@@ -80,12 +80,22 @@
   .linkbtn:hover, .restartbtn:hover { background: #2980b9; }
   #lastAddedBox {
     margin-top: 30px; background: rgba(255,255,255,0.6);
-    border-radius: 12px; padding: 10px; cursor: pointer;
+    border-radius: 12px; padding: 15px; cursor: pointer;
+    text-align: center;
   }
-  #lastAddedList { display: none; margin-top: 10px; text-align: left; }
+  #lastAddedList {
+    display: none; margin-top: 10px; text-align: center; font-size: 0.95rem;
+  }
+  #lastAddedList div { margin: 4px 0; }
   #datasourceStatus { margin-top: 10px; font-size: 0.9rem; color: #666; }
   .correct { background-color: #e9fce9 !important; }
   .wrong { background-color: #fdecea !important; }
+  .subline {
+    font-size: 0.85rem;
+    color: #888;
+    font-style: italic;
+    margin-top: -8px;
+  }
 </style>
 </head>
 <body>
@@ -109,7 +119,7 @@
   <div class="functions">
     <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
     <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
-    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten<br><i style="font-size:0.9rem;">(Mitdenker Edition)</i></div>
+    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten<br><i style="font-size:0.9rem;">Mitdenker Edition</i></div>
   </div>
 
   <div class="feedback-settings">
@@ -128,6 +138,7 @@
   <div id="trainer" class="trainer">
     <div class="card">
       <div id="word" class="word"></div>
+      <div id="subline" class="subline"></div>
       <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none;">
       <button id="enterBtn" style="display:none;">Eingabe</button>
       <div id="feedback" class="feedback"></div>
@@ -164,7 +175,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
         enter=document.getElementById("enterBtn"), right=document.getElementById("rightBtn"),
         wrong=document.getElementById("wrongBtn"), skip=document.getElementById("skipBtn"),
         restart=document.getElementById("restartBtn"), fT=document.getElementById("feedbackToggle"),
-        tT=document.getElementById("toastTime"), status=document.getElementById("datasourceStatus");
+        tT=document.getElementById("toastTime"), status=document.getElementById("datasourceStatus"),
+        subline=document.getElementById("subline");
 
   let list=[],round=[],i=0,errors=[],skipped=[],game="learn",mode="mixed",trap=false,correctAns="";
 
@@ -219,6 +231,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     correctAns=answ;
 
     word.innerHTML=`<div style="display:inline-block;padding:5px 12px;border-radius:12px;background:${color};color:#fff;">${NAMES[catg]}</div><br><br><b>${ask}</b>`;
+    subline.textContent=game==="cards"?"Mitdenker Edition – erkenne falsche Paare!":"";
     feedback.textContent=""; updateProg();
 
     if(game==="learn"){ ans.style.display="inline-block"; enter.style.display="inline-block";
