@@ -1,338 +1,207 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>📘 Vokabelübersicht</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #f7f9fb;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-      color: #222;
-    }
-    .app {
-      max-width: 1100px;
-      margin: auto;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      padding: 20px;
-    }
-    h1 { font-size: 1.8rem; margin-bottom: 10px; }
-    h2 { font-size: 1.3rem; color: #1e6ed8; margin-bottom: 10px; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td {
-      padding: 8px 10px;
-      border-bottom: 1px solid #e0e6ef;
-      text-align: left;
-    }
-    th { background: #eef4ff; cursor: pointer; }
-    th:hover { background: #e3ecff; }
-    tr:hover { background: #f4f9ff; }
-    input, select, button {
-      padding: 8px 10px;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #cfd6e4;
-      margin: 4px;
-    }
-    button {
-      cursor: pointer;
-      background: #1e6ed8;
-      color: #fff;
-      border: none;
-      transition: background 0.2s ease;
-    }
-    button:hover { background: #2980b9; }
-    .category-chip {
-      padding: 3px 8px;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 0.9rem;
-    }
-    .divider {
-      margin: 25px 0;
-      border-top: 3px solid #e5ebf3;
-    }
-    .pagination { margin-top: 10px; }
-    .pagination button {
-      background: #ecf0f1;
-      color: #333;
-      margin: 2px;
-      border: 1px solid #ccc;
-    }
-    .pagination button.active {
-      background: #1e6ed8;
-      color: #fff;
-    }
-    .footer { margin-top: 30px; font-size: 0.95rem; }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #2ecc71;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 8px;
-      display: none;
-      z-index: 999;
-    }
-    #modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.4);
-      align-items: center; justify-content: center;
-      z-index: 9999;
-    }
-    #modalContent {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 400px;
-    }
-    #modalContent input, #modalContent select {
-      width: 90%;
-      margin: 6px 0;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📘 Vokabelübersicht</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;color:#222}
+.app{max-width:1100px;margin:auto;background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,0.08);padding:20px}
+h1{font-size:1.8rem;margin-bottom:10px}
+h2{font-size:1.3rem;color:#1e6ed8;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px 10px;border-bottom:1px solid #e0e6ef;text-align:left}
+th{background:#eef4ff;cursor:pointer}
+th:hover{background:#e3ecff}
+tr:hover{background:#f4f9ff}
+input,select,button{padding:8px 10px;font-size:1rem;border-radius:8px;border:1px solid #cfd6e4;margin:4px}
+button{cursor:pointer;background:#1e6ed8;color:#fff;border:none;transition:background .2s}
+button:hover{background:#2980b9}
+.category-chip{padding:3px 8px;border-radius:8px;color:#fff;font-size:.9rem}
+.divider{margin:25px 0;border-top:3px solid #e5ebf3}
+.pagination{margin-top:10px}
+.pagination button{background:#ecf0f1;color:#333;margin:2px;border:1px solid #ccc}
+.pagination button.active{background:#1e6ed8;color:#fff}
+.footer{margin-top:30px;font-size:.95rem}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:999}
+#modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;z-index:9999}
+#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 3px 12px rgba(0,0,0,0.2);width:90%;max-width:400px}
+#modalContent input,#modalContent select{width:90%;margin:6px 0}
+#tokenBox{margin-top:10px;font-size:.9rem;color:#666}
+</style>
 </head>
 <body>
 <div class="app">
-  <h1>📘 Vokabelübersicht</h1>
+<h1>📘 Vokabelübersicht</h1>
 
-  <div class="section">
-    <h2>🔍 Filter & Suche</h2>
-    <div>
-      <label>Kategorie:
-        <select id="filterCat">
-          <option value="Alle">Alle (bunt gemischt)</option>
-        </select>
-      </label>
-      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
-      <button id="resetFilter">🔄 Filter zurücksetzen</button>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>📄 Vokabelliste</h2>
-    <table id="vokabelTable">
-      <thead>
-        <tr>
-          <th data-col="0">Englisch</th>
-          <th data-col="1">Deutsch</th>
-          <th data-col="2">Kategorie</th>
-          <th style="width:90px;">Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="pagination" class="pagination"></div>
-    <div id="infoFooter"></div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <h2>➕ Neue Vokabel hinzufügen</h2>
-    <input id="newEn" type="text" placeholder="Englisch">
-    <input id="newDe" type="text" placeholder="Deutsch">
-    <select id="newCat"></select>
-    <input id="newGroup" type="text" placeholder="Gruppe / Variante">
-    <input id="newHint" type="text" placeholder="Hinweis">
-    <button id="addBtn">Hinzufügen</button>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <h2>💾 JSON & Synchronisierung</h2>
-    <button id="syncBtn">🔄 GitHub Sync</button>
-    <button id="downloadBtn">💾 vokabeln.json herunterladen</button>
-    <p id="syncInfo" style="font-size:.9rem;color:#555;margin-top:8px;">Quelle: –</p>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <h2>🧾 Zuletzt hinzugefügt</h2>
-    <div id="lastAdded">–</div>
-  </div>
-
-  <div class="footer">
-    <button onclick="window.location.href='index.html'">⬅️ Zurück zum Trainer</button>
-    <p>© 2025 @Beefi</p>
-  </div>
+<div class="section">
+<h2>🔍 Filter &amp; Suche</h2>
+<div>
+<label>Kategorie:
+<select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select></label>
+<input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
+<button id="resetFilter">🔄 Filter zurücksetzen</button>
+</div>
 </div>
 
-<!-- Modal -->
+<div class="section">
+<h2>📄 Vokabelliste</h2>
+<table id="vokabelTable">
+<thead>
+<tr>
+<th data-col="0">Englisch</th>
+<th data-col="1">Deutsch</th>
+<th data-col="2">Kategorie</th>
+<th style="width:90px;">Aktion</th>
+</tr>
+</thead><tbody></tbody>
+</table>
+<div id="pagination" class="pagination"></div>
+<div id="infoFooter" style="margin-top:6px;font-size:.95rem;color:#555"></div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+<h2>➕ Neue Vokabel hinzufügen</h2>
+<input id="newEn" type="text" placeholder="Englisch">
+<input id="newDe" type="text" placeholder="Deutsch">
+<select id="newCat"></select>
+<input id="newGroup" type="text" placeholder="Gruppe / Variante">
+<input id="newHint" type="text" placeholder="Hinweis">
+<button id="addBtn">Hinzufügen</button>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+<h2>💾 JSON &amp; Synchronisierung</h2>
+<button id="syncBtn">🔄 Von GitHub laden</button>
+<button id="pushBtn">⬆️ Änderungen hochladen</button>
+<button id="downloadBtn">💾 vokabeln.json herunterladen</button>
+<p id="syncInfo" style="font-size:.9rem;color:#555;margin-top:8px;">Quelle: –</p>
+<div id="tokenBox">
+<input id="tokenInput" type="password" placeholder="🔑 GitHub Token eingeben">
+<button id="saveTokenBtn">Token speichern</button>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+<h2>🧾 Zuletzt hinzugefügt</h2>
+<div id="lastAdded">–</div>
+</div>
+
+<div class="footer">
+<button onclick="window.location.href='index.html'">⬅️ Zurück zum Trainer</button>
+<p>© 2025 @Beefi</p>
+</div>
+</div>
+
 <div id="modal">
-  <div id="modalContent">
-    <h3>🔍 Vokabel-Details</h3>
-    <input id="editEn" type="text" placeholder="Englisch">
-    <input id="editDe" type="text" placeholder="Deutsch">
-    <select id="editCat"></select>
-    <input id="editGroup" type="text" placeholder="Gruppe / Variante">
-    <input id="editHint" type="text" placeholder="Hinweis">
-    <button id="saveEdit">💾 Speichern</button>
-    <button id="closeModal">❌ Schließen</button>
-  </div>
+<div id="modalContent">
+<h3>🔍 Vokabel-Details</h3>
+<input id="editEn" type="text" placeholder="Englisch">
+<input id="editDe" type="text" placeholder="Deutsch">
+<select id="editCat"></select>
+<input id="editGroup" type="text" placeholder="Gruppe / Variante">
+<input id="editHint" type="text" placeholder="Hinweis">
+<button id="saveEdit">💾 Speichern</button>
+<button id="closeModal">❌ Schließen</button>
+</div>
 </div>
 
 <div id="toast" class="toast">Gespeichert</div>
 
 <script>
-(() => {
-const CATEGORY_NAMES = {
-  "Gelb":"Grundwerkzeuge Metallverarbeitung",
-  "Pink":"Werkzeugkasten Mechaniker",
-  "Blau":"Blech- / Kunststoffarbeiten",
-  "Gruen":"Drehen / Fräsen",
-  "HellesPink":"Hydraulik / Pneumatik",
-  "Orange":"Elektrotechnik",
-  "Dunkelgruen":"Fluggerätemechanik allgemein",
-  "Rot":"Verwechslungsgefahr"
-};
-const COLOR_MAP = {
-  "Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449",
-  "HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"
-};
+(()=>{
 
-let list = [];
-const perPage = 15;
-let currentPage = 1;
-let sortCol = 0, sortDir = 1;
+const CATEGORY_NAMES={
+"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
+const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 
-const $ = s => document.querySelector(s);
-const $$ = s => document.querySelectorAll(s);
+let list=[],perPage=15,currentPage=1,sortCol=0,sortDir=1;
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 
-function saveLocal() {
-  localStorage.setItem("vokabeln", JSON.stringify(list));
-  localStorage.setItem("vokabeln_updated", new Date().toISOString());
-  render();
+async function getGitHubSHA(){
+ const res=await fetch("https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json");
+ if(!res.ok)throw new Error("SHA konnte nicht geladen werden");
+ const data=await res.json();
+ return data.sha;
+}
+function checkToken(){return localStorage.getItem("gh_token")||null;}
+
+async function saveToGitHub(){
+ const token=checkToken();
+ if(!token){alert("Bitte zuerst ein GitHub Token speichern.");return;}
+ try{
+   const sha=await getGitHubSHA();
+   const body={message:"Auto-Update via Vokabeltrainer",content:btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2)))),sha};
+   const res=await fetch("https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json",{
+     method:"PUT",headers:{Authorization:"token "+token,"Content-Type":"application/json"},body:JSON.stringify(body)
+   });
+   if(!res.ok)throw new Error(res.status);
+   showToast("✅ Erfolgreich auf GitHub gespeichert");
+   localStorage.setItem("vokabeln",JSON.stringify(list));
+ }catch(e){alert("Fehler beim Upload: "+e.message);}
 }
 
-async function loadFromGitHub() {
-  try {
-    const res = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json?cache=" + Date.now());
-    if (!res.ok) throw new Error(res.status);
-    const data = await res.json();
-    list = data;
-    saveLocal();
-    $("#syncInfo").textContent = "Quelle: GitHub (automatisch geladen)";
-  } catch {
-    const local = localStorage.getItem("vokabeln");
-    list = local ? JSON.parse(local) : [];
-    $("#syncInfo").textContent = "Quelle: Lokaler Speicher";
-  }
+async function loadFromGitHub(){
+ try{
+   const res=await fetch("https://raw.githubusercontent.com/beeferino/vokabeltrainer/main/vokabeln.json?_="+Date.now());
+   if(!res.ok)throw new Error(res.status);
+   const data=await res.json();
+   list=data;
+   localStorage.setItem("vokabeln",JSON.stringify(list));
+   $("#syncInfo").textContent="🌐 Quelle: GitHub (Online)";
+ }catch{
+   const local=localStorage.getItem("vokabeln");
+   list=local?JSON.parse(local):[];
+   $("#syncInfo").textContent="💾 Quelle: Lokaler Speicher";
+ }
+ render();
 }
 
-function fillCats(sel) {
-  sel.innerHTML = "";
-  for (const k in CATEGORY_NAMES) {
-    const o = document.createElement("option");
-    o.value = k;
-    o.textContent = CATEGORY_NAMES[k];
-    o.style.background = COLOR_MAP[k];
-    o.style.color = "#fff";
-    sel.appendChild(o);
-  }
-}
+function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));render();}
 
-function render() {
-  const tb = $("#vokabelTable tbody");
-  const search = $("#searchInput").value.toLowerCase();
-  const catFilter = $("#filterCat").value;
-  let filtered = list.filter(v => {
-    const matchCat = catFilter === "Alle" || v[2] === catFilter;
-    const matchSearch = v[0].toLowerCase().includes(search) || v[1].toLowerCase().includes(search);
-    return matchCat && matchSearch;
-  });
-  filtered.sort((a,b)=>a[sortCol].localeCompare(b[sortCol]) * sortDir);
-  const pages = Math.ceil(filtered.length / perPage);
-  const start = (currentPage - 1) * perPage;
-  const rows = filtered.slice(start, start + perPage);
-  tb.innerHTML = rows.map((v,i)=>`
-    <tr>
-      <td>${v[0]}</td>
-      <td>${v[1]}</td>
-      <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-      <td><button onclick="openEdit(${start+i})">🔍</button></td>
-    </tr>`).join("");
-  $("#infoFooter").textContent = `📚 Gesamt: ${list.length} | 🔎 Gefiltert: ${filtered.length}`;
-  const pag = $("#pagination"); pag.innerHTML="";
-  for(let p=1;p<=pages;p++){
-    const b=document.createElement("button");
-    b.textContent=p; if(p===currentPage)b.classList.add("active");
-    b.onclick=()=>{currentPage=p;render();};
-    pag.appendChild(b);
-  }
-  renderLastAdded();
-}
+function fillCats(sel){sel.innerHTML="";for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);}}
 
-function renderLastAdded(){
-  const div=$("#lastAdded");
-  if(!list.length){div.textContent="–";return;}
-  const last=list.slice(-5).reverse();
-  div.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${COLOR_MAP[v[2]]}">(${CATEGORY_NAMES[v[2]]})</span></div>`).join("");
+function render(){
+ const tb=$("#vokabelTable tbody");
+ const search=$("#searchInput").value.toLowerCase();
+ const cat=$("#filterCat").value;
+ let filtered=list.filter(v=>{const mc=cat==="Alle"||v[2]===cat;const ms=v[0].toLowerCase().includes(search)||v[1].toLowerCase().includes(search);return mc&&ms;});
+ filtered.sort((a,b)=>a[sortCol].localeCompare(b[sortCol])*sortDir);
+ const pages=Math.ceil(filtered.length/perPage);
+ const start=(currentPage-1)*perPage;
+ const rows=filtered.slice(start,start+perPage);
+ tb.innerHTML=rows.map((v,i)=>`<tr><td>${v[0]}</td><td>${v[1]}</td><td><span class='category-chip' style='background:${COLOR_MAP[v[2]]}'>${CATEGORY_NAMES[v[2]]}</span></td><td><button onclick='openEdit(${start+i})'>🔍</button></td></tr>`).join("");
+ $("#infoFooter").textContent=`📚 Gesamt: ${list.length} | 🔎 Gefiltert: ${filtered.length}`;
+ const pag=$("#pagination");pag.innerHTML="";
+ for(let p=1;p<=pages;p++){const b=document.createElement("button");b.textContent=p;if(p===currentPage)b.classList.add("active");b.onclick=()=>{currentPage=p;render();};pag.appendChild(b);}
+ renderLastAdded();
 }
+function renderLastAdded(){const div=$("#lastAdded");if(!list.length){div.textContent="–";return;}const last=list.slice(-5).reverse();div.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style='color:${COLOR_MAP[v[2]]}'>(${CATEGORY_NAMES[v[2]]})</span></div>`).join("");}
 
-window.openEdit = function(i){
-  const v=list[i];
-  $("#editEn").value=v[0];
-  $("#editDe").value=v[1];
-  $("#editCat").value=v[2];
-  $("#editGroup").value=v[3]||"";
-  $("#editHint").value=v[4]||"";
-  $("#modal").style.display="flex";
-  $("#saveEdit").onclick=()=>{
-    v[0]=$("#editEn").value.trim();
-    v[1]=$("#editDe").value.trim();
-    v[2]=$("#editCat").value;
-    v[3]=$("#editGroup").value.trim();
-    v[4]=$("#editHint").value.trim();
-    saveLocal();
-    $("#modal").style.display="none";
-  };
-  $("#closeModal").onclick=()=>$("#modal").style.display="none";
-};
+window.openEdit=function(i){const v=list[i];$("#editEn").value=v[0];$("#editDe").value=v[1];$("#editCat").value=v[2];$("#editGroup").value=v[3]||"";$("#editHint").value=v[4]||"";$("#modal").style.display="flex";
+$("#saveEdit").onclick=()=>{v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();saveLocal();showToast("💾 Gespeichert");$("#modal").style.display="none";};
+$("#closeModal").onclick=()=>$("#modal").style.display="none";};
 
 $("#resetFilter").onclick=()=>{$("#searchInput").value="";$("#filterCat").value="Alle";render();};
-$("#addBtn").onclick=()=>{
-  const en=$("#newEn").value.trim(),de=$("#newDe").value.trim(),cat=$("#newCat").value,grp=$("#newGroup").value.trim(),hint=$("#newHint").value.trim();
-  if(!en||!de){alert("Bitte Englisch & Deutsch eingeben!");return;}
-  list.push([en,de,cat,grp,hint]);
-  saveLocal();
-  $("#newEn").value=$("#newDe").value=$("#newGroup").value=$("#newHint").value="";
-};
-$("#downloadBtn").onclick=()=>{
-  const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="vokabeln.json";
-  a.click();
-};
+$("#addBtn").onclick=()=>{const en=$("#newEn").value.trim(),de=$("#newDe").value.trim(),cat=$("#newCat").value,grp=$("#newGroup").value.trim(),hint=$("#newHint").value.trim();if(!en||!de)return alert("Bitte Englisch & Deutsch eingeben!");list.push([en,de,cat,grp,hint]);saveLocal();showToast("➕ Hinzugefügt");$("#newEn").value=$("#newDe").value=$("#newGroup").value=$("#newHint").value="";};
+$("#downloadBtn").onclick=()=>{const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vokabeln.json";a.click();};
 $("#syncBtn").onclick=loadFromGitHub;
-$$("th[data-col]").forEach(th=>{
-  th.onclick=()=>{
-    const c=parseInt(th.dataset.col);
-    sortDir = sortCol === c ? -sortDir : 1;
-    sortCol=c;
-    render();
-  };
-});
+$("#pushBtn").onclick=saveToGitHub;
+$("#saveTokenBtn").onclick=()=>{const t=$("#tokenInput").value.trim();if(!t)return alert("Bitte Token eingeben.");localStorage.setItem("gh_token",t);showToast("🔑 Token gespeichert");$("#tokenInput").value="";};
 
-fillCats($("#newCat"));
-fillCats($("#editCat"));
-fillCats($("#filterCat"));
-loadFromGitHub().then(render);
+$$("th[data-col]").forEach(th=>{th.onclick=()=>{const c=parseInt(th.dataset.col);sortDir=sortCol===c?-sortDir:1;sortCol=c;render();};});
+
+function showToast(msg){const t=$("#toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",2000);}
+
+fillCats($("#newCat"));fillCats($("#editCat"));fillCats($("#filterCat"));
+loadFromGitHub();
+
 })();
 </script>
 </body>
