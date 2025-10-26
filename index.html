@@ -34,7 +34,8 @@ select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1r
 .footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
 .footer-actions a,.footer-actions button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
 .feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
-details.recent-section{background:#f8faff;border-radius:16px;padding:14px 20px;margin-top:24px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:all .3s ease}
+.trenner{height:2px;width:80%;margin:40px auto 10px;background:linear-gradient(90deg,#e5e7eb,#c7d2fe,#e5e7eb);border-radius:2px}
+details.recent-section{background:#f8faff;border-radius:16px;padding:14px 20px;margin-top:16px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:all .3s ease}
 details.recent-section[open]{background:#fff;box-shadow:0 4px 22px rgba(0,0,0,.08)}
 details.recent-section summary{font-weight:700;font-size:1.1rem;color:#1f2937;cursor:pointer;list-style:none;text-transform:uppercase;transition:color .3s ease}
 details.recent-section summary:hover{color:#2563eb}
@@ -105,6 +106,8 @@ details.recent-section summary:hover{color:#2563eb}
     <a href="vokabeln.html">📂 Vokabeln</a>
     <button onclick="location.reload()">🔄 Neustart</button>
   </div>
+
+  <div class="trenner"></div>
 
   <details class="recent-section">
     <summary>Zuletzt hinzugefügt</summary>
