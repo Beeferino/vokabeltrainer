@@ -1,5 +1,4 @@
-<html lang="de">
-<head>
+<html lang="de"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vokabeltrainer</title>
@@ -32,13 +31,16 @@ a.linkbtn:hover{background:#a6d4ff;}
 #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none;}
 </style>
 </head>
+
 <body>
 <div class="app">
 <h1>🎯 Vokabeltrainer</h1>
 
 <div class="controls">
-<label>Kategorie:<select id="category"><option value="Alle">Alle (bunt gemischt)</option></select></label>
-<label>Modus:<select id="mode">
+<label>Kategorie:
+<select id="category"><option value="Alle">Alle (bunt gemischt)</option></select></label>
+<label>Modus:
+<select id="mode">
 <option value="toGerman">Englisch → Deutsch</option>
 <option value="toEnglish">Deutsch → Englisch</option>
 <option value="mixed">Gemischt</option>
@@ -53,7 +55,8 @@ a.linkbtn:hover{background:#a6d4ff;}
 
 <div class="feedback-settings">
 <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
-<label>Toast-Dauer:<select id="toastTime">
+<label>Toast-Dauer:
+<select id="toastTime">
 <option value="500">0,5 s</option>
 <option value="1000" selected>1 s</option>
 <option value="2000">2 s</option>
@@ -81,49 +84,187 @@ a.linkbtn:hover{background:#a6d4ff;}
 <div class="footer">
 <a href="vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a>
 <br><br>
-<small>© 2025 @Beefi</small>
+<small>© 2025 @Beefi</small><br>
+<button id="exportBtn" style="margin-top:8px;">💾 vokabeln.json herunterladen</button>
 </div>
 </div>
 
-<div id="datasourceStatus" aria-live="polite">💾 Datenquelle: Lokaler Speicher</div>
+<div id="datasourceStatus">💾 Datenquelle: Lokaler Speicher</div>
 
 <script>
-/* Gemeinsame robuste JSON-Sync-Logik */
-const statusEl=document.getElementById('datasourceStatus');
-function getDefaultList(){return [["hammer","Hammer","Pink"],["file","Feile","Gelb"],["drill","Bohrer","Pink"]];}
-function mergeVocabLists(remote, local){const key=v=>`${v[0].toLowerCase()}|${v[1].toLowerCase()}`;const map=new Map();remote.forEach(v=>map.set(key(v),v));local.forEach(v=>{if(!map.has(key(v)))map.set(key(v),v);});return Array.from(map.values());}
-function saveLocal(v){localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
-function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
-async function trySyncFromJson(){
-const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
-let remote=null;
-for(const u of urls){try{const r=await fetch(u,{cache:"no-store"});if(!r.ok)continue;const d=await r.json();if(Array.isArray(d)){remote=d;break;}}catch{}}
-const local=loadLocal();
-if(!remote&&local.length===0){const def=getDefaultList();saveLocal(def);statusEl.textContent="✨ Standardliste verwendet";return;}
-if(remote){const merged=mergeVocabLists(remote,local);saveLocal(merged);statusEl.textContent="🔄 JSON + lokale Ergänzungen";}
-else statusEl.textContent="💾 Lokaler Speicher";
-}
-
-/* Rest: Dein unverändertes Trainer-Script */
 (function(){
 const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
 const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
-const catSel=document.getElementById("category"),modeSel=document.getElementById("mode"),feedbackToggle=document.getElementById("feedbackToggle"),learnBtn=document.getElementById("learnBtn"),cardsBtn=document.getElementById("cardsBtn"),last30Btn=document.getElementById("last30Btn"),restartBtn=document.getElementById("restartBtn"),wordDiv=document.getElementById("word"),feedback=document.getElementById("feedback"),rightBtn=document.getElementById("rightBtn"),wrongBtn=document.getElementById("wrongBtn"),skipBtn=document.getElementById("skipBtn"),progress=document.getElementById("progress"),trainer=document.getElementById("trainer"),result=document.getElementById("result"),answerInput=document.getElementById("answerInput"),card=document.getElementById("card");
+const statusEl=document.getElementById('datasourceStatus');
 
-let list=[],round=[],index=0,errors=[],skipped=[],mode="mixed",category="Alle",gameMode="learn";
-function renderCats(){catSel.innerHTML="<option value='Alle'>Alle (bunt gemischt)</option>";for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=" "+CATEGORY_NAMES[k];o.style.backgroundColor=COLOR_MAP[k];o.style.color="#fff";catSel.appendChild(o);}}
-function flash(cls){if(!feedbackToggle.checked)return;card.classList.add(cls);setTimeout(()=>card.classList.remove(cls),400);}
-function updateProgress(){progress.style.display="block";progress.textContent=`Vokabel ${index+1}/${round.length} | Fehler: ${errors.length}`;}
+/* ========= ROBUSTER JSON-SYNC mit MERGE ========= */
+function keyOf(v){return `${(v[0]||'').toLowerCase()}|${(v[1]||'').toLowerCase()}`;}
+function mergeVocabLists(remote,local){
+  const map=new Map();
+  remote.forEach(v=>map.set(keyOf(v),v));
+  local.forEach(v=>{if(!map.has(keyOf(v)))map.set(keyOf(v),v);});
+  return Array.from(map.values());
+}
+function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+function saveLocal(v){localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
+function exportJson(){
+  const blob=new Blob([JSON.stringify(loadLocal(),null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="vokabeln.json";a.click();URL.revokeObjectURL(url);
+}
+async function trySyncFromJson(){
+  const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
+  let remote=null;
+  for(const u of urls){
+    try{const r=await fetch(u,{cache:"no-store"});if(!r.ok)continue;
+      const d=await r.json();if(Array.isArray(d)){remote=d;break;}}catch{}
+  }
+  const local=loadLocal();
+  if(!remote&&local.length===0){
+    saveLocal([["hammer","Hammer","Pink"],["file","Feile","Gelb"]]);
+    statusEl.textContent="✨ Standardliste verwendet";
+    return;
+  }
+  if(remote){
+    const merged=mergeVocabLists(remote,local);
+    saveLocal(merged);
+    statusEl.textContent="🔄 JSON + lokale Ergänzungen (gemergt)";
+  } else {
+    statusEl.textContent="💾 Lokaler Speicher (Offline)";
+  }
+}
+/* ================================================ */
+
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
-function showNext(){if(index>=round.length){trainer.style.display="none";progress.style.display="none";let html=`<h3>Runde beendet</h3>`;if(errors.length===0)html+="<p>Keine Fehler 🎉</p>";else{html+=`<p>${errors.length} Fehler:</p><ul>`;errors.forEach(([q,a])=>html+=`<li>${q} → ${a}</li>`);html+="</ul>";}html+="<button onclick='location.reload()'>🔄 Neue Runde</button>";result.innerHTML=html;result.style.display="block";return;}
-updateProgress();const [en,de,cat]=round[index];let ask,answer;if(mode==="toGerman"){ask=en;answer=de;}else if(mode==="toEnglish"){ask=de;answer=en;}else{if(Math.random()<0.5){ask=en;answer=de;}else{ask=de;answer=en;}}const c=COLOR_MAP[cat]||"#ccc";wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${c};color:#fff;'>${CATEGORY_NAMES[cat]}</div><br><br><b>${ask}</b>`;feedback.textContent="";
-answerInput.style.display="inline-block";rightBtn.style.display="none";wrongBtn.style.display="none";skipBtn.style.display="inline-block";answerInput.value="";answerInput.focus();
-answerInput.onkeydown=e=>{if(e.key==="Enter"){const ok=answerInput.value.trim().toLowerCase()===answer.toLowerCase();if(feedbackToggle.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answer}`;flash(ok?"correct":"wrong");}if(!ok)errors.push([ask,answer]);index++;setTimeout(showNext,feedbackToggle.checked?1000:0);}};skipBtn.onclick=()=>{skipped.push([en,de,cat]);index++;showNext();}}
-function startRound(selectedMode,type,customList=null){list=loadLocal();if(list.length===0){list=getDefaultList();saveLocal(list);}category=catSel.value;mode=selectedMode;gameMode=type;let f=(category==="Alle")?list:list.filter(v=>v[2]===category);if(customList)f=customList;shuffle(f);round=f.slice(0,15);index=0;errors=[];skipped=[];result.style.display="none";trainer.style.display="block";feedback.textContent="";updateProgress();showNext();}
-last30Btn.onclick=()=>{const all=loadLocal();if(!all.length)return alert("Keine Vokabeln.");const last30=all.slice(-30);const choice=confirm("📚 Letzte 30 Vokabeln trainieren?\nOK = Karteikarten, Abbrechen = Abfrage");const m=choice?"cards":"learn";startRound(modeSel.value,m,last30);};
-learnBtn.onclick=()=>startRound(modeSel.value,"learn");cardsBtn.onclick=()=>startRound(modeSel.value,"cards");restartBtn.onclick=()=>location.reload();renderCats();
+const catSel=document.getElementById("category"),
+modeSel=document.getElementById("mode"),
+feedbackToggle=document.getElementById("feedbackToggle"),
+learnBtn=document.getElementById("learnBtn"),
+cardsBtn=document.getElementById("cardsBtn"),
+last30Btn=document.getElementById("last30Btn"),
+restartBtn=document.getElementById("restartBtn"),
+wordDiv=document.getElementById("word"),
+feedback=document.getElementById("feedback"),
+rightBtn=document.getElementById("rightBtn"),
+wrongBtn=document.getElementById("wrongBtn"),
+skipBtn=document.getElementById("skipBtn"),
+progress=document.getElementById("progress"),
+trainer=document.getElementById("trainer"),
+result=document.getElementById("result"),
+answerInput=document.getElementById("answerInput"),
+card=document.getElementById("card");
+
+let list=[],round=[],index=0,errors=[],skipped=[],mode="mixed",category="Alle",gameMode="learn",currentAnswer="",isTrap=false;
+
+function renderCats(){
+  catSel.innerHTML="<option value='Alle'>Alle (bunt gemischt)</option>";
+  for(const k in CATEGORY_NAMES){
+    const o=document.createElement("option");
+    o.value=k;o.textContent=" "+CATEGORY_NAMES[k];
+    o.style.backgroundColor=COLOR_MAP[k];o.style.color="#fff";
+    catSel.appendChild(o);
+  }
+}
+
+function flash(colorClass){
+  if(!feedbackToggle.checked) return;
+  card.classList.add(colorClass);
+  setTimeout(()=>card.classList.remove(colorClass),400);
+}
+function updateProgress(){
+  progress.style.display="block";
+  progress.textContent=`Vokabel ${index+1}/ ${round.length} | Fehler: ${errors.length}`;
+}
+
+function startRound(selectedMode,type,customList=null){
+  list=loadLocal();
+  if(list.length===0){list=[["hammer","Hammer","Pink"]];saveLocal(list);}
+  category=catSel.value;mode=selectedMode;gameMode=type;
+  let f=(category==="Alle")?list:list.filter(v=>v[2]===category);
+  if(customList)f=customList;
+  shuffle(f);
+  round=f.slice(0,15);
+  index=0;errors=[];skipped=[];
+  result.style.display="none";trainer.style.display="block";
+  feedback.textContent="";
+  updateProgress();
+  showNext();
+}
+
+function showNext(){
+  if(index>=round.length){
+    if(skipped.length>0){round=skipped;skipped=[];index=0;feedback.textContent="📘 Übersprungene Vokabeln!";updateProgress();showNext();return;}
+    trainer.style.display="none";progress.style.display="none";
+    let html=`<h3>Runde beendet</h3>`;
+    if(errors.length===0)html+="<p>Keine Fehler 🎉</p>";
+    else{html+=`<p>${errors.length} Fehler:</p><ul>`;errors.forEach(([q,a])=>html+=`<li>${q} → ${a}</li>`);html+="</ul>";}
+    html+="<button onclick='location.reload()'>🔄 Neue Runde</button>";
+    result.innerHTML=html;result.style.display="block";return;
+  }
+
+  updateProgress();
+  const [en,de,cat]=round[index];
+  let ask,answer;
+  if(mode==="toGerman"){ask=en;answer=de;}
+  else if(mode==="toEnglish"){ask=de;answer=en;}
+  else{if(Math.random()<0.5){ask=en;answer=de;}else{ask=de;answer=en;}}
+  const catColor=COLOR_MAP[cat]||"#ccc";
+  wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${CATEGORY_NAMES[cat]}</div><br><br><b>${ask}</b>`;
+  feedback.textContent="";
+
+  if(gameMode==="learn"){
+    answerInput.style.display="inline-block";
+    rightBtn.style.display="none";
+    wrongBtn.style.display="none";
+    skipBtn.style.display="inline-block";
+    answerInput.value="";
+    answerInput.focus();
+    answerInput.onkeydown=e=>{
+      if(e.key==="Enter"){
+        const correct=answerInput.value.trim().toLowerCase()===answer.toLowerCase();
+        if(feedbackToggle.checked){
+          feedback.textContent=correct?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answer}`;
+          flash(correct?"correct":"wrong");
+        }
+        if(!correct)errors.push([ask,answer]);
+        index++;
+        setTimeout(showNext,feedbackToggle.checked?1000:0);
+      }
+    };
+    skipBtn.onclick=function(){skipped.push([en,de,cat]);index++;showNext();};
+  }
+  else if(gameMode==="cards"){
+    answerInput.style.display="none";
+    rightBtn.style.display="inline-block";
+    wrongBtn.style.display="inline-block";
+    skipBtn.style.display="inline-block";
+    isTrap=Math.random()<0.3;
+    currentAnswer=isTrap?getRandomWrongAnswer(answer):answer;
+    card.style.background=isTrap?"#f3f3f3":"#fff";
+    feedback.innerHTML=`💡 <b>${currentAnswer}</b>`;
+    wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${CATEGORY_NAMES[cat]}</div><br><br><b>${ask}</b>`;
+    const parent=document.getElementById("cardButtons");
+    if(Math.random()<0.5)parent.insertBefore(wrongBtn,rightBtn);else parent.insertBefore(rightBtn,wrongBtn);
+    rightBtn.onclick=function(){const correct=!isTrap;if(feedbackToggle.checked){feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!";flash(correct?"correct":"wrong");}if(!correct)errors.push([ask,answer]);index++;setTimeout(showNext,feedbackToggle.checked?600:0);};
+    wrongBtn.onclick=function(){const correct=isTrap;if(feedbackToggle.checked){feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!";flash(correct?"correct":"wrong");}if(!correct)errors.push([ask,answer]);index++;setTimeout(showNext,feedbackToggle.checked?600:0);};
+    skipBtn.onclick=function(){skipped.push([en,de,cat]);index++;showNext();};
+  }
+}
+
+function getRandomWrongAnswer(correct){
+  let pool=list.map(v=>v[1]);
+  let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===correct);
+  return wrong;
+}
+
+last30Btn.onclick=()=>{const all=loadLocal();if(!all.length)return alert("Keine Vokabeln.");const last30=all.slice(-30);const choice=confirm("📚 Letzte 30 üben? OK=Karteikarten, Abbrechen=Abfrage");const selectedMode=choice?"cards":"learn";startRound(modeSel.value,selectedMode,last30);};
+learnBtn.onclick=()=>startRound(modeSel.value,"learn");
+cardsBtn.onclick=()=>startRound(modeSel.value,"cards");
+restartBtn.onclick=()=>location.reload();
+renderCats();
 trySyncFromJson();
+
+document.getElementById("exportBtn").onclick=exportJson;
 })();
 </script>
-</body>
-</html>
+</body></html>
