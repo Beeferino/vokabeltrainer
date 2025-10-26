@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🎯 Vokabeltrainer</title>
+<!DOCTYPE html><html lang="de"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vokabeltrainer</title>
 <style>
-body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;color:#111}
-.app{max-width:900px;margin:auto}
+body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px}
+.app{max-width:900px;margin:auto;text-align:center}
 h1{font-size:1.8rem;margin-bottom:1rem}
 button,input,select{font-size:1rem;padding:8px 12px;border-radius:8px;border:1px solid #ccc;margin:5px}
 button{cursor:pointer;background:#2980b9;color:#fff;border:none;transition:background .2s ease,transform .1s ease}
 button:hover{background:#3498db;transform:translateY(-1px)}
-.card{position:relative;background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,0.1);margin-top:20px;transition:background-color .4s ease}
+.card{background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,.1);margin-top:20px;transition:background-color .4s ease}
 .card.correct{background-color:#d4edda}
 .card.wrong{background-color:#f8d7da}
 .word{font-size:1.6rem;margin:20px 0;font-weight:600}
@@ -19,226 +16,68 @@ button:hover{background:#3498db;transform:translateY(-1px)}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;margin-bottom:25px}
 .controls label{display:flex;align-items:center;gap:6px;margin:5px 8px}
 .functions{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin:30px 0 10px}
-.kachel{flex:1 1 300px;max-width:360px;background:linear-gradient(145deg,#fff,#f0f4ff);border-radius:14px;box-shadow:0 3px 6px rgba(0,0,0,0.08);padding:16px;text-align:center;font-size:1.1rem;cursor:pointer;transition:all .25s ease;border:1px solid #dce3ef}
-.kachel:hover{background:linear-gradient(145deg,#e7f1ff,#ffffff);transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,0.12)}
-.feedback-settings{background:#f1f3f6;border-radius:12px;padding:12px 20px;margin:25px auto;max-width:600px;box-shadow:0 2px 5px rgba(0,0,0,0.08);display:flex;flex-wrap:wrap;justify-content:center;gap:15px;align-items:center}
+.kachel{flex:1 1 300px;max-width:360px;background:linear-gradient(145deg,#fff,#f0f4ff);border-radius:14px;box-shadow:0 3px 6px rgba(0,0,0,.08);padding:16px;text-align:center;font-size:1.1rem;cursor:pointer;transition:all .25s ease;border:1px solid #dce3ef}
+.kachel:hover{background:linear-gradient(145deg,#e7f1ff,#ffffff);transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.12)}
+.feedback-settings{background:#f1f3f6;border-radius:12px;padding:12px 20px;margin:25px auto;max-width:600px;box-shadow:0 2px 5px rgba(0,0,0,.08);display:flex;flex-wrap:wrap;justify-content:center;gap:15px;align-items:center}
 .progress{margin-top:10px;font-weight:600;font-size:1.05rem;min-height:1.2em}
 #cardButtons{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:15px}
 #rightBtn{background:#2ECC71;color:#fff}
 #wrongBtn{background:#E74C3C;color:#fff}
 #skipBtn{background:#bdc3c7;color:#000}
-.footer{margin-top:30px;font-size:0.95rem;color:#555}
+.footer{margin-top:30px;font-size:.95rem;color:#555}
 a.linkbtn{display:inline-block;padding:10px 16px;border-radius:8px;background:#74b9ff;color:#000;text-decoration:none;font-weight:600}
 a.linkbtn:hover{background:#a6d4ff}
 #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none}
-#lastAddedBox{background:#fff;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.1);padding:10px;margin-top:15px;max-width:500px;margin-inline:auto;display:none}
-.last-entry{margin:6px 0}
-.last-entry span{font-weight:600}
-.toggleBtn{background:#ecf0f1;border-radius:8px;padding:8px 12px;cursor:pointer;transition:background .2s ease}
-.toggleBtn:hover{background:#dfe6e9}
+#lastAddedBox{margin-top:25px;border-top:2px solid #ddd;padding-top:15px;text-align:center}
+#lastAddedBox h3{margin-bottom:8px}
+#lastAddedList div{margin:3px 0}
 </style>
-</head>
-<body>
+</head><body>
 <div class="app">
-  <h1>🎯 Vokabeltrainer</h1>
-
-  <div class="controls">
-    <label>Kategorie:
-      <select id="category">
-        <option value="Alle">Alle (bunt gemischt)</option>
-        <option value="Gelb" style="background-color:#F4D03F;color:#fff;"> Grundwerkzeuge Metallverarbeitung</option>
-        <option value="Pink" style="background-color:#E91E63;color:#fff;"> Werkzeugkasten Mechaniker</option>
-        <option value="Blau" style="background-color:#1976D2;color:#fff;"> Blech- / Kunststoffarbeiten</option>
-        <option value="Gruen" style="background-color:#1E8449;color:#fff;"> Drehen / Fräsen</option>
-        <option value="HellesPink" style="background-color:#F54927;color:#fff;"> Hydraulik / Pneumatik</option>
-        <option value="Orange" style="background-color:#E67E22;color:#fff;"> Elektrotechnik</option>
-        <option value="Dunkelgruen" style="background-color:#117A65;color:#fff;"> Fluggerätemechanik allgemein</option>
-        <option value="Rot" style="background-color:#C0392B;color:#fff;"> Verwechslungsgefahr</option>
-      </select>
-    </label>
-    <label>Modus:
-      <select id="mode">
-        <option value="toGerman">Englisch → Deutsch</option>
-        <option value="toEnglish">Deutsch → Englisch</option>
-        <option value="mixed">Gemischt</option>
-      </select>
-    </label>
-  </div>
-
-  <div class="functions">
-    <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
-    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
-    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten</div>
-  </div>
-
-  <div class="feedback-settings">
-    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
-    <label>Feedback-Dauer:
-      <select id="toastTime">
-        <option value="3000" selected>3 s</option>
-        <option value="5000">5 s</option>
-      </select>
-    </label>
-  </div>
-
-  <div class="progress" id="progress" style="display:none;"></div>
-
-  <div id="trainer" style="display:none;">
-    <div class="card" id="card">
-      <div id="word" class="word"></div>
-      <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none;">
-      <div id="feedback" class="feedback"></div>
-      <div id="cardButtons">
-        <button id="rightBtn" style="display:none;">Richtig</button>
-        <button id="wrongBtn" style="display:none;">Falsch</button>
-        <button id="skipBtn" style="display:none;">Überspringen</button>
-      </div>
-    </div>
-    <button id="restartBtn" style="margin-top:10px;">🔄 Neustart</button>
-  </div>
-
-  <div id="result" style="display:none;" class="card"></div>
-
-  <div class="footer">
-    <a href="/vokabeltrainer/vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a>
-    <br><br>
-    <div class="toggleBtn" id="toggleLast">📜 Zuletzt hinzugefügt (anzeigen)</div>
-    <div id="lastAddedBox"></div>
-    <br>
-    <small>© 2025 @Beefi</small>
-  </div>
+<h1>🎯 Vokabeltrainer</h1>
+<div class="controls">
+<label>Kategorie:<select id="category"><option value="Alle">Alle (bunt gemischt)</option></select></label>
+<label>Modus:<select id="mode"><option value="toGerman">Englisch → Deutsch</option><option value="toEnglish">Deutsch → Englisch</option><option value="mixed">Gemischt</option></select></label>
 </div>
-
-<div id="datasourceStatus" aria-live="polite">💾 Datenquelle: Lokaler Speicher</div>
-
+<div class="functions">
+  <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
+  <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
+  <div class="kachel" id="cardsBtn">🧠 Karteikarten starten</div>
+</div>
+<div class="feedback-settings">
+<label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
+<label>Toast-Dauer:<select id="toastTime"><option value="500">0,5 s</option><option value="1000" selected>1 s</option><option value="2000">2 s</option><option value="3000">3 s</option><option value="5000">5 s</option></select></label>
+</div>
+<div class="progress" id="progress" style="display:none"></div>
+<div id="trainer" style="display:none">
+<div class="card" id="card">
+<div id="word" class="word"></div>
+<input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none">
+<div id="feedback" class="feedback"></div>
+<div id="cardButtons">
+<button id="rightBtn" style="display:none">Richtig</button>
+<button id="wrongBtn" style="display:none">Falsch</button>
+<button id="skipBtn" style="display:none">Überspringen</button>
+</div>
+</div>
+<button id="restartBtn" style="margin-top:10px">🔄 Neustart</button>
+</div>
+<div id="result" style="display:none" class="card"></div>
+<div class="footer">
+<a href="vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a><br><br>
+<small>© 2025 @Beefi</small>
+<div id="lastAddedBox"><h3>🆕 Zuletzt hinzugefügt</h3><div id="lastAddedList">–</div></div>
+</div></div>
+<div id="datasourceStatus">💾 Datenquelle: Lokaler Speicher</div>
 <script>
-(() => {
-  const REMOTE_JSON_URL = '/vokabeltrainer/vokabeln.json';
-  const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
-  const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
-
-  const statusEl=document.getElementById('datasourceStatus');
-  function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
-  function saveLocal(v){localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
-  function merge(remote,local){const map=new Map();remote.forEach(v=>map.set((v[0]+v[1]).toLowerCase(),v));local.forEach(v=>map.set((v[0]+v[1]).toLowerCase(),v));return Array.from(map.values());}
-
-  async function tryLoadFromJson(){
-    try{
-      const r=await fetch(REMOTE_JSON_URL,{cache:'no-store'});
-      if(!r.ok) throw 0;
-      const data=await r.json();
-      if(Array.isArray(data)){ const merged=merge(data, loadLocal()); saveLocal(merged); statusEl.textContent='📂 Quelle: GitHub JSON (gemergt)'; return true; }
-      throw 0;
-    }catch{
-      statusEl.textContent = '💾 Quelle: Lokaler Speicher';
-      if(!localStorage.getItem('vokabeln')){ const def=[["hammer","Hammer","Pink"],["file","Feile","Gelb"]]; saveLocal(def); }
-      return false;
-    }
-  }
-
-  const catSel=document.getElementById("category"),modeSel=document.getElementById("mode"),
-        feedbackToggle=document.getElementById("feedbackToggle"),toastSel=document.getElementById("toastTime"),
-        learnBtn=document.getElementById("learnBtn"),cardsBtn=document.getElementById("cardsBtn"),
-        last30Btn=document.getElementById("last30Btn"),restartBtn=document.getElementById("restartBtn"),
-        wordDiv=document.getElementById("word"),feedback=document.getElementById("feedback"),
-        rightBtn=document.getElementById("rightBtn"),wrongBtn=document.getElementById("wrongBtn"),
-        skipBtn=document.getElementById("skipBtn"),progress=document.getElementById("progress"),
-        trainer=document.getElementById("trainer"),result=document.getElementById("result"),
-        answerInput=document.getElementById("answerInput"),card=document.getElementById("card");
-
-  let list=[],round=[],index=0,errors=[],skipped=[],mode="mixed",category="Alle",gameMode="learn",currentAnswer="",isTrap=false;
-
-  function flash(cls){ if(!feedbackToggle.checked) return; card.classList.add(cls); setTimeout(()=>card.classList.remove(cls),400); }
-  function updateProgress(){ progress.style.display="block"; progress.textContent=`Frage ${index+1}/${round.length} | Fehler: ${errors.length}`; }
-
-  function startRound(selectedMode,type,custom=null){
-    list=loadLocal(); category=catSel.value; mode=selectedMode; gameMode=type;
-    let f=(category==="Alle")?list:list.filter(v=>v[2]===category);
-    if(custom) f=custom;
-    f=f.slice(); f.sort(()=>Math.random()-0.5);
-    round=f.slice(0,15);
-    index=0; errors=[]; skipped=[];
-    result.style.display="none"; trainer.style.display="block"; feedback.textContent="";
-    updateProgress(); showNext();
-  }
-
-  function showNext(){
-    if(index>=round.length){
-      if(skipped.length>0){ round=skipped; skipped=[]; index=0; feedback.textContent="📘 Jetzt die übersprungenen Vokabeln!"; updateProgress(); showNext(); return; }
-      trainer.style.display="none"; progress.style.display="none";
-      let html=`<h3>Runde beendet</h3>`;
-      if(errors.length===0) html+="<p>Keine Fehler 🎉</p>";
-      else { html+=`<p>${errors.length} Fehler:</p><ul>`; errors.forEach(([q,a])=>html+=`<li>${q} → ${a}</li>`); html+="</ul>"; }
-      html+="<button onclick='location.reload()'>🔄 Neue Runde</button>";
-      result.innerHTML=html; result.style.display="block"; return;
-    }
-
-    updateProgress();
-    const [en,de,cat]=round[index];
-    let ask,answer;
-    if(mode==="toGerman"){ask=en;answer=de;}
-    else if(mode==="toEnglish"){ask=de;answer=en;}
-    else{ if(Math.random()<0.5){ask=en;answer=de;} else {ask=de;answer=en;} }
-    const catColor=COLOR_MAP[cat]||"#ccc";
-    wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${({Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"})[cat]}</div><br><br><b>${ask}</b>`;
-    feedback.textContent="";
-
-    if(gameMode==="learn"){
-      answerInput.style.display="inline-block"; rightBtn.style.display="none"; wrongBtn.style.display="none"; skipBtn.style.display="inline-block";
-      answerInput.value=""; answerInput.focus();
-      answerInput.onkeydown=e=>{
-        if(e.key==="Enter"){
-          const correct=answerInput.value.trim().toLowerCase()===answer.toLowerCase();
-          if(feedbackToggle.checked){ feedback.textContent=correct?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answer}`; flash(correct?"correct":"wrong"); }
-          if(!correct) errors.push([ask,answer]);
-          index++;
-          const delay=parseInt(toastSel.value||"3000");
-          setTimeout(showNext, feedbackToggle.checked?delay:0);
-        }
-      };
-      skipBtn.onclick=function(){ skipped.push([en,de,cat]); index++; showNext(); };
-    } else if(gameMode==="cards"){
-      answerInput.style.display="none"; rightBtn.style.display="inline-block"; wrongBtn.style.display="inline-block"; skipBtn.style.display="inline-block";
-      isTrap=Math.random()<0.3;
-      currentAnswer=isTrap?getRandomWrongAnswer(answer):answer;
-      const qMark=isTrap?"<div style='position:absolute;top:10px;right:15px;font-size:1.3rem;color:#888;'>❓</div>":"";
-      feedback.innerHTML=`💡 <b>${currentAnswer}</b>`;
-      wordDiv.innerHTML=`${qMark}<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${({Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"})[cat]}</div><br><br><b>${ask}</b>`;
-      rightBtn.onclick=function(){ const correct=!isTrap; if(feedbackToggle.checked){ feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!"; flash(correct?"correct":"wrong"); } if(!correct) errors.push([ask,answer]); index++; const delay=parseInt(toastSel.value||"3000"); setTimeout(showNext, feedbackToggle.checked?delay:0); };
-      wrongBtn.onclick=function(){ const correct=isTrap;  if(feedbackToggle.checked){ feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!"; flash(correct?"correct":"wrong"); } if(!correct) errors.push([ask,answer]); index++; const delay=parseInt(toastSel.value||"3000"); setTimeout(showNext, feedbackToggle.checked?delay:0); };
-      skipBtn.onclick=function(){ skipped.push([en,de,cat]); index++; showNext(); };
-    }
-  }
-
-  function getRandomWrongAnswer(correct){ const pool=loadLocal().map(v=>v[1]); let w; do{ w=pool[Math.floor(Math.random()*pool.length)]||correct; }while(w===correct); return w; }
-
-  // Buttons
-  document.getElementById("toggleLast").onclick=()=>{
-    const box=document.getElementById("lastAddedBox");
-    box.style.display=box.style.display==="block"?"none":"block";
-    document.getElementById("toggleLast").textContent = box.style.display==="block" ? "📜 Zuletzt hinzugefügt (verbergen)" : "📜 Zuletzt hinzugefügt (anzeigen)";
-    renderLastAdded();
-  };
-  function renderLastAdded(){
-    const data=loadLocal(); const div=document.getElementById("lastAddedBox");
-    if(!data.length){div.textContent="Keine Vokabeln vorhanden.";return;}
-    const last=data.slice(-10).reverse();
-    div.innerHTML=last.map(v=>`<div class='last-entry'><span>${v[0]}</span> – ${v[1]} <small style='color:${COLOR_MAP[v[2]]}'>(${({Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"})[v[2]]})</small></div>`).join("");
-  }
-
-  document.getElementById("learnBtn").onclick=()=>startRound(document.getElementById("mode").value,"learn");
-  document.getElementById("cardsBtn").onclick=()=>startRound(document.getElementById("mode").value,"cards");
-  document.getElementById("last30Btn").onclick=()=>{
-    const all=loadLocal(); if(all.length===0) return alert("Keine Vokabeln vorhanden.");
-    const last30=all.slice(-30);
-    const choice=confirm("🧠 Karteikarten (OK) oder ✍️ Schreiben (Abbrechen)?");
-    startRound(document.getElementById("mode").value, choice?"cards":"learn", last30);
-  };
-  document.getElementById("restartBtn").onclick=()=>location.reload();
-
-  // Init
-  (async function(){ await tryLoadFromJson(); renderLastAdded(); })();
+(()=>{const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"},M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};const status=document.getElementById("datasourceStatus");async function sync(){try{const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});if(!r.ok)throw new Error;const d=await r.json();localStorage.setItem("vokabeln",JSON.stringify(d));localStorage.setItem("vokabeln_updated",new Date().toISOString());status.textContent="🌐 Datenquelle: GitHub (Online)"}catch{status.textContent="💾 Datenquelle: Lokaler Speicher"}};const S=e=>JSON.parse(localStorage.getItem(e)||"[]"),G=e=>{localStorage.setItem("vokabeln",JSON.stringify(e));localStorage.setItem("vokabeln_updated",new Date().toISOString())};const cat=document.getElementById("category");for(const k in C){const o=document.createElement("option");o.value=k;o.textContent=" "+C[k];o.style.backgroundColor=M[k];o.style.color="#fff";cat.appendChild(o)};const mSel=document.getElementById("mode"),fT=document.getElementById("feedbackToggle"),tT=document.getElementById("toastTime"),learn=document.getElementById("learnBtn"),cards=document.getElementById("cardsBtn"),last30=document.getElementById("last30Btn"),restart=document.getElementById("restartBtn"),word=document.getElementById("word"),feedback=document.getElementById("feedback"),right=document.getElementById("rightBtn"),wrong=document.getElementById("wrongBtn"),skip=document.getElementById("skipBtn"),progress=document.getElementById("progress"),trainer=document.getElementById("trainer"),result=document.getElementById("result"),ans=document.getElementById("answerInput"),card=document.getElementById("card");let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",curr="",trap=!1;function flash(c){if(!fT.checked)return;card.classList.add(c);setTimeout(()=>card.classList.remove(c),400)}function updateProg(){progress.style.display="block";progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`}function start(selected,type,custom=null){list=S("vokabeln");if(!list.length)return alert("Keine Vokabeln gefunden.");mode=selected;game=type;let f=(cat.value==="Alle"?list:list.filter(v=>v[2]===cat.value));if(custom)f=custom;round=f.slice(0,15);i=0;errors=[];skipped=[];trainer.style.display="block";result.style.display="none";showNext()}function showNext(){if(i>=round.length){if(skipped.length){round=skipped;skipped=[];i=0;feedback.textContent="📘 Jetzt die übersprungenen Vokabeln!";updateProg();showNext();return}trainer.style.display="none";progress.style.display="none";let h="<h3>Runde beendet</h3>";h+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";h+='<button onclick="location.reload()">🔄 Neue Runde</button>';result.innerHTML=h;result.style.display="block";return}updateProg();const [en,de,cat]=round[i];let ask,answ;if(mode==="toGerman"){ask=en;answ=de}else if(mode==="toEnglish"){ask=de;answ=en}else{if(Math.random()<.5){ask=en;answ=de}else{ask=de;answ=en}}const c=M[cat]||"#ccc";word.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${c};color:#fff;'>${C[cat]}</div><br><br><b>${ask}</b>`;feedback.textContent="";if(game==="learn"){ans.style.display="inline-block";right.style.display="none";wrong.style.display="none";skip.style.display="inline-block";ans.value="";ans.focus();ans.onkeydown=e=>{if(e.key==="Enter"){const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();if(fT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answ}`;flash(ok?"correct":"wrong")}if(!ok)errors.push([ask,answ]);i++;setTimeout(showNext,fT.checked?parseInt(tT.value):0)}};skip.onclick=()=>{skipped.push([en,de,cat]);i++;showNext()}}else{ans.style.display="none";right.style.display="inline-block";wrong.style.display="inline-block";skip.style.display="inline-block";trap=Math.random()<.3;curr=trap?getWrong(answ):answ;card.style.background=trap?"#f3f3f3":"#fff";feedback.innerHTML=`💡 <b>${curr}</b>`;const parent=document.getElementById("cardButtons");if(Math.random()<.5)parent.insertBefore(wrong,right);else parent.insertBefore(right,wrong);right.onclick=()=>{const ok=!trap;if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong")}if(!ok)errors.push([ask,answ]);i++;setTimeout(showNext,fT.checked?500:0)};wrong.onclick=()=>{const ok=trap;if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong")}if(!ok)errors.push([ask,answ]);i++;setTimeout(showNext,fT.checked?500:0)};skip.onclick=()=>{skipped.push([en,de,cat]);i++;showNext()}}}
+function getWrong(c){let p=list.map(v=>v[1]);let w;do{w=p[Math.floor(Math.random()*p.length)]}while(w===c);return w}
+learn.onclick=()=>start(mSel.value,"learn");
+cards.onclick=()=>start(mSel.value,"cards");
+last30.onclick=()=>{const a=S("vokabeln");if(!a.length)return alert("Keine Vokabeln.");const l=a.slice(-30);if(confirm("📚 Letzte 30 Vokabeln:\nOK = Karteikarten\nAbbrechen = Eingabe"))start(mSel.value,confirm?"cards":"learn",l)};
+restart.onclick=()=>location.reload();
+function lastAdded(){const d=document.getElementById("lastAddedList"),a=S("vokabeln");if(!a.length)return d.textContent="Keine Vokabeln.";const l=a.slice(-5).reverse();d.innerHTML=l.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style='color:${M[v[2]]}'>(${C[v[2]]])</span></div>`).join("")}
+sync().then(()=>{list=S("vokabeln");lastAdded()});
 })();
 </script>
-</body>
-</html>
+</body></html>
