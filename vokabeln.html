@@ -57,7 +57,7 @@ a.linkbtn:hover{background:#a6d4ff;}
 
 <script>
 /* ================================
-   ROBUSTER JSON-SYNC mit MERGE + EXPORT
+   ROBUSTER JSON-SYNC mit MERGE + EXPORT + BACKUP
    ================================ */
 const statusEl=document.getElementById("datasourceStatus");
 
@@ -73,6 +73,21 @@ function mergeVocabLists(remote,local){
 }
 function saveLocal(v){localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
 function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+
+/* 🔒 BACKUP-FUNKTION */
+function createBackup(){
+  const data=JSON.stringify(loadLocal(),null,2);
+  const blob=new Blob([data],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const timestamp=new Date().toISOString().split("T")[0];
+  a.href=url;
+  a.download=`vokabeln_backup_${timestamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* 💾 EXPORT-AKTUELL */
 function exportJson(){
   const data=JSON.stringify(loadLocal(),null,2);
   const blob=new Blob([data],{type:"application/json"});
@@ -81,6 +96,8 @@ function exportJson(){
   a.href=url;a.download="vokabeln.json";a.click();
   URL.revokeObjectURL(url);
 }
+
+/* 🔄 JSON-SYNC (mit Merge) */
 async function trySyncFromJson(){
   const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
   let remote=null;
@@ -115,6 +132,7 @@ async function trySyncFromJson(){
    TABELLE + BEARBEITUNG
    ================================ */
 const tbody=document.querySelector("#table tbody");
+
 function renderTable(){
   const data=loadLocal();
   tbody.innerHTML="";
@@ -130,14 +148,19 @@ function renderTable(){
     tbody.appendChild(tr);
   });
 }
+
+/* 🔥 Löschen mit automatischem Backup */
 function deleteRow(i){
   const data=loadLocal();
-  if(confirm(`"${data[i][0]}" löschen?`)){
+  if(confirm(`"${data[i][0]}" wirklich löschen? Es wird vorher ein Backup erstellt.`)){
+    createBackup(); // 💾 Backup anlegen
     data.splice(i,1);
     saveLocal(data);
     renderTable();
   }
 }
+
+/* ➕ Hinzufügen */
 document.getElementById("addBtn").onclick=()=>{
   const en=document.getElementById("en").value.trim();
   const de=document.getElementById("de").value.trim();
@@ -150,10 +173,12 @@ document.getElementById("addBtn").onclick=()=>{
   document.getElementById("de").value="";
   renderTable();
 };
+
+/* 🔘 Buttons */
 document.getElementById("updateJsonBtn").onclick=trySyncFromJson;
 document.getElementById("exportBtn").onclick=exportJson;
 
-/* Start */
+/* 🚀 Start */
 trySyncFromJson();
 </script>
 </body>
