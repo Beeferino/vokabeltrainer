@@ -1,68 +1,359 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vokabelübersicht</title>
-<style>
-body {font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
-table {width:90%;margin:auto;border-collapse:collapse;}
-th, td {border-bottom:1px solid #ddd;padding:8px;text-align:left;}
-th {background:#eef2f7;}
-button {padding:6px 10px;border:none;background:#2980b9;color:white;border-radius:5px;cursor:pointer;}
-button:hover {background:#3498db;}
-.linkbtn {display:inline-block;margin-top:20px;text-decoration:none;background:#28a745;color:white;padding:10px 15px;border-radius:6px;}
-.linkbtn:hover {background:#1f7e34;}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📘 Vokabelübersicht</title>
+
+  <style>
+    body { font-family: sans-serif; background: #f7f9fb; margin: 0; padding: 20px; text-align: center; }
+    .app { max-width: 1100px; margin: auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #eef2f7; cursor: pointer; user-select: none; }
+    th.sort-asc::after { content: " ↑"; color: #666; }
+    th.sort-desc::after { content: " ↓"; color: #666; }
+    tr:hover { background: #f0f7ff; }
+    .category-chip { display: inline-block; padding: 5px 10px; border-radius: 10px; color: #fff; }
+    input, select, button { padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #cfd6e4; margin: 5px; }
+    button { cursor: pointer; background: #2980b9; color: #fff; border: none; }
+    button:hover { background: #3498db; }
+    a.linkbtn { display: inline-block; padding: 10px 16px; border-radius: 8px; background: #74b9ff; color: #000; text-decoration: none; font-weight: 600; }
+    a.linkbtn:hover { background: #a6d4ff; }
+    .info-footer { margin-top: 16px; font-size: 0.95rem; color: #555; }
+    .lexica { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+    .lexica button { background: #ecf0f1; color: #333; border: 1px solid #ccc; font-weight: 600; padding: 6px 9px; }
+    .lexica button.active { background: #2980b9; color: #fff; }
+    .filter-bar { margin-top: 10px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .searchbox { min-width: 260px; }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+    .pagination button { background: #ecf0f1; color: #333; border: 1px solid #ccc; padding: 6px 10px; }
+    .pagination button.active { background: #2980b9; color: #fff; }
+    .section-divider { margin: 24px 0; border-top: 3px solid #e3e7ef; }
+    .new-entry { margin-top: 10px; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; color: #fff; padding: 10px 16px; border-radius: 8px; display: none; z-index: 999; }
+    .edit-btn { background: #f39c12; }
+    .save-btn { background: #27ae60; }
+    .save-btn:hover { background: #2ecc71; }
+    .colored { transition: background 0.4s ease; }
+    footer { margin-top: 30px; }
+    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none;}
+  </style>
 </head>
+
 <body>
-<h1>📖 Vokabelübersicht</h1>
-<table id="vokabelTabelle"><thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th></tr></thead><tbody></tbody></table>
-<a href="index.html" class="linkbtn">⬅️ Zurück zum Trainer</a>
-<script>
+  <div class="app">
+    <h1>📘 Vokabelübersicht</h1>
 
-async function ladeVokabeln() {
-  const statusEl = document.createElement('div');
-  statusEl.style.position = 'fixed';
-  statusEl.style.bottom = '8px';
-  statusEl.style.right = '10px';
-  statusEl.style.fontSize = '0.8em';
-  statusEl.style.opacity = '0.7';
-  statusEl.style.color = '#555';
-  document.body.appendChild(statusEl);
+    <div id="lexica" class="lexica"></div>
 
-  try {
-    const res = await fetch('vokabeln.json');
-    if (!res.ok) throw new Error('Fehler beim Laden');
-    const data = await res.json();
-    localStorage.setItem('vokabeln', JSON.stringify(data));
-    statusEl.textContent = '📂 Datenquelle: JSON-Datei (Online)';
-    return data;
-  } catch (err) {
-    const local = localStorage.getItem('vokabeln');
-    if (local) {
-      statusEl.textContent = '💾 Datenquelle: Lokaler Speicher';
-      return JSON.parse(local);
-    } else {
-      statusEl.textContent = '✨ Standardliste verwendet';
-      const defaults = [["angle", "Winkel", "Gelb"], ["broom", "Besen", "Gelb"], ["measuring tape", "Maßband", "Blau"], ["hammer", "Hammer", "Pink"], ["file", "Feile", "Gelb"], ["pliers", "Zange", "Blau"], ["saw", "Säge", "Gelb"], ["ruler", "Maßstab", "Gelb"], ["drill", "Bohrer", "Pink"], ["gloves", "Handschuhe", "Gelb"], ["chisel", "Meißel", "Gelb"], ["vice", "Schraubstock", "Pink"], ["square file", "Vierkantefeile", "Gelb"], ["screw", "Schraube", "Gelb"], ["tap wrench", "Windeisen", "Gruen"], ["counterbore", "Entgrater", "Orange"]];
-      localStorage.setItem('vokabeln', JSON.stringify(defaults));
-      return defaults;
+    <div class="filter-bar">
+      <label>Kategorie:
+        <select id="filterCategory" class="colored"></select>
+      </label>
+      <label>Gruppe / Variante:
+        <select id="filterGroup"></select>
+      </label>
+      <input id="searchInput" class="searchbox" type="text" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)">
+      <button id="resetFilter">🔄 Filter zurücksetzen</button>
+    </div>
+
+    <table id="vocabTable">
+      <thead>
+        <tr>
+          <th style="width:36px;">&nbsp;</th>
+          <th data-key="en">Englisch</th>
+          <th data-key="de">Deutsch</th>
+          <th data-key="cat">Kategorie</th>
+          <th data-key="grp">Gruppe / Variante</th>
+          <th data-key="hint">Hinweis</th>
+          <th style="width:80px;">Aktion</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="pagination" class="pagination"></div>
+    <div id="infoFooter" class="info-footer"></div>
+
+    <div class="section-divider"></div>
+
+    <div class="new-entry">
+      <h3>➕ Neue Vokabel hinzufügen</h3>
+      <div>
+        <input id="newEnglish" type="text" placeholder="Englisch" disabled>
+        <input id="newGerman" type="text" placeholder="Deutsch" disabled>
+        <select id="newCategory" class="colored" disabled></select>
+        <input id="newGroup" type="text" placeholder="Gruppe / Variante" disabled>
+        <input id="newHint" type="text" placeholder="Hinweis" disabled>
+        <button id="addBtn" disabled>Hinzufügen</button>
+      </div>
+      <div style="margin-top:8px;">
+        <button id="toggleAdd">✏️ Eingabe aktivieren</button>
+        <button id="deleteSelected">🗑️ Ausgewählte löschen</button>
+      </div>
+    </div>
+
+    <footer>
+      <div style="margin-top:18px;">
+        <button id="exportBtn">📤 Exportieren</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;">
+        <button id="importBtn">📥 Importieren</button>
+      </div>
+      <div style="margin-top:22px;">
+        <a href="index.html" class="linkbtn">⬅️ Zurück zum Trainer</a>
+      </div>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast">💾 Gespeichert</div>
+  <div id="datasourceStatus" aria-live="polite"></div>
+
+  <script>
+  (() => {
+    const CATEGORY_NAMES = { Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker", Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen", HellesPink:"Hydraulik / Pneumatik", Orange:"Elektrotechnik", Dunkelgruen:"Fluggerätemechanik allgemein", Rot:"Verwechslungsgefahr" };
+    const COLOR_MAP = { Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449", HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B" };
+    const CATEGORY_EMOJI = { Gelb:"🟡", Pink:"🟣", Blau:"🔵", Gruen:"🟢", HellesPink:"🟥", Orange:"🟧", Dunkelgruen:"🟩", Rot:"🔴" };
+    const labelForCategory = k => `${CATEGORY_EMOJI[k] || "•"} ${CATEGORY_NAMES[k]}`;
+
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const toast = m => { const t=$("#toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",1500); };
+
+    const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
+    const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
+    const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
+
+    // JSON Sync + Statusanzeige
+    async function trySyncFromJson(){
+      const status=document.getElementById('datasourceStatus');
+      try{
+        const r=await fetch('vokabeln.json',{cache:'no-store'});
+        if(!r.ok) throw new Error('http '+r.status);
+        const data=await r.json();
+        if(Array.isArray(data)){ saveLocal(data.map(normalize)); status.textContent='📂 Datenquelle: JSON-Datei (Online)'; return; }
+        throw new Error('format');
+      }catch(e){
+        if(localStorage.getItem('vokabeln')) status.textContent='💾 Datenquelle: Lokaler Speicher';
+        else { const def = [ ["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"] ]; saveLocal(def); status.textContent='✨ Standardliste verwendet'; }
+      }
     }
-  }
-}
 
+    let list = [];
+    let currentLetter = "Alle";
+    let filterCat = "Alle";
+    let filterGrp = "Alle";
+    let searchTerm = "";
+    let currentPage = 1;
+    const perPage = 15;
+    let sortKey = "en", sortDir = "asc";
 
-async function init() {
-  const data = await ladeVokabeln();
-  const tbody = document.querySelector('#vokabelTabelle tbody');
-  data.forEach(v => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${v[0]}</td><td>${v[1]}</td><td>${v[2]}</td>`;
-    tbody.appendChild(tr);
-  });
-}
-init();
-</script>
+    function renderCategorySelect(sel, setColor = false) {
+      sel.innerHTML = "";
+      Object.keys(CATEGORY_NAMES).forEach(k => {
+        const o = document.createElement("option"); o.value = k; o.textContent = labelForCategory(k); sel.appendChild(o);
+      });
+      if (setColor) setSelectColor(sel, sel.value);
+      sel.onchange = () => setSelectColor(sel, sel.value);
+    }
+
+    function setSelectColor(sel, val){
+      if (!val || val === "Alle") { sel.style.background="#fff"; sel.style.color="#111"; sel.style.border="1px solid #cfd6e4"; return; }
+      const c = COLOR_MAP[val] || "#fff"; sel.style.background=c; sel.style.color="#fff"; sel.style.border="1px solid #999";
+    }
+
+    function renderFilterCategory() {
+      const sel = $("#filterCategory");
+      sel.innerHTML = "<option value='Alle'>Alle (bunt gemischt)</option>";
+      Object.keys(CATEGORY_NAMES).forEach(k => {
+        const o = document.createElement("option"); o.value = k; o.textContent = labelForCategory(k); sel.appendChild(o);
+      });
+      setSelectColor(sel, "Alle");
+      sel.onchange = e => { filterCat = e.target.value; setSelectColor(sel, filterCat); currentPage = 1; renderTable(); };
+    }
+
+    function renderFilterGroup() {
+      const groups = [...new Set(list.map(v => v[3]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "de"));
+      const sel = $("#filterGroup");
+      sel.innerHTML = "<option value='Alle'>Alle</option>" + groups.map(g => `<option>${g}</option>`).join("");
+      sel.onchange = e => { filterGrp = e.target.value; currentPage = 1; renderTable(); };
+    }
+
+    function renderLexica() {
+      const letters = ["Alle", ...Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")];
+      const lx = $("#lexica"); lx.innerHTML = "";
+      letters.forEach(l => { const b=document.createElement("button"); b.textContent=l; if(l===currentLetter)b.classList.add("active"); b.onclick=()=>{ currentLetter=l; currentPage=1; renderTable(); renderLexica(); }; lx.appendChild(b); });
+    }
+
+    function filtered() {
+      return list.filter(([en, de, cat, grp, hint]) => {
+        if (currentLetter !== "Alle" && !en.toUpperCase().startsWith(currentLetter)) return false;
+        if (filterCat !== "Alle" && cat !== filterCat) return false;
+        if (filterGrp !== "Alle" && grp !== filterGrp) return false;
+        if (searchTerm) { const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase(); if(!hay.includes(searchTerm)) return false; }
+        return true;
+      });
+    }
+
+    function sortList(arr) {
+      const map = { en: 0, de: 1, cat: 2, grp: 3, hint: 4, date: 5 };
+      const i = map[sortKey];
+      return arr.sort((a, b) => {
+        let A = a[i] || "", B = b[i] || "";
+        if (sortKey === "date") { A = new Date(A).getTime(); B = new Date(B).getTime(); }
+        else { A = A.toString().toLowerCase(); B = B.toString().toLowerCase(); }
+        if (A < B) return sortDir === "asc" ? -1 : 1;
+        if (A > B) return sortDir === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
+
+    function renderTable() {
+      const all = sortList(filtered());
+      const pages = Math.max(1, Math.ceil(all.length / perPage));
+      if (currentPage > pages) currentPage = pages;
+      const start = (currentPage - 1) * perPage;
+      const rows = all.slice(start, start + perPage);
+
+      const tbody = $("#vocabTable tbody"); tbody.innerHTML = "";
+      rows.forEach(v => {
+        const [en, de, cat, grp, hint, date] = v;
+        const i = list.indexOf(v);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><input type="checkbox" data-index="${i}"></td>
+          <td>${en}</td><td>${de}</td>
+          <td><span class="category-chip" style="background:${COLOR_MAP[cat]}">${CATEGORY_NAMES[cat]}</span></td>
+          <td>${grp || ""}</td><td>${hint || ""}</td>
+          <td><button class="edit-btn" data-index="${i}">✏️</button></td>`;
+        tbody.appendChild(tr);
+      });
+
+      const pagination = $("#pagination"); pagination.innerHTML = "";
+      for (let p = 1; p <= pages; p++) { const b=document.createElement("button"); b.textContent=p; if(p===currentPage)b.classList.add("active"); b.onclick=()=>{ currentPage=p; renderTable(); }; pagination.appendChild(b); }
+
+      const upd = localStorage.getItem("vokabeln_updated");
+      $("#infoFooter").textContent = `📅 Letzte Änderung: ${upd ? new Date(upd).toLocaleString("de-DE") : "–"} | 📚 Gesamt: ${list.length} | 🔤 Angezeigt: ${all.length}`;
+
+      $$(".edit-btn").forEach(b => b.onclick = () => editRow(parseInt(b.dataset.index)));
+    }
+
+    function bindSort() {
+      $$("#vocabTable thead th").forEach(th => {
+        const k = th.dataset.key; if (!k) return;
+        th.onclick = () => {
+          if (sortKey === k) sortDir = (sortDir === "asc" ? "desc" : "asc");
+          else { sortKey = k; sortDir = "asc"; }
+          $$("#vocabTable thead th").forEach(t => t.classList.remove("sort-asc", "sort-desc"));
+          th.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
+          renderTable();
+        };
+      });
+    }
+
+    function editRow(i) {
+      const [en, de, cat, grp, hint, date] = list[i];
+      const tr = $$("#vocabTable tbody tr").find(r => parseInt(r.querySelector("input").dataset.index) === i);
+      tr.innerHTML = `<td></td>
+        <td><input id="eEn" value="${en}"></td>
+        <td><input id="eDe" value="${de}"></td>
+        <td><select id="eCat" class="colored">
+          ${Object.keys(CATEGORY_NAMES).map(k => `<option value="${k}" ${k === cat ? "selected" : ""}>${labelForCategory(k)}</option>`).join("")}
+        </select></td>
+        <td><input id="eGrp" value="${grp || ""}"></td>
+        <td><input id="eHint" value="${hint || ""}"></td>
+        <td><button class="save-btn">💾</button></td>`;
+
+      const eCat = tr.querySelector("#eCat");
+      setSelectColor(eCat, eCat.value);
+      eCat.onchange = () => setSelectColor(eCat, eCat.value);
+
+      tr.querySelector(".save-btn").onclick = () => {
+        const newEn = $("#eEn").value.trim(),
+              newDe = $("#eDe").value.trim(),
+              newCat = eCat.value,
+              newGrp = $("#eGrp").value.trim(),
+              newHint = $("#eHint").value.trim();
+        if (!newEn || !newDe) return alert("Bitte ausfüllen!");
+        list[i] = [newEn, newDe, newCat, newGrp, newHint, date];
+        saveLocal(list);
+        renderFilterGroup();
+        renderTable();
+        toast("💾 Gespeichert");
+      };
+    }
+
+    // INIT
+    (async function init(){
+      const status=document.getElementById('datasourceStatus');
+      await trySyncFromJson();
+      list = loadLocal();
+      renderCategorySelect(document.getElementById("newCategory"), true);
+      renderFilterCategory();
+      renderFilterGroup();
+      renderLexica();
+      renderTable();
+      bindSort();
+
+      document.getElementById("resetFilter").onclick = () => {
+        filterCat = "Alle"; filterGrp = "Alle"; currentLetter = "Alle"; searchTerm = "";
+        renderFilterCategory(); renderFilterGroup(); renderLexica(); document.getElementById("searchInput").value = ""; renderTable();
+      };
+      document.getElementById("searchInput").addEventListener("input", e => { searchTerm = e.target.value.trim().toLowerCase(); currentPage = 1; renderTable(); });
+
+      // Add controls
+      document.getElementById("toggleAdd").onclick = () => {
+        const d = document.getElementById("newEnglish").disabled;
+        ["newEnglish","newGerman","newCategory","newGroup","newHint","addBtn"].forEach(id=>{ document.getElementById(id).disabled = !d; });
+        document.getElementById("toggleAdd").textContent = d ? "🔒 Eingabe sperren" : "✏️ Eingabe aktivieren";
+        if (d) document.getElementById("newEnglish").focus();
+      };
+
+      document.getElementById("addBtn").onclick = () => {
+        const en = document.getElementById("newEnglish").value.trim(),
+              de = document.getElementById("newGerman").value.trim(),
+              cat = document.getElementById("newCategory").value,
+              grp = document.getElementById("newGroup").value.trim(),
+              hint = document.getElementById("newHint").value.trim();
+        if (!en || !de) return alert("Bitte ausfüllen!");
+        list.push([en, de, cat, grp, hint, new Date().toISOString()]);
+        saveLocal(list);
+        document.getElementById("newEnglish").value = "";
+        document.getElementById("newGerman").value = "";
+        document.getElementById("newGroup").value = "";
+        document.getElementById("newHint").value = "";
+        renderFilterGroup(); renderTable(); toast("➕ Hinzugefügt");
+      };
+
+      document.getElementById("deleteSelected").onclick = () => {
+        const sel = Array.from(document.querySelectorAll("input[type=checkbox]:checked"));
+        if (!sel.length) return alert("Bitte auswählen!");
+        if (!confirm("Ausgewählte Vokabel(n) löschen?")) return;
+        const ids = sel.map(c => parseInt(c.dataset.index)).sort((a, b) => b - a);
+        ids.forEach(i => list.splice(i, 1));
+        saveLocal(list); renderTable(); toast("🗑️ Gelöscht");
+      };
+
+      document.getElementById("exportBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(list, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = "vokabeln.json"; a.click(); URL.revokeObjectURL(url);
+        toast("📤 Exportiert");
+      };
+
+      document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+      document.getElementById("importFile").onchange = e => {
+        const f = e.target.files[0]; if (!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          try { const d = JSON.parse(r.result).map(normalize);
+            if (confirm("Bestehende überschreiben? (Abbrechen = Anhängen)")) list = d; else list = list.concat(d);
+            saveLocal(list); renderFilterGroup(); renderTable(); toast("📥 Importiert");
+          } catch { alert("Fehler beim Import."); }
+        }; r.readAsText(f);
+      };
+    })();
+  })();
+  </script>
 </body>
 </html>
