@@ -36,13 +36,16 @@ select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1r
 @keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
 .footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
 .footer-actions a,.footer-actions button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
-details{background:#f0f4ff;border-radius:12px;padding:10px 12px;margin-top:18px;text-align:center}
-summary{font-weight:700;cursor:pointer}
-#recent{margin-top:18px;text-align:center;line-height:1.8}
-.recent-item{display:inline-block;margin:6px;padding:8px 14px;border-radius:12px;color:#fff;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15)}
-.recent-item b{color:#fff}
-.foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 .feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
+details.recent-section{background:#f8faff;border-radius:16px;padding:14px 20px;margin-top:24px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:all .3s ease}
+details.recent-section[open]{background:#fff;box-shadow:0 4px 22px rgba(0,0,0,.08)}
+details.recent-section summary{font-weight:700;font-size:1.1rem;color:#1f2937;cursor:pointer;list-style:none;text-transform:uppercase;transition:color .3s ease}
+details.recent-section summary:hover{color:#2563eb}
+#recent{margin-top:18px;text-align:center;line-height:1.8;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;transition:opacity .4s ease}
+.recent-item{display:inline-block;min-width:160px;background:#f3f4f6;border-radius:12px;padding:8px 14px;color:#111827;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .2s ease,box-shadow .2s ease}
+.recent-item:hover{transform:translateY(-2px);box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.recent-item small{display:block;font-weight:400;font-size:.85rem;color:#4b5563}
+.foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 @media (hover:none){.kachel:active{transform:scale(.98)}}
 </style>
 </head>
@@ -106,8 +109,8 @@ summary{font-weight:700;cursor:pointer}
     <button onclick="location.reload()">🔄 Neustart</button>
   </div>
 
-  <details>
-    <summary>🆕 Zuletzt hinzugefügt ▾</summary>
+  <details class="recent-section">
+    <summary>Zuletzt hinzugefügt</summary>
     <div id="recent">–</div>
   </details>
 
@@ -126,7 +129,7 @@ const CATS={
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
-const el=(id)=>document.getElementById(id);
+const el=id=>document.getElementById(id);
 const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback");
 const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
 const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
@@ -140,60 +143,57 @@ let data=[], round=[], i=0, mode="learn", errors=0, trap=false, correct="", dela
 async function loadData(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    data=await r.json();
-    localStorage.setItem("vokabeln",JSON.stringify(data));
-  }catch{
-    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  }
+    data=await r.json();localStorage.setItem("vokabeln",JSON.stringify(data));
+  }catch{data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
   const last=data.slice(-5).reverse();
   if(!last.length){recent.textContent="–";return;}
-  recent.innerHTML = last.map(v=>{
+  recent.innerHTML=last.map(v=>{
     const c=CATS[v[2]]||["","#ccc","#000"];
-    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
-      <b>${v[0]}</b> – ${v[1]}<br><small>(${c[0]})</small>
-    </div>`;
+    return `<div class="recent-item"><b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small></div>`;
   }).join("");
 }
 
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
 function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
 function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors}`;}
-function showStage(show){stage.style.display = show ? "block":"none";}
+function showStage(show){stage.style.display=show?"block":"none";}
 function flash(ok){
   if(!chkFeedback.checked){i++;return next();}
   stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();}, delay);
+  setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);
+}
+
+function randomizeButtons(){
+  const buttons=[btnRight,btnDec,btnSkip];
+  const order=[0,1,2].sort(()=>Math.random()-0.5);
+  rowButtons.innerHTML="";
+  order.forEach(idx=>rowButtons.appendChild(buttons[idx]));
 }
 
 function next(){
   if(i>=round.length){showStage(false);alert(`Fertig! Fehler: ${errors}`);return;}
   delay=parseInt(selDelay.value,10);
-  const [en,de,cat] = round[i];
+  const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-  const askEN = Math.random()<0.5;
-  const question = askEN ? en : de;
-  const answer   = askEN ? de : en;
-  correct = answer;
-  q.textContent = question;
+  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
+  const askEN=Math.random()<0.5;
+  const question=askEN?en:de;
+  const answer=askEN?de:en;
+  correct=answer;
+  q.textContent=question;
 
   if(mode==="cards"){
     trap=false;
     if(Math.random()<0.3){
-      const pool=data.map(v=> askEN ? v[1] : v[0]);
-      let wrong; do{ wrong = pool[Math.floor(Math.random()*pool.length)]; } while(wrong===answer);
-      offer.textContent="💡 "+wrong;
-      trap=true;
-    }else{
-      offer.textContent="💡 "+answer;
-    }
+      const pool=data.map(v=>askEN?v[1]:v[0]);
+      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
+      offer.textContent="💡 "+wrong;trap=true;
+    }else offer.textContent="💡 "+answer;
     rowButtons.style.display="flex";
-    btnRight.style.display="inline-block";
-    btnDec.style.display="inline-block";
-    btnSkip.style.display="inline-block";
     rowInput.style.display="none";
     inp.value="";
-  } else {
+    randomizeButtons(); // Buttons neu mischen
+  }else{
     offer.textContent="";
     trap=false;
     rowButtons.style.display="flex";
@@ -201,10 +201,9 @@ function next(){
     btnDec.style.display="none";
     btnSkip.style.display="inline-block";
     rowInput.style.display="flex";
-    inp.value=""; inp.focus();
+    inp.value="";inp.focus();
   }
-  setProg();
-  showStage(true);
+  setProg();showStage(true);
 }
 
 /* Buttons */
@@ -218,7 +217,8 @@ inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
 btnLearn.onclick=()=>{mode="learn";i=0;errors=0;round=pick(data);next();};
 btnCards.onclick=()=>{mode="cards";i=0;errors=0;round=pick(data);next();};
 btnLast30.onclick=()=>{
-  const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");
+  const l=data.slice(-30);
+  if(!l.length)return alert("Keine Vokabeln vorhanden");
   mode=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
   round=l;i=0;errors=0;next();
 };
