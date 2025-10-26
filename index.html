@@ -24,8 +24,6 @@
     transition: box-shadow 0.2s ease;
   }
 
-  .app:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
-
   h1 {
     margin-bottom: 18px;
     font-weight: 700;
@@ -59,6 +57,8 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   }
   .kachel:hover { background: #2980b9; transform: translateY(-3px); }
+
+  .feedback-settings { margin-bottom: 10px; }
 
   .progress {
     font-weight: bold;
@@ -149,6 +149,13 @@
     margin-left: 6px;
   }
 
+  .bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+  }
+
   .restart {
     background: #1e6ed8;
     color: #fff;
@@ -158,10 +165,15 @@
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 30px;
     transition: all 0.25s ease;
   }
   .restart:hover { background: #2980b9; transform: translateY(-2px); }
+
+  .linkbtn {
+    text-decoration: none;
+    color: #1e6ed8;
+    font-weight: 600;
+  }
 
   .correct { animation: flashGreen 0.5s ease; }
   .wrong { animation: flashRed 0.5s ease; }
@@ -178,7 +190,6 @@
   }
 
   .footer { margin-top: 40px; font-size: 0.9rem; color: #666; }
-  .linkbtn { text-decoration: none; color: #1e6ed8; font-weight: 500; }
   #datasourceStatus { margin-top: 10px; color: #666; font-size: 0.9rem; }
 
   #lastAddedBox {
@@ -217,6 +228,7 @@
     <label><input type="checkbox" id="feedbackToggle" checked> Feedback anzeigen</label>
     <label>Dauer:
       <select id="delayTime">
+        <option value="1000">1 s</option>
         <option value="3000" selected>3 s</option>
         <option value="5000">5 s</option>
       </select>
@@ -236,13 +248,16 @@
         <button id="skipBtn" style="display:none">Überspringen</button>
       </div>
     </div>
-    <button class="restart" id="restartBtn">🔄 Neustart</button>
+
+    <div class="bottom-bar">
+      <button class="restart" id="restartBtn">🔄 Neustart</button>
+      <a href="vokabeln.html" class="linkbtn">📘 Vokabeln</a>
+    </div>
   </div>
 
   <div id="result" style="display:none" class="card"></div>
 
   <div class="footer">
-    <a href="vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a><br><br>
     <small>© 2025 @Beefi</small>
 
     <div id="lastAddedBox">
