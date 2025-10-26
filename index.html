@@ -11,7 +11,9 @@ h1{font-size:1.8rem;margin-bottom:1rem;}
 button,input,select{font-size:1rem;padding:8px 12px;border-radius:8px;border:1px solid #ccc;margin:5px;}
 button{cursor:pointer;background:#2980b9;color:#fff;border:none;transition:background .2s ease,transform .1s ease;}
 button:hover{background:#3498db;transform:translateY(-1px);}
-.card{background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,0.1);margin-top:20px;}
+.card{position:relative;background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,0.1);margin-top:20px;transition:background-color .3s ease;}
+.card.correct{background-color:#d4edda;}
+.card.wrong{background-color:#f8d7da;}
 .word{font-size:1.6rem;margin:20px 0;font-weight:600;}
 .feedback{font-size:1.1rem;margin:10px 0;min-height:1.2em;}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;margin-bottom:25px;}
@@ -146,17 +148,15 @@ function startRound(m,gt,custom=null){
   const cat=$("#category").value;mode=m;gameType=gt;
   let f=cat==="Alle"?list:list.filter(v=>v[2]===cat);
   if(custom)f=custom;shuffle(f);
-  round=f.slice(0,15); // 15 Vokabeln pro Runde
-  idx=0;errors=[];skipped=[];
-  $("#trainer").style.display="block";
-  $("#progress").style.display="block";
-  $("#result").style.display="none";
+  round=f.slice(0,15);idx=0;errors=[];skipped=[];
+  $("#trainer").style.display="block";$("#progress").style.display="block";$("#result").style.display="none";
   showNext();
 }
 
 function showNext(){
-  const card=$("#card"),input=$("#answerInput"),feedback=$("#feedback"),
-        right=$("#rightBtn"),wrong=$("#wrongBtn"),skip=$("#skipBtn");
+  const card=$("#card"),input=$("#answerInput"),feedback=$("#feedback"),right=$("#rightBtn"),wrong=$("#wrongBtn"),skip=$("#skipBtn");
+  card.style.background="#fff";card.querySelectorAll(".trapMark").forEach(e=>e.remove());
+
   if(idx>=round.length){
     $("#trainer").style.display="none";
     const res=$("#result");
@@ -167,6 +167,7 @@ function showNext(){
     document.getElementById("restartBtn2").onclick=()=>location.reload();
     return;
   }
+
   updateProgress();
   const [en,de,cat]=round[idx];
   let ask,answer;
@@ -192,6 +193,17 @@ function showNext(){
     input.style.display="none";right.style.display="inline-block";wrong.style.display="inline-block";skip.style.display="inline-block";
     const trap=Math.random()<0.3;const wrongAns=list[Math.floor(Math.random()*list.length)][1];
     const shown=trap?wrongAns:answer;feedback.innerHTML=`💡 <b>${shown}</b>`;
+
+    // 🔹 Täuschfrage optisch markieren
+    if(trap){
+      card.style.background="#f3f3f3";
+      const mark=document.createElement("div");
+      mark.textContent="❓";
+      mark.className="trapMark";
+      Object.assign(mark.style,{position:"absolute",top:"10px",right:"15px",fontSize:"1.4rem",color:"#888"});
+      card.appendChild(mark);
+    }
+
     const handle=isCorrect=>{
       const correct=(isCorrect&&!trap)||(!isCorrect&&trap);
       if($("#feedbackToggle").checked){feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!";flash(correct?"correct":"wrong");}
