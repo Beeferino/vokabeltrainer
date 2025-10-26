@@ -5,63 +5,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>🧠 Vokabeltrainer</title>
 <style>
-body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
-.app{max-width:800px;margin:auto;}
-h1{font-size:1.9rem;margin-bottom:1rem;}
-button{cursor:pointer;background:#2980b9;color:#fff;border:none;padding:10px 14px;font-size:1rem;border-radius:6px;}
-button:hover{background:#3498db;}
-input{padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #cfd6e4;margin:5px;}
-.card{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.05);border-radius:12px;padding:20px;margin-top:24px;}
-footer{margin-top:40px;font-size:.95rem;color:#555;}
-.linkbtn{display:inline-block;padding:10px 16px;border-radius:8px;background:#74b9ff;color:#000;text-decoration:none;font-weight:600;}
-.linkbtn:hover{background:#a6d4ff;}
-.recent-list{list-style:none;padding:0;margin:10px 0;}
-.recent-list li{background:#f7f9fb;border-left:4px solid #2980b9;margin:6px 0;padding:8px 10px;border-radius:6px;}
-.recent-list span{font-weight:bold;color:#2c3e50;}
-#datasourceStatus{margin-top:10px;color:#555;font-size:0.9rem;}
-/* Snackbar-Stil */
-#updateSnackbar{
-  position:fixed;bottom:-120px;left:50%;transform:translateX(-50%);
-  background:#2ecc71;color:#fff;padding:14px 18px;border-radius:10px;
-  display:flex;align-items:center;gap:14px;box-shadow:0 4px 8px rgba(0,0,0,0.2);
-  transition:bottom .5s ease;z-index:1000;
-}
-#updateSnackbar.show{bottom:25px;}
-#updateSnackbar button{background:#27ae60;border:none;padding:6px 10px;border-radius:6px;color:#fff;}
-#updateSnackbar button:hover{background:#2ecc71;}
-#updateSnackbar .later{background:#7f8c8d;}
-#updateSnackbar .later:hover{background:#95a5a6;}
+  body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
+  .app{max-width:900px;margin:auto;}
+  h1{font-size:1.9rem;margin-bottom:.6rem;}
+
+  /* Karten / Sektionen */
+  .section,.card{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.05);border-radius:12px;padding:20px;margin-top:24px;text-align:left;}
+  .section h2,.card h2{margin-top:0;color:#2c3e50;border-bottom:2px solid #e3e7ef;padding-bottom:6px;font-size:1.2rem;}
+
+  /* Controls */
+  input,button{padding:10px 12px;font-size:1rem;border-radius:8px;border:1px solid #cfd6e4;margin:6px;}
+  button{cursor:pointer;background:#2980b9;color:#fff;border:none;}
+  button:hover{background:#3498db;}
+  .btn-secondary{background:#7f8c8d;} .btn-secondary:hover{background:#95a5a6;}
+  .linkbtn{display:inline-block;padding:10px 16px;border-radius:8px;background:#74b9ff;color:#000;text-decoration:none;font-weight:600;}
+  .linkbtn:hover{background:#a6d4ff;}
+
+  /* Trainer-Layout */
+  .trainer-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .trainer-row input{flex:1;min-width:220px}
+  .status{color:#555;font-size:.95rem;margin-top:8px}
+
+  /* Zuletzt hinzugefügt */
+  .recent-list{list-style:none;padding-left:0;margin:10px 0;}
+  .recent-list li{background:#f7f9fb;border-left:4px solid #2980b9;margin:6px 0;padding:8px 10px;border-radius:6px;}
+  .recent-list span{display:inline-block;font-weight:bold;color:#2c3e50;}
+
+  /* Snackbar */
+  #updateSnackbar{position:fixed;bottom:-120px;left:50%;transform:translateX(-50%);
+    background:#2ecc71;color:#fff;padding:14px 18px;border-radius:10px;
+    display:flex;align-items:center;gap:14px;box-shadow:0 4px 8px rgba(0,0,0,.2);
+    transition:bottom .5s ease;z-index:1000;}
+  #updateSnackbar.show{bottom:25px;}
+  #updateSnackbar button{background:#27ae60;border:none;padding:6px 10px;border-radius:6px;color:#fff;}
+  #updateSnackbar button:hover{background:#2ecc71;}
+  #updateSnackbar .later{background:#7f8c8d;} #updateSnackbar .later:hover{background:#95a5a6;}
+
+  footer{margin-top:30px;color:#555}
 </style>
 </head>
 <body>
-<div class="app">
-  <h1>🧠 Vokabeltrainer</h1>
+  <div class="app">
+    <h1>🧠 Vokabeltrainer</h1>
 
-  <!-- Haupt-Trainingsbereich -->
-  <div class="card">
-    <p>Hier könnte dein Trainingsmodus stehen (Abfrage, Punktzahl, Buttons etc.)</p>
-    <a href="vokabeluebersicht.html" class="linkbtn">📘 Zur Vokabelübersicht</a>
+    <!-- Trainerkarte (Layout beibehalten: schlicht, blau/weiß) -->
+    <div class="card">
+      <h2>🎯 Training</h2>
+      <div class="trainer-row">
+        <input id="answer" type="text" placeholder="Antwort eingeben …">
+        <button id="showBtn" class="btn-secondary">👀 Antwort zeigen</button>
+        <button id="nextBtn">➡️ Nächstes Wort</button>
+      </div>
+      <div id="solution" class="status"></div>
+      <div style="margin-top:14px;">
+        <a href="vokabeln.html" class="linkbtn">📘 Zur Vokabelübersicht</a>
+      </div>
+    </div>
+
+    <!-- Zuletzt hinzugefügt + Sync-Controls -->
+    <div class="section">
+      <h2>🕒 Zuletzt hinzugefügt</h2>
+      <ul id="recentList" class="recent-list"></ul>
+      <div id="datasourceStatus" class="status">📂 Datenquelle: wird geprüft …</div>
+      <button id="reloadJson">🔄 JSON aktualisieren</button>
+    </div>
+
+    <footer>© 2025 – Vokabeltrainer</footer>
   </div>
 
-  <!-- Neue Sektion: Zuletzt hinzugefügt -->
-  <div class="card">
-    <h2>🕒 Zuletzt hinzugefügt</h2>
-    <ul id="recentList" class="recent-list"></ul>
-    <div id="datasourceStatus">📂 Datenquelle: wird geprüft...</div>
-    <button id="reloadJson">🔄 JSON aktualisieren</button>
+  <!-- Snackbar -->
+  <div id="updateSnackbar">
+    <span>Eine neue Vokabelliste ist verfügbar!</span>
+    <button class="updateNow">🔄 Jetzt aktualisieren</button>
+    <button class="later">Später</button>
   </div>
-
-  <footer>
-    © 2025 – Vokabeltrainer  
-  </footer>
-</div>
-
-<!-- Snackbar unten -->
-<div id="updateSnackbar">
-  <span>Eine neue Vokabelliste ist verfügbar!</span>
-  <button class="updateNow">🔄 Jetzt aktualisieren</button>
-  <button class="later">Später</button>
-</div>
 
 <script>
 (() => {
@@ -70,77 +87,71 @@ footer{margin-top:40px;font-size:.95rem;color:#555;}
   const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
   const saveLocal=v=>{localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());};
 
+  // --- Snackbar ---
   const snackbar=$("#updateSnackbar");
-
-  // Snackbar anzeigen
   const showSnackbar=(onUpdate)=>{
     snackbar.classList.add("show");
     snackbar.querySelector(".updateNow").onclick=()=>{snackbar.classList.remove("show");onUpdate();};
     snackbar.querySelector(".later").onclick=()=>snackbar.classList.remove("show");
-    // automatisch ausblenden nach 15s
     setTimeout(()=>snackbar.classList.remove("show"),15000);
   };
 
-  // JSON-Sync mit Versionsprüfung
-  async function trySyncFromJson(force=false){
-    const status=$("#datasourceStatus");
-    const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
-    let newestData=null,newestDate=0,usedUrl="";
-    for(const url of urls){
+  // --- robuster JSON-Sync (Mehrpfad + Last-Modified + Hash) ---
+  const SYNC_URLS=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
+  function hashString(str){let h=5381;for(let i=0;i<str.length;i++){h=((h<<5)+h)+str.charCodeAt(i);h|=0;}return String(h);}
+  async function fetchNewest(){
+    let best={date:0,hash:"",data:null,url:""};
+    for(const url of SYNC_URLS){
       try{
         const r=await fetch(url,{cache:"no-store"});
         if(!r.ok)continue;
-        const txt=await r.text();
-        const data=JSON.parse(txt);
-        if(!Array.isArray(data))continue;
-        const remoteDate=new Date(r.headers.get("last-modified")||0).getTime();
-        if(remoteDate>newestDate){newestDate=remoteDate;newestData=data;usedUrl=url;}
-      }catch(e){continue;}
-    }
-    const localUpdate=new Date(localStorage.getItem("vokabeln_updated")||0).getTime();
-    if(newestData&&newestDate>localUpdate&&!force){
-      // Neue Version gefunden
-      showSnackbar(async()=>{
-        saveLocal(newestData.map(normalize));
-        status.textContent="📂 Datenquelle: "+usedUrl;
-        renderRecent();
-      });
-    }else if(force&&newestData){
-      saveLocal(newestData.map(normalize));
-      status.textContent="📂 Manuell aktualisiert";
-      renderRecent();
-    }else if(localStorage.getItem("vokabeln")){
-      status.textContent="💾 Lokaler Speicher aktiv";
+        const txt=await r.text(); const data=JSON.parse(txt); if(!Array.isArray(data))continue;
+        const d=new Date(r.headers.get("last-modified")||0).getTime(); const h=hashString(txt);
+        if(d>best.date || (d===best.date && h!==best.hash)) best={date:d,hash:h,data,url};
+      }catch{}}
+    return best.data?best:null;
+  }
+  async function trySync(force=false){
+    const status=$("#datasourceStatus");
+    const cand=await fetchNewest();
+    const localUpd=new Date(localStorage.getItem("vokabeln_updated")||0).getTime();
+    const localHash=localStorage.getItem("vokabeln_remote_hash")||"";
+    if(cand){
+      const newer=cand.date>localUpd; const diff=cand.hash&&cand.hash!==localHash;
+      if((newer||diff)&&!force){
+        showSnackbar(()=>{saveLocal(cand.data.map(normalize));localStorage.setItem("vokabeln_remote_hash",cand.hash);status.textContent="📂 Datenquelle: "+cand.url; renderRecent();});
+      }else if(force){
+        saveLocal(cand.data.map(normalize));localStorage.setItem("vokabeln_remote_hash",cand.hash);status.textContent="📂 Manuell aktualisiert";renderRecent();
+      }else if(localStorage.getItem("vokabeln")) status.textContent="💾 Lokaler Speicher aktiv";
+      else { const def=[["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"]]; saveLocal(def); status.textContent="✨ Standardliste verwendet"; }
     }else{
-      const def=[["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"]];
-      saveLocal(def);
-      status.textContent="✨ Standardliste verwendet";
+      if(localStorage.getItem("vokabeln")) status.textContent="💾 Lokaler Speicher aktiv";
+      else { const def=[["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"]]; saveLocal(def); status.textContent="✨ Standardliste verwendet"; }
     }
   }
 
-  // Letzte 5 Vokabeln anzeigen
+  // --- Zuletzt hinzugefügt rendern ---
   function renderRecent(){
     const list=loadLocal();
     const ul=$("#recentList");
-    const sorted=[...list].sort((a,b)=>new Date(b[5])-new Date(a[5]));
-    const last5=sorted.slice(0,5);
-    ul.innerHTML=last5.map(v=>`<li><span>${v[0]}</span> → ${v[1]} <small style="color:#777;">(${new Date(v[5]).toLocaleString("de-DE")})</small></li>`).join("")||"<li><em>Keine Einträge</em></li>";
+    const last5=[...list].sort((a,b)=>new Date(b[5])-new Date(a[5])).slice(0,5);
+    ul.innerHTML=last5.map(v=>`<li><span>${v[0]}</span> → ${v[1]} <small style="color:#777;">(${new Date(v[5]).toLocaleString("de-DE")})</small></li>`).join("")
+      || "<li><em>Keine Einträge</em></li>";
   }
 
-  // Echtzeit-Update bei localStorage-Änderung
+  // --- Mini-Trainingslogik (nur Layout-Stubs, zerstört nichts) ---
+  let idx=0, pool=[];
+  function next(){ pool=loadLocal(); if(!pool.length){$("#solution").textContent="Keine Daten."; return;} idx=(idx+1)%pool.length; $("#answer").value=""; $("#solution").textContent=""; }
+  $("#showBtn").onclick=()=>{ if(!pool.length) pool=loadLocal(); if(!pool.length) return; const [en,de]=pool[idx]; $("#solution").textContent=`${en} → ${de}`; };
+  $("#nextBtn").onclick=next;
+
+  // Echtzeit-Update über Tabs
   window.addEventListener("storage",e=>{
-    if(e.key==="vokabeln"||e.key==="vokabeln_updated"){
-      renderRecent();
-      $("#datasourceStatus").textContent="🔄 Automatisch aktualisiert (Synchronisierung erkannt)";
-    }
+    if(e.key==="vokabeln"||e.key==="vokabeln_updated"){ renderRecent(); $("#datasourceStatus").textContent="🔄 Automatisch aktualisiert (Synchronisierung erkannt)"; }
   });
 
-  // Initialisierung
-  (async function init(){
-    await trySyncFromJson();
-    renderRecent();
-    $("#reloadJson").onclick=async()=>{await trySyncFromJson(true);renderRecent();};
-  })();
+  // Init
+  (async function init(){ await trySync(); renderRecent(); next(); $("#reloadJson").onclick=async()=>{await trySync(true);renderRecent();}; })();
 })();
 </script>
 </body>
