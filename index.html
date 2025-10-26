@@ -1,66 +1,97 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>🎯 Vokabeltrainer – @Beefi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#f7f9fb;--card:#ffffffcc;--ink:#1f2633;--muted:#5b6575;
-      --brand:#1e6ed8;--brand2:#2980b9;--ok:#2ECC71;--bad:#E74C3C;--neutral:#bdc3c7;
-      --shadow:0 8px 28px rgba(16,24,40,.08);--radius:16px;
-    }
-    body{font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);margin:0;padding:20px;}
-    .app{max-width:960px;margin:0 auto;}
-    h1{text-align:center;font-size:2rem;margin:.5rem 0 0;font-weight:800;color:var(--brand);}
-    .hr-fancy{width:100%;height:10px;background:linear-gradient(90deg,#dfe7fb,transparent 50%,#dfe7fb);margin:6px 0 20px;}
-    .controls{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center;margin-bottom:10px;}
-    label{font-weight:600;color:var(--muted);}
-    select{padding:8px 10px;border-radius:10px;border:1px solid #ccd5e3;font-size:1rem;}
-    .functions{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin:15px 0;}
-    .kachel{flex:1 1 260px;max-width:300px;background:#fff;border:1px solid #dce3ef;border-radius:14px;
-      padding:14px;text-align:center;box-shadow:var(--shadow);cursor:pointer;font-weight:600;}
-    .kachel small{display:block;color:var(--muted);font-style:italic;margin-top:4px;}
-    .game-shell{display:none;margin:15px auto;max-width:820px;}
-    .card{position:relative;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);
-      padding:20px;border:1px solid #e6ecf6;backdrop-filter:blur(10px);}
-    .chip{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;color:#fff;margin-bottom:8px;}
-    .word{font-size:1.7rem;font-weight:800;margin:12px 0 4px;}
-    .subline{font-style:italic;color:var(--muted);margin-bottom:12px;}
-    .hint{font-size:1rem;color:var(--muted);min-height:1em;}
-    .feedback{font-size:1.05rem;margin:10px 0;min-height:1.2em;}
-    .controls-row{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
-    .btn{border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;}
-    .btn.ok{background:var(--ok);color:#fff;}
-    .btn.bad{background:var(--bad);color:#fff;}
-    .btn.neutral{background:var(--neutral);color:#000;}
-    .btn.primary{background:var(--brand);color:#fff;}
-    .answer-wrap{display:flex;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap;}
-    .answer-wrap input{min-width:250px;padding:10px;border-radius:10px;border:1px solid #ccd5e3;font-size:1rem;}
-    .progress{text-align:center;font-weight:600;margin-top:10px;}
-    .under-actions{display:flex;justify-content:space-between;margin-top:15px;}
-    a.linkbtn{display:inline-flex;align-items:center;gap:6px;background:#74b9ff;color:#000;padding:8px 14px;
-      border-radius:10px;text-decoration:none;font-weight:700;border:1px solid #bcdcff;}
-    a.linkbtn:hover{background:#a6d4ff;}
-    .last-box{text-align:center;margin-top:20px;}
-    .last-toggle{cursor:pointer;background:#ecf3ff;border:1px solid #cfe3ff;color:#1b3d7a;padding:8px 12px;
-      border-radius:10px;font-weight:700;}
-    .last-list{display:none;margin-top:10px;}
-    .c-Gelb{background:#F4D03F}.c-Pink{background:#E91E63}.c-Blau{background:#1976D2}
-    .c-Gruen{background:#1E8449}.c-HellesPink{background:#F54927}.c-Orange{background:#E67E22}
-    .c-Dunkelgruen{background:#117A65}.c-Rot{background:#C0392B}
-    #datasourceStatus{text-align:center;font-size:.85rem;color:#777;margin-top:6px;}
-    @keyframes flashG{from{box-shadow:0 0 0 4px rgba(46,204,113,.3)}to{box-shadow:none}}
-    @keyframes flashR{from{box-shadow:0 0 0 4px rgba(231,76,60,.3)}to{box-shadow:none}}
-    .correct{animation:flashG .4s ease}
-    .wrong{animation:flashR .4s ease}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎯 Vokabeltrainer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+  body {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(180deg,#f3f7fc 0%,#eef2f7 100%);
+    margin: 0; padding: 0;
+    display: flex; justify-content: center;
+    min-height: 100vh;
+  }
+  .app {
+    width: 95%; max-width: 800px;
+    margin-top: 30px; margin-bottom: 40px;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    padding: 25px;
+    text-align: center;
+  }
+  h1 { font-size: 1.9rem; color: #1e6ed8; margin-bottom: 8px; }
+  .divider {
+    width: 60px; height: 3px; background: #1e6ed8;
+    margin: 10px auto 25px; border-radius: 10px;
+  }
+  select, input {
+    padding: 8px 10px; border-radius: 8px;
+    border: 1px solid #ccc; font-size: 1rem;
+  }
+  .controls label { margin: 0 10px; }
+  .functions {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 15px; margin-top: 20px;
+  }
+  .kachel {
+    background: #1e6ed8; color: #fff;
+    padding: 14px 22px; border-radius: 14px;
+    font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    cursor: pointer; transition: all 0.2s;
+  }
+  .kachel:hover { background: #2980b9; transform: scale(1.03); }
+  .feedback-settings {
+    margin-top: 20px; background: rgba(255,255,255,0.6);
+    padding: 10px; border-radius: 12px; font-size: 0.95rem;
+  }
+  .progress { margin-top: 10px; font-size: 1rem; color: #333; }
+  .trainer {
+    display: none; margin-top: 30px; padding: 25px;
+    border-radius: 16px; background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(6px); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .card {
+    padding: 20px; border-radius: 14px; background: #fff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08); margin-bottom: 15px;
+  }
+  .word { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; }
+  .feedback { margin-top: 10px; font-size: 1rem; min-height: 1.5em; }
+  button {
+    padding: 10px 16px; border: none; border-radius: 10px;
+    font-size: 1rem; cursor: pointer; margin: 4px;
+  }
+  #rightBtn { background: #27ae60; color: #fff; }
+  #wrongBtn { background: #c0392b; color: #fff; }
+  #skipBtn  { background: #bdc3c7; color: #333; }
+  #enterBtn { background: #1e6ed8; color: #fff; }
+  .footer {
+    margin-top: 30px; display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .linkbtn, .restartbtn {
+    display: inline-block; background: #1e6ed8; color: #fff;
+    padding: 10px 16px; border-radius: 10px; text-decoration: none;
+    font-weight: 600; transition: all 0.2s;
+  }
+  .linkbtn:hover, .restartbtn:hover { background: #2980b9; }
+  #lastAddedBox {
+    margin-top: 30px; background: rgba(255,255,255,0.6);
+    border-radius: 12px; padding: 10px; cursor: pointer;
+  }
+  #lastAddedList { display: none; margin-top: 10px; text-align: left; }
+  #datasourceStatus { margin-top: 10px; font-size: 0.9rem; color: #666; }
+  .correct { background-color: #e9fce9 !important; }
+  .wrong { background-color: #fdecea !important; }
+</style>
 </head>
 <body>
 <div class="app">
   <h1>🎯 Vokabeltrainer</h1>
-  <div class="hr-fancy"></div>
+  <div class="divider"></div>
 
   <div class="controls">
     <label>Kategorie:
@@ -70,154 +101,188 @@
       <select id="mode">
         <option value="toGerman">Englisch → Deutsch</option>
         <option value="toEnglish">Deutsch → Englisch</option>
-        <option value="mixed" selected>Gemischt</option>
+        <option value="mixed">Gemischt</option>
       </select>
-    </label>
-    <label>Feedback:
-      <select id="feedbackSetting"><option value="on">An</option><option value="off">Aus</option></select>
-    </label>
-    <label>Delay:
-      <select id="delayMs"><option value="1000">1 s</option><option value="3000" selected>3 s</option><option value="5000">5 s</option></select>
     </label>
   </div>
 
   <div class="functions">
     <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
-    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln <small>Mitdenker oder Abfrage</small></div>
-    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten <small><i>Mitdenker</i> – Täuschungen möglich</small></div>
+    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
+    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten<br><i style="font-size:0.9rem;">(Mitdenker Edition)</i></div>
   </div>
 
-  <div id="gameShell" class="game-shell">
-    <div id="card" class="card">
-      <div id="catChip" class="chip">Kategorie</div>
+  <div class="feedback-settings">
+    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback</label>
+    <label>Delay:
+      <select id="toastTime">
+        <option value="1000">1 s</option>
+        <option value="3000" selected>3 s</option>
+        <option value="5000">5 s</option>
+      </select>
+    </label>
+  </div>
+
+  <div id="progress" class="progress" style="display:none;"></div>
+
+  <div id="trainer" class="trainer">
+    <div class="card">
       <div id="word" class="word"></div>
-      <div id="subline" class="subline"></div>
-      <div id="hint" class="hint"></div>
+      <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none;">
+      <button id="enterBtn" style="display:none;">Eingabe</button>
       <div id="feedback" class="feedback"></div>
-
-      <div id="typeArea" class="answer-wrap" style="display:none;">
-        <input id="answerInput" type="text" placeholder="Übersetzung eingeben …">
-        <button id="submitAnswer" class="btn primary">Eingabe</button>
-        <button id="skipBtn1" class="btn neutral">Überspringen</button>
+      <div id="cardButtons">
+        <button id="rightBtn" style="display:none;">Richtig</button>
+        <button id="wrongBtn" style="display:none;">Falsch</button>
+        <button id="skipBtn" style="display:none;">Überspringen</button>
       </div>
-
-      <div id="detectArea" class="controls-row" style="display:none;">
-        <button id="btnTrap" class="btn bad">Täuschung erkannt</button>
-        <button id="btnMatch" class="btn ok">Richtig</button>
-        <button id="skipBtn2" class="btn neutral">Überspringen</button>
-      </div>
-
-      <div id="fixArea" class="answer-wrap" style="display:none;">
-        <input id="fixInput" type="text" placeholder="Richtige Übersetzung …">
-        <button id="fixSend" class="btn primary">Eingabe</button>
-      </div>
-
-      <div id="progress" class="progress"></div>
-    </div>
-
-    <div class="under-actions">
-      <a href="javascript:void(0)" id="restartBtn" class="linkbtn">🔄 Neustart</a>
-      <a href="vokabeln.html" class="linkbtn">📘 Vokabeln</a>
     </div>
   </div>
 
-  <div class="last-box">
-    <button id="toggleLast" class="last-toggle">🆕 Zuletzt hinzugefügt anzeigen</button>
-    <div id="lastList" class="last-list"></div>
+  <div class="footer">
+    <a href="vokabeln.html" class="linkbtn">📘 Vokabeln</a>
+    <button id="restartBtn" class="restartbtn">🔄 Neustart</button>
   </div>
-  <div id="datasourceStatus">Datenquelle: –</div>
-  <p style="text-align:center;font-size:.85rem;color:#666;margin-top:8px;">© 2025 Beeferino | Vokabeltrainer</p>
+
+  <div id="lastAddedBox">
+    <h3>🆕 Zuletzt hinzugefügt</h3>
+    <div id="lastAddedList"></div>
+  </div>
+
+  <div id="datasourceStatus">🌐 Datenquelle: GitHub (Online)</div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded",()=>{
-const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
-const M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
+document.addEventListener("DOMContentLoaded", ()=>{
+  const COLORS={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
+  const NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
+  const cat=document.getElementById("category"), modeSel=document.getElementById("mode"),
+        learn=document.getElementById("learnBtn"), last30=document.getElementById("last30Btn"),
+        cards=document.getElementById("cardsBtn"), trainer=document.getElementById("trainer"),
+        progress=document.getElementById("progress"), word=document.getElementById("word"),
+        feedback=document.getElementById("feedback"), ans=document.getElementById("answerInput"),
+        enter=document.getElementById("enterBtn"), right=document.getElementById("rightBtn"),
+        wrong=document.getElementById("wrongBtn"), skip=document.getElementById("skipBtn"),
+        restart=document.getElementById("restartBtn"), fT=document.getElementById("feedbackToggle"),
+        tT=document.getElementById("toastTime"), status=document.getElementById("datasourceStatus");
 
-const statusEl=document.getElementById("datasourceStatus"),cat=document.getElementById("category"),modeSel=document.getElementById("mode"),
-feedSel=document.getElementById("feedbackSetting"),delaySel=document.getElementById("delayMs"),
-learn=document.getElementById("learnBtn"),cards=document.getElementById("cardsBtn"),last30=document.getElementById("last30Btn"),
-restart=document.getElementById("restartBtn"),gameShell=document.getElementById("gameShell"),
-card=document.getElementById("card"),catChip=document.getElementById("catChip"),word=document.getElementById("word"),
-subline=document.getElementById("subline"),hint=document.getElementById("hint"),feedback=document.getElementById("feedback"),
-typeArea=document.getElementById("typeArea"),answerInput=document.getElementById("answerInput"),submitAnswer=document.getElementById("submitAnswer"),
-skipBtn1=document.getElementById("skipBtn1"),detectArea=document.getElementById("detectArea"),btnTrap=document.getElementById("btnTrap"),
-btnMatch=document.getElementById("btnMatch"),skipBtn2=document.getElementById("skipBtn2"),fixArea=document.getElementById("fixArea"),
-fixInput=document.getElementById("fixInput"),fixSend=document.getElementById("fixSend"),progress=document.getElementById("progress"),
-toggleLast=document.getElementById("toggleLast"),lastList=document.getElementById("lastList");
+  let list=[],round=[],i=0,errors=[],skipped=[],game="learn",mode="mixed",trap=false,correctAns="";
 
-let list=[],round=[],i=0,errors=[],skipped=[],gameMode="",delay=3000,current=null;
+  async function sync(){
+    try{
+      const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+      if(!r.ok) throw new Error();
+      list=await r.json(); localStorage.setItem("vokabeln",JSON.stringify(list));
+      status.textContent="🌐 Datenquelle: GitHub (Online)";
+    }catch{
+      list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+      status.textContent="💾 Datenquelle: Lokal";
+    }
+    renderCats(); lastAdded();
+  }
 
-async function sync(){
- try{
-  const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-  if(!r.ok)throw new Error();
-  const d=await r.json();list=d;localStorage.setItem("vokabeln",JSON.stringify(d));
-  statusEl.textContent="🌐 Datenquelle: GitHub (Online)";
- }catch{
-  list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  statusEl.textContent="💾 Datenquelle: Lokaler Speicher";
-  if(!list.length){list=[["hammer","Hammer","Pink"],["file","Feile","Gelb"],["drill","Bohrer","Pink"]];}
- }
- renderLast();
-}
+  function renderCats(){
+    cat.innerHTML='<option value="Alle">Alle (bunt gemischt)</option>';
+    for(const k in NAMES){
+      const o=document.createElement("option");
+      o.value=k; o.textContent=NAMES[k]; o.style.background=COLORS[k]; o.style.color="#fff";
+      cat.appendChild(o);
+    }
+  }
 
-function renderLast(){
- if(!list.length){lastList.textContent="–";return;}
- const l=list.slice(-5).reverse();
- lastList.innerHTML=l.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span class="chip c-${v[2]}">${C[v[2]]}</span></div>`).join("");
-}
+  function flash(cls){ if(!fT.checked)return;
+    const c=document.querySelector(".card"); c.classList.add(cls);
+    setTimeout(()=>c.classList.remove(cls),400);
+  }
 
-function fillCats(){for(const k in C){const o=document.createElement("option");o.value=k;o.textContent=C[k];o.style.backgroundColor=M[k];o.style.color="#fff";cat.appendChild(o);}}
+  function updateProg(){ progress.style.display="block"; progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`; }
 
-function showProgress(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`;}
+  function start(sel,type,data=null){
+    game=type; mode=sel; trainer.style.display="block";
+    const pool=list.filter(v=>cat.value==="Alle"||v[2]===cat.value);
+    round=data||shuffle(pool).slice(0,15); i=0; errors=[]; skipped=[]; showNext();
+  }
 
-function flash(c){card.classList.remove("correct","wrong");void card.offsetWidth;card.classList.add(c);}
-function next(){i++;if(i>=round.length){if(skipped.length){round=skipped;i=0;skipped=[];showCard();}else finish();return;}showCard();}
-function finish(){typeArea.style.display=detectArea.style.display=fixArea.style.display="none";
-word.innerHTML="<b>Runde beendet</b>";subline.textContent="";feedback.innerHTML=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(e=>`<li>${e.q} → ${e.a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";}
+  function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 
-function showCard(){
- const [en,de,catg]=round[i];let ask,answ;
- if(modeSel.value==="toGerman"){ask=en;answ=de;}
- else if(modeSel.value==="toEnglish"){ask=de;answ=en;}
- else{if(Math.random()<.5){ask=en;answ=de;}else{ask=de;answ=en;}}
- const c=M[catg];catChip.textContent=C[catg];catChip.style.background=c;word.textContent=ask;
- subline.textContent=gameMode==="cards"?"für Mitdenker":"";feedback.textContent="";
- if(gameMode==="learn"){
-  typeArea.style.display="flex";detectArea.style.display=fixArea.style.display="none";
-  answerInput.value="";answerInput.focus();
-  submitAnswer.onclick=()=>{const ok=answerInput.value.trim().toLowerCase()===answ.toLowerCase();
-   if(feedSel.value==="on"){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answ}`;flash(ok?"correct":"wrong");}
-   if(!ok)errors.push({q:ask,a:answ});setTimeout(next,delay);};
-  answerInput.onkeydown=e=>{if(e.key==="Enter")submitAnswer.click();};
-  skipBtn1.onclick=()=>{skipped.push([en,de,catg]);next();};
- }else{
-  typeArea.style.display="none";detectArea.style.display="flex";fixArea.style.display="none";
-  const wrong=(()=>{const pool=list.filter(v=>v[0]!=en&&v[1]!=de);const pick=pool[Math.floor(Math.random()*pool.length)];return Math.random()<.5?pick[0]:pick[1];})();
-  const isTrap=Math.random()<.35;const shown=isTrap?wrong:answ;
-  hint.innerHTML=`💡 ${shown}`;
-  btnTrap.onclick=()=>{if(isTrap){feedback.textContent="✅ Täuschung erkannt!";flash("correct");fixArea.style.display="flex";fixInput.value="";fixInput.focus();
-   fixSend.onclick=()=>{const ok=fixInput.value.trim().toLowerCase()===answ.toLowerCase();
-    feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answ}`;flash(ok?"correct":"wrong");if(!ok)errors.push({q:ask,a:answ});setTimeout(next,delay);};
-   fixInput.onkeydown=e=>{if(e.key==="Enter")fixSend.click();};}
-  else{feedback.textContent="❌ Keine Täuschung.";flash("wrong");errors.push({q:ask,a:answ});setTimeout(next,delay);}};
-  btnMatch.onclick=()=>{if(isTrap){feedback.textContent="❌ Das war eine Täuschung.";flash("wrong");errors.push({q:ask,a:answ});}else{feedback.textContent="✅ Passt!";flash("correct");}setTimeout(next,delay);};
-  skipBtn2.onclick=()=>{skipped.push([en,de,catg]);next();};
- }
- showProgress();
-}
+  function showNext(){
+    if(i>=round.length){
+      if(skipped.length){round=skipped;skipped=[];i=0;feedback.textContent="📘 Wiederholung der Fehler";updateProg();showNext();return;}
+      trainer.innerHTML=`<div class="card"><h3>Runde beendet</h3>${errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(e=>`<li>${e[0]} → ${e[1]}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>"}</div>`;
+      progress.style.display="none";return;
+    }
 
-function start(mode,src){gameMode=mode;delay=parseInt(delaySel.value,10)||3000;round=(cat.value==="Alle"?src:src.filter(v=>v[2]===cat.value)).slice(0,15);
-i=0;errors=[];skipped=[];gameShell.style.display="block";showCard();}
+    const [en,de,catg]=round[i];
+    const color=COLORS[catg]||"#ccc";
+    const askIsEnglish=/^[a-zA-Z\s\-]+$/.test(en)&&!/ä|ö|ü|ß/.test(en);
+    const ask=askIsEnglish?en:de; const answ=askIsEnglish?de:en;
+    correctAns=answ;
 
-learn.onclick=()=>start("learn",list);
-cards.onclick=()=>start("cards",list);
-last30.onclick=()=>{const last=list.slice(-30);const c=confirm("📚 Letzte 30:\nOK = Karteikarten (Mitdenker)\nAbbrechen = Abfrage");start(c?"cards":"learn",last);};
-restart.onclick=()=>location.reload();
-toggleLast.onclick=()=>{lastList.style.display=lastList.style.display==="block"?"none":"block";};
+    word.innerHTML=`<div style="display:inline-block;padding:5px 12px;border-radius:12px;background:${color};color:#fff;">${NAMES[catg]}</div><br><br><b>${ask}</b>`;
+    feedback.textContent=""; updateProg();
 
-fillCats();sync();
+    if(game==="learn"){ ans.style.display="inline-block"; enter.style.display="inline-block";
+      right.style.display="none"; wrong.style.display="none"; skip.style.display="inline-block";
+      ans.value=""; ans.focus();
+      const check=()=>{const ok=ans.value.trim().toLowerCase()===correctAns.toLowerCase();
+        if(fT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! (${correctAns})`;flash(ok?"correct":"wrong");}
+        if(!ok)errors.push([ask,correctAns]); i++; setTimeout(showNext,parseInt(tT.value,10));};
+      ans.onkeydown=e=>{if(e.key==="Enter")check();}; enter.onclick=check;
+      skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
+    }
+
+    else if(game==="cards"){
+      ans.style.display="none"; enter.style.display="none"; right.style.display="inline-block";
+      wrong.style.display="inline-block"; skip.style.display="inline-block";
+
+      trap=Math.random()<0.35; let fake=correctAns;
+      if(trap){let alt;do{const rand=list[Math.floor(Math.random()*list.length)];
+        alt=askIsEnglish?rand[1]:rand[0];}while(alt===correctAns);fake=alt;}
+      feedback.innerHTML=`💡 <b>${fake}</b>`;
+      const swap=Math.random()<0.5; const parent=document.getElementById("cardButtons");
+      if(swap)parent.insertBefore(wrong,right);else parent.insertBefore(right,wrong);
+
+      right.onclick=()=>{const ok=!trap;
+        if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}
+        if(trap&&ok){feedback.textContent="🧠 Gut erkannt! Gib die richtige Übersetzung ein:";
+          ans.style.display="inline-block";enter.style.display="inline-block";ans.value="";ans.focus();
+          enter.onclick=()=>{const valid=ans.value.trim().toLowerCase()===correctAns.toLowerCase();
+            if(fT.checked){feedback.textContent=valid?"✅ Richtig!":"❌ Falsch!";flash(valid?"correct":"wrong");}
+            if(!valid)errors.push([ask,correctAns]);i++;setTimeout(showNext,parseInt(tT.value,10));};}
+        else{if(!ok)errors.push([ask,correctAns]);i++;setTimeout(showNext,parseInt(tT.value,10));};
+      };
+      wrong.onclick=()=>{const ok=trap;
+        if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}
+        if(!ok)errors.push([ask,correctAns]);i++;setTimeout(showNext,parseInt(tT.value,10));};
+      skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
+    }
+  }
+
+  function lastAdded(){const box=document.getElementById("lastAddedList");
+    const all=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    if(!all.length){box.textContent="Keine Vokabeln.";return;}
+    const last=all.slice(-5).reverse();
+    box.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${COLORS[v[2]]}">(${NAMES[v[2]]})</span></div>`).join("");
+  }
+
+  document.getElementById("lastAddedBox").onclick=()=>{
+    const l=document.getElementById("lastAddedList");
+    l.style.display=l.style.display==="block"?"none":"block";
+  };
+
+  learn.onclick=()=>start(modeSel.value,"learn");
+  cards.onclick=()=>start(modeSel.value,"cards");
+  last30.onclick=()=>{
+    const all=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    if(!all.length){alert("Keine Vokabeln gefunden.");return;}
+    const last=all.slice(-30);
+    if(confirm("Letzte 30 Vokabeln als Karteikarten (OK) oder Abfrage (Abbrechen)?"))
+      start(modeSel.value,"cards",last);
+    else start(modeSel.value,"learn",last);
+  };
+  restart.onclick=()=>location.reload();
+
+  sync();
 });
 </script>
 </body>
