@@ -1,66 +1,76 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Vokabeltrainer</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #f7f9fb;
-    margin: 0; padding: 0;
+    font-family: system-ui, Arial, sans-serif;
+    background: #f5f7fb;
+    margin: 0;
     text-align: center;
   }
   .app {
     max-width: 600px;
-    margin: 60px auto;
+    margin: 40px auto;
     background: #fff;
+    border-radius: 14px;
     padding: 30px 25px;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
   }
-  h1 { margin-top: 0; color: #222; }
-  p { color: #555; }
-
+  h1 {
+    margin-top: 0;
+    font-size: 1.9rem;
+  }
+  select {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    margin: 5px;
+  }
   button {
     display: inline-block;
-    background: #3498db;
-    color: #fff;
+    padding: 14px 22px;
+    border-radius: 12px;
     border: none;
-    border-radius: 6px;
-    padding: 12px 20px;
+    background: #f9f9fb;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.06), inset 0 2px 4px rgba(255,255,255,0.7);
     font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    margin: 8px;
+    transition: 0.2s;
   }
-  button:hover { background: #2980b9; }
-
-  a.linkbtn {
-    display: inline-block;
-    padding: 10px 16px;
-    border-radius: 6px;
+  button:hover {
+    background: #eef2f8;
+    transform: translateY(-1px);
+  }
+  .row { margin: 10px 0; }
+  .main-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
+  .linkbtn {
     background: #74b9ff;
     color: #000;
     text-decoration: none;
-    font-weight: 600;
-    margin-top: 10px;
-  }
-  a.linkbtn:hover { background: #a6d4ff; }
-
-  /* Zuletzt hinzugefügt */
-  #recentBox {
-    margin-top: 25px;
-    background: #f3f6fa;
+    padding: 10px 18px;
     border-radius: 8px;
-    padding: 15px;
-    max-width: 520px;
-    margin-inline: auto;
-    border: 1px solid #e0e5ec;
+    display: inline-block;
+    margin-top: 16px;
+    font-weight: 600;
   }
-  #recentBox h3 {
-    margin-top: 0;
-    font-size: 1.1rem;
-    color: #333;
+  .linkbtn:hover { background: #a6d4ff; }
+  footer { margin-top: 20px; font-size: 0.9rem; color: #666; }
+
+  /* Aufklappbare Box */
+  #recentBox {
+    margin-top: 20px;
+    background: #fafbff;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+    padding: 10px 15px;
+    max-width: 500px;
+    margin-inline: auto;
+    display: none;
   }
   #recentList {
     list-style: none;
@@ -68,46 +78,74 @@
     margin: 10px 0 0;
   }
   #recentList li {
-    padding: 6px 0;
-    border-bottom: 1px dashed #ccc;
-    font-size: 0.95rem;
+    border-bottom: 1px dashed #ddd;
+    padding: 5px 0;
   }
   #recentList li:last-child { border-bottom: none; }
-  .catLabel {
-    font-size: 0.9rem;
-    opacity: 0.8;
-  }
+  .catLabel { font-size: 0.9rem; opacity: 0.75; }
 
-  footer {
-    margin-top: 40px;
-    color: #777;
-    font-size: 0.9rem;
+  #toggleRecent {
+    background: #edf3ff;
+    color: #0d3b66;
+    font-weight: 600;
+    margin-top: 15px;
+    border: 1px solid #d3def2;
+  }
+  #toggleRecent:hover { background: #e5edff; }
+
+  .divider {
+    border-top: 2px solid #e5e9f0;
+    margin: 25px 0;
   }
 </style>
 </head>
 <body>
-<div class="app">
-  <h1>🧠 Vokabeltrainer</h1>
-  <p>Wähle einen Modus:</p>
+  <div class="app">
+    <h1>🎯 Vokabeltrainer</h1>
 
-  <div>
-    <button id="startQuiz">📖 Vokabel-Abfrage starten</button>
-    <button id="last30">⏰ Letzte 30 Vokabeln</button>
-    <button id="cards">🗂️ Karteikarten spielen</button>
-  </div>
+    <div class="row">
+      <label>Kategorie:
+        <select id="filterCategory">
+          <option value="Alle">Alle (bunt gemischt)</option>
+        </select>
+      </label>
+      <label>Modus:
+        <select id="modeSelect">
+          <option value="en-de">Englisch → Deutsch</option>
+          <option value="de-en">Deutsch → Englisch</option>
+        </select>
+      </label>
+    </div>
 
-  <div style="margin-top:16px;">
+    <div class="main-buttons">
+      <button id="startQuiz">✍️ Vokabel-Abfrage starten</button>
+      <button id="last30">📚 Letzte 30 Vokabeln</button>
+      <button id="cards">🧠 Karteikarten starten</button>
+    </div>
+
+    <div class="row" style="margin-top:15px;">
+      <label><input type="checkbox" id="showFeedback" checked /> Sofortiges Feedback anzeigen</label>
+      <label> Toast-Dauer:
+        <select id="toastTime">
+          <option value="1000">1 s</option>
+          <option value="1500">1,5 s</option>
+          <option value="2000">2 s</option>
+          <option value="3000">3 s</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="divider"></div>
+
     <a href="vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a>
-  </div>
 
-  <!-- Zuletzt hinzugefügt -->
-  <div id="recentBox">
-    <h3>📜 Zuletzt hinzugefügt</h3>
-    <ul id="recentList"><li><em>Keine Vokabeln vorhanden.</em></li></ul>
-  </div>
+    <button id="toggleRecent">📜 Zuletzt hinzugefügt (anzeigen)</button>
+    <div id="recentBox">
+      <ul id="recentList"><li><em>Keine Vokabeln vorhanden.</em></li></ul>
+    </div>
 
-  <footer>© 2025 @Beefi</footer>
-</div>
+    <footer>© 2025 @Beefi</footer>
+  </div>
 
 <script>
 (() => {
@@ -122,14 +160,13 @@
     Rot:"Verwechslungsgefahr"
   };
   const COLOR_MAP = {
-    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2",
-    Gruen:"#1E8449", HellesPink:"#F54927", Orange:"#E67E22",
-    Dunkelgruen:"#117A65", Rot:"#C0392B"
+    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
+    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
   };
 
   const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
-  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
-  const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
+  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal = v => { localStorage.setItem("vokabeln",JSON.stringify(v)); localStorage.setItem("vokabeln_updated",new Date().toISOString()); };
 
   async function trySyncFromJson(){
     const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
@@ -142,19 +179,22 @@
     }
     const local=loadLocal();
     if(!remote && local.length===0){
-      const def=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"],["file","Feile","Gelb","","","2025-01-01T00:00:00Z"],["drill","Bohrer","Pink","","","2025-01-01T00:00:00Z"]];
+      const def=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"],["file","Feile","Gelb","","","2025-01-01T00:00:00Z"]];
       saveLocal(def);
     } else if(remote){
-      const merged=merge(remote, local);
+      const merged=merge(remote,local);
       saveLocal(merged);
     }
     renderRecent();
   }
 
-  function merge(remote, local){
+  function merge(remote,local){
     const map=new Map();
     remote.map(normalize).forEach(v=>map.set(v[0].toLowerCase()+"|"+v[1].toLowerCase(),v));
-    local.map(normalize).forEach(v=>{const k=v[0].toLowerCase()+"|"+v[1].toLowerCase();if(!map.has(k))map.set(k,v);});
+    local.map(normalize).forEach(v=>{
+      const k=v[0].toLowerCase()+"|"+v[1].toLowerCase();
+      if(!map.has(k))map.set(k,v);
+    });
     return Array.from(map.values());
   }
 
@@ -163,25 +203,26 @@
     const last=list.slice(-5).reverse();
     const ul=document.getElementById("recentList");
     ul.innerHTML="";
-    if(!last.length){
-      ul.innerHTML="<li><em>Keine Vokabeln vorhanden.</em></li>";
-      return;
-    }
+    if(!last.length){ ul.innerHTML="<li><em>Keine Vokabeln vorhanden.</em></li>"; return; }
     last.forEach(([en,de,cat])=>{
       const li=document.createElement("li");
-      li.innerHTML=`<b>${en}</b> – ${de} <span class="catLabel" style="color:${COLOR_MAP[cat]||"#555"}">(${CATEGORY_NAMES[cat]||cat})</span>`;
+      li.innerHTML=`<b>${en}</b> – ${de} <span class='catLabel' style='color:${COLOR_MAP[cat]||"#555"}'>(${CATEGORY_NAMES[cat]||cat})</span>`;
       ul.appendChild(li);
     });
   }
 
-  // ===== Navigation / Modi =====
-  function startQuiz(){ window.location.href="vokabeln.html?mode=quiz"; }
-  function startLast30(){ window.location.href="vokabeln.html?mode=last30"; }
-  function startCards(){ window.location.href="vokabeln.html?mode=cards"; }
+  document.getElementById("toggleRecent").onclick=()=>{
+    const box=document.getElementById("recentBox");
+    const btn=document.getElementById("toggleRecent");
+    const visible=box.style.display==="block";
+    box.style.display=visible?"none":"block";
+    btn.textContent=visible?"📜 Zuletzt hinzugefügt (anzeigen)":"📜 Zuletzt hinzugefügt (verbergen)";
+  };
 
-  document.getElementById("startQuiz").onclick=startQuiz;
-  document.getElementById("last30").onclick=startLast30;
-  document.getElementById("cards").onclick=startCards;
+  // Navigation:
+  document.getElementById("startQuiz").onclick=()=>window.location.href="vokabeln.html?mode=quiz";
+  document.getElementById("last30").onclick=()=>window.location.href="vokabeln.html?mode=last30";
+  document.getElementById("cards").onclick=()=>window.location.href="vokabeln.html?mode=cards";
 
   trySyncFromJson();
 })();
