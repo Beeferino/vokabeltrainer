@@ -1,121 +1,488 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>📘 Vokabelübersicht</title>
-<style>
-body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
-.app{max-width:1100px;margin:auto;}
-h1{font-size:1.8rem;margin-bottom:.6rem;}
-.section{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.05);border-radius:12px;padding:20px;margin-top:24px;text-align:left;}
-.section h2{margin-top:0;color:#2c3e50;border-bottom:2px solid #e3e7ef;padding-bottom:6px;font-size:1.2rem;}
-button{cursor:pointer;background:#2980b9;color:#fff;border:none;padding:8px 12px;border-radius:6px;}
-button:hover{background:#3498db;}
-#datasourceStatus{font-size:.9rem;margin-top:10px;color:#555;}
-#reloadJson{background:#8e44ad;margin-top:5px;}
-#reloadJson:hover{background:#9b59b6;}
-.recent-list{list-style:none;padding:0;margin:10px 0;}
-.recent-list li{background:#f7f9fb;border-left:4px solid #2980b9;margin:6px 0;padding:8px 10px;border-radius:6px;}
-.recent-list span{font-weight:bold;color:#2c3e50;}
-/* Snackbar-Stil */
-#updateSnackbar{
-  position:fixed;bottom:-120px;left:50%;transform:translateX(-50%);
-  background:#2ecc71;color:#fff;padding:14px 18px;border-radius:10px;
-  display:flex;align-items:center;gap:14px;box-shadow:0 4px 8px rgba(0,0,0,0.2);
-  transition:bottom .5s ease;z-index:1000;
-}
-#updateSnackbar.show{bottom:25px;}
-#updateSnackbar button{background:#27ae60;border:none;padding:6px 10px;border-radius:6px;color:#fff;}
-#updateSnackbar button:hover{background:#2ecc71;}
-#updateSnackbar .later{background:#7f8c8d;}
-#updateSnackbar .later:hover{background:#95a5a6;}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📘 Vokabelübersicht</title>
+  <style>
+    body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
+    .app{max-width:1100px;margin:auto;}
+    h1{font-size:1.8rem;margin-bottom:.6rem;}
+
+    /* Karten / Sektionen */
+    .section{background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.05);border-radius:12px;padding:20px;margin-top:24px;text-align:left;}
+    .section h2{margin-top:0;color:#2c3e50;border-bottom:2px solid #e3e7ef;padding-bottom:6px;font-size:1.2rem;}
+
+    /* Tabelle */
+    table{width:100%;border-collapse:collapse;margin-top:15px;}
+    th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
+    th{background:#eef2f7;cursor:pointer;user-select:none;}
+    th.sort-asc::after{content:" ↑";color:#666;} th.sort-desc::after{content:" ↓";color:#666;}
+    tr:hover{background:#f0f7ff;}
+    .category-chip{display:inline-block;padding:5px 10px;border-radius:10px;color:#fff;}
+
+    /* Controls */
+    input,select,button{padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #cfd6e4;margin:5px;}
+    button{cursor:pointer;background:#2980b9;color:#fff;border:none;}
+    button:hover{background:#3498db;}
+    .edit-btn{background:#f39c12;} .save-btn{background:#27ae60;} .save-btn:hover{background:#2ecc71;}
+    .colored{transition:background .4s ease;}
+    .lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0;}
+    .lexica button{background:#ecf0f1;color:#333;border:1px solid #ccc;font-weight:600;padding:6px 9px;}
+    .lexica button.active{background:#2980b9;color:#fff;}
+    .filter-bar{margin-top:10px;display:flex;justify-content:center;gap:14px;flex-wrap:wrap;align-items:center;}
+    .searchbox{min-width:260px;}
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:10px;}
+    .pagination button{background:#ecf0f1;color:#333;border:1px solid #ccc;padding:6px 10px;}
+    .pagination button.active{background:#2980b9;color:#fff;}
+    .info-footer{margin-top:16px;font-size:.95rem;color:#555;text-align:center;}
+
+    /* Footer/Links */
+    a.linkbtn{display:inline-block;padding:10px 16px;border-radius:8px;background:#74b9ff;color:#000;text-decoration:none;font-weight:600;}
+    a.linkbtn:hover{background:#a6d4ff;}
+    footer{margin-top:35px;padding-top:15px;border-top:2px solid #e3e7ef;color:#555;text-align:center;}
+    footer button{margin:6px;}
+    #datasourceStatus{font-size:.9rem;margin-top:10px;color:#555;}
+    #reloadJson{background:#8e44ad;margin-top:5px;} #reloadJson:hover{background:#9b59b6;}
+
+    /* Toast / Snackbar */
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:999;}
+    #updateSnackbar{position:fixed;bottom:-120px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:14px 18px;border-radius:10px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 8px rgba(0,0,0,.2);transition:bottom .5s ease;z-index:1000;}
+    #updateSnackbar.show{bottom:25px;}
+    #updateSnackbar button{background:#27ae60;border:none;padding:6px 10px;border-radius:6px;color:#fff;}
+    #updateSnackbar button:hover{background:#2ecc71;}
+    #updateSnackbar .later{background:#7f8c8d;} #updateSnackbar .later:hover{background:#95a5a6;}
+
+    /* Zuletzt hinzugefügt */
+    .recent-list{list-style:none;padding-left:0;margin:10px 0;}
+    .recent-list li{background:#f7f9fb;border-left:4px solid #2980b9;margin:6px 0;padding:8px 10px;border-radius:6px;}
+    .recent-list span{display:inline-block;font-weight:bold;color:#2c3e50;}
+  </style>
 </head>
 <body>
-<div class="app">
-  <h1>📘 Vokabelübersicht</h1>
-  <div class="section">
-    <h2>🕒 Zuletzt hinzugefügt</h2>
-    <ul id="recentList" class="recent-list"></ul>
+  <div class="app">
+    <h1>📘 Vokabelübersicht</h1>
+
+    <!-- Filter & Alphabet -->
+    <div class="section">
+      <h2>🔤 Filter & Alphabet</h2>
+      <div id="lexica" class="lexica"></div>
+      <div class="filter-bar">
+        <label>Kategorie:
+          <select id="filterCategory" class="colored"><option value="Alle">Alle (bunt gemischt)</option></select>
+        </label>
+        <label>Gruppe / Variante:
+          <select id="filterGroup"><option value="Alle">Alle</option></select>
+        </label>
+        <input id="searchInput" class="searchbox" type="text" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)">
+        <button id="resetFilter">🔄 Filter zurücksetzen</button>
+      </div>
+    </div>
+
+    <!-- Tabelle -->
+    <div class="section">
+      <h2>📋 Vokabeltabelle</h2>
+      <table id="vocabTable">
+        <thead>
+          <tr>
+            <th style="width:36px;">&nbsp;</th>
+            <th data-key="en">Englisch</th>
+            <th data-key="de">Deutsch</th>
+            <th data-key="cat">Kategorie</th>
+            <th data-key="grp">Gruppe / Variante</th>
+            <th data-key="hint">Hinweis</th>
+            <th style="width:80px;">Aktion</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div id="pagination" class="pagination"></div>
+      <div id="infoFooter" class="info-footer"></div>
+    </div>
+
+    <!-- Zuletzt hinzugefügt -->
+    <div class="section">
+      <h2>🕒 Zuletzt hinzugefügt</h2>
+      <ul id="recentList" class="recent-list"></ul>
+    </div>
+
+    <!-- Verwaltung -->
+    <div class="section">
+      <h2>⚙️ Verwaltung & Import/Export</h2>
+      <div class="new-entry">
+        <h3 style="background:#ecf0f1;padding:10px 15px;border-radius:8px;color:#2c3e50;display:inline-block;">➕ Neue Vokabel hinzufügen</h3>
+        <div>
+          <input id="newEnglish" type="text" placeholder="Englisch" disabled>
+          <input id="newGerman" type="text" placeholder="Deutsch" disabled>
+          <select id="newCategory" class="colored" disabled></select>
+          <input id="newGroup" type="text" placeholder="Gruppe / Variante" disabled>
+          <input id="newHint" type="text" placeholder="Hinweis" disabled>
+          <button id="addBtn" disabled>Hinzufügen</button>
+        </div>
+        <div style="margin-top:8px;">
+          <button id="toggleAdd">✏️ Eingabe aktivieren</button>
+          <button id="deleteSelected">🗑️ Ausgewählte löschen</button>
+        </div>
+      </div>
+
+      <footer>
+        <div>
+          <button id="exportBtn">📤 Exportieren</button>
+          <input type="file" id="importFile" accept=".json" style="display:none;">
+          <button id="importBtn">📥 Importieren</button>
+        </div>
+        <div style="margin-top:22px;">
+          <a href="index.html" class="linkbtn">⬅️ Zurück zum Trainer</a>
+        </div>
+        <div id="datasourceStatus">📂 Datenquelle: wird geprüft...</div>
+        <button id="reloadJson">🔄 JSON aktualisieren</button>
+      </footer>
+    </div>
   </div>
-  <div class="section">
-    <h2>⚙️ Verwaltung</h2>
-    <button id="reloadJson">🔄 JSON aktualisieren</button>
-    <div id="datasourceStatus">📂 Datenquelle: wird geprüft...</div>
+
+  <!-- Snackbar -->
+  <div id="updateSnackbar">
+    <span>Eine neue Vokabelliste ist verfügbar!</span>
+    <button class="updateNow">🔄 Jetzt aktualisieren</button>
+    <button class="later">Später</button>
   </div>
-</div>
 
-<!-- Snackbar unten -->
-<div id="updateSnackbar">
-  <span>Eine neue Vokabelliste ist verfügbar!</span>
-  <button class="updateNow">🔄 Jetzt aktualisieren</button>
-  <button class="later">Später</button>
-</div>
+  <!-- Toast -->
+  <div id="toast" class="toast">💾 Gespeichert</div>
 
-<script>
-(() => {
-  const $=s=>document.querySelector(s);
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-  const saveLocal=v=>{localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());};
+  <script>
+  (() => {
+    /* === Konstanten & Utils === */
+    const CATEGORY_NAMES = {
+      Gelb:"Grundwerkzeuge Metallverarbeitung",
+      Pink:"Werkzeugkasten Mechaniker",
+      Blau:"Blech- / Kunststoffarbeiten",
+      Gruen:"Drehen / Fräsen",
+      HellesPink:"Hydraulik / Pneumatik",
+      Orange:"Elektrotechnik",
+      Dunkelgruen:"Fluggerätemechanik allgemein",
+      Rot:"Verwechslungsgefahr"
+    };
+    const COLOR_MAP = {
+      Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
+      HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
+    };
+    const CATEGORY_EMOJI = {
+      Gelb:"🟡", Pink:"🟣", Blau:"🔵", Gruen:"🟢", HellesPink:"🟥",
+      Orange:"🟧", Dunkelgruen:"🟩", Rot:"🔴"
+    };
+    const labelForCategory = k => `${CATEGORY_EMOJI[k]||"•"} ${CATEGORY_NAMES[k]}`;
 
-  const snackbar=$("#updateSnackbar");
-  const showSnackbar=(onUpdate)=>{
-    snackbar.classList.add("show");
-    snackbar.querySelector(".updateNow").onclick=()=>{snackbar.classList.remove("show");onUpdate();};
-    snackbar.querySelector(".later").onclick=()=>snackbar.classList.remove("show");
-  };
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const toast = m => { const t=$("#toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",1500); };
 
-  async function trySyncFromJson(force=false){
-    const status=$("#datasourceStatus");
-    const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
-    let newestData=null,newestDate=0,usedUrl="";
-    for(const url of urls){
-      try{
-        const r=await fetch(url,{cache:"no-store"});
-        if(!r.ok)continue;
-        const txt=await r.text();
-        const data=JSON.parse(txt);
-        if(!Array.isArray(data))continue;
-        const remoteDate=new Date(r.headers.get("last-modified")||0).getTime();
-        if(remoteDate>newestDate){newestDate=remoteDate;newestData=data;usedUrl=url;}
-      }catch(e){continue;}
+    const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
+    const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
+    const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
+
+    /* einfacher Hash (djb2) für Content-Vergleich */
+    function hashString(str){
+      let h=5381; for(let i=0;i<str.length;i++){ h=((h<<5)+h) + str.charCodeAt(i); h|=0; }
+      return String(h);
     }
-    const localUpdate=new Date(localStorage.getItem("vokabeln_updated")||0).getTime();
-    if(newestData&&newestDate>localUpdate&&!force){
-      showSnackbar(async()=>{
-        saveLocal(newestData.map(normalize));
-        status.textContent="📂 Datenquelle: "+usedUrl;
-        renderRecent();
+
+    /* === Robuster JSON-Sync (mehrere Pfade, Last-Modified + Hash) === */
+    const SYNC_URLS = [
+      "./vokabeln.json",
+      "vokabeln.json",
+      window.location.origin + "/vokabeltrainer/vokabeln.json"
+    ];
+
+    async function fetchNewestJsonCandidate(){
+      let best = {date:0, hash:"", data:null, url:""};
+      for(const url of SYNC_URLS){
+        try{
+          const r = await fetch(url, { cache:"no-store" });
+          if(!r.ok) continue;
+          const txt = await r.text();
+          const data = JSON.parse(txt);
+          if(!Array.isArray(data)) continue;
+          const remoteDate = new Date(r.headers.get("last-modified")||0).getTime();
+          const h = hashString(txt);
+          // Auswahl nach Datum; wenn Datum fehlt/gleich, nach anderem Hash bevorzugen
+          if (remoteDate > best.date || (remoteDate === best.date && h !== best.hash)) {
+            best = { date:remoteDate, hash:h, data, url };
+          }
+        }catch(e){ /* ignore */ }
+      }
+      return best.data ? best : null;
+    }
+
+    async function trySyncFromJson(force=false){
+      const status = $("#datasourceStatus");
+      const candidate = await fetchNewestJsonCandidate();
+      const localUpdate = new Date(localStorage.getItem("vokabeln_updated")||0).getTime();
+      const localHash = localStorage.getItem("vokabeln_remote_hash")||"";
+
+      if(candidate){
+        const isNewerByDate = candidate.date > localUpdate;
+        const isDifferentByHash = candidate.hash && candidate.hash !== localHash;
+
+        if((isNewerByDate || isDifferentByHash) && !force){
+          showSnackbar(async()=>{
+            saveLocal(candidate.data.map(normalize));
+            localStorage.setItem("vokabeln_remote_hash", candidate.hash);
+            status.textContent = "📂 Datenquelle: " + candidate.url;
+            afterListChange();
+          });
+        }else if(force){
+          saveLocal(candidate.data.map(normalize));
+          localStorage.setItem("vokabeln_remote_hash", candidate.hash);
+          status.textContent = "📂 Manuell aktualisiert";
+          afterListChange();
+        }else if(localStorage.getItem("vokabeln")){
+          status.textContent = "💾 Lokaler Speicher aktiv";
+        }else{
+          const def=[["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"]];
+          saveLocal(def);
+          status.textContent="✨ Standardliste verwendet";
+        }
+      } else {
+        // keine Online-Quelle erreichbar
+        if(localStorage.getItem("vokabeln")) status.textContent="💾 Lokaler Speicher aktiv";
+        else { const def=[["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"]]; saveLocal(def); status.textContent="✨ Standardliste verwendet"; }
+      }
+    }
+
+    /* Snackbar */
+    const snackbar = $("#updateSnackbar");
+    function showSnackbar(onUpdate){
+      snackbar.classList.add("show");
+      snackbar.querySelector(".updateNow").onclick = ()=>{ snackbar.classList.remove("show"); onUpdate(); };
+      snackbar.querySelector(".later").onclick = ()=> snackbar.classList.remove("show");
+      setTimeout(()=>snackbar.classList.remove("show"), 15000);
+    }
+
+    /* === State === */
+    let list = [];
+    let currentLetter="Alle", filterCat="Alle", filterGrp="Alle", searchTerm="";
+    let currentPage=1; const perPage=15;
+    let sortKey="en", sortDir="asc";
+
+    /* === Rendering === */
+    function setSelectColor(sel,val){
+      if(!val || val==="Alle"){ sel.style.background="#fff"; sel.style.color="#111"; sel.style.border="1px solid #cfd6e4"; return; }
+      const c=COLOR_MAP[val]||"#fff"; sel.style.background=c; sel.style.color="#fff"; sel.style.border="1px solid #999";
+    }
+    function renderCategorySelect(sel,setColor=false){
+      sel.innerHTML=""; Object.keys(CATEGORY_NAMES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.textContent=labelForCategory(k); sel.appendChild(o); });
+      if(setColor) setSelectColor(sel, sel.value);
+      sel.onchange=()=>setSelectColor(sel, sel.value);
+    }
+    function renderFilterCategory(){
+      const sel=$("#filterCategory");
+      sel.innerHTML="<option value='Alle'>Alle (bunt gemischt)</option>";
+      Object.keys(CATEGORY_NAMES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.textContent=labelForCategory(k); sel.appendChild(o); });
+      setSelectColor(sel,"Alle");
+      sel.onchange=e=>{ filterCat=e.target.value; setSelectColor(sel,filterCat); currentPage=1; renderTable(); };
+    }
+    function renderFilterGroup(){
+      const groups=[...new Set(list.map(v=>v[3]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de"));
+      const sel=$("#filterGroup");
+      sel.innerHTML="<option value='Alle'>Alle</option>"+groups.map(g=>`<option>${g}</option>`).join("");
+      sel.onchange=e=>{ filterGrp=e.target.value; currentPage=1; renderTable(); };
+    }
+    function renderLexica(){
+      const letters=["Alle",...Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")];
+      const lx=$("#lexica"); lx.innerHTML="";
+      letters.forEach(l=>{ const b=document.createElement("button"); b.textContent=l; if(l===currentLetter)b.classList.add("active");
+        b.onclick=()=>{ currentLetter=l; currentPage=1; renderTable(); renderLexica(); };
+        lx.appendChild(b);
       });
-    }else if(force&&newestData){
-      saveLocal(newestData.map(normalize));
-      status.textContent="📂 Manuell aktualisiert";
-      renderRecent();
-    }else if(localStorage.getItem("vokabeln")){
-      status.textContent="💾 Lokaler Speicher aktiv";
-    }else{
-      const def=[["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"]];
-      saveLocal(def);
-      status.textContent="✨ Standardliste verwendet";
     }
-  }
+    function filtered(){
+      return list.filter(([en,de,cat,grp,hint])=>{
+        if(currentLetter!=="Alle" && !en.toUpperCase().startsWith(currentLetter)) return false;
+        if(filterCat!=="Alle" && cat!==filterCat) return false;
+        if(filterGrp!=="Alle" && grp!==filterGrp) return false;
+        if(searchTerm){ const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase(); if(!hay.includes(searchTerm)) return false; }
+        return true;
+      });
+    }
+    function sortList(arr){
+      const map={en:0,de:1,cat:2,grp:3,hint:4,date:5};
+      const i=map[sortKey];
+      return arr.sort((a,b)=>{
+        let A=a[i]||"", B=b[i]||"";
+        if(sortKey==="date"){ A=new Date(A).getTime(); B=new Date(B).getTime(); }
+        else { A=A.toString().toLowerCase(); B=B.toString().toLowerCase(); }
+        if(A<B) return sortDir==="asc"?-1:1;
+        if(A>B) return sortDir==="asc"?1:-1;
+        return 0;
+      });
+    }
+    function renderTable(){
+      const all=sortList(filtered());
+      const pages=Math.max(1,Math.ceil(all.length/perPage));
+      if(currentPage>pages) currentPage=pages;
+      const start=(currentPage-1)*perPage;
+      const rows=all.slice(start,start+perPage);
 
-  function renderRecent(){
-    const list=loadLocal();
-    const ul=$("#recentList");
-    const sorted=[...list].sort((a,b)=>new Date(b[5])-new Date(a[5]));
-    const last5=sorted.slice(0,5);
-    ul.innerHTML=last5.map(v=>`<li><span>${v[0]}</span> → ${v[1]} <small style="color:#777;">(${new Date(v[5]).toLocaleString("de-DE")})</small></li>`).join("")||"<li><em>Keine Einträge</em></li>";
-  }
+      const tbody=$("#vocabTable tbody"); tbody.innerHTML="";
+      rows.forEach(v=>{
+        const [en,de,cat,grp,hint,date]=v;
+        const i=list.indexOf(v);
+        const tr=document.createElement("tr");
+        tr.innerHTML = `<td><input type="checkbox" data-index="${i}"></td>
+          <td>${en}</td><td>${de}</td>
+          <td><span class="category-chip" style="background:${COLOR_MAP[cat]}">${CATEGORY_NAMES[cat]}</span></td>
+          <td>${grp||""}</td><td>${hint||""}</td>
+          <td><button class="edit-btn" data-index="${i}">✏️</button></td>`;
+        tbody.appendChild(tr);
+      });
 
-  (async function init(){
-    await trySyncFromJson();
-    renderRecent();
-    $("#reloadJson").onclick=async()=>{await trySyncFromJson(true);renderRecent();};
+      const pagination=$("#pagination"); pagination.innerHTML="";
+      for(let p=1;p<=pages;p++){ const b=document.createElement("button"); b.textContent=p; if(p===currentPage)b.classList.add("active"); b.onclick=()=>{ currentPage=p; renderTable(); }; pagination.appendChild(b); }
+
+      const upd=localStorage.getItem("vokabeln_updated");
+      $("#infoFooter").textContent = `📅 Letzte Änderung: ${upd?new Date(upd).toLocaleString("de-DE"):"–"} | 📚 Gesamt: ${list.length} | 🔤 Angezeigt: ${all.length}`;
+
+      $$(".edit-btn").forEach(b => b.onclick = () => editRow(parseInt(b.dataset.index)));
+
+      renderRecent();
+    }
+    function bindSort(){
+      $$("#vocabTable thead th").forEach(th=>{
+        const k=th.dataset.key; if(!k) return;
+        th.onclick=()=>{
+          if(sortKey===k) sortDir = (sortDir==="asc"?"desc":"asc");
+          else { sortKey=k; sortDir="asc"; }
+          $$("#vocabTable thead th").forEach(t=>t.classList.remove("sort-asc","sort-desc"));
+          th.classList.add(sortDir==="asc"?"sort-asc":"sort-desc");
+          renderTable();
+        };
+      });
+    }
+    function editRow(i){
+      const [en,de,cat,grp,hint,date]=list[i];
+      const tr=$$("#vocabTable tbody tr").find(r=>parseInt(r.querySelector("input").dataset.index)===i);
+      tr.innerHTML = `<td></td>
+        <td><input id="eEn" value="${en}"></td>
+        <td><input id="eDe" value="${de}"></td>
+        <td><select id="eCat" class="colored">
+          ${Object.keys(CATEGORY_NAMES).map(k=>`<option value="${k}" ${k===cat?"selected":""}>${labelForCategory(k)}</option>`).join("")}
+        </select></td>
+        <td><input id="eGrp" value="${grp||""}"></td>
+        <td><input id="eHint" value="${hint||""}"></td>
+        <td><button class="save-btn">💾</button></td>`;
+      const eCat=tr.querySelector("#eCat"); setSelectColor(eCat,eCat.value); eCat.onchange=()=>setSelectColor(eCat,eCat.value);
+      tr.querySelector(".save-btn").onclick=()=>{
+        const newEn=$("#eEn").value.trim(),
+              newDe=$("#eDe").value.trim(),
+              newCat=eCat.value,
+              newGrp=$("#eGrp").value.trim(),
+              newHint=$("#eHint").value.trim();
+        if(!newEn||!newDe) return alert("Bitte ausfüllen!");
+        list[i]=[newEn,newDe,newCat,newGrp,newHint,date];
+        saveLocal(list);
+        renderFilterGroup();
+        renderTable();
+        toast("💾 Gespeichert");
+      };
+    }
+    function renderRecent(){
+      const ul=$("#recentList");
+      const sorted=[...list].sort((a,b)=>new Date(b[5])-new Date(a[5]));
+      const last5=sorted.slice(0,5);
+      ul.innerHTML = last5.map(v=>`<li><span>${v[0]}</span> → ${v[1]} <small style="color:#777;">(${new Date(v[5]).toLocaleString("de-DE")})</small></li>`).join("")
+        || "<li><em>Keine Einträge vorhanden</em></li>";
+    }
+    function afterListChange(){
+      list = loadLocal();
+      renderFilterGroup();
+      renderTable();
+    }
+
+    /* === INIT === */
+    (async function init(){
+      await trySyncFromJson();          // prüft & bietet Update via Snackbar an
+      list = loadLocal();
+
+      renderCategorySelect($("#newCategory"), true);
+      renderFilterCategory();
+      renderFilterGroup();
+      renderLexica();
+      renderTable();
+      bindSort();
+
+      // Controls
+      $("#resetFilter").onclick = () => {
+        currentLetter="Alle"; filterCat="Alle"; filterGrp="Alle"; searchTerm="";
+        renderFilterCategory(); renderFilterGroup(); renderLexica();
+        $("#searchInput").value=""; currentPage=1; renderTable();
+      };
+      $("#searchInput").addEventListener("input", e => { searchTerm=e.target.value.trim().toLowerCase(); currentPage=1; renderTable(); });
+
+      $("#toggleAdd").onclick = () => {
+        const d = $("#newEnglish").disabled;
+        ["newEnglish","newGerman","newCategory","newGroup","newHint","addBtn"].forEach(id=>$("#"+id).disabled=!d);
+        $("#toggleAdd").textContent = d ? "🔒 Eingabe sperren" : "✏️ Eingabe aktivieren";
+        if (d) $("#newEnglish").focus();
+      };
+
+      $("#addBtn").onclick = () => {
+        const en=$("#newEnglish").value.trim(),
+              de=$("#newGerman").value.trim(),
+              cat=$("#newCategory").value,
+              grp=$("#newGroup").value.trim(),
+              hint=$("#newHint").value.trim();
+        if(!en||!de) return alert("Bitte ausfüllen!");
+        list.push([en,de,cat,grp,hint,new Date().toISOString()]);
+        saveLocal(list);
+        $("#newEnglish").value = $("#newGerman").value = $("#newGroup").value = $("#newHint").value = "";
+        renderFilterGroup(); renderTable(); toast("➕ Hinzugefügt");
+      };
+
+      $("#deleteSelected").onclick = () => {
+        const sel = Array.from(document.querySelectorAll("input[type=checkbox]:checked"));
+        if(!sel.length) return alert("Bitte auswählen!");
+        if(!confirm("Ausgewählte Vokabel(n) löschen?")) return;
+        const ids = sel.map(c=>parseInt(c.dataset.index)).sort((a,b)=>b-a);
+        ids.forEach(i=>list.splice(i,1));
+        saveLocal(list); renderTable(); toast("🗑️ Gelöscht");
+      };
+
+      $("#exportBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(list, null, 2)], { type:"application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href=url; a.download="vokabeln.json"; a.click(); URL.revokeObjectURL(url);
+        toast("📤 Exportiert");
+      };
+
+      $("#importBtn").onclick = () => $("#importFile").click();
+      $("#importFile").onchange = e => {
+        const f = e.target.files[0]; if(!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          try {
+            const d = JSON.parse(r.result).map(normalize);
+            if (confirm("Bestehende überschreiben? (Abbrechen = Anhängen)")) list = d; else list = list.concat(d);
+            saveLocal(list); renderFilterGroup(); renderTable(); toast("📥 Importiert");
+          } catch { alert("Fehler beim Import."); }
+        };
+        r.readAsText(f);
+      };
+
+      $("#reloadJson").onclick = async () => {
+        await trySyncFromJson(true);  // forcierter Abruf
+        afterListChange();
+      };
+
+      // Echtzeit-Update: reagiert auf Änderungen aus anderen Tabs/Seiten
+      window.addEventListener("storage", e => {
+        if (e.key==="vokabeln" || e.key==="vokabeln_updated") {
+          afterListChange();
+          $("#datasourceStatus").textContent = "🔄 Automatisch aktualisiert (Synchronisierung erkannt)";
+        }
+      });
+    })();
   })();
-})();
-</script>
+  </script>
 </body>
 </html>
