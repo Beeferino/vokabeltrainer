@@ -1,33 +1,34 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vokabelübersicht</title>
+<title>📘 Vokabelübersicht</title>
 <style>
-body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;color:#222;}
+body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
 .app{max-width:1100px;margin:auto;}
-h1{text-align:center;margin-bottom:20px;}
-table{width:100%;border-collapse:collapse;margin-top:10px;}
-th,td{padding:8px 10px;border-bottom:1px solid #ddd;text-align:left;}
+h1{font-size:1.8rem;margin-bottom:1rem;}
+table{width:100%;border-collapse:collapse;margin-top:15px;}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
 th{background:#eef3ff;}
-tr:hover{background:#f6f9ff;}
-button,input,select{font-size:1rem;padding:7px 10px;border-radius:6px;border:1px solid #ccc;margin:3px;}
+tr:hover{background:#f4f9ff;}
+.category-chip{display:inline-block;padding:5px 10px;border-radius:10px;color:#fff;}
+button,input,select{padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #ccc;margin:5px;}
 button{cursor:pointer;background:#2980b9;color:#fff;border:none;transition:background .2s ease,transform .1s ease;}
 button:hover{background:#3498db;transform:translateY(-1px);}
-.section{background:#fff;padding:15px 20px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,0.06);margin-bottom:25px;}
-.section h2{text-align:center;margin:0 0 10px;font-size:1.2rem;}
+.section{background:#fff;padding:16px 20px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,0.08);margin-bottom:25px;}
+.section h2{text-align:center;font-size:1.2rem;margin-bottom:10px;}
 .flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;}
 input[type="text"]{flex:1 1 160px;}
+.footer{text-align:center;margin-top:20px;font-size:0.95rem;color:#555;}
+#infoFooter{margin-top:5px;font-size:.9rem;color:#555;}
+#datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;}
+#modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000;}
+#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);min-width:280px;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:999;}
 hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
-.footer{text-align:center;font-size:0.95rem;color:#555;margin-top:15px;}
-#modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center;}
-#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.2);min-width:300px;}
-#modalContent h3{margin-top:0;}
-.catOpt{color:#fff;}
-#infoFooter{margin-top:5px;font-size:0.9rem;text-align:center;color:#555;}
 #lastAdded{background:#f8fafc;padding:10px;border-radius:10px;margin-top:8px;text-align:center;}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 18px;border-radius:10px;font-size:1rem;display:none;z-index:1000;box-shadow:0 2px 6px rgba(0,0,0,0.2);}
 </style>
 </head>
 <body>
@@ -38,9 +39,7 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
   <h2>🔍 Filter & Suche</h2>
   <div class="flex">
     <label>Kategorie:
-      <select id="filterCat">
-        <option value="Alle">Alle (bunt gemischt)</option>
-      </select>
+      <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
     </label>
     <input type="text" id="searchInput" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)">
     <button id="resetFilter">🔄 Filter zurücksetzen</button>
@@ -50,9 +49,7 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 <div class="section">
   <h2>📄 Vokabelliste</h2>
   <table id="vokabelTable">
-    <thead>
-      <tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Gruppe / Variante</th><th>Hinweis</th><th>Aktion</th></tr>
-    </thead>
+    <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Gruppe / Variante</th><th>Hinweis</th><th>Aktion</th></tr></thead>
     <tbody></tbody>
   </table>
   <div id="pagination" class="flex" style="margin-top:10px;"></div>
@@ -62,11 +59,11 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 <div class="section">
   <h2>➕ Neue Vokabel hinzufügen</h2>
   <div class="flex">
-    <input type="text" id="en" placeholder="Englisch">
-    <input type="text" id="de" placeholder="Deutsch">
+    <input id="en" type="text" placeholder="Englisch">
+    <input id="de" type="text" placeholder="Deutsch">
     <select id="cat"></select>
-    <input type="text" id="group" placeholder="Gruppe / Variante">
-    <input type="text" id="hint" placeholder="Hinweis">
+    <input id="group" type="text" placeholder="Gruppe / Variante">
+    <input id="hint" type="text" placeholder="Hinweis">
     <button id="addBtn">Hinzufügen</button>
   </div>
 </div>
@@ -78,7 +75,8 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
   <div class="flex">
     <button id="exportBtn">📤 Exportieren</button>
     <button id="importBtn">📥 Importieren</button>
-    <button id="downloadJson">🧾 vokabeln.json herunterladen</button>
+    <button id="downloadJson">💾 vokabeln.json herunterladen</button>
+    <button id="syncBtn">🔄 JSON aktualisieren (merge)</button>
   </div>
 </div>
 
@@ -98,11 +96,11 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 <div id="modal">
   <div id="modalContent">
     <h3>✏️ Vokabel bearbeiten</h3>
-    <input type="text" id="editEn" placeholder="Englisch"><br><br>
-    <input type="text" id="editDe" placeholder="Deutsch"><br><br>
+    <input id="editEn" type="text" placeholder="Englisch"><br><br>
+    <input id="editDe" type="text" placeholder="Deutsch"><br><br>
     <select id="editCat"></select><br><br>
-    <input type="text" id="editGroup" placeholder="Gruppe / Variante"><br><br>
-    <input type="text" id="editHint" placeholder="Hinweis"><br><br>
+    <input id="editGroup" type="text" placeholder="Gruppe / Variante"><br><br>
+    <input id="editHint" type="text" placeholder="Hinweis"><br><br>
     <div class="flex">
       <button id="saveEdit">💾 Speichern</button>
       <button id="cancelEdit">❌ Abbrechen</button>
@@ -111,47 +109,84 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 </div>
 
 <div id="toast" class="toast">Gespeichert</div>
+<div id="datasourceStatus">💾 Datenquelle: Lokaler Speicher</div>
 
 <script>
-(()=>{
+(async()=>{
 const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
 const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
-let list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+let list=[];
 const perPage=15;let currentPage=1;let editIndex=null;
 const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
+const statusEl=$("#datasourceStatus");
 
+// 🔄 SYNCHRONISIERUNG
+async function loadVokabeln(){
+  let vokabeln=[];
+  try{
+    const local=localStorage.getItem("vokabeln");
+    if(local){vokabeln=JSON.parse(local);statusEl.textContent="💾 Datenquelle: Lokaler Speicher";}
+    else{
+      const r=await fetch("vokabeln.json",{cache:"no-store"});
+      if(r.ok){vokabeln=await r.json();statusEl.textContent="🌐 Datenquelle: vokabeln.json";}
+    }
+  }catch(e){console.error(e);}
+  if(!Array.isArray(vokabeln))vokabeln=[];
+  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+  localStorage.setItem("vokabeln_updated",new Date().toISOString());
+  return vokabeln;
+}
+
+async function syncJson(){
+  try{
+    const response=await fetch("vokabeln.json",{cache:"no-store"});
+    if(!response.ok)throw new Error("Fetch fehlgeschlagen");
+    const remote=await response.json();
+    const local=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    const merged=mergeLists(remote,local);
+    localStorage.setItem("vokabeln",JSON.stringify(merged));
+    localStorage.setItem("vokabeln_updated",new Date().toISOString());
+    list=merged;
+    render();toast("🔄 Synchronisiert");
+  }catch(e){toast("⚠️ Sync fehlgeschlagen","#e67e22");}
+}
+
+function mergeLists(remote,local){
+  const map=new Map();
+  remote.forEach(v=>map.set((v[0]+"|"+v[1]).toLowerCase(),v));
+  local.forEach(v=>map.set((v[0]+"|"+v[1]).toLowerCase(),v));
+  return Array.from(map.values());
+}
+
+// 🔧 UI & Logik
 function toast(msg,color="#2ecc71"){
   const t=$("#toast");t.textContent=msg;t.style.background=color;t.style.display="block";
   setTimeout(()=>t.style.display="none",1500);
 }
+function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));localStorage.setItem("vokabeln_updated",new Date().toISOString());render();}
 
-function saveLocal(){
-  localStorage.setItem("vokabeln",JSON.stringify(list));
-  localStorage.setItem("vokabeln_updated",new Date().toISOString());
-  render();
-}
+// ⚡ AUTO-EXPORT BEIM VERLASSEN
+window.addEventListener("beforeunload",()=>{
+  const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="vokabeln.json";
+  a.click();
+});
 
 function fillCats(sel){
   sel.innerHTML="";
   for(const k in CATEGORY_NAMES){
-    const opt=document.createElement("option");
-    opt.value=k;opt.textContent=CATEGORY_NAMES[k];
-    opt.style.background=COLOR_MAP[k];
-    opt.style.color="#fff";sel.appendChild(opt);
+    const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];
+    o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);
   }
 }
 fillCats($("#cat"));fillCats($("#editCat"));
 const filterCat=$("#filterCat");
-for(const k in CATEGORY_NAMES){
-  const o=document.createElement("option");
-  o.value=k;o.textContent=CATEGORY_NAMES[k];
-  o.style.background=COLOR_MAP[k];o.style.color="#fff";
-  filterCat.appendChild(o);
-}
+for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";filterCat.appendChild(o);}
 
 function render(){
   const tb=$("#vokabelTable tbody");
-  if(!list.length){tb.innerHTML="<tr><td colspan='6' style='text-align:center;'>Keine Vokabeln vorhanden.</td></tr>";return;}
   const search=$("#searchInput").value.toLowerCase();
   const cat=$("#filterCat").value;
   let all=list.filter(v=>{
@@ -159,32 +194,20 @@ function render(){
     const matchSearch=(v[0].toLowerCase().includes(search)||v[1].toLowerCase().includes(search)||(v[3]||"").toLowerCase().includes(search)||(v[4]||"").toLowerCase().includes(search));
     return matchCat&&matchSearch;
   });
-  const pages=Math.ceil(all.length/perPage);
-  if(currentPage>pages)currentPage=pages||1;
+  const pages=Math.ceil(all.length/perPage)||1;
+  if(currentPage>pages)currentPage=pages;
   const start=(currentPage-1)*perPage;
   const rows=all.slice(start,start+perPage);
-  tb.innerHTML=rows.map((v,i)=>`
-    <tr>
-      <td>${v[0]}</td>
-      <td>${v[1]}</td>
-      <td><span style="background:${COLOR_MAP[v[2]]};color:#fff;padding:2px 8px;border-radius:8px;">${CATEGORY_NAMES[v[2]]}</span></td>
-      <td>${v[3]||""}</td>
-      <td>${v[4]||""}</td>
-      <td>
-        <button class="editBtn" data-idx="${start+i}">✏️</button>
-        <button class="delBtn" data-idx="${start+i}">🗑️</button>
-      </td>
-    </tr>`).join("");
+  tb.innerHTML=rows.map((v,i)=>`<tr>
+  <td>${v[0]}</td><td>${v[1]}</td>
+  <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+  <td>${v[3]||""}</td><td>${v[4]||""}</td>
+  <td><button class="editBtn" data-idx="${start+i}">✏️</button><button class="delBtn" data-idx="${start+i}">🗑️</button></td></tr>`).join("");
 
   const pag=$("#pagination");pag.innerHTML="";
-  for(let i=1;i<=pages;i++){
-    const b=document.createElement("button");
-    b.textContent=i;if(i===currentPage)b.style.background="#6ca0f8";
-    b.onclick=()=>{currentPage=i;render();};
-    pag.appendChild(b);
-  }
+  for(let i=1;i<=pages;i++){const b=document.createElement("button");b.textContent=i;if(i===currentPage)b.style.background="#6ca0f8";b.onclick=()=>{currentPage=i;render();};pag.appendChild(b);}
   const upd=localStorage.getItem("vokabeln_updated");
-  $("#infoFooter").textContent=`📅 Letzte Änderung: ${upd?new Date(upd).toLocaleString("de-DE"):"–"} | 📚 Gesamt: ${list.length} | 🔎 Gefunden: ${all.length} | 🔤 Angezeigt: ${rows.length} | 📄 Seite ${currentPage}/${pages||1}`;
+  $("#infoFooter").textContent=`📅 Letzte Änderung: ${upd?new Date(upd).toLocaleString("de-DE"):"–"} | 📚 Gesamt: ${list.length} | 🔤 Angezeigt: ${rows.length} | 📄 Seite ${currentPage}/${pages}`;
   renderLastAdded();
 
   $$(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.idx));
@@ -199,35 +222,22 @@ function renderLastAdded(){
 }
 
 function openEdit(i){
-  editIndex=i;
-  const v=list[i];
+  editIndex=i;const v=list[i];
   $("#editEn").value=v[0];$("#editDe").value=v[1];$("#editCat").value=v[2];
   $("#editGroup").value=v[3]||"";$("#editHint").value=v[4]||"";
   $("#modal").style.display="flex";
 }
-
-$("#saveEdit").onclick=()=>{
-  const v=list[editIndex];
-  v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();
-  v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();
-  saveLocal();toast("💾 Änderungen gespeichert");
-  $("#modal").style.display="none";
-};
+$("#saveEdit").onclick=()=>{const v=list[editIndex];v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();saveLocal();$("#modal").style.display="none";toast("💾 Gespeichert");};
 $("#cancelEdit").onclick=()=>$("#modal").style.display="none";
-
-$("#addBtn").onclick=()=>{
-  const en=$("#en").value.trim(),de=$("#de").value.trim(),cat=$("#cat").value,grp=$("#group").value.trim(),hint=$("#hint").value.trim();
-  if(!en||!de||!cat)return alert("Bitte alle Pflichtfelder ausfüllen!");
-  list.push([en,de,cat,grp,hint]);saveLocal();
-  $("#en").value=$("#de").value=$("#group").value=$("#hint").value="";
-  toast("➕ Hinzugefügt");
-};
-
+$("#addBtn").onclick=()=>{const en=$("#en").value.trim(),de=$("#de").value.trim(),cat=$("#cat").value,grp=$("#group").value.trim(),hint=$("#hint").value.trim();if(!en||!de)return alert("Bitte ausfüllen!");list.push([en,de,cat,grp,hint]);saveLocal();$("#en").value=$("#de").value=$("#group").value=$("#hint").value="";toast("➕ Hinzugefügt");};
 $("#resetFilter").onclick=()=>{$("#filterCat").value="Alle";$("#searchInput").value="";render();};
 $("#exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vokabeln_export.json";a.click();toast("📤 Exportiert");};
-$("#importBtn").onclick=()=>{const i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){list=d;saveLocal();toast("📥 Importiert");}}catch{alert("Ungültige Datei!");}};r.readAsText(f);};i.click();};
+$("#importBtn").onclick=()=>{const i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){list=d;saveLocal();toast("📥 Importiert");}}catch{alert("Fehler beim Import");}};r.readAsText(f);};i.click();};
 $("#downloadJson").onclick=()=>{const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vokabeln.json";a.click();toast("💾 vokabeln.json gespeichert");};
+$("#syncBtn").onclick=syncJson;
 
+// INIT
+list=await loadVokabeln();
 render();
 })();
 </script>
