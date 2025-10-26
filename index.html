@@ -1,298 +1,269 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🎯 Vokabeltrainer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vokabeltrainer – Beeferino</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(180deg,#f3f7fc 0%,#eef2f7 100%);
-  margin: 0; padding: 0;
-  display: flex; justify-content: center;
-  min-height: 100vh;
-}
-.app {
-  width: 95%; max-width: 800px;
-  margin-top: 30px; margin-bottom: 40px;
-  background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(8px);
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-  padding: 25px;
-  text-align: center;
-}
-h1 { font-size: 1.9rem; color: #1e6ed8; margin-bottom: 8px; }
-.divider {
-  width: 60px; height: 3px; background: #1e6ed8;
-  margin: 10px auto 25px; border-radius: 10px;
-}
-select, input {
-  padding: 8px 10px; border-radius: 8px;
-  border: 1px solid #ccc; font-size: 1rem;
-}
-.controls label { margin: 0 10px; }
-.functions {
-  display: flex; flex-wrap: wrap; justify-content: center;
-  gap: 15px; margin-top: 20px;
-}
-.kachel {
-  background: #1e6ed8; color: #fff;
-  padding: 14px 22px; border-radius: 14px;
-  font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-  cursor: pointer; transition: all 0.2s;
-}
-.kachel:hover { background: #2980b9; transform: scale(1.03); }
-.feedback-settings {
-  margin-top: 20px; background: rgba(255,255,255,0.6);
-  padding: 10px; border-radius: 12px; font-size: 0.95rem;
-}
-.progress { margin-top: 10px; font-size: 1rem; color: #333; }
-.trainer {
-  display: none; margin-top: 30px; padding: 25px;
-  border-radius: 16px; background: rgba(255,255,255,0.7);
-  backdrop-filter: blur(6px); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.card {
-  padding: 20px; border-radius: 14px; background: #fff;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.08); margin-bottom: 15px;
-}
-.word { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; }
-.feedback { margin-top: 10px; font-size: 1rem; min-height: 1.5em; }
-button {
-  padding: 10px 16px; border: none; border-radius: 10px;
-  font-size: 1rem; cursor: pointer; margin: 4px;
-}
-#rightBtn { background: #27ae60; color: #fff; }
-#wrongBtn { background: #c0392b; color: #fff; }
-#skipBtn  { background: #bdc3c7; color: #333; }
-#enterBtn { background: #1e6ed8; color: #fff; }
-.footer {
-  margin-top: 30px; display: flex;
-  justify-content: space-between; align-items: center;
-}
-.linkbtn, .restartbtn {
-  display: inline-block; background: #1e6ed8; color: #fff;
-  padding: 10px 16px; border-radius: 10px; text-decoration: none;
-  font-weight: 600; transition: all 0.2s;
-}
-.linkbtn:hover, .restartbtn:hover { background: #2980b9; }
-#lastAddedBox {
-  margin-top: 30px; background: rgba(255,255,255,0.6);
-  border-radius: 12px; padding: 15px; cursor: pointer;
-  text-align: center;
-}
-#lastAddedList {
-  display: none; margin-top: 10px; text-align: center; font-size: 0.95rem;
-}
-#lastAddedList div { margin: 4px 0; }
-#datasourceStatus { margin-top: 10px; font-size: 0.9rem; color: #666; }
-.correct { background-color: #e9fce9 !important; }
-.wrong { background-color: #fdecea !important; }
-.subline { font-size: 0.85rem; color: #888; font-style: italic; margin-top: -8px; }
+  :root {
+    --blue: #2563eb;
+    --blue-dark: #1e3a8a;
+    --bg: #f5f8ff;
+    --card-bg: rgba(255,255,255,0.8);
+    --success: #22c55e;
+    --error: #ef4444;
+    --neutral: #9ca3af;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    background: linear-gradient(145deg,#eff3ff,#dbeafe);
+    margin:0; color:#111827;
+  }
+  .app {
+    max-width:900px; margin:30px auto; padding:20px;
+    background:var(--card-bg);
+    border-radius:20px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.1);
+    backdrop-filter:blur(8px);
+  }
+  h1 {
+    text-align:center; margin:0; font-size:2rem; font-weight:700;
+    color:var(--blue-dark);
+  }
+  .divider {
+    width:160px; height:4px; background:var(--blue);
+    border-radius:4px; margin:10px auto 20px;
+  }
+
+  /* === Menüleiste === */
+  .controls, .functions, .footer-buttons {
+    display:flex; flex-wrap:wrap; justify-content:center; gap:12px;
+    margin-bottom:15px;
+  }
+  select, button {
+    font-family:inherit;
+    font-size:1rem;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+    padding:8px 12px;
+  }
+  .kachel {
+    flex:1 1 250px;
+    background:var(--blue);
+    color:white;
+    padding:14px 20px;
+    border-radius:14px;
+    text-align:center;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    transition:all .2s;
+  }
+  .kachel:hover { transform:translateY(-2px); background:#1d4ed8; }
+
+  /* === Spielbereich === */
+  #stage {
+    display:none;
+    background:rgba(255,255,255,0.9);
+    border-radius:20px;
+    padding:25px;
+    text-align:center;
+    box-shadow:inset 0 0 10px rgba(0,0,0,0.05);
+  }
+  .category {
+    display:inline-block;
+    background:#fff4cc;
+    color:#92400e;
+    font-weight:700;
+    padding:8px 16px;
+    border-radius:999px;
+    margin-bottom:16px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.05);
+  }
+  .word { font-size:1.8rem; font-weight:700; margin:10px 0; }
+  .hint { color:#6b7280; margin-bottom:10px; font-style:italic; }
+  .btn-group { display:flex; justify-content:center; gap:12px; margin-top:10px; flex-wrap:wrap; }
+  .btn {
+    border:none; border-radius:10px; padding:10px 20px; font-weight:600;
+    cursor:pointer; font-size:1rem;
+  }
+  .btn-ok { background:var(--success); color:white; }
+  .btn-wrong { background:var(--error); color:white; }
+  .btn-skip { background:var(--neutral); color:white; }
+
+  /* === Eingabefeld === */
+  .input-row {
+    margin-top:15px;
+    display:flex; justify-content:center; align-items:center; gap:8px;
+  }
+  .input-row input {
+    width:60%; padding:10px 14px;
+    border-radius:10px; border:1px solid #d1d5db;
+    font-size:1rem;
+  }
+  .input-row button {
+    background:var(--blue); color:white; border:none; padding:10px 16px;
+    border-radius:10px; font-weight:600; cursor:pointer;
+  }
+
+  /* === Animation === */
+  .flash-correct { background:#dcfce7 !important; transition:.3s; }
+  .flash-wrong { background:#fee2e2 !important; transition:.3s; }
+
+  .footer { margin-top:25px; text-align:center; font-size:0.9rem; color:#6b7280; }
+  details { background:#f0f4ff; border-radius:10px; padding:10px; cursor:pointer; margin-top:20px; }
+  summary { font-weight:600; }
 </style>
 </head>
 <body>
-<div class="app">
-  <h1>🎯 Vokabeltrainer</h1>
-  <div class="divider"></div>
+  <div class="app">
+    <h1>🎯 Vokabeltrainer</h1>
+    <div class="divider"></div>
 
-  <div class="controls">
-    <label>Kategorie:
-      <select id="category"><option value="Alle">Alle (bunt gemischt)</option></select>
-    </label>
-    <label>Modus:
-      <select id="mode">
-        <option value="toGerman">Englisch → Deutsch</option>
-        <option value="toEnglish">Deutsch → Englisch</option>
-        <option value="mixed">Gemischt</option>
-      </select>
-    </label>
-  </div>
-
-  <div class="functions">
-    <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
-    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
-    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten<br><i style="font-size:0.9rem;">Mitdenker Edition</i></div>
-  </div>
-
-  <div class="feedback-settings">
-    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback</label>
-    <label>Delay:
-      <select id="toastTime">
-        <option value="1000">1 s</option>
-        <option value="3000" selected>3 s</option>
-        <option value="5000">5 s</option>
-      </select>
-    </label>
-  </div>
-
-  <div id="progress" class="progress" style="display:none;"></div>
-
-  <div id="trainer" class="trainer">
-    <div class="card">
-      <div id="word" class="word"></div>
-      <div id="subline" class="subline"></div>
-      <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none;">
-      <button id="enterBtn" style="display:none;">Eingabe</button>
-      <div id="feedback" class="feedback"></div>
-      <div id="cardButtons">
-        <button id="rightBtn" style="display:none;">Richtig</button>
-        <button id="wrongBtn" style="display:none;">Falsch</button>
-        <button id="skipBtn" style="display:none;">Überspringen</button>
-      </div>
+    <div class="controls">
+      <label>Kategorie:
+        <select id="category">
+          <option value="Alle">Alle (gemischt)</option>
+        </select>
+      </label>
+      <label>Modus:
+        <select id="mode">
+          <option value="mixed">Gemischt</option>
+          <option value="toGerman">Englisch → Deutsch</option>
+          <option value="toEnglish">Deutsch → Englisch</option>
+        </select>
+      </label>
+      <label>Delay:
+        <select id="delay">
+          <option value="1000">1s</option>
+          <option value="3000" selected>3s</option>
+          <option value="5000">5s</option>
+        </select>
+      </label>
     </div>
-  </div>
 
-  <div class="footer">
-    <a href="vokabeln.html" class="linkbtn">📘 Vokabeln</a>
-    <button id="restartBtn" class="restartbtn">🔄 Neustart</button>
-  </div>
+    <div class="functions">
+      <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage</div>
+      <div class="kachel" id="last30Btn">📘 Letzte 30</div>
+      <div class="kachel" id="cardsBtn">🧠 Karteikarten <small><i>Mitdenker Edition</i></small></div>
+    </div>
 
-  <div id="lastAddedBox">
-    <h3>🆕 Zuletzt hinzugefügt</h3>
-    <div id="lastAddedList"></div>
-  </div>
+    <div id="progress" style="text-align:center; font-weight:600; margin-bottom:10px;"></div>
 
-  <div id="datasourceStatus">🌐 Datenquelle: GitHub (Online)</div>
-</div>
+    <section id="stage">
+      <div id="categoryChip" class="category"></div>
+      <div id="word" class="word"></div>
+      <div id="mitdenkerHint" class="hint" style="display:none;">Mitdenker Edition – erkenne falsche Paare!</div>
+      <div id="feedback" class="hint"></div>
+      <div class="btn-group">
+        <button class="btn btn-ok" id="btnRight">Richtig</button>
+        <button class="btn btn-wrong" id="btnWrong">Täuschung erkannt</button>
+        <button class="btn btn-skip" id="btnSkip">Überspringen</button>
+      </div>
+      <div class="input-row" id="inputRow" style="display:none;">
+        <input type="text" id="inputAnswer" placeholder="Übersetzung eingeben …">
+        <button id="submitAnswer">Eingabe</button>
+      </div>
+    </section>
+
+    <div class="footer-buttons">
+      <button onclick="window.location='vokabeln.html'">📂 Vokabeln</button>
+      <button onclick="location.reload()">🔄 Neustart</button>
+    </div>
+
+    <details>
+      <summary>🆕 Zuletzt hinzugefügt ▾</summary>
+      <div id="recentList">–</div>
+    </details>
+
+    <div class="footer">© 2025 Beeferino – Online Sync aktiv</div>
+  </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", ()=>{
-  const COLORS={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
-  const NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
-  const cat=document.getElementById("category"), modeSel=document.getElementById("mode"),
-        learn=document.getElementById("learnBtn"), last30=document.getElementById("last30Btn"),
-        cards=document.getElementById("cardsBtn"), trainer=document.getElementById("trainer"),
-        progress=document.getElementById("progress"), word=document.getElementById("word"),
-        feedback=document.getElementById("feedback"), ans=document.getElementById("answerInput"),
-        enter=document.getElementById("enterBtn"), right=document.getElementById("rightBtn"),
-        wrong=document.getElementById("wrongBtn"), skip=document.getElementById("skipBtn"),
-        restart=document.getElementById("restartBtn"), fT=document.getElementById("feedbackToggle"),
-        tT=document.getElementById("toastTime"), status=document.getElementById("datasourceStatus"),
-        subline=document.getElementById("subline");
+(async()=>{
+  const stage=document.getElementById("stage");
+  const catChip=document.getElementById("categoryChip");
+  const word=document.getElementById("word");
+  const mitdenker=document.getElementById("mitdenkerHint");
+  const feedback=document.getElementById("feedback");
+  const btnR=document.getElementById("btnRight");
+  const btnW=document.getElementById("btnWrong");
+  const btnS=document.getElementById("btnSkip");
+  const inputRow=document.getElementById("inputRow");
+  const input=document.getElementById("inputAnswer");
+  const submit=document.getElementById("submitAnswer");
+  const progress=document.getElementById("progress");
 
-  let list=[],round=[],i=0,errors=[],skipped=[],game="learn",mode="mixed",trap=false,correctAns="";
+  let vocab=[], round=[], i=0, errors=[], trap=false, correct="", offered="", askLang="EN", mode="learn";
 
-  async function sync(){
+  async function load(){
     try{
-      const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-      if(!r.ok) throw new Error();
-      list=await r.json(); localStorage.setItem("vokabeln",JSON.stringify(list));
-      status.textContent="🌐 Datenquelle: GitHub (Online)";
-    }catch{
-      list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-      status.textContent="💾 Datenquelle: Lokal";
-    }
-    renderCats(); lastAdded();
+      const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json");
+      vocab=await r.json();
+    }catch{vocab=[["hammer","Hammer","Werkzeugkasten Mechaniker"],["ruler","Maßstab","Grundwerkzeuge Metallverarbeitung"]];}
   }
 
-  function renderCats(){
-    cat.innerHTML='<option value="Alle">Alle (bunt gemischt)</option>';
-    for(const k in NAMES){
-      const o=document.createElement("option");
-      o.value=k; o.textContent=NAMES[k]; o.style.background=COLORS[k]; o.style.color="#fff";
-      cat.appendChild(o);
+  function shuffle(a){for(let j=a.length-1;j>0;j--){const x=Math.floor(Math.random()*(j+1));[a[j],a[x]]=[a[x],a[j]];}}
+  function next(){
+    if(i>=round.length){alert("Fertig! Fehler: "+errors.length);stage.style.display="none";return;}
+    stage.classList.remove("flash-correct","flash-wrong");
+    const [en,de,cat]=round[i];
+    catChip.textContent=cat;
+    askLang=Math.random()<0.5?"EN":"DE";
+    correct=askLang==="EN"?de:en;
+    offered=correct;
+    trap=false;
+    // 30% Täuschung mit falschem Gegenstück anderer Sprache
+    if(mode==="cards" && Math.random()<0.3){
+      const pool=vocab.map(x=>askLang==="EN"?x[1]:x[0]);
+      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===correct);
+      offered=wrong; trap=true;
     }
+    word.textContent=askLang==="EN"?en:de;
+    feedback.innerHTML=(mode==="cards")?"💡 "+offered:"";
+    mitdenker.style.display=mode==="cards"?"block":"none";
+    inputRow.style.display="none";
+    updateProgress();
   }
+  function updateProgress(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`;}
 
-  function flash(cls){ if(!fT.checked)return;
-    const c=document.querySelector(".card"); c.classList.add(cls);
-    setTimeout(()=>c.classList.remove(cls),400);
-  }
-
-  function updateProg(){ progress.style.display="block"; progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`; }
-
-  function shuffle(a){return a.sort(()=>Math.random()-0.5);}
-
-  function start(sel,type,data=null){
-    game=type; mode=sel; trainer.style.display="block";
-    const pool=list.filter(v=>cat.value==="Alle"||v[2]===cat.value);
-    round=data||shuffle(pool).slice(0,15); i=0; errors=[]; skipped=[]; showNext();
-  }
-
-  function showNext(){
-    if(i>=round.length){
-      if(skipped.length){round=skipped;skipped=[];i=0;feedback.textContent="📘 Wiederholung der Fehler";updateProg();showNext();return;}
-      trainer.innerHTML=`<div class="card"><h3>Runde beendet</h3>${errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(e=>`<li>${e[0]} → ${e[1]}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>"}</div>`;
-      progress.style.display="none";return;
+  function flash(ok){stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>stage.classList.remove(ok?"flash-correct":"flash-wrong"),500);}
+  btnR.onclick=()=>{
+    if(mode==="cards"){
+      const ok=!trap;
+      if(!ok)errors.push("Täuschung nicht erkannt");
+      flash(ok);i++;setTimeout(next,parseInt(document.getElementById("delay").value));return;
     }
-
-    const [en,de,catg]=round[i];
-    const color=COLORS[catg]||"#ccc";
-    const askIsEnglish=/^[a-zA-Z\s\-]+$/.test(en)&&!/ä|ö|ü|ß/.test(en);
-    const ask=askIsEnglish?en:de; const answ=askIsEnglish?de:en;
-    correctAns=answ;
-
-    word.innerHTML=`<div style="display:inline-block;padding:5px 12px;border-radius:12px;background:${color};color:#fff;">${NAMES[catg]}</div><br><br><b>${ask}</b>`;
-    subline.textContent=game==="cards"?"Mitdenker Edition – erkenne falsche Paare!":"";
-    feedback.textContent=""; updateProg();
-
-    if(game==="learn"){ ans.style.display="inline-block"; enter.style.display="inline-block";
-      right.style.display="none"; wrong.style.display="none"; skip.style.display="inline-block";
-      ans.value=""; ans.focus();
-      const check=()=>{const ok=ans.value.trim().toLowerCase()===correctAns.toLowerCase();
-        if(fT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! (${correctAns})`;flash(ok?"correct":"wrong");}
-        if(!ok)errors.push([ask,correctAns]); i++; setTimeout(showNext,parseInt(tT.value,10));};
-      ans.onkeydown=e=>{if(e.key==="Enter")check();}; enter.onclick=check;
-      skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
-    }
-
-    else if(game==="cards"){
-      ans.style.display="none"; enter.style.display="none"; right.style.display="inline-block";
-      wrong.style.display="inline-block"; skip.style.display="inline-block";
-
-      trap=Math.random()<0.35; let fake=correctAns;
-      if(trap){let alt;do{const rand=list[Math.floor(Math.random()*list.length)];
-        const isValidPair=(askIsEnglish && !/ä|ö|ü|ß/.test(rand[1])) || (!askIsEnglish && /[äöüß]/.test(rand[1]));
-        alt=askIsEnglish?rand[1]:rand[0];}while(alt===correctAns);fake=alt;}
-      feedback.innerHTML=`💡 <b>${fake}</b>`;
-      const swap=Math.random()<0.5; const parent=document.getElementById("cardButtons");
-      if(swap)parent.insertBefore(wrong,right);else parent.insertBefore(right,wrong);
-
-      right.onclick=()=>{const ok=!trap;
-        if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}
-        if(trap&&ok){feedback.textContent="🧠 Gut erkannt! Gib die richtige Übersetzung ein:";
-          ans.style.display="inline-block";enter.style.display="inline-block";ans.value="";ans.focus();
-          enter.onclick=()=>{const valid=ans.value.trim().toLowerCase()===correctAns.toLowerCase();
-            if(fT.checked){feedback.textContent=valid?"✅ Richtig!":"❌ Falsch!";flash(valid?"correct":"wrong");}
-            if(!valid)errors.push([ask,correctAns]);i++;setTimeout(showNext,parseInt(tT.value,10));};}
-        else{if(!ok)errors.push([ask,correctAns]);i++;setTimeout(showNext,parseInt(tT.value,10));};
+    inputRow.style.display="flex";
+    input.focus();
+  };
+  btnW.onclick=()=>{
+    if(mode!=="cards")return;
+    if(trap){
+      inputRow.style.display="flex";
+      input.focus();
+      submit.onclick=()=>{
+        const ok=input.value.trim().toLowerCase()===correct.toLowerCase();
+        if(!ok)errors.push("Korrektur falsch");
+        flash(ok);i++;setTimeout(next,parseInt(document.getElementById("delay").value));
       };
-      wrong.onclick=()=>{const ok=trap;
-        if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}
-        if(!ok)errors.push([ask,correctAns]);i++;setTimeout(showNext,parseInt(tT.value,10));};
-      skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
+    }else{
+      errors.push("Falsch Täuschung vermutet");
+      flash(false);i++;setTimeout(next,parseInt(document.getElementById("delay").value));
     }
-  }
-
-  function lastAdded(){const box=document.getElementById("lastAddedList");
-    const all=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    if(!all.length){box.textContent="Keine Vokabeln.";return;}
-    const last=all.slice(-5).reverse();
-    box.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${COLORS[v[2]]}">(${NAMES[v[2]]})</span></div>`).join("");
-  }
-
-  document.getElementById("lastAddedBox").onclick=()=>{
-    const l=document.getElementById("lastAddedList");
-    l.style.display=l.style.display==="block"?"none":"block";
   };
+  btnS.onclick=()=>{i++;next();};
 
-  learn.onclick=()=>start(modeSel.value,"learn");
-  cards.onclick=()=>start(modeSel.value,"cards");
-  last30.onclick=()=>{
-    const all=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    if(!all.length){alert("Keine Vokabeln gefunden.");return;}
-    const last=all.slice(-30);
-    if(confirm("Letzte 30 Vokabeln als Karteikarten (OK) oder Abfrage (Abbrechen)?"))
-      start(modeSel.value,"cards",last);
-    else start(modeSel.value,"learn",last);
-  };
-  restart.onclick=()=>location.reload();
+  document.getElementById("learnBtn").onclick=()=>{mode="learn";start();};
+  document.getElementById("cardsBtn").onclick=()=>{mode="cards";start();};
+  document.getElementById("last30Btn").onclick=()=>{if(!vocab.length)return;round=vocab.slice(-30);mode=confirm("Mitdenker Edition?")?"cards":"learn";i=0;start(true);};
 
-  sync();
-});
+  function start(last=false){
+    shuffle(vocab);round=last?round:vocab.slice(0,15);i=0;errors=[];stage.style.display="block";next();
+  }
+  await load();
+})();
 </script>
 </body>
 </html>
