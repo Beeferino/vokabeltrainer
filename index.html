@@ -1,183 +1,190 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🧠 Vokabeltrainer</title>
-  <style>
-    body { font-family: sans-serif; background: #f5f7fa; margin: 0; padding: 20px; text-align: center; }
-    .app { max-width: 700px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
-    h2 { font-size: 1.2rem; margin-top: 1.4rem; color: #555; }
-    button { padding: 10px 14px; margin: 6px; border: none; border-radius: 8px; background: #3498db; color: #fff; font-size: 1rem; cursor: pointer; }
-    button:hover { background: #2980b9; }
-    input { padding: 8px; border: 1px solid #ccc; border-radius: 6px; width: 70%; font-size: 1rem; }
-    .hidden { display: none; }
-    #trainer { margin-top: 25px; }
-    #wordBox { font-size: 1.4rem; margin-bottom: 12px; }
-    #feedback { margin-top: 10px; font-weight: bold; }
-    footer { margin-top: 40px; font-size: 0.9rem; color: #777; }
-    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;}
-    #recentWrapper { margin-top:20px; }
-    #recentHeader { cursor:pointer; font-weight:600; display:inline-block; background:#e9f2ff; color:#004085; padding:8px 12px; border-radius:8px; }
-    #recentList { display:none; background:#fff; border:1px solid #ccd; border-radius:8px; padding:10px; margin-top:6px; max-width:500px; margin-inline:auto; text-align:left; }
-    #recentUl { list-style:none; padding:0; margin:0; }
-    #recentUl li { padding:4px 0; border-bottom:1px dashed #ddd; }
-    #recentUl li:last-child { border-bottom:none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vokabeltrainer</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f7f9fb;
+    margin: 0; padding: 0;
+    text-align: center;
+  }
+  .app {
+    max-width: 600px;
+    margin: 60px auto;
+    background: #fff;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+  h1 { margin-top: 0; color: #222; }
+  p { color: #555; }
+
+  button {
+    display: inline-block;
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 8px;
+  }
+  button:hover { background: #2980b9; }
+
+  a.linkbtn {
+    display: inline-block;
+    padding: 10px 16px;
+    border-radius: 6px;
+    background: #74b9ff;
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 10px;
+  }
+  a.linkbtn:hover { background: #a6d4ff; }
+
+  /* Zuletzt hinzugefügt */
+  #recentBox {
+    margin-top: 25px;
+    background: #f3f6fa;
+    border-radius: 8px;
+    padding: 15px;
+    max-width: 520px;
+    margin-inline: auto;
+    border: 1px solid #e0e5ec;
+  }
+  #recentBox h3 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #333;
+  }
+  #recentList {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0;
+  }
+  #recentList li {
+    padding: 6px 0;
+    border-bottom: 1px dashed #ccc;
+    font-size: 0.95rem;
+  }
+  #recentList li:last-child { border-bottom: none; }
+  .catLabel {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  footer {
+    margin-top: 40px;
+    color: #777;
+    font-size: 0.9rem;
+  }
+</style>
 </head>
 <body>
-  <div class="app">
-    <h1>🧠 Vokabeltrainer</h1>
-    <p>Wähle einen Modus:</p>
-    <button id="startTrainer">📖 Vokabel-Abfrage starten</button>
-    <button id="last30">🕓 Letzte 30 Vokabeln</button>
-    <button id="flashcards">🗂️ Karteikarten spielen</button>
-    <br><br>
-    <a href="vokabeln.html"><button>📘 Vokabelübersicht öffnen</button></a>
+<div class="app">
+  <h1>🧠 Vokabeltrainer</h1>
+  <p>Wähle einen Modus:</p>
 
-    <!-- 🔹 Zuletzt hinzugefügt -->
-    <div id="recentWrapper">
-      <div id="recentHeader">📜 Zuletzt hinzugefügt (anzeigen)</div>
-      <div id="recentList">
-        <ul id="recentUl"></ul>
-      </div>
-    </div>
-
-    <div id="trainer" class="hidden">
-      <div id="wordBox"></div>
-      <input type="text" id="answerInput" placeholder="Übersetzung eingeben...">
-      <br>
-      <button id="checkBtn">Prüfen</button>
-      <button id="skipBtn">Überspringen</button>
-      <div id="feedback"></div>
-    </div>
-
-    <footer>
-      <br>
-      <small>© 2025 @Beefi</small>
-    </footer>
+  <div>
+    <button id="startQuiz">📖 Vokabel-Abfrage starten</button>
+    <button id="last30">⏰ Letzte 30 Vokabeln</button>
+    <button id="cards">🗂️ Karteikarten spielen</button>
   </div>
 
-  <div id="datasourceStatus" aria-live="polite">📂 Datenquelle: wird geprüft…</div>
+  <div style="margin-top:16px;">
+    <a href="vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a>
+  </div>
 
-  <script>
-  (() => {
-    // --- Konstanten ---
-    const CATEGORY_NAMES = { Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker", Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen", HellesPink:"Hydraulik / Pneumatik", Orange:"Elektrotechnik", Dunkelgruen:"Fluggerätemechanik allgemein", Rot:"Verwechslungsgefahr" };
-    const COLOR_MAP = { Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449", HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B" };
+  <!-- Zuletzt hinzugefügt -->
+  <div id="recentBox">
+    <h3>📜 Zuletzt hinzugefügt</h3>
+    <ul id="recentList"><li><em>Keine Vokabeln vorhanden.</em></li></ul>
+  </div>
 
-    const $ = s => document.querySelector(s);
-    const statusEl = $("#datasourceStatus");
+  <footer>© 2025 @Beefi</footer>
+</div>
 
-    const normalize = v => [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-    const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
-    const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
+<script>
+(() => {
+  const CATEGORY_NAMES = {
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein",
+    Rot:"Verwechslungsgefahr"
+  };
+  const COLOR_MAP = {
+    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2",
+    Gruen:"#1E8449", HellesPink:"#F54927", Orange:"#E67E22",
+    Dunkelgruen:"#117A65", Rot:"#C0392B"
+  };
 
-    function keyOf(v){ return `${(v[0]||"").toLowerCase().trim()}|${(v[1]||"").toLowerCase().trim()}`; }
-    function mergeVocabLists(remote, local) {
-      const map=new Map();
-      remote.map(normalize).forEach(v=>map.set(keyOf(v),v));
-      local.map(normalize).forEach(v=>{ if(!map.has(keyOf(v))) map.set(keyOf(v),v); });
-      return Array.from(map.values());
+  const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
+  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
+  const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
+
+  async function trySyncFromJson(){
+    const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
+    let remote=null;
+    for(const u of urls){
+      try{
+        const r=await fetch(u,{cache:"no-store"});
+        if(r.ok){ const d=await r.json(); if(Array.isArray(d)){remote=d;break;} }
+      }catch{}
     }
-
-    async function trySyncFromJson() {
-      const urls = ["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
-      let remote = null;
-      for (const u of urls) {
-        try { const r = await fetch(u, {cache:"no-store"}); if(!r.ok) continue;
-          const d = await r.json(); if(Array.isArray(d)) { remote=d; break; } } catch {}
-      }
-      const local = loadLocal();
-      if (!remote && local.length===0) {
-        const def=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"],["file","Feile","Gelb","","","2025-01-01T00:00:00Z"],["drill","Bohrer","Pink","","","2025-01-01T00:00:00Z"]];
-        saveLocal(def); statusEl.textContent="✨ Standardliste verwendet";
-      } else if (remote) {
-        saveLocal(mergeVocabLists(remote, local));
-        statusEl.textContent="🔄 JSON + lokale Ergänzungen (gemergt)";
-      } else {
-        statusEl.textContent="💾 Lokaler Speicher (Offline)";
-      }
-      vocabList = loadLocal();
-      renderRecent();
+    const local=loadLocal();
+    if(!remote && local.length===0){
+      const def=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"],["file","Feile","Gelb","","","2025-01-01T00:00:00Z"],["drill","Bohrer","Pink","","","2025-01-01T00:00:00Z"]];
+      saveLocal(def);
+    } else if(remote){
+      const merged=merge(remote, local);
+      saveLocal(merged);
     }
+    renderRecent();
+  }
 
-    // === Trainer-Logik ===
-    let vocabList = [];
-    let currentList = [];
-    let currentIndex = 0;
+  function merge(remote, local){
+    const map=new Map();
+    remote.map(normalize).forEach(v=>map.set(v[0].toLowerCase()+"|"+v[1].toLowerCase(),v));
+    local.map(normalize).forEach(v=>{const k=v[0].toLowerCase()+"|"+v[1].toLowerCase();if(!map.has(k))map.set(k,v);});
+    return Array.from(map.values());
+  }
 
-    function startTrainer(mode) {
-      $("#trainer").classList.remove("hidden");
-      currentList = [...vocabList];
-      if (mode === "last30") currentList = vocabList.slice(-30);
-      if (mode === "flashcards") shuffle(currentList);
-      currentIndex = 0;
-      showWord();
+  function renderRecent(){
+    const list=loadLocal();
+    const last=list.slice(-5).reverse();
+    const ul=document.getElementById("recentList");
+    ul.innerHTML="";
+    if(!last.length){
+      ul.innerHTML="<li><em>Keine Vokabeln vorhanden.</em></li>";
+      return;
     }
-
-    function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } }
-
-    function showWord() {
-      if (currentIndex >= currentList.length) {
-        $("#wordBox").textContent = "🎉 Alle Vokabeln durch!";
-        $("#answerInput, #checkBtn, #skipBtn").forEach ? $("#answerInput").disabled = true : null;
-        return;
-      }
-      const [en,de,cat,grp,hint] = currentList[currentIndex];
-      $("#wordBox").innerHTML = `<b>${en}</b><br><small style='color:#666'>(${CATEGORY_NAMES[cat] || cat})</small><br><small>${hint || ""}</small>`;
-      $("#feedback").textContent = "";
-      $("#answerInput").value = "";
-      $("#answerInput").focus();
-    }
-
-    $("#checkBtn").onclick = () => {
-      const answer = $("#answerInput").value.trim().toLowerCase();
-      const correct = currentList[currentIndex][1].toLowerCase();
-      $("#feedback").textContent = (answer === correct)
-        ? "✅ Richtig!"
-        : `❌ Falsch! Richtig: ${currentList[currentIndex][1]}`;
-      currentIndex++;
-      setTimeout(showWord, 1000);
-    };
-
-    $("#skipBtn").onclick = () => { currentIndex++; showWord(); };
-
-    // === Zuletzt hinzugefügt ===
-    function renderRecent() {
-      const list = loadLocal();
-      const ul = document.getElementById("recentUl");
-      ul.innerHTML = "";
-      const last = list.slice(-5).reverse();
-      if (last.length === 0) {
-        ul.innerHTML = "<li><em>Keine Vokabeln vorhanden.</em></li>";
-        return;
-      }
-      last.forEach(([en,de,cat]) => {
-        const color = COLOR_MAP[cat] || "#777";
-        const li = document.createElement("li");
-        li.innerHTML = `<b>${en}</b> – ${de} <span style="color:${color}; font-size:0.9em;">(${CATEGORY_NAMES[cat] || cat})</span>`;
-        ul.appendChild(li);
-      });
-    }
-
-    const header = document.getElementById("recentHeader");
-    const listDiv = document.getElementById("recentList");
-    header.addEventListener("click", () => {
-      const open = listDiv.style.display === "block";
-      listDiv.style.display = open ? "none" : "block";
-      header.textContent = open ? "📜 Zuletzt hinzugefügt (anzeigen)" : "📜 Zuletzt hinzugefügt (verbergen)";
+    last.forEach(([en,de,cat])=>{
+      const li=document.createElement("li");
+      li.innerHTML=`<b>${en}</b> – ${de} <span class="catLabel" style="color:${COLOR_MAP[cat]||"#555"}">(${CATEGORY_NAMES[cat]||cat})</span>`;
+      ul.appendChild(li);
     });
+  }
 
-    // === INIT ===
-    (async function init() {
-      await trySyncFromJson();
-      $("#startTrainer").onclick = () => startTrainer("normal");
-      $("#last30").onclick = () => startTrainer("last30");
-      $("#flashcards").onclick = () => startTrainer("flashcards");
-    })();
-  })();
-  </script>
+  // ===== Navigation / Modi =====
+  function startQuiz(){ window.location.href="vokabeln.html?mode=quiz"; }
+  function startLast30(){ window.location.href="vokabeln.html?mode=last30"; }
+  function startCards(){ window.location.href="vokabeln.html?mode=cards"; }
+
+  document.getElementById("startQuiz").onclick=startQuiz;
+  document.getElementById("last30").onclick=startLast30;
+  document.getElementById("cards").onclick=startCards;
+
+  trySyncFromJson();
+})();
+</script>
 </body>
 </html>
