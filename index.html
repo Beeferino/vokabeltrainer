@@ -3,307 +3,241 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📘 Vokabelübersicht</title>
+<title>🎯 Vokabeltrainer</title>
 <style>
-body{font-family:"Segoe UI",Roboto,sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;color:#111}
-.app{max-width:1100px;margin:auto}
-h1{font-size:1.8rem;margin-bottom:.6rem}
-h2{font-size:1.1rem;margin:0 0 .6rem}
-.section{background:#fff;padding:16px 20px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.08);margin-bottom:18px}
-.flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
-button,input,select{padding:8px 10px;font-size:1rem;border-radius:8px;border:1px solid #ccc;margin:5px}
+body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;color:#111}
+.app{max-width:900px;margin:auto}
+h1{font-size:1.8rem;margin-bottom:1rem}
+button,input,select{font-size:1rem;padding:8px 12px;border-radius:8px;border:1px solid #ccc;margin:5px}
 button{cursor:pointer;background:#2980b9;color:#fff;border:none;transition:background .2s ease,transform .1s ease}
 button:hover{background:#3498db;transform:translateY(-1px)}
-.chip{display:inline-block;padding:5px 10px;border-radius:10px;color:#fff;font-size:.9rem}
-.divider{border:0;border-top:3px solid #e3e7ef;margin:18px 0}
-.subdivider{border:0;border-top:1px solid #e6e9f0;margin:14px 0}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}
-th{background:#eef3ff;cursor:pointer;user-select:none;position:relative}
-th:hover{background:#e2ebff}
-tr:hover{background:#f4f9ff}
-th.sort-asc::after{content:"▲";position:absolute;right:8px;color:#2980b9}
-th.sort-desc::after{content:"▼";position:absolute;right:8px;color:#2980b9}
-.lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0 10px}
-.lexica button{background:#ecf0f1;color:#333;border:1px solid #ccc;font-weight:600;padding:6px 9px;border-radius:8px}
-.lexica button.active{background:#2980b9;color:#fff}
-.pagination{display:flex;justify-content:center;gap:8px;margin-top:10px}
-.pagination button{background:#ecf0f1;color:#333;border:1px solid #ccc;padding:6px 10px}
-.pagination button.active{background:#2980b9;color:#fff}
-#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
-#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.3);min-width:280px;max-width:460px;width:92%}
-#modalContent h3{margin-top:0}
-#modalContent input,#modalContent select{width:100%;box-sizing:border-box;margin:6px 0}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:999}
+.card{position:relative;background:#fff;padding:20px;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,0.1);margin-top:20px;transition:background-color .4s ease}
+.card.correct{background-color:#d4edda}
+.card.wrong{background-color:#f8d7da}
+.word{font-size:1.6rem;margin:20px 0;font-weight:600}
+.feedback{font-size:1.1rem;margin:10px 0;min-height:1.2em}
+.controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;margin-bottom:25px}
+.controls label{display:flex;align-items:center;gap:6px;margin:5px 8px}
+.functions{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin:30px 0 10px}
+.kachel{flex:1 1 300px;max-width:360px;background:linear-gradient(145deg,#fff,#f0f4ff);border-radius:14px;box-shadow:0 3px 6px rgba(0,0,0,0.08);padding:16px;text-align:center;font-size:1.1rem;cursor:pointer;transition:all .25s ease;border:1px solid #dce3ef}
+.kachel:hover{background:linear-gradient(145deg,#e7f1ff,#ffffff);transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,0.12)}
+.feedback-settings{background:#f1f3f6;border-radius:12px;padding:12px 20px;margin:25px auto;max-width:600px;box-shadow:0 2px 5px rgba(0,0,0,0.08);display:flex;flex-wrap:wrap;justify-content:center;gap:15px;align-items:center}
+.progress{margin-top:10px;font-weight:600;font-size:1.05rem;min-height:1.2em}
+#cardButtons{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:15px}
+#rightBtn{background:#2ECC71;color:#fff}
+#wrongBtn{background:#E74C3C;color:#fff}
+#skipBtn{background:#bdc3c7;color:#000}
+.footer{margin-top:30px;font-size:0.95rem;color:#555}
+a.linkbtn{display:inline-block;padding:10px 16px;border-radius:8px;background:#74b9ff;color:#000;text-decoration:none;font-weight:600}
+a.linkbtn:hover{background:#a6d4ff}
 #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none}
-.footer{margin-top:8px;font-size:.95rem;color:#555}
-.last-change{margin-top:12px;font-size:.9rem;color:#555}
-@media(max-width:768px){body{padding:12px}th,td{padding:8px}button,input,select{font-size:.95rem}.section{padding:14px 12px}}
+#lastAddedBox{background:#fff;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,0.1);padding:10px;margin-top:15px;max-width:500px;margin-inline:auto;display:none}
+.last-entry{margin:6px 0}
+.last-entry span{font-weight:600}
+.toggleBtn{background:#ecf0f1;border-radius:8px;padding:8px 12px;cursor:pointer;transition:background .2s ease}
+.toggleBtn:hover{background:#dfe6e9}
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>📘 Vokabelübersicht</h1>
-  <div id="syncBadge" style="font-size:.9rem;color:#555;opacity:.9;margin-bottom:8px;">🔄 JSON wird synchronisiert…</div>
+  <h1>🎯 Vokabeltrainer</h1>
 
-  <!-- A–Z -->
-  <div id="lexica" class="lexica"></div>
+  <div class="controls">
+    <label>Kategorie:
+      <select id="category">
+        <option value="Alle">Alle (bunt gemischt)</option>
+        <option value="Gelb" style="background-color:#F4D03F;color:#fff;"> Grundwerkzeuge Metallverarbeitung</option>
+        <option value="Pink" style="background-color:#E91E63;color:#fff;"> Werkzeugkasten Mechaniker</option>
+        <option value="Blau" style="background-color:#1976D2;color:#fff;"> Blech- / Kunststoffarbeiten</option>
+        <option value="Gruen" style="background-color:#1E8449;color:#fff;"> Drehen / Fräsen</option>
+        <option value="HellesPink" style="background-color:#F54927;color:#fff;"> Hydraulik / Pneumatik</option>
+        <option value="Orange" style="background-color:#E67E22;color:#fff;"> Elektrotechnik</option>
+        <option value="Dunkelgruen" style="background-color:#117A65;color:#fff;"> Fluggerätemechanik allgemein</option>
+        <option value="Rot" style="background-color:#C0392B;color:#fff;"> Verwechslungsgefahr</option>
+      </select>
+    </label>
+    <label>Modus:
+      <select id="mode">
+        <option value="toGerman">Englisch → Deutsch</option>
+        <option value="toEnglish">Deutsch → Englisch</option>
+        <option value="mixed">Gemischt</option>
+      </select>
+    </label>
+  </div>
 
-  <!-- Filter & Suche -->
-  <div class="section">
-    <h2>🔍 Filter & Suche</h2>
-    <div class="flex">
-      <label>Kategorie:
-        <select id="filterCat">
-          <option value="Alle">Alle (bunt gemischt)</option>
-        </select>
-      </label>
-      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
-      <button id="resetFilter">🔄 Filter zurücksetzen</button>
+  <div class="functions">
+    <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
+    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
+    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten</div>
+  </div>
+
+  <div class="feedback-settings">
+    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
+    <label>Feedback-Dauer:
+      <select id="toastTime">
+        <option value="3000" selected>3 s</option>
+        <option value="5000">5 s</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="progress" id="progress" style="display:none;"></div>
+
+  <div id="trainer" style="display:none;">
+    <div class="card" id="card">
+      <div id="word" class="word"></div>
+      <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none;">
+      <div id="feedback" class="feedback"></div>
+      <div id="cardButtons">
+        <button id="rightBtn" style="display:none;">Richtig</button>
+        <button id="wrongBtn" style="display:none;">Falsch</button>
+        <button id="skipBtn" style="display:none;">Überspringen</button>
+      </div>
     </div>
+    <button id="restartBtn" style="margin-top:10px;">🔄 Neustart</button>
   </div>
 
-  <!-- Tabelle -->
-  <div class="section">
-    <h2>📄 Vokabelliste</h2>
-    <table id="vokabelTable">
-      <thead>
-        <tr>
-          <th data-col="0">Englisch</th>
-          <th data-col="1">Deutsch</th>
-          <th data-col="2">Kategorie</th>
-          <th style="width:110px;">Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="pagination" class="pagination"></div>
-    <div id="infoFooter" style="margin-top:6px;font-size:.95rem;color:#555;"></div>
-  </div>
-
-  <!-- Neue Vokabel -->
-  <div class="section">
-    <h2>➕ Neue Vokabel hinzufügen</h2>
-    <div class="flex">
-      <input id="newEn" type="text" placeholder="Englisch">
-      <input id="newDe" type="text" placeholder="Deutsch">
-      <select id="newCat"></select>
-      <input id="newGroup" type="text" placeholder="Gruppe / Variante">
-      <input id="newHint" type="text" placeholder="Hinweis">
-      <button id="addBtn">Hinzufügen</button>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- JSON / Sync -->
-  <div class="section">
-    <h2>💾 JSON & Synchronisierung</h2>
-    <div class="flex">
-      <button id="syncBtn">🔄 Von GitHub neu laden (Merge)</button>
-      <button id="downloadBtn" disabled>💾 Aktualisierte vokabeln.json herunterladen</button>
-    </div>
-    <div class="subdivider"></div>
-    <div id="syncInfo" style="font-size:.95rem;color:#555;">Quelle: – | Letzter Abgleich: –</div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- Zuletzt hinzugefügt -->
-  <div class="section">
-    <h2>🧾 Zuletzt hinzugefügt</h2>
-    <div id="lastAdded">–</div>
-  </div>
+  <div id="result" style="display:none;" class="card"></div>
 
   <div class="footer">
-    <button onclick="window.location.href='/vokabeltrainer/index.html'">⬅️ Zurück zum Trainer</button>
-    <div class="last-change" id="lastChange">📅 Letzte Änderung: –</div>
-    <p>© 2025 @Beefi</p>
+    <a href="/vokabeltrainer/vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a>
+    <br><br>
+    <div class="toggleBtn" id="toggleLast">📜 Zuletzt hinzugefügt (anzeigen)</div>
+    <div id="lastAddedBox"></div>
+    <br>
+    <small>© 2025 @Beefi</small>
   </div>
 </div>
 
-<!-- Modal: Details / Bearbeiten -->
-<div id="modal">
-  <div id="modalContent">
-    <h3>🔍 Vokabel-Details</h3>
-    <input id="editEn" type="text" placeholder="Englisch" readonly>
-    <input id="editDe" type="text" placeholder="Deutsch" readonly>
-    <select id="editCat" disabled></select>
-    <input id="editGroup" type="text" placeholder="Gruppe / Variante" readonly>
-    <input id="editHint" type="text" placeholder="Hinweis" readonly>
-    <div class="flex" style="margin-top:6px;">
-      <button id="toggleEdit">🔧 Bearbeiten</button>
-      <button id="closeModal">❌ Schließen</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast" class="toast">Gespeichert</div>
-<div id="datasourceStatus" aria-live="polite">🔄 JSON + lokale Ergänzungen (gemergt)</div>
+<div id="datasourceStatus" aria-live="polite">💾 Datenquelle: Lokaler Speicher</div>
 
 <script>
 (() => {
   const REMOTE_JSON_URL = '/vokabeltrainer/vokabeln.json';
-  const CATEGORY_NAMES = {
-    Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen",
-    HellesPink:"Hydraulik / Pneumatik", Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein", Rot:"Verwechslungsgefahr"
-  };
-  const COLOR_MAP = {Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
+  const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
+  const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 
-  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-  const toast=(m,c="#2ecc71")=>{const t=$("#toast");t.textContent=m;t.style.background=c;t.style.display="block";setTimeout(()=>t.style.display="none",1500);};
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-  const key=v=>`${(v[0]||"").toLowerCase()}|${(v[1]||"").toLowerCase()}`;
-  const loadLocal=()=> (JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalize);
-  const saveLocal=(ls)=>{localStorage.setItem("vokabeln",JSON.stringify(ls));localStorage.setItem("vokabeln_updated",new Date().toISOString());};
-  const setLastChange=()=>{$("#lastChange").textContent=`📅 Letzte Änderung: ${new Date(localStorage.getItem("vokabeln_updated")||Date.now()).toLocaleString("de-DE")}`;}
+  const statusEl=document.getElementById('datasourceStatus');
+  function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+  function saveLocal(v){localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
+  function merge(remote,local){const map=new Map();remote.forEach(v=>map.set((v[0]+v[1]).toLowerCase(),v));local.forEach(v=>map.set((v[0]+v[1]).toLowerCase(),v));return Array.from(map.values());}
 
-  let state={list:[],filtered:[],page:1,perPage:15,sortCol:0,sortAsc:true,letter:"Alle",filterCat:"Alle",search:""};
-  let editIndex=null;
-
-  function merge(remote,local){const map=new Map();remote.map(normalize).forEach(v=>map.set(key(v),v));local.map(normalize).forEach(v=>map.set(key(v),v));return [...map.values()];}
-
-  async function fetchRemote(){
-    try{const r=await fetch(REMOTE_JSON_URL,{cache:"no-store"}); if(!r.ok) throw 0; const j=await r.json(); return Array.isArray(j)?j:[];}catch{return null;}
-  }
-  function enableDownloadMerged(list){
-    const btn=$("#downloadBtn"); btn.disabled=false;
-    const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});
-    const url=URL.createObjectURL(blob);
-    btn.onclick=()=>{const a=document.createElement("a");a.href=url;a.download="vokabeln.json";a.click();};
-  }
-
-  function fillCat(sel){
-    sel.innerHTML="";
-    for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);}
-  }
-
-  function renderLexica(){
-    const letters=["Alle",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], lx=$("#lexica"); lx.innerHTML="";
-    letters.forEach(l=>{const b=document.createElement("button");b.textContent=l; if(l===state.letter)b.classList.add("active"); b.onclick=()=>{state.letter=l;state.page=1;renderTable();renderLexica();}; lx.appendChild(b);});
-  }
-
-  function applyFilterSort(){
-    const s=state.search.toLowerCase();
-    let arr=state.list.filter(([en,de,cat])=>{
-      if(state.letter!=="Alle" && !en.toUpperCase().startsWith(state.letter)) return false;
-      if(state.filterCat!=="Alle" && cat!==state.filterCat) return false;
-      if(s && !(en.toLowerCase().includes(s) || de.toLowerCase().includes(s))) return false;
-      return true;
-    });
-    arr.sort((a,b)=>{const x=(a[state.sortCol]||"").toLowerCase(),y=(b[state.sortCol]||"").toLowerCase(); if(x<y)return state.sortAsc?-1:1; if(x>y)return state.sortAsc?1:-1; return 0;});
-    state.filtered=arr;
-  }
-
-  function renderTable(){
-    applyFilterSort();
-    const pages = Math.max(1, Math.ceil(state.filtered.length/state.perPage));
-    if(state.page>pages) state.page=pages;
-    const start=(state.page-1)*state.perPage;
-    const rows=state.filtered.slice(start,start+state.perPage);
-
-    const tb=$("#vokabelTable tbody"); tb.innerHTML="";
-    rows.forEach(v=>{
-      const i=state.list.indexOf(v); const [en,de,cat]=v;
-      const tr=document.createElement("tr");
-      tr.innerHTML=`<td>${en}</td><td>${de}</td><td><span class="chip" style="background:${COLOR_MAP[cat]}">${CATEGORY_NAMES[cat]}</span></td><td><button class="viewBtn" data-i="${i}">🔍</button> <button class="delBtn" data-i="${i}">🗑️</button></td>`;
-      tb.appendChild(tr);
-    });
-
-    const pg=$("#pagination"); pg.innerHTML="";
-    for(let p=1;p<=pages;p++){const b=document.createElement("button");b.textContent=p; if(p===state.page)b.classList.add("active"); b.onclick=()=>{state.page=p;renderTable();}; pg.appendChild(b);}
-
-    $("#infoFooter").textContent=`📚 Gesamt: ${state.list.length} | 🔎 Gefiltert: ${state.filtered.length} | 📄 Seite ${state.page}/${pages}`;
-
-    $$(".viewBtn").forEach(b=>b.onclick=()=>openView(parseInt(b.dataset.i)));
-    $$(".delBtn").forEach(b=>b.onclick=()=>onDelete(parseInt(b.dataset.i)));
-  }
-
-  function renderLastAdded(){
-    const div=$("#lastAdded"); if(!state.list.length){div.textContent="Keine Vokabeln vorhanden.";return;}
-    const last=state.list.slice(-5).reverse();
-    div.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${COLOR_MAP[v[2]]}">(${CATEGORY_NAMES[v[2]]})</span></div>`).join("");
-  }
-
-  function updateSortHeaders(){
-    $$("th[data-col]").forEach(th=>th.classList.remove("sort-asc","sort-desc"));
-    const a=$(`th[data-col="${state.sortCol}"]`); if(a) a.classList.add(state.sortAsc?"sort-asc":"sort-desc");
-  }
-
-  // Modal
-  function setReadonlyModal(r){$("#editEn").readOnly=r;$("#editDe").readOnly=r;$("#editGroup").readOnly=r;$("#editHint").readOnly=r;$("#editCat").disabled=r;}
-  function openView(i){
-    editIndex=i; const [en,de,cat,grp,hint]=state.list[i];
-    $("#editEn").value=en; $("#editDe").value=de; $("#editCat").value=cat; $("#editGroup").value=grp||""; $("#editHint").value=hint||"";
-    setReadonlyModal(true); $("#toggleEdit").textContent="🔧 Bearbeiten"; $("#modal").style.display="flex";
-  }
-  $("#toggleEdit").onclick=()=>{
-    if($("#toggleEdit").textContent.includes("Bearbeiten")){ setReadonlyModal(false); $("#toggleEdit").textContent="💾 Speichern"; }
-    else{
-      const v=state.list[editIndex];
-      v[0]=$("#editEn").value.trim(); v[1]=$("#editDe").value.trim(); v[2]=$("#editCat").value;
-      v[3]=$("#editGroup").value.trim(); v[4]=$("#editHint").value.trim(); v[5]=new Date().toISOString();
-      saveLocal(state.list); setLastChange(); renderTable(); renderLastAdded(); enableDownloadMerged(state.list); toast("💾 Gespeichert");
-      setReadonlyModal(true); $("#toggleEdit").textContent="🔧 Bearbeiten";
+  async function tryLoadFromJson(){
+    try{
+      const r=await fetch(REMOTE_JSON_URL,{cache:'no-store'});
+      if(!r.ok) throw 0;
+      const data=await r.json();
+      if(Array.isArray(data)){ const merged=merge(data, loadLocal()); saveLocal(merged); statusEl.textContent='📂 Quelle: GitHub JSON (gemergt)'; return true; }
+      throw 0;
+    }catch{
+      statusEl.textContent = '💾 Quelle: Lokaler Speicher';
+      if(!localStorage.getItem('vokabeln')){ const def=[["hammer","Hammer","Pink"],["file","Feile","Gelb"]]; saveLocal(def); }
+      return false;
     }
-  };
-  $("#closeModal").onclick=()=>$("#modal").style.display="none";
-
-  function onDelete(i){
-    if(!confirm("Diese Vokabel löschen?")) return;
-    state.list.splice(i,1); saveLocal(state.list); setLastChange(); renderTable(); renderLastAdded(); enableDownloadMerged(state.list); toast("🗑️ Gelöscht","#e74c3c");
   }
 
-  // Add
-  $("#addBtn").onclick=()=>{
-    const en=$("#newEn").value.trim(), de=$("#newDe").value.trim(), cat=$("#newCat").value, grp=$("#newGroup").value.trim(), hint=$("#newHint").value.trim();
-    if(!en||!de||!cat) return alert("Bitte Englisch, Deutsch und Kategorie ausfüllen.");
-    state.list.push([en,de,cat,grp,hint,new Date().toISOString()]);
-    saveLocal(state.list); setLastChange(); $("#newEn").value=$("#newDe").value=$("#newGroup").value=$("#newHint").value="";
-    renderTable(); renderLastAdded(); enableDownloadMerged(state.list); toast("➕ Hinzugefügt");
-  };
+  const catSel=document.getElementById("category"),modeSel=document.getElementById("mode"),
+        feedbackToggle=document.getElementById("feedbackToggle"),toastSel=document.getElementById("toastTime"),
+        learnBtn=document.getElementById("learnBtn"),cardsBtn=document.getElementById("cardsBtn"),
+        last30Btn=document.getElementById("last30Btn"),restartBtn=document.getElementById("restartBtn"),
+        wordDiv=document.getElementById("word"),feedback=document.getElementById("feedback"),
+        rightBtn=document.getElementById("rightBtn"),wrongBtn=document.getElementById("wrongBtn"),
+        skipBtn=document.getElementById("skipBtn"),progress=document.getElementById("progress"),
+        trainer=document.getElementById("trainer"),result=document.getElementById("result"),
+        answerInput=document.getElementById("answerInput"),card=document.getElementById("card");
 
-  // Filter / Suche / Sort
-  $("#filterCat").onchange=e=>{state.filterCat=e.target.value;state.page=1;renderTable();};
-  $("#searchInput").oninput=e=>{state.search=e.target.value.trim().toLowerCase();state.page=1;renderTable();};
-  $("#resetFilter").onclick=()=>{state.search="";$("#searchInput").value="";state.filterCat="Alle";$("#filterCat").value="Alle";state.letter="Alle";renderLexica();state.page=1;renderTable();};
-  $$("th[data-col]").forEach(th=>th.onclick=()=>{const col=parseInt(th.dataset.col); if(state.sortCol===col)state.sortAsc=!state.sortAsc; else{state.sortCol=col;state.sortAsc=true;} updateSortHeaders(); renderTable();});
+  let list=[],round=[],index=0,errors=[],skipped=[],mode="mixed",category="Alle",gameMode="learn",currentAnswer="",isTrap=false;
 
-  // Sync
-  async function initialSync(){
-    $("#syncBadge").textContent="🔄 JSON wird synchronisiert…";
-    const remote=await fetchRemote();
-    const local = loadLocal();
-    let source="";
-    if(remote){ state.list=merge(remote,local); source="GitHub + Lokal (gemergt)"; }
-    else { state.list=local; source="Lokal (offline)"; }
-    saveLocal(state.list); setLastChange();
+  function flash(cls){ if(!feedbackToggle.checked) return; card.classList.add(cls); setTimeout(()=>card.classList.remove(cls),400); }
+  function updateProgress(){ progress.style.display="block"; progress.textContent=`Frage ${index+1}/${round.length} | Fehler: ${errors.length}`; }
 
-    // UI
-    renderLexica();
-    renderTable();
+  function startRound(selectedMode,type,custom=null){
+    list=loadLocal(); category=catSel.value; mode=selectedMode; gameMode=type;
+    let f=(category==="Alle")?list:list.filter(v=>v[2]===category);
+    if(custom) f=custom;
+    f=f.slice(); f.sort(()=>Math.random()-0.5);
+    round=f.slice(0,15);
+    index=0; errors=[]; skipped=[];
+    result.style.display="none"; trainer.style.display="block"; feedback.textContent="";
+    updateProgress(); showNext();
+  }
+
+  function showNext(){
+    if(index>=round.length){
+      if(skipped.length>0){ round=skipped; skipped=[]; index=0; feedback.textContent="📘 Jetzt die übersprungenen Vokabeln!"; updateProgress(); showNext(); return; }
+      trainer.style.display="none"; progress.style.display="none";
+      let html=`<h3>Runde beendet</h3>`;
+      if(errors.length===0) html+="<p>Keine Fehler 🎉</p>";
+      else { html+=`<p>${errors.length} Fehler:</p><ul>`; errors.forEach(([q,a])=>html+=`<li>${q} → ${a}</li>`); html+="</ul>"; }
+      html+="<button onclick='location.reload()'>🔄 Neue Runde</button>";
+      result.innerHTML=html; result.style.display="block"; return;
+    }
+
+    updateProgress();
+    const [en,de,cat]=round[index];
+    let ask,answer;
+    if(mode==="toGerman"){ask=en;answer=de;}
+    else if(mode==="toEnglish"){ask=de;answer=en;}
+    else{ if(Math.random()<0.5){ask=en;answer=de;} else {ask=de;answer=en;} }
+    const catColor=COLOR_MAP[cat]||"#ccc";
+    wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${({Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"})[cat]}</div><br><br><b>${ask}</b>`;
+    feedback.textContent="";
+
+    if(gameMode==="learn"){
+      answerInput.style.display="inline-block"; rightBtn.style.display="none"; wrongBtn.style.display="none"; skipBtn.style.display="inline-block";
+      answerInput.value=""; answerInput.focus();
+      answerInput.onkeydown=e=>{
+        if(e.key==="Enter"){
+          const correct=answerInput.value.trim().toLowerCase()===answer.toLowerCase();
+          if(feedbackToggle.checked){ feedback.textContent=correct?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answer}`; flash(correct?"correct":"wrong"); }
+          if(!correct) errors.push([ask,answer]);
+          index++;
+          const delay=parseInt(toastSel.value||"3000");
+          setTimeout(showNext, feedbackToggle.checked?delay:0);
+        }
+      };
+      skipBtn.onclick=function(){ skipped.push([en,de,cat]); index++; showNext(); };
+    } else if(gameMode==="cards"){
+      answerInput.style.display="none"; rightBtn.style.display="inline-block"; wrongBtn.style.display="inline-block"; skipBtn.style.display="inline-block";
+      isTrap=Math.random()<0.3;
+      currentAnswer=isTrap?getRandomWrongAnswer(answer):answer;
+      const qMark=isTrap?"<div style='position:absolute;top:10px;right:15px;font-size:1.3rem;color:#888;'>❓</div>":"";
+      feedback.innerHTML=`💡 <b>${currentAnswer}</b>`;
+      wordDiv.innerHTML=`${qMark}<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${({Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"})[cat]}</div><br><br><b>${ask}</b>`;
+      rightBtn.onclick=function(){ const correct=!isTrap; if(feedbackToggle.checked){ feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!"; flash(correct?"correct":"wrong"); } if(!correct) errors.push([ask,answer]); index++; const delay=parseInt(toastSel.value||"3000"); setTimeout(showNext, feedbackToggle.checked?delay:0); };
+      wrongBtn.onclick=function(){ const correct=isTrap;  if(feedbackToggle.checked){ feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!"; flash(correct?"correct":"wrong"); } if(!correct) errors.push([ask,answer]); index++; const delay=parseInt(toastSel.value||"3000"); setTimeout(showNext, feedbackToggle.checked?delay:0); };
+      skipBtn.onclick=function(){ skipped.push([en,de,cat]); index++; showNext(); };
+    }
+  }
+
+  function getRandomWrongAnswer(correct){ const pool=loadLocal().map(v=>v[1]); let w; do{ w=pool[Math.floor(Math.random()*pool.length)]||correct; }while(w===correct); return w; }
+
+  // Buttons
+  document.getElementById("toggleLast").onclick=()=>{
+    const box=document.getElementById("lastAddedBox");
+    box.style.display=box.style.display==="block"?"none":"block";
+    document.getElementById("toggleLast").textContent = box.style.display==="block" ? "📜 Zuletzt hinzugefügt (verbergen)" : "📜 Zuletzt hinzugefügt (anzeigen)";
     renderLastAdded();
-    // Dropdowns
-    fillCat($("#newCat")); fillCat($("#editCat"));
-    // Filter-Kategorien
-    const f=$("#filterCat"); f.innerHTML="<option value='Alle'>Alle (bunt gemischt)</option>";
-    for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";f.appendChild(o);}
-    updateSortHeaders();
-
-    // Badges
-    $("#datasourceStatus").textContent = remote ? "📂 Datenquelle: GitHub JSON (gemergt mit lokalen Änderungen)" : "💾 Datenquelle: Lokaler Speicher (offline)";
-    $("#syncInfo").textContent = `Quelle: ${source} | Letzter Abgleich: ${new Date().toLocaleString("de-DE")}`;
-    $("#syncBadge").textContent = `✅ Synchronisiert – Quelle: ${source}`;
-
-    // Download aktivieren
-    enableDownloadMerged(state.list);
+  };
+  function renderLastAdded(){
+    const data=loadLocal(); const div=document.getElementById("lastAddedBox");
+    if(!data.length){div.textContent="Keine Vokabeln vorhanden.";return;}
+    const last=data.slice(-10).reverse();
+    div.innerHTML=last.map(v=>`<div class='last-entry'><span>${v[0]}</span> – ${v[1]} <small style='color:${COLOR_MAP[v[2]]}'>(${({Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"})[v[2]]})</small></div>`).join("");
   }
-  $("#syncBtn").onclick=async()=>{ $("#syncBadge").textContent="🔄 JSON wird synchronisiert…"; await initialSync(); toast("🔄 JSON neu geladen & gemergt"); };
 
-  // Start
-  initialSync();
+  document.getElementById("learnBtn").onclick=()=>startRound(document.getElementById("mode").value,"learn");
+  document.getElementById("cardsBtn").onclick=()=>startRound(document.getElementById("mode").value,"cards");
+  document.getElementById("last30Btn").onclick=()=>{
+    const all=loadLocal(); if(all.length===0) return alert("Keine Vokabeln vorhanden.");
+    const last30=all.slice(-30);
+    const choice=confirm("🧠 Karteikarten (OK) oder ✍️ Schreiben (Abbrechen)?");
+    startRound(document.getElementById("mode").value, choice?"cards":"learn", last30);
+  };
+  document.getElementById("restartBtn").onclick=()=>location.reload();
+
+  // Init
+  (async function(){ await tryLoadFromJson(); renderLastAdded(); })();
 })();
 </script>
 </body>
