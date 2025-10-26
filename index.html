@@ -5,44 +5,147 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vokabeltrainer – Beeferino</title>
 <style>
-:root{--blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--glass:rgba(255,255,255,.88);--ok:#22c55e;--bad:#ef4444;--muted:#9ca3af}
+:root{
+  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
+  --glass:rgba(255,255,255,.88);
+  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
-.app{max-width:960px;margin:32px auto;padding:22px;background:var(--glass);border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)}
-h1{margin:0;text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
-.controls,.functions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  color:var(--ink)
+}
+.app{
+  max-width:960px;margin:32px auto;
+  padding:22px;background:var(--glass);
+  border-radius:22px;
+  box-shadow:0 10px 32px rgba(0,0,0,.10);
+  backdrop-filter:blur(8px)
+}
+h1{
+  margin:0;text-align:center;
+  font-size:2rem;font-weight:800;color:#1e3a8a
+}
+.hr{
+  width:160px;height:4px;background:var(--blue);
+  border-radius:4px;margin:10px auto 20px
+}
+.controls,.functions{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:12px
+}
 .controls label{display:flex;align-items:center;gap:6px}
-select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem}
-.kachel{flex:1 1 240px;text-align:center;background:var(--blue);color:#fff;padding:14px 18px;border-radius:14px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(37,99,235,.25);transition:transform .15s,background .15s}
+select{
+  padding:8px 12px;border:1px solid #d1d5db;
+  border-radius:10px;font-size:1rem
+}
+.kachel{
+  flex:1 1 240px;text-align:center;
+  background:var(--blue);color:#fff;
+  padding:14px 18px;border-radius:14px;
+  font-weight:700;cursor:pointer;
+  box-shadow:0 6px 16px rgba(37,99,235,.25);
+  transition:transform .15s,background .15s
+}
 .kachel small{font-weight:600;opacity:.9}
 .kachel:hover{transform:translateY(-1px);background:var(--blue2)}
 .progress{text-align:center;font-weight:700;margin:8px 0 12px;min-height:1.2em}
-#stage{display:none;margin-top:14px;padding:28px;border-radius:20px;background:rgba(255,255,255,.95);box-shadow:inset 0 0 10px rgba(0,0,0,.05);text-align:center}
+#stage{
+  display:none;margin-top:14px;padding:28px;border-radius:20px;
+  background:rgba(255,255,255,.95);
+  box-shadow:inset 0 0 10px rgba(0,0,0,.05);
+  text-align:center
+}
 .chip{display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:10px}
 .word{font-size:1.9rem;font-weight:800;margin:8px 0 6px}
 .offer{font-size:1.1rem;color:#1f2937;margin:6px 0 12px;min-height:1.3em}
 .btnrow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-.btn{border:none;border-radius:12px;padding:10px 20px;font-weight:700;font-size:1rem;cursor:pointer}
-.ok{background:var(--ok);color:#fff}.bad{background:var(--bad);color:#fff}.skip{background:var(--muted);color:#fff}
-.inprow{display:none;gap:8px;justify-content:center;margin-top:12px}
-.inprow input{width:60%;min-width:260px;padding:10px 14px;border:1px solid #d1d5db;border-radius:12px;font-size:1rem}
-.inprow button{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700}
-.flash-correct{animation:good .4s}.flash-wrong{animation:bad .4s}
+.btn{
+  border:none;border-radius:12px;padding:10px 20px;
+  font-weight:700;font-size:1rem;cursor:pointer
+}
+.ok{background:var(--ok);color:#fff}
+.bad{background:var(--bad);color:#fff}
+.skip{background:var(--muted);color:#fff}
+.inprow{
+  display:none;gap:8px;justify-content:center;margin-top:12px
+}
+.inprow input{
+  width:60%;min-width:260px;padding:10px 14px;
+  border:1px solid #d1d5db;border-radius:12px;font-size:1rem
+}
+.inprow button{
+  background:var(--blue);color:#fff;border:none;
+  border-radius:12px;padding:10px 16px;font-weight:700
+}
+.flash-correct{animation:good .4s}
+.flash-wrong{animation:bad .4s}
 @keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
 @keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
-.footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
-.footer-actions a,.footer-actions button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
-.feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
-.trenner{height:2px;width:80%;margin:40px auto 10px;background:linear-gradient(90deg,#e5e7eb,#c7d2fe,#e5e7eb);border-radius:2px}
-details.recent-section{background:#f8faff;border-radius:16px;padding:14px 20px;margin-top:16px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.05);transition:all .3s ease}
-details.recent-section[open]{background:#fff;box-shadow:0 4px 22px rgba(0,0,0,.08)}
-details.recent-section summary{font-weight:700;font-size:1.1rem;color:#1f2937;cursor:pointer;list-style:none;text-transform:uppercase;transition:color .3s ease}
+.footer-actions{
+  display:flex;justify-content:space-between;
+  gap:12px;margin-top:24px
+}
+.footer-actions a,.footer-actions button{
+  background:#eaf0ff;border:1px solid #dbe3ff;
+  color:#1f2937;padding:10px 14px;border-radius:12px;
+  font-weight:700;cursor:pointer;text-decoration:none
+}
+.feedback-toggle{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;margin-bottom:10px
+}
+
+/* --- Stylischer Trenner & Section --- */
+.trenner{
+  height:3px;width:60%;margin:50px auto 20px;
+  background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
+  border-radius:2px;animation:shine 5s linear infinite
+}
+@keyframes shine{
+  0%{background-position:0 0}
+  100%{background-position:400px 0}
+}
+details.recent-section{
+  background:rgba(255,255,255,.9);
+  border-radius:20px;padding:22px;
+  margin-top:10px;text-align:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.08);
+  backdrop-filter:blur(12px);
+  transition:all .3s ease;
+}
+details.recent-section[open]{
+  background:rgba(255,255,255,1);
+  box-shadow:0 10px 32px rgba(0,0,0,.12);
+}
+details.recent-section summary{
+  font-weight:800;font-size:1.15rem;color:#1e3a8a;
+  cursor:pointer;list-style:none;
+  letter-spacing:.5px;text-transform:uppercase;
+  transition:color .3s ease;
+}
 details.recent-section summary:hover{color:#2563eb}
-#recent{margin-top:18px;text-align:center;line-height:1.8;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;transition:opacity .4s ease}
-.recent-item{display:inline-block;min-width:160px;border-radius:12px;padding:10px 16px;color:#111827;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:transform .2s ease,box-shadow .2s ease}
-.recent-item:hover{transform:translateY(-2px);box-shadow:0 3px 10px rgba(0,0,0,.18)}
-.recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px}
+#recent{
+  margin-top:18px;text-align:center;line-height:1.8;
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:12px;transition:opacity .4s ease;
+}
+.recent-item{
+  display:inline-block;min-width:160px;
+  border-radius:14px;padding:12px 18px;
+  font-weight:700;color:#111827;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.recent-item:hover{
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
+}
+.recent-item small{
+  display:block;font-weight:500;font-size:.85rem;
+  margin-top:4px;opacity:.8
+}
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 @media (hover:none){.kachel:active{transform:scale(.98)}}
 </style>
@@ -160,48 +263,23 @@ function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random
 function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
 function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
 function showStage(show){stage.style.display=show?"block":"none";}
-
-function flash(ok){
-  if(!chkFeedback.checked){i++;return next();}
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);
-}
-
-function randomizeButtons(){
-  const buttons=[btnRight,btnDec,btnSkip];
-  const order=[0,1,2].sort(()=>Math.random()-0.5);
-  rowButtons.innerHTML="";
-  order.forEach(idx=>rowButtons.appendChild(buttons[idx]));
-}
+function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
+function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
 
 function next(){
   if(i>=round.length){
-    if(errorsList.length>0){
-      alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);
-      round=errorsList.map(v=>v);
-      errorsList=[];
-      i=0;
-      btnSkip.style.display="none";
-      next();
-      return;
-    }else{
-      showStage(false);
-      alert(`🎉 Runde beendet – alles korrekt!`);
-      return;
-    }
+    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
+    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
   }
-
   delay=parseInt(selDelay.value,10);
   const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
   chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
-
   const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
   const question=askEN?en:de;
   const answer=askEN?de:en;
   correct=answer;
   q.textContent=question;
-
   if(game==="cards"){
     trap=false;
     if(Math.random()<0.3){
@@ -209,39 +287,24 @@ function next(){
       let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
       offer.textContent="💡 "+wrong;trap=true;
     }else offer.textContent="💡 "+answer;
-    rowButtons.style.display="flex";
-    rowInput.style.display="none";
-    inp.value="";
-    randomizeButtons();
+    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
   }else{
-    offer.textContent="";
-    trap=false;
-    rowButtons.style.display="flex";
-    btnRight.style.display="none";
-    btnDec.style.display="none";
-    btnSkip.style.display="inline-block";
-    rowInput.style.display="flex";
-    inp.value="";inp.focus();
+    offer.textContent="";trap=false;
+    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
+    rowInput.style.display="flex";inp.value="";inp.focus();
   }
   setProg();showStage(true);
 }
 
-/* Buttons */
 btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
 btnDec.onclick=()=>{if(game!=="cards")return;if(trap){rowInput.style.display="flex";inp.focus();}else{errorsList.push(round[i]);flash(false);}};
 btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
 btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
 inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
 
-/* Spielstart */
 btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
 btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
-btnLast30.onclick=()=>{
-  const l=data.slice(-30);
-  if(!l.length)return alert("Keine Vokabeln vorhanden");
-  game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
-  round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();
-};
+btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
 loadData();
 })();
 </script>
