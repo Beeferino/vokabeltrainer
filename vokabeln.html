@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -11,7 +10,10 @@ body{font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:
 h1{font-size:1.8rem;margin-bottom:1rem;}
 table{width:100%;border-collapse:collapse;margin-top:15px;}
 th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;}
-th{background:#eef3ff;}
+th{background:#eef3ff;cursor:pointer;user-select:none;position:relative;}
+th:hover{background:#dce6ff;}
+th.sort-asc::after{content:"▲";position:absolute;right:8px;color:#2980b9;}
+th.sort-desc::after{content:"▼";position:absolute;right:8px;color:#2980b9;}
 tr:hover{background:#f4f9ff;}
 .category-chip{display:inline-block;padding:5px 10px;border-radius:10px;color:#fff;}
 button,input,select{padding:8px 10px;font-size:1rem;border-radius:6px;border:1px solid #ccc;margin:5px;}
@@ -49,7 +51,16 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 <div class="section">
   <h2>📄 Vokabelliste</h2>
   <table id="vokabelTable">
-    <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Gruppe / Variante</th><th>Hinweis</th><th>Aktion</th></tr></thead>
+    <thead>
+      <tr>
+        <th onclick="sortList(0)">Englisch</th>
+        <th onclick="sortList(1)">Deutsch</th>
+        <th onclick="sortList(2)">Kategorie</th>
+        <th onclick="sortList(3)">Gruppe / Variante</th>
+        <th onclick="sortList(4)">Hinweis</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
     <tbody></tbody>
   </table>
   <div id="pagination" class="flex" style="margin-top:10px;"></div>
@@ -115,12 +126,11 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 (async()=>{
 const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
 const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
-let list=[];
-const perPage=15;let currentPage=1;let editIndex=null;
+let list=[];const perPage=15;let currentPage=1;let editIndex=null;
+let sortColumn=null;let sortAsc=true;
 const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
 const statusEl=$("#datasourceStatus");
 
-// 🔄 SYNCHRONISIERUNG
 async function loadVokabeln(){
   let vokabeln=[];
   try{
@@ -137,53 +147,24 @@ async function loadVokabeln(){
   return vokabeln;
 }
 
-async function syncJson(){
-  try{
-    const response=await fetch("vokabeln.json",{cache:"no-store"});
-    if(!response.ok)throw new Error("Fetch fehlgeschlagen");
-    const remote=await response.json();
-    const local=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    const merged=mergeLists(remote,local);
-    localStorage.setItem("vokabeln",JSON.stringify(merged));
-    localStorage.setItem("vokabeln_updated",new Date().toISOString());
-    list=merged;
-    render();toast("🔄 Synchronisiert");
-  }catch(e){toast("⚠️ Sync fehlgeschlagen","#e67e22");}
-}
-
-function mergeLists(remote,local){
-  const map=new Map();
-  remote.forEach(v=>map.set((v[0]+"|"+v[1]).toLowerCase(),v));
-  local.forEach(v=>map.set((v[0]+"|"+v[1]).toLowerCase(),v));
-  return Array.from(map.values());
-}
-
-// 🔧 UI & Logik
-function toast(msg,color="#2ecc71"){
-  const t=$("#toast");t.textContent=msg;t.style.background=color;t.style.display="block";
-  setTimeout(()=>t.style.display="none",1500);
-}
+function toast(msg,color="#2ecc71"){const t=$("#toast");t.textContent=msg;t.style.background=color;t.style.display="block";setTimeout(()=>t.style.display="none",1500);}
 function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));localStorage.setItem("vokabeln_updated",new Date().toISOString());render();}
 
-// ⚡ AUTO-EXPORT BEIM VERLASSEN
-window.addEventListener("beforeunload",()=>{
-  const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="vokabeln.json";
-  a.click();
-});
-
-function fillCats(sel){
-  sel.innerHTML="";
-  for(const k in CATEGORY_NAMES){
-    const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];
-    o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);
-  }
+window.sortList=function(colIndex){
+  const ths=$$("th");
+  ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
+  if(sortColumn===colIndex){sortAsc=!sortAsc;}else{sortColumn=colIndex;sortAsc=true;}
+  const activeTh=ths[colIndex];
+  activeTh.classList.add(sortAsc?"sort-asc":"sort-desc");
+  list.sort((a,b)=>{
+    const x=(a[colIndex]||"").toLowerCase();
+    const y=(b[colIndex]||"").toLowerCase();
+    if(x<y)return sortAsc?-1:1;
+    if(x>y)return sortAsc?1:-1;
+    return 0;
+  });
+  saveLocal();
 }
-fillCats($("#cat"));fillCats($("#editCat"));
-const filterCat=$("#filterCat");
-for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";filterCat.appendChild(o);}
 
 function render(){
   const tb=$("#vokabelTable tbody");
@@ -227,17 +208,23 @@ function openEdit(i){
   $("#editGroup").value=v[3]||"";$("#editHint").value=v[4]||"";
   $("#modal").style.display="flex";
 }
+
 $("#saveEdit").onclick=()=>{const v=list[editIndex];v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();saveLocal();$("#modal").style.display="none";toast("💾 Gespeichert");};
 $("#cancelEdit").onclick=()=>$("#modal").style.display="none";
 $("#addBtn").onclick=()=>{const en=$("#en").value.trim(),de=$("#de").value.trim(),cat=$("#cat").value,grp=$("#group").value.trim(),hint=$("#hint").value.trim();if(!en||!de)return alert("Bitte ausfüllen!");list.push([en,de,cat,grp,hint]);saveLocal();$("#en").value=$("#de").value=$("#group").value=$("#hint").value="";toast("➕ Hinzugefügt");};
 $("#resetFilter").onclick=()=>{$("#filterCat").value="Alle";$("#searchInput").value="";render();};
-$("#exportBtn").onclick=()=>{const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vokabeln_export.json";a.click();toast("📤 Exportiert");};
-$("#importBtn").onclick=()=>{const i=document.createElement("input");i.type="file";i.accept=".json";i.onchange=e=>{const f=e.target.files[0];const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(Array.isArray(d)){list=d;saveLocal();toast("📥 Importiert");}}catch{alert("Fehler beim Import");}};r.readAsText(f);};i.click();};
-$("#downloadJson").onclick=()=>{const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="vokabeln.json";a.click();toast("💾 vokabeln.json gespeichert");};
-$("#syncBtn").onclick=syncJson;
 
-// INIT
 list=await loadVokabeln();
+
+// 🟢 Automatische Anfangssortierung nach Englisch
+sortColumn=0; sortAsc=true;
+list.sort((a,b)=>a[0].localeCompare(b[0]));
+$$("th")[0].classList.add("sort-asc");
+
+const filterCat=$("#filterCat");
+for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";filterCat.appendChild(o);}
+function fillCats(sel){sel.innerHTML="";for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);}}
+fillCats($("#cat"));fillCats($("#editCat"));
 render();
 })();
 </script>
