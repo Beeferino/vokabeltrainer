@@ -23,6 +23,7 @@
     #datasourceStatus { margin-top: 10px; color: #666; font-size: 0.9rem; }
     #lastAddedBox { margin-top: 20px; background: #f4f7fb; border-radius: 10px; padding: 10px; }
     #lastAddedList div { margin: 3px 0; }
+    #lastAddedList { transition: all 0.3s ease; }
   </style>
 </head>
 
@@ -82,8 +83,9 @@
   <div class="footer">
     <a href="vokabeln.html" class="linkbtn">📘 Vokabelübersicht öffnen</a><br><br>
     <small>© 2025 @Beefi</small>
+
     <div id="lastAddedBox">
-      <h3>🆕 Zuletzt hinzugefügt</h3>
+      <h3>🆕 Zuletzt hinzugefügt ▼</h3>
       <div id="lastAddedList">–</div>
     </div>
   </div>
@@ -227,6 +229,17 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 
   (async()=>{await sync();renderCats();lastAdded();})();
+
+  // --- Einklappbare "Zuletzt hinzugefügt"-Liste ---
+  const header=document.querySelector("#lastAddedBox h3");
+  const listBox=document.getElementById("lastAddedList");
+  let open=true;
+  header.style.cursor="pointer";
+  header.onclick=()=>{
+    open=!open;
+    listBox.style.display=open?"block":"none";
+    header.innerHTML=open?"🆕 Zuletzt hinzugefügt ▼":"🆕 Zuletzt hinzugefügt ▲";
+  };
 });
 </script>
 </body>
