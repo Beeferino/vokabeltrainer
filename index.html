@@ -32,6 +32,7 @@ summary{cursor:pointer;font-weight:600;}
 ul.last5{list-style:none;padding:0;margin-top:10px;}
 ul.last5 li{margin:4px 0;}
 .catLabel{font-size:0.9rem;}
+#datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;}
 </style>
 </head>
 <body>
@@ -76,9 +77,9 @@ ul.last5 li{margin:4px 0;}
   <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
   <label>Feedback-Dauer:
     <select id="toastTime">
-      <option value="400">0,4 s</option>
+      <option value="400" selected>0,4 s</option>
       <option value="700">0,7 s</option>
-      <option value="1000" selected>1 s</option>
+      <option value="1000">1 s</option>
       <option value="1500">1,5 s</option>
     </select>
   </label>
@@ -108,6 +109,8 @@ ul.last5 li{margin:4px 0;}
 </div>
 </div>
 
+<div id="datasourceStatus">💾 Datenquelle: Lokaler Speicher</div>
+
 <script>
 (()=>{
 const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
@@ -117,109 +120,111 @@ const $=s=>document.querySelector(s);
 async function tryLoadFromJson(){
   try{
     const r=await fetch("vokabeln.json",{cache:"no-store"});
-    if(r.ok){const data=await r.json();localStorage.setItem("vokabeln",JSON.stringify(data));}
+    if(r.ok){
+      const data=await r.json();
+      localStorage.setItem("vokabeln",JSON.stringify(data));
+      $("#datasourceStatus").textContent="📂 JSON geladen";
+    }
   }catch{}
   renderLastAdded();
 }
-function loadList(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+
+function loadList(){
+  const data=localStorage.getItem("vokabeln");
+  if(!data) return [];
+  try{return JSON.parse(data);}catch{return [];}
+}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
 let list=[],round=[],idx=0,errors=[],skipped=[],mode="mixed",gameType="learn";
 
-function updateProgress(){document.getElementById("progress").textContent=`Vokabel ${idx+1}/${round.length} | Fehler: ${errors.length}`;}
+function updateProgress(){document.getElementById("progress").textContent=`Frage ${idx+1}/${round.length} | Fehler: ${errors.length}`;}
 function flash(c){const card=document.getElementById("card");card.classList.add(c);setTimeout(()=>card.classList.remove(c),300);}
 
 function startRound(m,gt,custom=null){
   list=loadList();if(!list.length)return alert("Keine Vokabeln vorhanden!");
-  const cat=document.getElementById("category").value;
-  mode=m;gameType=gt;
+  const cat=$("#category").value;mode=m;gameType=gt;
   let f=cat==="Alle"?list:list.filter(v=>v[2]===cat);
   if(custom)f=custom;shuffle(f);
-  round=f.slice(0,15);idx=0;errors=[];skipped=[];
-  document.getElementById("trainer").style.display="block";
-  document.getElementById("progress").style.display="block";
-  document.getElementById("result").style.display="none";
+  round=f.slice(0,15); // 15 Vokabeln pro Runde
+  idx=0;errors=[];skipped=[];
+  $("#trainer").style.display="block";
+  $("#progress").style.display="block";
+  $("#result").style.display="none";
   showNext();
 }
 
 function showNext(){
-  const card=document.getElementById("card");
-  const answerInput=document.getElementById("answerInput");
-  const feedback=document.getElementById("feedback");
-  const progress=document.getElementById("progress");
-  const rightBtn=document.getElementById("rightBtn");
-  const wrongBtn=document.getElementById("wrongBtn");
-  const skipBtn=document.getElementById("skipBtn");
+  const card=$("#card"),input=$("#answerInput"),feedback=$("#feedback"),
+        right=$("#rightBtn"),wrong=$("#wrongBtn"),skip=$("#skipBtn");
   if(idx>=round.length){
-    if(skipped.length){round=skipped;skipped=[];idx=0;feedback.textContent="📘 Übersprungene Vokabeln:";return showNext();}
-    document.getElementById("trainer").style.display="none";
-    const res=document.getElementById("result");
-    res.innerHTML=errors.length?`<h3>Fehler (${errors.length}):</h3><ul>${errors.map(e=>`<li>${e[0]} → ${e[1]}</li>`).join("")}</ul>`:"🎉 Keine Fehler!";
-    res.style.display="block";return;
+    $("#trainer").style.display="none";
+    const res=$("#result");
+    let html=`<h3>Runde beendet</h3>`;
+    html+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(e=>`<li>${e[0]} → ${e[1]}</li>`).join("")}</ul>`:"<p>🎉 Keine Fehler!</p>";
+    html+=`<br><button id='restartBtn2'>🔄 Neustart</button>`;
+    res.innerHTML=html;res.style.display="block";
+    document.getElementById("restartBtn2").onclick=()=>location.reload();
+    return;
   }
   updateProgress();
   const [en,de,cat]=round[idx];
   let ask,answer;
-  if(mode==="toGerman"){ask=en;answer=de;}else if(mode==="toEnglish"){ask=de;answer=en;}
+  if(mode==="toGerman"){ask=en;answer=de;}
+  else if(mode==="toEnglish"){ask=de;answer=en;}
   else{if(Math.random()<0.5){ask=en;answer=de;}else{ask=de;answer=en;}}
-  document.getElementById("word").innerHTML=`<div style="background:${COLOR_MAP[cat]};color:#fff;border-radius:10px;padding:5px 10px;display:inline-block;">${CATEGORY_NAMES[cat]}</div><br><br>${ask}`;
+  $("#word").innerHTML=`<div style="background:${COLOR_MAP[cat]};color:#fff;border-radius:10px;padding:5px 10px;display:inline-block;">${CATEGORY_NAMES[cat]}</div><br><br>${ask}`;
   feedback.textContent="";
 
   if(gameType==="learn"){
-    answerInput.style.display="inline-block";
-    rightBtn.style.display="none";wrongBtn.style.display="none";skipBtn.style.display="inline-block";
-    answerInput.value="";answerInput.focus();
-    answerInput.onkeydown=e=>{
+    input.style.display="inline-block";right.style.display="none";wrong.style.display="none";skip.style.display="inline-block";
+    input.value="";input.focus();
+    input.onkeydown=e=>{
       if(e.key==="Enter"){
-        const correct=answerInput.value.trim().toLowerCase()===answer.toLowerCase();
-        if(document.getElementById("feedbackToggle").checked){
-          feedback.textContent=correct?"✅ Richtig!":`❌ Falsch! ${answer}`;
-          flash(correct?"correct":"wrong");
-        }
+        const correct=input.value.trim().toLowerCase()===answer.toLowerCase();
+        if($("#feedbackToggle").checked){feedback.textContent=correct?"✅ Richtig!":`❌ Falsch! (${answer})`;flash(correct?"correct":"wrong");}
         if(!correct)errors.push([ask,answer]);
-        idx++;setTimeout(showNext,document.getElementById("feedbackToggle").checked?400:0);
+        idx++;setTimeout(showNext,$("#toastTime").value);
       }
     };
-    skipBtn.onclick=()=>{skipped.push([en,de,cat]);idx++;showNext();};
+    skip.onclick=()=>{skipped.push([en,de,cat]);idx++;showNext();};
   }else{
-    answerInput.style.display="none";
-    rightBtn.style.display="inline-block";wrongBtn.style.display="inline-block";skipBtn.style.display="inline-block";
-    const trap=Math.random()<0.3;
-    const wrongAns=list[Math.floor(Math.random()*list.length)][1];
-    const shown=trap?wrongAns:answer;
-    feedback.innerHTML=`💡 <b>${shown}</b>`;
+    input.style.display="none";right.style.display="inline-block";wrong.style.display="inline-block";skip.style.display="inline-block";
+    const trap=Math.random()<0.3;const wrongAns=list[Math.floor(Math.random()*list.length)][1];
+    const shown=trap?wrongAns:answer;feedback.innerHTML=`💡 <b>${shown}</b>`;
     const handle=isCorrect=>{
       const correct=(isCorrect&&!trap)||(!isCorrect&&trap);
-      if(document.getElementById("feedbackToggle").checked){
-        feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!";
-        flash(correct?"correct":"wrong");
-      }
+      if($("#feedbackToggle").checked){feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!";flash(correct?"correct":"wrong");}
       if(!correct)errors.push([ask,answer]);
-      idx++;setTimeout(showNext,document.getElementById("feedbackToggle").checked?600:0);
+      idx++;setTimeout(showNext,$("#toastTime").value);
     };
-    rightBtn.onclick=()=>handle(true);
-    wrongBtn.onclick=()=>handle(false);
-    skipBtn.onclick=()=>{skipped.push([en,de,cat]);idx++;showNext();};
+    right.onclick=()=>handle(true);wrong.onclick=()=>handle(false);skip.onclick=()=>{skipped.push([en,de,cat]);idx++;showNext();};
   }
 }
 
 function renderLastAdded(){
-  const all=loadList();const ul=document.getElementById("lastAdded");
-  if(!ul)return;
-  const last=all.slice(-5);
-  ul.innerHTML=last.map(([en,de,cat])=>`<li><b>${en}</b> – ${de} <span class="catLabel" style="color:${COLOR_MAP[cat]}">(${CATEGORY_NAMES[cat]})</span></li>`).join("");
+  const all=loadList();const ul=$("#lastAdded");if(!ul)return;
+  const last=all.slice(-5).reverse();
+  ul.innerHTML=last.map(([en,de,cat])=>`<li><b>${en}</b> – ${de} <span class='catLabel' style='color:${COLOR_MAP[cat]}'>(${CATEGORY_NAMES[cat]})</span></li>`).join("");
 }
 
-document.getElementById("learnBtn").onclick=()=>startRound(document.getElementById("mode").value,"learn");
-document.getElementById("cardsBtn").onclick=()=>startRound(document.getElementById("mode").value,"cards");
-document.getElementById("last30Btn").onclick=()=>{
-  const all=loadList();
-  if(!all.length)return alert("Keine Vokabeln vorhanden!");
+// 🔄 Echtzeit-Sync mit vokabeln.html
+window.addEventListener("storage", e => {
+  if(e.key==="vokabeln" && e.newValue){
+    console.log("🔄 Neue Vokabel erkannt – aktualisiere Anzeige");
+    renderLastAdded();
+  }
+});
+
+$("#learnBtn").onclick=()=>startRound($("#mode").value,"learn");
+$("#cardsBtn").onclick=()=>startRound($("#mode").value,"cards");
+$("#last30Btn").onclick=()=>{
+  const all=loadList();if(!all.length)return alert("Keine Vokabeln vorhanden!");
   const last30=all.slice(-30);
-  const choice=confirm("📚 Letzte 30 Vokabeln als Karteikarten?\nOK=Karteikarten, Abbrechen=Eingabe");
-  startRound(document.getElementById("mode").value,choice?"cards":"learn",last30);
+  const choice=confirm("📚 Letzte 30 als Karteikarten?\nOK=Karteikarten, Abbrechen=Eingabe");
+  startRound($("#mode").value,choice?"cards":"learn",last30);
 };
-document.getElementById("restartBtn").onclick=()=>location.reload();
+$("#restartBtn").onclick=()=>location.reload();
 
 tryLoadFromJson();
 })();
