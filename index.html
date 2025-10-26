@@ -5,97 +5,92 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🎯 Vokabeltrainer</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-  body {
-    font-family: 'Inter', sans-serif;
-    background: linear-gradient(180deg,#f3f7fc 0%,#eef2f7 100%);
-    margin: 0; padding: 0;
-    display: flex; justify-content: center;
-    min-height: 100vh;
-  }
-  .app {
-    width: 95%; max-width: 800px;
-    margin-top: 30px; margin-bottom: 40px;
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(8px);
-    border-radius: 16px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
-    padding: 25px;
-    text-align: center;
-  }
-  h1 { font-size: 1.9rem; color: #1e6ed8; margin-bottom: 8px; }
-  .divider {
-    width: 60px; height: 3px; background: #1e6ed8;
-    margin: 10px auto 25px; border-radius: 10px;
-  }
-  select, input {
-    padding: 8px 10px; border-radius: 8px;
-    border: 1px solid #ccc; font-size: 1rem;
-  }
-  .controls label { margin: 0 10px; }
-  .functions {
-    display: flex; flex-wrap: wrap; justify-content: center;
-    gap: 15px; margin-top: 20px;
-  }
-  .kachel {
-    background: #1e6ed8; color: #fff;
-    padding: 14px 22px; border-radius: 14px;
-    font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-    cursor: pointer; transition: all 0.2s;
-  }
-  .kachel:hover { background: #2980b9; transform: scale(1.03); }
-  .feedback-settings {
-    margin-top: 20px; background: rgba(255,255,255,0.6);
-    padding: 10px; border-radius: 12px; font-size: 0.95rem;
-  }
-  .progress { margin-top: 10px; font-size: 1rem; color: #333; }
-  .trainer {
-    display: none; margin-top: 30px; padding: 25px;
-    border-radius: 16px; background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(6px); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .card {
-    padding: 20px; border-radius: 14px; background: #fff;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.08); margin-bottom: 15px;
-  }
-  .word { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; }
-  .feedback { margin-top: 10px; font-size: 1rem; min-height: 1.5em; }
-  button {
-    padding: 10px 16px; border: none; border-radius: 10px;
-    font-size: 1rem; cursor: pointer; margin: 4px;
-  }
-  #rightBtn { background: #27ae60; color: #fff; }
-  #wrongBtn { background: #c0392b; color: #fff; }
-  #skipBtn  { background: #bdc3c7; color: #333; }
-  #enterBtn { background: #1e6ed8; color: #fff; }
-  .footer {
-    margin-top: 30px; display: flex;
-    justify-content: space-between; align-items: center;
-  }
-  .linkbtn, .restartbtn {
-    display: inline-block; background: #1e6ed8; color: #fff;
-    padding: 10px 16px; border-radius: 10px; text-decoration: none;
-    font-weight: 600; transition: all 0.2s;
-  }
-  .linkbtn:hover, .restartbtn:hover { background: #2980b9; }
-  #lastAddedBox {
-    margin-top: 30px; background: rgba(255,255,255,0.6);
-    border-radius: 12px; padding: 15px; cursor: pointer;
-    text-align: center;
-  }
-  #lastAddedList {
-    display: none; margin-top: 10px; text-align: center; font-size: 0.95rem;
-  }
-  #lastAddedList div { margin: 4px 0; }
-  #datasourceStatus { margin-top: 10px; font-size: 0.9rem; color: #666; }
-  .correct { background-color: #e9fce9 !important; }
-  .wrong { background-color: #fdecea !important; }
-  .subline {
-    font-size: 0.85rem;
-    color: #888;
-    font-style: italic;
-    margin-top: -8px;
-  }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg,#f3f7fc 0%,#eef2f7 100%);
+  margin: 0; padding: 0;
+  display: flex; justify-content: center;
+  min-height: 100vh;
+}
+.app {
+  width: 95%; max-width: 800px;
+  margin-top: 30px; margin-bottom: 40px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  padding: 25px;
+  text-align: center;
+}
+h1 { font-size: 1.9rem; color: #1e6ed8; margin-bottom: 8px; }
+.divider {
+  width: 60px; height: 3px; background: #1e6ed8;
+  margin: 10px auto 25px; border-radius: 10px;
+}
+select, input {
+  padding: 8px 10px; border-radius: 8px;
+  border: 1px solid #ccc; font-size: 1rem;
+}
+.controls label { margin: 0 10px; }
+.functions {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 15px; margin-top: 20px;
+}
+.kachel {
+  background: #1e6ed8; color: #fff;
+  padding: 14px 22px; border-radius: 14px;
+  font-weight: 600; box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  cursor: pointer; transition: all 0.2s;
+}
+.kachel:hover { background: #2980b9; transform: scale(1.03); }
+.feedback-settings {
+  margin-top: 20px; background: rgba(255,255,255,0.6);
+  padding: 10px; border-radius: 12px; font-size: 0.95rem;
+}
+.progress { margin-top: 10px; font-size: 1rem; color: #333; }
+.trainer {
+  display: none; margin-top: 30px; padding: 25px;
+  border-radius: 16px; background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(6px); box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.card {
+  padding: 20px; border-radius: 14px; background: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08); margin-bottom: 15px;
+}
+.word { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; }
+.feedback { margin-top: 10px; font-size: 1rem; min-height: 1.5em; }
+button {
+  padding: 10px 16px; border: none; border-radius: 10px;
+  font-size: 1rem; cursor: pointer; margin: 4px;
+}
+#rightBtn { background: #27ae60; color: #fff; }
+#wrongBtn { background: #c0392b; color: #fff; }
+#skipBtn  { background: #bdc3c7; color: #333; }
+#enterBtn { background: #1e6ed8; color: #fff; }
+.footer {
+  margin-top: 30px; display: flex;
+  justify-content: space-between; align-items: center;
+}
+.linkbtn, .restartbtn {
+  display: inline-block; background: #1e6ed8; color: #fff;
+  padding: 10px 16px; border-radius: 10px; text-decoration: none;
+  font-weight: 600; transition: all 0.2s;
+}
+.linkbtn:hover, .restartbtn:hover { background: #2980b9; }
+#lastAddedBox {
+  margin-top: 30px; background: rgba(255,255,255,0.6);
+  border-radius: 12px; padding: 15px; cursor: pointer;
+  text-align: center;
+}
+#lastAddedList {
+  display: none; margin-top: 10px; text-align: center; font-size: 0.95rem;
+}
+#lastAddedList div { margin: 4px 0; }
+#datasourceStatus { margin-top: 10px; font-size: 0.9rem; color: #666; }
+.correct { background-color: #e9fce9 !important; }
+.wrong { background-color: #fdecea !important; }
+.subline { font-size: 0.85rem; color: #888; font-style: italic; margin-top: -8px; }
 </style>
 </head>
 <body>
@@ -209,13 +204,13 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
   function updateProg(){ progress.style.display="block"; progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`; }
 
+  function shuffle(a){return a.sort(()=>Math.random()-0.5);}
+
   function start(sel,type,data=null){
     game=type; mode=sel; trainer.style.display="block";
     const pool=list.filter(v=>cat.value==="Alle"||v[2]===cat.value);
     round=data||shuffle(pool).slice(0,15); i=0; errors=[]; skipped=[]; showNext();
   }
-
-  function shuffle(a){return a.sort(()=>Math.random()-0.5);}
 
   function showNext(){
     if(i>=round.length){
@@ -250,6 +245,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
       trap=Math.random()<0.35; let fake=correctAns;
       if(trap){let alt;do{const rand=list[Math.floor(Math.random()*list.length)];
+        const isValidPair=(askIsEnglish && !/ä|ö|ü|ß/.test(rand[1])) || (!askIsEnglish && /[äöüß]/.test(rand[1]));
         alt=askIsEnglish?rand[1]:rand[0];}while(alt===correctAns);fake=alt;}
       feedback.innerHTML=`💡 <b>${fake}</b>`;
       const swap=Math.random()<0.5; const parent=document.getElementById("cardButtons");
