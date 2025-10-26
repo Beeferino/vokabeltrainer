@@ -3,194 +3,307 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🧠 Vokabeltrainer</title>
+<title>📘 Vokabelübersicht</title>
 <style>
-  body{font-family:"Segoe UI",Roboto,sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;color:#111;}
-  .app{max-width:900px;margin:auto;}
-  h1{font-size:2rem;margin-bottom:1rem}
-  .tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin:18px 0;}
-  .tile{flex:1 1 260px;background:#fff;border-radius:14px;padding:20px 10px;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer;transition:transform .1s ease,background .2s ease;}
-  .tile:hover{background:#ecf5ff;transform:translateY(-2px);}
-  .tile h2{margin:0;font-size:1.2rem;color:#2980b9;}
-  .tile p{margin:6px 0 0;font-size:.95rem;color:#444;}
-  .game{background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:20px;margin-top:20px;display:none;}
-  input[type=text]{padding:10px 12px;font-size:1rem;width:80%;max-width:300px;border-radius:8px;border:1px solid #ccc;margin-top:10px;}
-  button{padding:8px 14px;font-size:1rem;border-radius:8px;border:none;cursor:pointer;background:#2980b9;color:#fff;transition:background .2s;}
-  button:hover{background:#3498db;}
-  .result{font-size:1.2rem;margin-top:10px;}
-  .feedback{font-size:1.4rem;margin-top:12px;font-weight:600;}
-  .feedback.correct{color:#2ecc71;}
-  .feedback.wrong{color:#e74c3c;}
-  .card{position:relative;width:280px;height:160px;margin:20px auto;perspective:1000px;}
-  .card-inner{position:absolute;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d;}
-  .card.flip .card-inner{transform:rotateY(180deg);}
-  .card-face{position:absolute;width:100%;height:100%;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-size:1.4rem;border-radius:12px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.1);}
-  .card-back{transform:rotateY(180deg);}
-  .footer{margin-top:30px;font-size:.95rem;color:#555;}
-  .collapsible{margin-top:30px;text-align:center;}
-  .collapsible button{background:#74b9ff;color:#000;font-weight:600;}
-  .collapsible-content{display:none;margin-top:10px;}
-  .vocab-item{margin:4px 0;}
-  .chip{padding:2px 8px;border-radius:8px;color:#fff;font-size:.9rem;}
-  hr{border:0;border-top:3px solid #e3e7ef;margin:24px 0;}
+body{font-family:"Segoe UI",Roboto,sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;color:#111}
+.app{max-width:1100px;margin:auto}
+h1{font-size:1.8rem;margin-bottom:.6rem}
+h2{font-size:1.1rem;margin:0 0 .6rem}
+.section{background:#fff;padding:16px 20px;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.08);margin-bottom:18px}
+.flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+button,input,select{padding:8px 10px;font-size:1rem;border-radius:8px;border:1px solid #ccc;margin:5px}
+button{cursor:pointer;background:#2980b9;color:#fff;border:none;transition:background .2s ease,transform .1s ease}
+button:hover{background:#3498db;transform:translateY(-1px)}
+.chip{display:inline-block;padding:5px 10px;border-radius:10px;color:#fff;font-size:.9rem}
+.divider{border:0;border-top:3px solid #e3e7ef;margin:18px 0}
+.subdivider{border:0;border-top:1px solid #e6e9f0;margin:14px 0}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left}
+th{background:#eef3ff;cursor:pointer;user-select:none;position:relative}
+th:hover{background:#e2ebff}
+tr:hover{background:#f4f9ff}
+th.sort-asc::after{content:"▲";position:absolute;right:8px;color:#2980b9}
+th.sort-desc::after{content:"▼";position:absolute;right:8px;color:#2980b9}
+.lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0 10px}
+.lexica button{background:#ecf0f1;color:#333;border:1px solid #ccc;font-weight:600;padding:6px 9px;border-radius:8px}
+.lexica button.active{background:#2980b9;color:#fff}
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.pagination button{background:#ecf0f1;color:#333;border:1px solid #ccc;padding:6px 10px}
+.pagination button.active{background:#2980b9;color:#fff}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,.3);min-width:280px;max-width:460px;width:92%}
+#modalContent h3{margin-top:0}
+#modalContent input,#modalContent select{width:100%;box-sizing:border-box;margin:6px 0}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:999}
+#datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none}
+.footer{margin-top:8px;font-size:.95rem;color:#555}
+.last-change{margin-top:12px;font-size:.9rem;color:#555}
+@media(max-width:768px){body{padding:12px}th,td{padding:8px}button,input,select{font-size:.95rem}.section{padding:14px 12px}}
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>🧠 Vokabeltrainer</h1>
-  <div id="syncStatus" style="font-size:.9rem;color:#555;opacity:.8;">🔄 Synchronisiere Daten...</div>
+  <h1>📘 Vokabelübersicht</h1>
+  <div id="syncBadge" style="font-size:.9rem;color:#555;opacity:.9;margin-bottom:8px;">🔄 JSON wird synchronisiert…</div>
 
-  <!-- Auswahl-Kacheln -->
-  <div class="tiles">
-    <div class="tile" id="startAbfrage"><h2>📝 Vokabel-Abfrage starten</h2><p>Englisch → Deutsch (mit Feedback)</p></div>
-    <div class="tile" id="startKartei"><h2>🎴 Karteikarten spielen</h2><p>Einfach umdrehen & merken</p></div>
-    <div class="tile" id="startLetzte"><h2>🕓 Letzte 30 Vokabeln</h2><p>Wiederhole deine neuesten Einträge</p></div>
+  <!-- A–Z -->
+  <div id="lexica" class="lexica"></div>
+
+  <!-- Filter & Suche -->
+  <div class="section">
+    <h2>🔍 Filter & Suche</h2>
+    <div class="flex">
+      <label>Kategorie:
+        <select id="filterCat">
+          <option value="Alle">Alle (bunt gemischt)</option>
+        </select>
+      </label>
+      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
+      <button id="resetFilter">🔄 Filter zurücksetzen</button>
+    </div>
   </div>
 
-  <!-- Spielbereich -->
-  <div id="game" class="game"></div>
+  <!-- Tabelle -->
+  <div class="section">
+    <h2>📄 Vokabelliste</h2>
+    <table id="vokabelTable">
+      <thead>
+        <tr>
+          <th data-col="0">Englisch</th>
+          <th data-col="1">Deutsch</th>
+          <th data-col="2">Kategorie</th>
+          <th style="width:110px;">Aktion</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+    <div id="infoFooter" style="margin-top:6px;font-size:.95rem;color:#555;"></div>
+  </div>
+
+  <!-- Neue Vokabel -->
+  <div class="section">
+    <h2>➕ Neue Vokabel hinzufügen</h2>
+    <div class="flex">
+      <input id="newEn" type="text" placeholder="Englisch">
+      <input id="newDe" type="text" placeholder="Deutsch">
+      <select id="newCat"></select>
+      <input id="newGroup" type="text" placeholder="Gruppe / Variante">
+      <input id="newHint" type="text" placeholder="Hinweis">
+      <button id="addBtn">Hinzufügen</button>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- JSON / Sync -->
+  <div class="section">
+    <h2>💾 JSON & Synchronisierung</h2>
+    <div class="flex">
+      <button id="syncBtn">🔄 Von GitHub neu laden (Merge)</button>
+      <button id="downloadBtn" disabled>💾 Aktualisierte vokabeln.json herunterladen</button>
+    </div>
+    <div class="subdivider"></div>
+    <div id="syncInfo" style="font-size:.95rem;color:#555;">Quelle: – | Letzter Abgleich: –</div>
+  </div>
+
+  <hr class="divider">
 
   <!-- Zuletzt hinzugefügt -->
-  <div class="collapsible">
-    <button id="toggleLast">🧾 Zuletzt hinzugefügt anzeigen</button>
-    <div id="lastAdded" class="collapsible-content">–</div>
+  <div class="section">
+    <h2>🧾 Zuletzt hinzugefügt</h2>
+    <div id="lastAdded">–</div>
   </div>
 
-  <hr>
-
   <div class="footer">
-    <button onclick="location.href='vokabeln.html'">📘 Zur Vokabelübersicht</button>
+    <button onclick="window.location.href='/vokabeltrainer/index.html'">⬅️ Zurück zum Trainer</button>
+    <div class="last-change" id="lastChange">📅 Letzte Änderung: –</div>
     <p>© 2025 @Beefi</p>
   </div>
 </div>
 
+<!-- Modal: Details / Bearbeiten -->
+<div id="modal">
+  <div id="modalContent">
+    <h3>🔍 Vokabel-Details</h3>
+    <input id="editEn" type="text" placeholder="Englisch" readonly>
+    <input id="editDe" type="text" placeholder="Deutsch" readonly>
+    <select id="editCat" disabled></select>
+    <input id="editGroup" type="text" placeholder="Gruppe / Variante" readonly>
+    <input id="editHint" type="text" placeholder="Hinweis" readonly>
+    <div class="flex" style="margin-top:6px;">
+      <button id="toggleEdit">🔧 Bearbeiten</button>
+      <button id="closeModal">❌ Schließen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Gespeichert</div>
+<div id="datasourceStatus" aria-live="polite">🔄 JSON + lokale Ergänzungen (gemergt)</div>
+
 <script>
 (() => {
-  const REMOTE_JSON_URL = 'vokabeln.json';
+  const REMOTE_JSON_URL = '/vokabeltrainer/vokabeln.json';
   const CATEGORY_NAMES = {
     Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker",
     Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen",
     HellesPink:"Hydraulik / Pneumatik", Orange:"Elektrotechnik",
     Dunkelgruen:"Fluggerätemechanik allgemein", Rot:"Verwechslungsgefahr"
   };
-  const COLOR_MAP = { Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
-                      HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B" };
+  const COLOR_MAP = {Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
 
-  const $=s=>document.querySelector(s);
-  let vocab=[], mode=null, idx=0, wrong=0, feedbackTime=3000;
+  const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+  const toast=(m,c="#2ecc71")=>{const t=$("#toast");t.textContent=m;t.style.background=c;t.style.display="block";setTimeout(()=>t.style.display="none",1500);};
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+  const key=v=>`${(v[0]||"").toLowerCase()}|${(v[1]||"").toLowerCase()}`;
+  const loadLocal=()=> (JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalize);
+  const saveLocal=(ls)=>{localStorage.setItem("vokabeln",JSON.stringify(ls));localStorage.setItem("vokabeln_updated",new Date().toISOString());};
+  const setLastChange=()=>{$("#lastChange").textContent=`📅 Letzte Änderung: ${new Date(localStorage.getItem("vokabeln_updated")||Date.now()).toLocaleString("de-DE")}`;}
 
-  /* === Sync === */
-  async function syncVocab(){
-    $("#syncStatus").textContent="🔄 Lade vokabeln.json...";
-    try{
-      const r=await fetch(REMOTE_JSON_URL,{cache:'no-store'});
-      if(r.ok){
-        const remote=await r.json();
-        const local=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-        const merged=mergeLists(remote,local);
-        vocab=merged;
-        localStorage.setItem("vokabeln",JSON.stringify(merged));
-        $("#syncStatus").textContent="✅ Synchronisiert (GitHub + Lokal)";
-      }else throw new Error();
-    }catch{
-      vocab=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-      $("#syncStatus").textContent="💾 Offline: Lokale Daten";
-    }
-    renderLastAdded();
+  let state={list:[],filtered:[],page:1,perPage:15,sortCol:0,sortAsc:true,letter:"Alle",filterCat:"Alle",search:""};
+  let editIndex=null;
+
+  function merge(remote,local){const map=new Map();remote.map(normalize).forEach(v=>map.set(key(v),v));local.map(normalize).forEach(v=>map.set(key(v),v));return [...map.values()];}
+
+  async function fetchRemote(){
+    try{const r=await fetch(REMOTE_JSON_URL,{cache:"no-store"}); if(!r.ok) throw 0; const j=await r.json(); return Array.isArray(j)?j:[];}catch{return null;}
   }
-  function mergeLists(remote,local){
-    const map=new Map();
-    remote.forEach(v=>map.set((v[0]+v[1]).toLowerCase(),v));
-    local.forEach(v=>map.set((v[0]+v[1]).toLowerCase(),v));
-    return Array.from(map.values());
+  function enableDownloadMerged(list){
+    const btn=$("#downloadBtn"); btn.disabled=false;
+    const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    btn.onclick=()=>{const a=document.createElement("a");a.href=url;a.download="vokabeln.json";a.click();};
   }
 
-  /* === Spiele === */
-  function startGame(type){
-    $("#game").style.display="block";
-    $("#game").innerHTML="";
-    mode=type; idx=0; wrong=0;
-    let set=[...vocab];
-    if(type==="last30") set=set.slice(-30);
-    else set.sort(()=>Math.random()-0.5);
-    const subset=set.slice(0,15);
-    if(type==="abfrage") runAbfrage(subset);
-    if(type==="kartei") runKartei(subset);
+  function fillCat(sel){
+    sel.innerHTML="";
+    for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);}
   }
 
-  /* === Abfrage-Spiel === */
-  function runAbfrage(list){
-    const g=$("#game");
-    g.innerHTML=`<h2>📝 Englisch → Deutsch</h2>
-      <div id="question"></div>
-      <input id="answer" type="text" placeholder="Übersetzung eingeben">
-      <div><button id="checkBtn">Prüfen</button></div>
-      <div id="progress"></div><div id="feedback" class="feedback"></div>`;
-    const q=$("#question"),a=$("#answer"),f=$("#feedback"),p=$("#progress");
-    let i=0;wrong=0;
-    function next(){
-      if(i>=list.length){
-        g.innerHTML=`<h2>Fertig!</h2><p>Du hattest ${wrong} Fehler.</p><button onclick="location.reload()">🔁 Neustart</button>`;
-        return;
-      }
-      const v=list[i];
-      q.textContent=v[0];
-      a.value="";f.textContent="";p.textContent=`Frage ${i+1}/${list.length} | Fehler: ${wrong}`;
-      $("#checkBtn").onclick=()=>{
-        const val=a.value.trim().toLowerCase(),sol=(v[1]||"").toLowerCase();
-        if(!val)return;
-        if(val===sol){f.textContent="✅ Richtig!";f.className="feedback correct";}
-        else{f.textContent=`❌ Falsch – ${v[1]}`;f.className="feedback wrong";wrong++;}
-        i++;
-        setTimeout(next,feedbackTime);
-      };
-    }
-    next();
+  function renderLexica(){
+    const letters=["Alle",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], lx=$("#lexica"); lx.innerHTML="";
+    letters.forEach(l=>{const b=document.createElement("button");b.textContent=l; if(l===state.letter)b.classList.add("active"); b.onclick=()=>{state.letter=l;state.page=1;renderTable();renderLexica();}; lx.appendChild(b);});
   }
 
-  /* === Karteikarten-Spiel === */
-  function runKartei(list){
-    const g=$("#game");
-    g.innerHTML=`<h2>🎴 Karteikarten</h2><div id="cardBox" class="card"><div class="card-inner">
-      <div class="card-face card-front"></div>
-      <div class="card-face card-back"></div></div></div>
-      <div><button id="flipBtn">🔁 Umdrehen</button> <button id="nextBtn">➡️ Weiter</button></div>
-      <div id="progress"></div>`;
-    const card=$("#cardBox"),front=$(".card-front"),back=$(".card-back"),p=$("#progress");
-    let i=0;
-    function showCard(){
-      if(i>=list.length){
-        g.innerHTML=`<h2>Alle durch!</h2><button onclick="location.reload()">🔁 Neustart</button>`;
-        return;
-      }
-      const v=list[i];
-      front.textContent=v[0];
-      back.innerHTML=`${v[1]}<br><small style="color:${COLOR_MAP[v[2]]}">(${CATEGORY_NAMES[v[2]]})</small>`;
-      card.classList.remove("flip");
-      p.textContent=`Karte ${i+1}/${list.length}`;
-    }
-    $("#flipBtn").onclick=()=>card.classList.toggle("flip");
-    $("#nextBtn").onclick=()=>{i++;showCard();};
-    showCard();
+  function applyFilterSort(){
+    const s=state.search.toLowerCase();
+    let arr=state.list.filter(([en,de,cat])=>{
+      if(state.letter!=="Alle" && !en.toUpperCase().startsWith(state.letter)) return false;
+      if(state.filterCat!=="Alle" && cat!==state.filterCat) return false;
+      if(s && !(en.toLowerCase().includes(s) || de.toLowerCase().includes(s))) return false;
+      return true;
+    });
+    arr.sort((a,b)=>{const x=(a[state.sortCol]||"").toLowerCase(),y=(b[state.sortCol]||"").toLowerCase(); if(x<y)return state.sortAsc?-1:1; if(x>y)return state.sortAsc?1:-1; return 0;});
+    state.filtered=arr;
   }
 
-  /* === Zuletzt hinzugefügt === */
+  function renderTable(){
+    applyFilterSort();
+    const pages = Math.max(1, Math.ceil(state.filtered.length/state.perPage));
+    if(state.page>pages) state.page=pages;
+    const start=(state.page-1)*state.perPage;
+    const rows=state.filtered.slice(start,start+state.perPage);
+
+    const tb=$("#vokabelTable tbody"); tb.innerHTML="";
+    rows.forEach(v=>{
+      const i=state.list.indexOf(v); const [en,de,cat]=v;
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${en}</td><td>${de}</td><td><span class="chip" style="background:${COLOR_MAP[cat]}">${CATEGORY_NAMES[cat]}</span></td><td><button class="viewBtn" data-i="${i}">🔍</button> <button class="delBtn" data-i="${i}">🗑️</button></td>`;
+      tb.appendChild(tr);
+    });
+
+    const pg=$("#pagination"); pg.innerHTML="";
+    for(let p=1;p<=pages;p++){const b=document.createElement("button");b.textContent=p; if(p===state.page)b.classList.add("active"); b.onclick=()=>{state.page=p;renderTable();}; pg.appendChild(b);}
+
+    $("#infoFooter").textContent=`📚 Gesamt: ${state.list.length} | 🔎 Gefiltert: ${state.filtered.length} | 📄 Seite ${state.page}/${pages}`;
+
+    $$(".viewBtn").forEach(b=>b.onclick=()=>openView(parseInt(b.dataset.i)));
+    $$(".delBtn").forEach(b=>b.onclick=()=>onDelete(parseInt(b.dataset.i)));
+  }
+
   function renderLastAdded(){
-    const div=$("#lastAdded");
-    if(!vocab.length){div.textContent="Keine Vokabeln vorhanden.";return;}
-    const last=vocab.slice(-5).reverse();
-    div.innerHTML=last.map(v=>`<div class="vocab-item"><b>${v[0]}</b> – ${v[1]} <span class="chip" style="background:${COLOR_MAP[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></div>`).join("");
+    const div=$("#lastAdded"); if(!state.list.length){div.textContent="Keine Vokabeln vorhanden.";return;}
+    const last=state.list.slice(-5).reverse();
+    div.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${COLOR_MAP[v[2]]}">(${CATEGORY_NAMES[v[2]]})</span></div>`).join("");
   }
 
-  /* === Events === */
-  $("#startAbfrage").onclick=()=>startGame("abfrage");
-  $("#startKartei").onclick=()=>startGame("kartei");
-  $("#startLetzte").onclick=()=>startGame("last30");
-  $("#toggleLast").onclick=()=>{
-    const c=$("#lastAdded");c.style.display=c.style.display==="block"?"none":"block";
+  function updateSortHeaders(){
+    $$("th[data-col]").forEach(th=>th.classList.remove("sort-asc","sort-desc"));
+    const a=$(`th[data-col="${state.sortCol}"]`); if(a) a.classList.add(state.sortAsc?"sort-asc":"sort-desc");
+  }
+
+  // Modal
+  function setReadonlyModal(r){$("#editEn").readOnly=r;$("#editDe").readOnly=r;$("#editGroup").readOnly=r;$("#editHint").readOnly=r;$("#editCat").disabled=r;}
+  function openView(i){
+    editIndex=i; const [en,de,cat,grp,hint]=state.list[i];
+    $("#editEn").value=en; $("#editDe").value=de; $("#editCat").value=cat; $("#editGroup").value=grp||""; $("#editHint").value=hint||"";
+    setReadonlyModal(true); $("#toggleEdit").textContent="🔧 Bearbeiten"; $("#modal").style.display="flex";
+  }
+  $("#toggleEdit").onclick=()=>{
+    if($("#toggleEdit").textContent.includes("Bearbeiten")){ setReadonlyModal(false); $("#toggleEdit").textContent="💾 Speichern"; }
+    else{
+      const v=state.list[editIndex];
+      v[0]=$("#editEn").value.trim(); v[1]=$("#editDe").value.trim(); v[2]=$("#editCat").value;
+      v[3]=$("#editGroup").value.trim(); v[4]=$("#editHint").value.trim(); v[5]=new Date().toISOString();
+      saveLocal(state.list); setLastChange(); renderTable(); renderLastAdded(); enableDownloadMerged(state.list); toast("💾 Gespeichert");
+      setReadonlyModal(true); $("#toggleEdit").textContent="🔧 Bearbeiten";
+    }
+  };
+  $("#closeModal").onclick=()=>$("#modal").style.display="none";
+
+  function onDelete(i){
+    if(!confirm("Diese Vokabel löschen?")) return;
+    state.list.splice(i,1); saveLocal(state.list); setLastChange(); renderTable(); renderLastAdded(); enableDownloadMerged(state.list); toast("🗑️ Gelöscht","#e74c3c");
+  }
+
+  // Add
+  $("#addBtn").onclick=()=>{
+    const en=$("#newEn").value.trim(), de=$("#newDe").value.trim(), cat=$("#newCat").value, grp=$("#newGroup").value.trim(), hint=$("#newHint").value.trim();
+    if(!en||!de||!cat) return alert("Bitte Englisch, Deutsch und Kategorie ausfüllen.");
+    state.list.push([en,de,cat,grp,hint,new Date().toISOString()]);
+    saveLocal(state.list); setLastChange(); $("#newEn").value=$("#newDe").value=$("#newGroup").value=$("#newHint").value="";
+    renderTable(); renderLastAdded(); enableDownloadMerged(state.list); toast("➕ Hinzugefügt");
   };
 
-  syncVocab();
+  // Filter / Suche / Sort
+  $("#filterCat").onchange=e=>{state.filterCat=e.target.value;state.page=1;renderTable();};
+  $("#searchInput").oninput=e=>{state.search=e.target.value.trim().toLowerCase();state.page=1;renderTable();};
+  $("#resetFilter").onclick=()=>{state.search="";$("#searchInput").value="";state.filterCat="Alle";$("#filterCat").value="Alle";state.letter="Alle";renderLexica();state.page=1;renderTable();};
+  $$("th[data-col]").forEach(th=>th.onclick=()=>{const col=parseInt(th.dataset.col); if(state.sortCol===col)state.sortAsc=!state.sortAsc; else{state.sortCol=col;state.sortAsc=true;} updateSortHeaders(); renderTable();});
+
+  // Sync
+  async function initialSync(){
+    $("#syncBadge").textContent="🔄 JSON wird synchronisiert…";
+    const remote=await fetchRemote();
+    const local = loadLocal();
+    let source="";
+    if(remote){ state.list=merge(remote,local); source="GitHub + Lokal (gemergt)"; }
+    else { state.list=local; source="Lokal (offline)"; }
+    saveLocal(state.list); setLastChange();
+
+    // UI
+    renderLexica();
+    renderTable();
+    renderLastAdded();
+    // Dropdowns
+    fillCat($("#newCat")); fillCat($("#editCat"));
+    // Filter-Kategorien
+    const f=$("#filterCat"); f.innerHTML="<option value='Alle'>Alle (bunt gemischt)</option>";
+    for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";f.appendChild(o);}
+    updateSortHeaders();
+
+    // Badges
+    $("#datasourceStatus").textContent = remote ? "📂 Datenquelle: GitHub JSON (gemergt mit lokalen Änderungen)" : "💾 Datenquelle: Lokaler Speicher (offline)";
+    $("#syncInfo").textContent = `Quelle: ${source} | Letzter Abgleich: ${new Date().toLocaleString("de-DE")}`;
+    $("#syncBadge").textContent = `✅ Synchronisiert – Quelle: ${source}`;
+
+    // Download aktivieren
+    enableDownloadMerged(state.list);
+  }
+  $("#syncBtn").onclick=async()=>{ $("#syncBadge").textContent="🔄 JSON wird synchronisiert…"; await initialSync(); toast("🔄 JSON neu geladen & gemergt"); };
+
+  // Start
+  initialSync();
 })();
 </script>
 </body>
