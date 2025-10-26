@@ -1,51 +1,44 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vokabeltrainer</title>
 <style>
-  body { font-family: system-ui, Arial, sans-serif; background:#f5f7fb; margin:0; text-align:center; }
-  .app { max-width: 900px; margin: 30px auto; }
-  h1 { margin: 0 0 14px; font-size: 2rem; }
-  /* Controls (Kategorie/Modus) */
-  .controls{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:10px 0 18px;}
-  .controls label{display:flex;align-items:center;gap:8px}
-  select{padding:8px 10px;border-radius:8px;border:1px solid #ccc;font-size:1rem}
-  /* Soft-UI tiles */
-  .tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin:5px 0 10px}
-  .tile{flex:1 1 320px;max-width:380px;background:#f9f9fb;border-radius:14px;
-    box-shadow:0 6px 16px rgba(0,0,0,.07), inset 0 2px 4px rgba(255,255,255,.7);
-    padding:16px 18px; cursor:pointer; transition:.18s; font-size:1.05rem}
-  .tile:hover{transform:translateY(-2px); background:#eef2f8}
-  .tile.center{max-width:520px}
-  /* Feedback settings */
-  .feedback-settings{background:#f1f4f9;border-radius:14px;padding:12px 18px;display:inline-flex;gap:16px;align-items:center;margin:16px 0;box-shadow:0 4px 12px rgba(0,0,0,.06)}
-  /* Link button */
-  .linkbtn{display:inline-block;padding:12px 18px;border-radius:10px;background:#74b9ff;color:#000;text-decoration:none;font-weight:700}
-  .linkbtn:hover{background:#a6d4ff}
-  .divider{border-top:2px solid #e5e9f0;margin:20px auto;width:92%}
-  /* Recent box (collapsible) */
-  #toggleRecent{margin-top:14px;background:#edf3ff;color:#0d3b66;border:1px solid #d3def2;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-  #toggleRecent:hover{background:#e5edff}
-  #recentBox{display:none;max-width:520px;margin:12px auto 0;background:#fafbff;border-radius:12px;box-shadow:inset 0 1px 2px rgba(0,0,0,.05);padding:12px 16px}
-  #recentList{list-style:none;margin:8px 0 0;padding:0}
-  #recentList li{padding:6px 0;border-bottom:1px dashed #ddd}
-  #recentList li:last-child{border-bottom:none}
-  .catLabel{font-size:.9rem;opacity:.75}
-  footer{margin-top:14px;color:#666}
-
-  /* Trainer UI */
-  .card{position:relative;background:#fff;margin:14px auto 0;max-width:640px;padding:20px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.08)}
-  .word{font-size:1.6rem;margin:10px 0 12px;font-weight:700}
-  .feedback{min-height:1.2em;margin:6px 0 4px}
-  #cardButtons{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px}
-  #rightBtn{background:#2ECC71;color:#fff;border:none;border-radius:10px;padding:10px 16px}
-  #wrongBtn{background:#E74C3C;color:#fff;border:none;border-radius:10px;padding:10px 16px}
-  #skipBtn{background:#bdc3c7;color:#000;border:none;border-radius:10px;padding:10px 16px}
-  input[type=text]{padding:10px 12px;border-radius:10px;border:1px solid #cfd6e4;font-size:1rem;width:92%;max-width:420px}
-  .chip{display:inline-block;padding:6px 10px;border-radius:12px;color:#fff;font-size:.9rem}
-  .muted{opacity:.7;font-size:.95rem}
+body { font-family: system-ui, Arial, sans-serif; background:#f5f7fb; margin:0; text-align:center; }
+.app { max-width: 900px; margin: 30px auto; }
+h1 { margin: 0 0 14px; font-size: 2rem; }
+.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin:10px 0 18px;}
+.controls label{display:flex;align-items:center;gap:8px}
+select{padding:8px 10px;border-radius:8px;border:1px solid #ccc;font-size:1rem}
+.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;margin:5px 0 10px}
+.tile{flex:1 1 320px;max-width:380px;background:#f9f9fb;border-radius:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.07), inset 0 2px 4px rgba(255,255,255,.7);
+  padding:16px 18px; cursor:pointer; transition:.18s; font-size:1.05rem}
+.tile:hover{transform:translateY(-2px); background:#eef2f8}
+.tile.center{max-width:520px}
+.feedback-settings{background:#f1f4f9;border-radius:14px;padding:12px 18px;display:inline-flex;gap:16px;align-items:center;margin:16px 0;box-shadow:0 4px 12px rgba(0,0,0,.06)}
+.linkbtn{display:inline-block;padding:12px 18px;border-radius:10px;background:#74b9ff;color:#000;text-decoration:none;font-weight:700}
+.linkbtn:hover{background:#a6d4ff}
+.divider{border-top:2px solid #e5e9f0;margin:20px auto;width:92%}
+#toggleRecent{margin-top:14px;background:#edf3ff;color:#0d3b66;border:1px solid #d3def2;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+#toggleRecent:hover{background:#e5edff}
+#recentBox{display:none;max-width:520px;margin:12px auto 0;background:#fafbff;border-radius:12px;box-shadow:inset 0 1px 2px rgba(0,0,0,.05);padding:12px 16px}
+#recentList{list-style:none;margin:8px 0 0;padding:0}
+#recentList li{padding:6px 0;border-bottom:1px dashed #ddd}
+#recentList li:last-child{border-bottom:none}
+.catLabel{font-size:.9rem;opacity:.75}
+footer{margin-top:14px;color:#666}
+.card{position:relative;background:#fff;margin:14px auto 0;max-width:640px;padding:20px;border-radius:16px;box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.word{font-size:1.6rem;margin:10px 0 12px;font-weight:700}
+.feedback{min-height:1.2em;margin:6px 0 4px}
+#cardButtons{display:flex;gap:12px;justify-content:center;align-items:center;margin-top:12px}
+#rightBtn{background:#2ECC71;color:#fff;border:none;border-radius:10px;padding:10px 16px}
+#wrongBtn{background:#E74C3C;color:#fff;border:none;border-radius:10px;padding:10px 16px}
+#skipBtn{background:#bdc3c7;color:#000;border:none;border-radius:10px;padding:10px 16px}
+input[type=text]{padding:10px 12px;border-radius:10px;border:1px solid #cfd6e4;font-size:1rem;width:92%;max-width:420px}
+.chip{display:inline-block;padding:6px 10px;border-radius:12px;color:#fff;font-size:.9rem}
+.muted{opacity:.7;font-size:.95rem}
 </style>
 </head>
 <body>
@@ -108,6 +101,7 @@
         <button id="wrongBtn" style="display:none">Falsch</button>
         <button id="skipBtn"  style="display:none">Überspringen</button>
       </div>
+      <div id="progress" class="muted" style="margin-top:8px;"></div>
     </div>
     <button id="restartBtn" class="tile center" style="margin-top:12px">🔄 Neustart</button>
   </div>
@@ -119,7 +113,6 @@
 
 <script>
 (() => {
-  // ===== Constants / utils =====
   const CATEGORY_NAMES = {
     Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker",
     Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen",
@@ -133,7 +126,7 @@
   const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
   const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
 
-  // ===== JSON Sync (merge) =====
+  // ==== JSON Sync ====
   async function trySyncFromJson(){
     const urls=["./vokabeln.json","vokabeln.json",location.origin+"/vokabeln.json",location.origin+"/vokabeltrainer/vokabeln.json"];
     let remote=null;
@@ -157,7 +150,7 @@
     return [...map.values()];
   }
 
-  // ===== Recent box =====
+  // ==== Recent list ====
   function renderRecent(){
     const ul=$("#recentList"); ul.innerHTML="";
     const last=loadLocal().slice(-5).reverse();
@@ -174,17 +167,18 @@
     $("#toggleRecent").textContent = vis ? "📜 Zuletzt hinzugefügt (anzeigen)" : "📜 Zuletzt hinzugefügt (verbergen)";
   };
 
-  // ===== Trainer/game state =====
+  // ==== Trainer ====
   let list=[], round=[], idx=0, errors=[], skipped=[], gameType="learn", mode="mixed", category="Alle";
   function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
 
   function renderCats(){
     const sel=$("#category");
-    // reset (keine Doppel)
     sel.innerHTML = "<option value='Alle'>Alle (bunt gemischt)</option>";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
+    Object.entries(CATEGORY_NAMES).forEach(([k,v])=>{
       const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
+      o.value=k; o.textContent=" "+v;
+      o.style.backgroundColor=COLOR_MAP[k];
+      o.style.color="#fff";
       sel.appendChild(o);
     });
   }
@@ -207,6 +201,10 @@
     showNext();
   }
 
+  function updateProgress(){
+    $("#progress").textContent = `Frage ${idx+1} von ${round.length}`;
+  }
+
   function showNext(){
     const feedbackOn = $("#feedbackToggle").checked;
     const toastDelay = parseInt($("#toastTime").value, 10) || 1000;
@@ -219,13 +217,14 @@
         $("#trainer").style.display="none";
         const r=$("#result"); r.style.display="block";
         let html="<h3>Runde beendet</h3>";
-        if(errors.length===0) html+="<p>Keine Fehler 🎉</p>";
-        else {
-          html+=`<p>${errors.length} Fehler:</p><ul>`;
+        html+=`<p>Gesamt: ${round.length+errors.length} | Fehler: ${errors.length}</p>`;
+        if(errors.length>0){
+          html+="<ul>";
           errors.forEach(([q,a])=> html+=`<li>${q} → ${a}</li>`);
           html+="</ul>";
+        } else {
+          html+="<p>🎉 Perfekt, keine Fehler!</p>";
         }
-        html+="<div style='margin-top:8px' class='muted'>Tipp: Kategorie/Modus oben ändern und neue Runde starten.</div>";
         r.innerHTML=html;
         return;
       }
@@ -237,92 +236,50 @@
     else if(mode==="toEnglish"){ ask=de; answer=en; }
     else { if(Math.random()<0.5){ ask=en; answer=de; } else { ask=de; answer=en; } }
 
+    updateProgress();
+
     const catChip = `<span class="chip" style="background:${COLOR_MAP[cat]||"#999"}">${CATEGORY_NAMES[cat]||cat}</span>`;
     $("#word").innerHTML = `${catChip}<br><br>${ask}`;
-    // Meta: Gruppe & Hinweis – immer anzeigen im Kartenmodus (auch ohne Feedback)
     const metaText = [grp?`Gruppe: <b>${grp}</b>`:"", hint?`Hinweis: <b>${hint}</b>`:""].filter(Boolean).join(" • ");
     $("#meta").innerHTML = metaText;
-    $("#meta").style.display = gameType==="cards" && metaText ? "block" : (metaText ? "block" : "none");
-
-    // Reset UI
+    $("#meta").style.display = metaText ? "block" : "none";
     $("#feedback").textContent="";
-    const answerInput=$("#answerInput");
-    const rightBtn=$("#rightBtn"), wrongBtn=$("#wrongBtn"), skipBtn=$("#skipBtn");
 
+    const input=$("#answerInput"), right=$("#rightBtn"), wrong=$("#wrongBtn"), skip=$("#skipBtn");
     if(gameType==="learn"){
-      answerInput.style.display="inline-block";
-      rightBtn.style.display="none"; wrongBtn.style.display="none"; skipBtn.style.display="inline-block";
-      answerInput.value=""; answerInput.focus();
-      answerInput.onkeydown = (e)=>{
+      input.style.display="inline-block"; right.style.display="none"; wrong.style.display="none"; skip.style.display="inline-block";
+      input.value=""; input.focus();
+      input.onkeydown=(e)=>{
         if(e.key==="Enter"){
-          const ok = answerInput.value.trim().toLowerCase() === (answer||"").toLowerCase();
-          if(feedbackOn){ $("#feedback").textContent = ok ? "✅ Richtig!" : `❌ Falsch! Richtige Antwort: ${answer}`; }
-          if(!ok) errors.push([ask, answer]);
-          idx++;
-          setTimeout(showNext, feedbackOn ? toastDelay : 0);
+          const ok=input.value.trim().toLowerCase()===answer.toLowerCase();
+          if(feedbackOn){ $("#feedback").textContent=ok?"✅ Richtig!":`❌ ${answer}`; }
+          if(!ok) errors.push([ask,answer]);
+          idx++; setTimeout(showNext, feedbackOn?toastDelay:0);
         }
       };
-      skipBtn.onclick = ()=>{ skipped.push([en,de,cat,grp,hint]); idx++; showNext(); };
-    }else{ // cards
-      answerInput.style.display="none";
-      rightBtn.style.display="inline-block"; wrongBtn.style.display="inline-block"; skipBtn.style.display="inline-block";
+      skip.onclick=()=>{ skipped.push([en,de,cat,grp,hint]); idx++; showNext(); };
+    }else{
+      input.style.display="none"; right.style.display="inline-block"; wrong.style.display="inline-block"; skip.style.display="inline-block";
+      const isTrap=Math.random()<0.3;
+      const pool=list.map(v=>mode==="toEnglish"?v[0]:v[1]);
+      let shown=answer;
+      if(isTrap){ do{ shown=pool[Math.floor(Math.random()*pool.length)]||answer; }while(shown===answer); }
+      $("#feedback").innerHTML=`💡 <b>${shown}</b>`;
+      if(Math.random()<0.5) $("#cardButtons").prepend(right); else $("#cardButtons").prepend(wrong);
 
-      // 30% Fallenkarte: zeigt falsche Antwort
-      const isTrap = Math.random() < 0.30;
-      const pool = list.map(v => mode==="toEnglish" ? v[0] : v[1]);
-      let shown = answer;
-      if(isTrap){
-        do { shown = pool[Math.floor(Math.random()*pool.length)] || answer; } while(shown===answer);
-      }
-      $("#feedback").innerHTML = `💡 <b>${shown}</b>`; // Vorschlag
-      if(!feedbackOn){ $("#feedback").style.opacity=".7"; } else { $("#feedback").style.opacity="1"; }
-
-      // Buttons mischen
-      const parent=$("#cardButtons");
-      if(Math.random()<0.5) parent.insertBefore(wrongBtn, rightBtn); else parent.insertBefore(rightBtn, wrongBtn);
-
-      rightBtn.onclick = ()=>{
-        const ok = !isTrap;
-        if(feedbackOn) $("#feedback").textContent = ok ? "✅ Richtig!" : "❌ Falsch!";
-        if(!ok) errors.push([ask, answer]);
-        idx++; setTimeout(showNext, feedbackOn ? Math.min(800, parseInt($("#toastTime").value,10)) : 0);
-      };
-      wrongBtn.onclick = ()=>{
-        const ok = isTrap;
-        if(feedbackOn) $("#feedback").textContent = ok ? "✅ Richtig!" : "❌ Falsch!";
-        if(!ok) errors.push([ask, answer]);
-        idx++; setTimeout(showNext, feedbackOn ? Math.min(800, parseInt($("#toastTime").value,10)) : 0);
-      };
-      skipBtn.onclick = ()=>{ skipped.push([en,de,cat,grp,hint]); idx++; showNext(); };
+      const handler=(ok)=>{ if(!ok) errors.push([ask,answer]); idx++; setTimeout(showNext,feedbackOn?toastDelay:0); };
+      right.onclick=()=>handler(!isTrap);
+      wrong.onclick=()=>handler(isTrap);
+      skip.onclick=()=>{ skipped.push([en,de,cat,grp,hint]); idx++; showNext(); };
     }
   }
 
-  // ===== Event wiring =====
-  $("#learnTile").onclick   = ()=> startRound($("#mode").value, "learn");
-  $("#cardsTile").onclick   = ()=> startRound($("#mode").value, "cards");
-  $("#last30Tile").onclick  = ()=> {
-    const all=loadLocal(); if(!all.length){ return; }
-    const last30 = all.slice(-30);
-    startRound($("#mode").value, "learn", last30);
-  };
-  $("#restartBtn").onclick  = ()=> location.reload();
+  $("#learnTile").onclick=()=>startRound($("#mode").value,"learn");
+  $("#cardsTile").onclick=()=>startRound($("#mode").value,"cards");
+  $("#last30Tile").onclick=()=>{const all=loadLocal(); if(!all.length)return; startRound($("#mode").value,"learn",all.slice(-30));};
+  $("#restartBtn").onclick=()=>location.reload();
 
-  // ===== Init =====
-  function renderCats(){
-    const sel=$("#category");
-    sel.innerHTML = "<option value='Alle'>Alle (bunt gemischt)</option>";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
-      sel.appendChild(o);
-    });
-  }
-
-  (async function init(){
-    renderCats();
-    await trySyncFromJson();
-  })();
-
+  (async function init(){renderCats();await trySyncFromJson();})();
 })();
 </script>
 </body>
