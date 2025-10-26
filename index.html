@@ -41,8 +41,9 @@ select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1r
 .footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:26px}
 .footer-actions a,.footer-actions button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;
   padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
-details{background:#f0f4ff;border-radius:12px;padding:10px 12px;margin-top:18px}
+details{background:#f0f4ff;border-radius:12px;padding:10px 12px;margin-top:18px;text-align:center}
 summary{font-weight:700;cursor:pointer}
+#recent{margin-top:10px;text-align:center;line-height:1.6}
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 .feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
 </style>
@@ -106,18 +107,22 @@ summary{font-weight:700;cursor:pointer}
   <button onclick="location.reload()">🔄 Neustart</button>
 </div>
 
-<details><summary>🆕 Zuletzt hinzugefügt ▾</summary><div id="recent">–</div></details>
+<details>
+  <summary>🆕 Zuletzt hinzugefügt ▾</summary>
+  <div id="recent">–</div>
+</details>
+
 <div class="foot">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
 </div>
 
 <script>
 (function(){
 const CATS={
- Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#fff"],
+ Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
- Blau:["Blech-/Kunststoffarbeiten","#1976D2","#fff"],
+ Blau:["Blech-/ Kunststoffarbeiten","#1976D2","#fff"],
  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
- HellesPink:["Hydraulik/Pneumatik","#F54927","#fff"],
+ HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
  Orange:["Elektrotechnik","#E67E22","#fff"],
  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
@@ -146,17 +151,19 @@ async function load(){
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
 function pick(){let l=selCat.value==="Alle"?data:data.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
 function flash(ok){if(!chkFeedback.checked){i++;return next();}
- stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
+ stage.classList.add(ok?"flash-correct":"flash-wrong");
+ setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
 function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors}`;}
 function next(){
  if(i>=round.length){stage.style.display="none";alert(`Fertig! Fehler: ${errors}`);return;}
  stage.style.display="block";delay=parseInt(selDelay.value);
  const [en,de,cat]=round[i];
- chip.textContent=CATS[cat]?CATS[cat][0]:cat;chip.style.background=CATS[cat]?CATS[cat][1]:"#ddd";chip.style.color=CATS[cat]?CATS[cat][2]:"#000";
+ chip.textContent=CATS[cat]?CATS[cat][0]:cat;
+ chip.style.background=CATS[cat]?CATS[cat][1]:"#ddd";chip.style.color=CATS[cat]?CATS[cat][2]:"#000";
  const ask=Math.random()<0.5?"EN":"DE";
  const question=ask==="EN"?en:de,answer=ask==="EN"?de:en;correct=answer;
  trap=false;
- if(mode==="cards"&&Math.random()<0.3){ // Täuschung nur im Mitdenker
+ if(mode==="cards"&&Math.random()<0.3){
    const pool=data.map(v=>ask==="EN"?v[1]:v[0]);
    let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
    offer.textContent="💡 "+wrong;trap=true;
