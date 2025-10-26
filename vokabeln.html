@@ -27,10 +27,12 @@ input[type="text"]{flex:1 1 160px;}
 #infoFooter{margin-top:5px;font-size:.9rem;color:#555;}
 #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;}
 #modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000;}
-#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);min-width:280px;}
+#modalContent{background:#fff;padding:20px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.3);min-width:280px;text-align:center;}
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#2ecc71;color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:999;}
 hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 #lastAdded{background:#f8fafc;padding:10px;border-radius:10px;margin-top:8px;text-align:center;}
+.viewBtn{background:#8e44ad;}
+.viewBtn:hover{background:#9b59b6;}
 </style>
 </head>
 <body>
@@ -43,7 +45,7 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
     <label>Kategorie:
       <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
     </label>
-    <input type="text" id="searchInput" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)">
+    <input type="text" id="searchInput" placeholder="🔎 Suchen (EN / DE)">
     <button id="resetFilter">🔄 Filter zurücksetzen</button>
   </div>
 </div>
@@ -56,8 +58,6 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
         <th onclick="sortList(0)">Englisch</th>
         <th onclick="sortList(1)">Deutsch</th>
         <th onclick="sortList(2)">Kategorie</th>
-        <th onclick="sortList(3)">Gruppe / Variante</th>
-        <th onclick="sortList(4)">Hinweis</th>
         <th>Aktion</th>
       </tr>
     </thead>
@@ -104,17 +104,18 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 </div>
 </div>
 
+<!-- 🔍 Ansehen / Bearbeiten Modal -->
 <div id="modal">
   <div id="modalContent">
-    <h3>✏️ Vokabel bearbeiten</h3>
-    <input id="editEn" type="text" placeholder="Englisch"><br><br>
-    <input id="editDe" type="text" placeholder="Deutsch"><br><br>
-    <select id="editCat"></select><br><br>
-    <input id="editGroup" type="text" placeholder="Gruppe / Variante"><br><br>
-    <input id="editHint" type="text" placeholder="Hinweis"><br><br>
+    <h3>🔍 Vokabel-Details</h3>
+    <input id="editEn" type="text" placeholder="Englisch" readonly><br><br>
+    <input id="editDe" type="text" placeholder="Deutsch" readonly><br><br>
+    <select id="editCat" disabled></select><br><br>
+    <input id="editGroup" type="text" placeholder="Gruppe / Variante" readonly><br><br>
+    <input id="editHint" type="text" placeholder="Hinweis" readonly><br><br>
     <div class="flex">
-      <button id="saveEdit">💾 Speichern</button>
-      <button id="cancelEdit">❌ Abbrechen</button>
+      <button id="toggleEdit">🔧 Bearbeiten</button>
+      <button id="cancelEdit">❌ Schließen</button>
     </div>
   </div>
 </div>
@@ -127,35 +128,28 @@ hr{border:0;border-top:1px solid #ddd;margin:20px 0;}
 const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
 const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 let list=[];const perPage=15;let currentPage=1;let editIndex=null;
-let sortColumn=null;let sortAsc=true;
+let sortColumn=0;let sortAsc=true;
 const $=s=>document.querySelector(s);const $$=s=>document.querySelectorAll(s);
-const statusEl=$("#datasourceStatus");
 
 async function loadVokabeln(){
   let vokabeln=[];
-  try{
-    const local=localStorage.getItem("vokabeln");
-    if(local){vokabeln=JSON.parse(local);statusEl.textContent="💾 Datenquelle: Lokaler Speicher";}
-    else{
-      const r=await fetch("vokabeln.json",{cache:"no-store"});
-      if(r.ok){vokabeln=await r.json();statusEl.textContent="🌐 Datenquelle: vokabeln.json";}
-    }
-  }catch(e){console.error(e);}
+  const local=localStorage.getItem("vokabeln");
+  if(local){vokabeln=JSON.parse(local);} 
+  else{
+    const r=await fetch("vokabeln.json",{cache:"no-store"});
+    if(r.ok){vokabeln=await r.json();}
+  }
   if(!Array.isArray(vokabeln))vokabeln=[];
-  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
-  localStorage.setItem("vokabeln_updated",new Date().toISOString());
   return vokabeln;
 }
 
 function toast(msg,color="#2ecc71"){const t=$("#toast");t.textContent=msg;t.style.background=color;t.style.display="block";setTimeout(()=>t.style.display="none",1500);}
-function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));localStorage.setItem("vokabeln_updated",new Date().toISOString());render();}
+function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));localStorage.setItem("vokabeln_updated",new Date().toISOString());render(false);}
 
 window.sortList=function(colIndex){
-  const ths=$$("th");
-  ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
+  const ths=$$("th");ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
   if(sortColumn===colIndex){sortAsc=!sortAsc;}else{sortColumn=colIndex;sortAsc=true;}
-  const activeTh=ths[colIndex];
-  activeTh.classList.add(sortAsc?"sort-asc":"sort-desc");
+  const activeTh=ths[colIndex];activeTh.classList.add(sortAsc?"sort-asc":"sort-desc");
   list.sort((a,b)=>{
     const x=(a[colIndex]||"").toLowerCase();
     const y=(b[colIndex]||"").toLowerCase();
@@ -163,35 +157,33 @@ window.sortList=function(colIndex){
     if(x>y)return sortAsc?1:-1;
     return 0;
   });
-  saveLocal();
-}
+  render(false);
+};
 
-function render(){
+function render(resetPage=true){
   const tb=$("#vokabelTable tbody");
   const search=$("#searchInput").value.toLowerCase();
   const cat=$("#filterCat").value;
-  let all=list.filter(v=>{
+  let filtered=list.filter(v=>{
     const matchCat=(cat==="Alle"||v[2]===cat);
-    const matchSearch=(v[0].toLowerCase().includes(search)||v[1].toLowerCase().includes(search)||(v[3]||"").toLowerCase().includes(search)||(v[4]||"").toLowerCase().includes(search));
+    const matchSearch=(v[0].toLowerCase().includes(search)||v[1].toLowerCase().includes(search));
     return matchCat&&matchSearch;
   });
-  const pages=Math.ceil(all.length/perPage)||1;
-  if(currentPage>pages)currentPage=pages;
+  const pages=Math.ceil(filtered.length/perPage)||1;
+  if(resetPage)currentPage=1;
   const start=(currentPage-1)*perPage;
-  const rows=all.slice(start,start+perPage);
+  const rows=filtered.slice(start,start+perPage);
   tb.innerHTML=rows.map((v,i)=>`<tr>
-  <td>${v[0]}</td><td>${v[1]}</td>
-  <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-  <td>${v[3]||""}</td><td>${v[4]||""}</td>
-  <td><button class="editBtn" data-idx="${start+i}">✏️</button><button class="delBtn" data-idx="${start+i}">🗑️</button></td></tr>`).join("");
+    <td>${v[0]}</td><td>${v[1]}</td>
+    <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+    <td><button class="viewBtn" data-idx="${list.indexOf(v)}">🔍</button><button class="delBtn" data-idx="${list.indexOf(v)}">🗑️</button></td></tr>`).join("");
 
   const pag=$("#pagination");pag.innerHTML="";
-  for(let i=1;i<=pages;i++){const b=document.createElement("button");b.textContent=i;if(i===currentPage)b.style.background="#6ca0f8";b.onclick=()=>{currentPage=i;render();};pag.appendChild(b);}
+  for(let i=1;i<=pages;i++){const b=document.createElement("button");b.textContent=i;if(i===currentPage)b.style.background="#6ca0f8";b.onclick=()=>{currentPage=i;render(false);};pag.appendChild(b);}
   const upd=localStorage.getItem("vokabeln_updated");
-  $("#infoFooter").textContent=`📅 Letzte Änderung: ${upd?new Date(upd).toLocaleString("de-DE"):"–"} | 📚 Gesamt: ${list.length} | 🔤 Angezeigt: ${rows.length} | 📄 Seite ${currentPage}/${pages}`;
+  $("#infoFooter").textContent=`📅 Letzte Änderung: ${upd?new Date(upd).toLocaleString("de-DE"):"–"} | 📚 Gesamt: ${list.length} | 🔍 Gefiltert: ${filtered.length} | 📄 Seite ${currentPage}/${pages}`;
   renderLastAdded();
-
-  $$(".editBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.idx));
+  $$(".viewBtn").forEach(b=>b.onclick=()=>openView(b.dataset.idx));
   $$(".delBtn").forEach(b=>b.onclick=()=>{if(confirm("Löschen?")){list.splice(b.dataset.idx,1);saveLocal();toast("🗑️ Gelöscht","#e74c3c");}});
 }
 
@@ -202,25 +194,53 @@ function renderLastAdded(){
   div.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${COLOR_MAP[v[2]]}">(${CATEGORY_NAMES[v[2]]})</span></div>`).join("");
 }
 
-function openEdit(i){
-  editIndex=i;const v=list[i];
-  $("#editEn").value=v[0];$("#editDe").value=v[1];$("#editCat").value=v[2];
-  $("#editGroup").value=v[3]||"";$("#editHint").value=v[4]||"";
+function openView(i){
+  editIndex=i;
+  const v=list[i];
+  $("#editEn").value=v[0];
+  $("#editDe").value=v[1];
+  $("#editCat").value=v[2];
+  $("#editGroup").value=v[3]||"";
+  $("#editHint").value=v[4]||"";
+  setReadonly(true);
+  $("#toggleEdit").textContent="🔧 Bearbeiten";
   $("#modal").style.display="flex";
 }
 
-$("#saveEdit").onclick=()=>{const v=list[editIndex];v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();saveLocal();$("#modal").style.display="none";toast("💾 Gespeichert");};
+function setReadonly(state){
+  $("#editEn").readOnly=state;
+  $("#editDe").readOnly=state;
+  $("#editGroup").readOnly=state;
+  $("#editHint").readOnly=state;
+  $("#editCat").disabled=state;
+}
+
+$("#toggleEdit").onclick=()=>{
+  if($("#toggleEdit").textContent.includes("Bearbeiten")){
+    setReadonly(false);
+    $("#toggleEdit").textContent="💾 Speichern";
+  } else {
+    const v=list[editIndex];
+    v[0]=$("#editEn").value.trim();
+    v[1]=$("#editDe").value.trim();
+    v[2]=$("#editCat").value;
+    v[3]=$("#editGroup").value.trim();
+    v[4]=$("#editHint").value.trim();
+    saveLocal();
+    setReadonly(true);
+    $("#toggleEdit").textContent="🔧 Bearbeiten";
+    toast("💾 Gespeichert");
+  }
+};
 $("#cancelEdit").onclick=()=>$("#modal").style.display="none";
 $("#addBtn").onclick=()=>{const en=$("#en").value.trim(),de=$("#de").value.trim(),cat=$("#cat").value,grp=$("#group").value.trim(),hint=$("#hint").value.trim();if(!en||!de)return alert("Bitte ausfüllen!");list.push([en,de,cat,grp,hint]);saveLocal();$("#en").value=$("#de").value=$("#group").value=$("#hint").value="";toast("➕ Hinzugefügt");};
 $("#resetFilter").onclick=()=>{$("#filterCat").value="Alle";$("#searchInput").value="";render();};
+$("#filterCat").onchange=()=>render(false);
+$("#searchInput").oninput=()=>render(false);
 
 list=await loadVokabeln();
-
-// 🟢 Automatische Anfangssortierung nach Englisch
-sortColumn=0; sortAsc=true;
 list.sort((a,b)=>a[0].localeCompare(b[0]));
 $$("th")[0].classList.add("sort-asc");
-
 const filterCat=$("#filterCat");
 for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";filterCat.appendChild(o);}
 function fillCats(sel){sel.innerHTML="";for(const k in CATEGORY_NAMES){const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);}}
