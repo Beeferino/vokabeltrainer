@@ -38,7 +38,9 @@ select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1r
 .footer-actions a,.footer-actions button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
 details{background:#f0f4ff;border-radius:12px;padding:10px 12px;margin-top:18px;text-align:center}
 summary{font-weight:700;cursor:pointer}
-#recent{margin-top:10px;text-align:center;line-height:1.6}
+#recent{margin-top:18px;text-align:center;line-height:1.8}
+.recent-item{display:inline-block;margin:6px;padding:8px 14px;border-radius:12px;color:#fff;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,0.15)}
+.recent-item b{color:#fff}
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 .feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
 @media (hover:none){.kachel:active{transform:scale(.98)}}
@@ -144,9 +146,13 @@ async function loadData(){
     data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
   }
   const last=data.slice(-5).reverse();
-  recent.innerHTML = last.length
-    ? last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="opacity:.7">(${CATS[v[2]]?CATS[v[2]][0]:v[2]})</span></div>`).join("")
-    : "–";
+  if(!last.length){recent.textContent="–";return;}
+  recent.innerHTML = last.map(v=>{
+    const c=CATS[v[2]]||["","#ccc","#000"];
+    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
+      <b>${v[0]}</b> – ${v[1]}<br><small>(${c[0]})</small>
+    </div>`;
+  }).join("");
 }
 
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
