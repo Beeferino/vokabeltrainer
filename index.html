@@ -6,28 +6,39 @@
 <title>🎯 Vokabeltrainer</title>
 <style>
   body {
-    font-family: system-ui, sans-serif;
-    background: #f5f8fc;
+    font-family: "Inter", system-ui, sans-serif;
+    background: linear-gradient(180deg, #eef3f8 0%, #f9fbfd 100%);
     color: #222;
     margin: 0;
-    padding: 20px;
+    padding: 30px 10px;
     text-align: center;
   }
+
   .app {
     max-width: 900px;
     margin: auto;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 25px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    padding: 25px 30px;
+    transition: box-shadow 0.2s ease;
   }
-  h1 { margin-bottom: 15px; }
+
+  .app:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+
+  h1 {
+    margin-bottom: 18px;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #1e6ed8;
+  }
 
   .controls label { margin: 0 10px; font-size: 1rem; }
-  select, input[type=text] {
-    padding: 6px 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+  select {
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #cfd6e4;
+    background: #f9fbfd;
   }
 
   .functions {
@@ -35,85 +46,138 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 15px;
-    margin: 20px 0;
+    margin: 25px 0;
   }
   .kachel {
     background: #1e6ed8;
-    color: white;
+    color: #fff;
     padding: 14px 22px;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.25s ease;
     font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
   }
-  .kachel:hover { background: #2980b9; transform: scale(1.04); }
+  .kachel:hover { background: #2980b9; transform: translateY(-3px); }
 
   .progress {
     font-weight: bold;
     color: #1e6ed8;
     margin-top: 20px;
+    letter-spacing: 0.3px;
   }
 
   .card {
     background: #f8fafc;
-    border-radius: 12px;
-    padding: 25px 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-top: 20px;
+    border-radius: 16px;
+    padding: 35px 25px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    margin-top: 25px;
+    transition: all 0.2s ease;
+    animation: fadeIn 0.5s ease;
   }
+  @keyframes fadeIn { from {opacity:0; transform:translateY(8px);} to {opacity:1; transform:translateY(0);} }
 
   .category-badge {
     display: inline-block;
-    padding: 6px 14px;
-    border-radius: 20px;
+    padding: 8px 16px;
+    border-radius: 50px;
     color: #fff;
-    font-weight: 500;
-    margin-bottom: 15px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
   }
 
   .word {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin: 10px 0;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 20px 0 10px;
   }
 
   .feedback {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #333;
-    margin: 12px 0;
-    min-height: 28px;
+    margin: 10px 0;
+    min-height: 30px;
+    transition: 0.3s;
   }
 
-  #cardButtons { margin-top: 12px; }
+  #cardButtons { margin-top: 16px; }
+
   #cardButtons button {
-    padding: 8px 18px;
-    margin: 4px;
-    border-radius: 8px;
+    padding: 10px 22px;
+    margin: 6px;
+    border-radius: 10px;
     border: none;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.25s ease;
+  }
+  #rightBtn { background: #27ae60; color: white; }
+  #wrongBtn { background: #e74c3c; color: white; }
+  #skipBtn { background: #95a5a6; color: white; }
+  #rightBtn:hover { background: #2ecc71; transform: translateY(-2px);}
+  #wrongBtn:hover { background: #ff4e4e; transform: translateY(-2px);}
+  #skipBtn:hover { background: #b0b8bb; transform: translateY(-2px);}
+
+  .input-card {
+    display: inline-flex;
+    align-items: center;
+    border: 2px solid #dce3ec;
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    margin-top: 10px;
     transition: 0.2s;
   }
-  #cardButtons button:hover { transform: scale(1.05); }
-  #rightBtn { background: #2ecc71; color: white; }
-  #wrongBtn { background: #e74c3c; color: white; }
-  #skipBtn { background: #bdc3c7; color: white; }
+  .input-card:focus-within {
+    border-color: #1e6ed8;
+    box-shadow: 0 0 0 3px rgba(30,110,216,0.15);
+  }
+  .input-card input {
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    padding: 6px;
+    flex: 1;
+  }
+  .input-card .enter-icon {
+    font-size: 1.2rem;
+    color: #1e6ed8;
+    margin-left: 6px;
+  }
 
   .restart {
     background: #1e6ed8;
     color: #fff;
     border: none;
-    padding: 10px 22px;
-    border-radius: 8px;
+    padding: 12px 26px;
+    border-radius: 10px;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 25px;
-    transition: 0.2s;
+    margin-top: 30px;
+    transition: all 0.25s ease;
   }
-  .restart:hover { background: #2980b9; transform: scale(1.05); }
+  .restart:hover { background: #2980b9; transform: translateY(-2px); }
 
-  .footer { margin-top: 40px; font-size: 0.9rem; }
+  .correct { animation: flashGreen 0.5s ease; }
+  .wrong { animation: flashRed 0.5s ease; }
+
+  @keyframes flashGreen {
+    0%{box-shadow:0 0 0 rgba(46,204,113,0);}
+    50%{box-shadow:0 0 20px rgba(46,204,113,0.5);}
+    100%{box-shadow:0 0 0 rgba(46,204,113,0);}
+  }
+  @keyframes flashRed {
+    0%{box-shadow:0 0 0 rgba(231,76,60,0);}
+    50%{box-shadow:0 0 20px rgba(231,76,60,0.5);}
+    100%{box-shadow:0 0 0 rgba(231,76,60,0);}
+  }
+
+  .footer { margin-top: 40px; font-size: 0.9rem; color: #666; }
   .linkbtn { text-decoration: none; color: #1e6ed8; font-weight: 500; }
   #datasourceStatus { margin-top: 10px; color: #666; font-size: 0.9rem; }
 
@@ -123,7 +187,6 @@
     border-radius: 10px;
     padding: 10px;
   }
-  #lastAddedList { transition: all 0.3s ease; }
 </style>
 </head>
 
@@ -133,9 +196,7 @@
 
   <div class="controls">
     <label>Kategorie:
-      <select id="category">
-        <option value="Alle">Alle (bunt gemischt)</option>
-      </select>
+      <select id="category"><option value="Alle">Alle (bunt gemischt)</option></select>
     </label>
     <label>Modus:
       <select id="mode">
@@ -153,11 +214,11 @@
   </div>
 
   <div class="feedback-settings">
-    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback</label>
-    <label>Anzeigedauer:
+    <label><input type="checkbox" id="feedbackToggle" checked> Feedback anzeigen</label>
+    <label>Dauer:
       <select id="delayTime">
-        <option value="3000" selected>3 Sekunden</option>
-        <option value="5000">5 Sekunden</option>
+        <option value="3000" selected>3 s</option>
+        <option value="5000">5 s</option>
       </select>
     </label>
   </div>
@@ -185,8 +246,8 @@
     <small>© 2025 @Beefi</small>
 
     <div id="lastAddedBox">
-      <h3>🆕 Zuletzt hinzugefügt ▼</h3>
-      <div id="lastAddedList">–</div>
+      <h3 style="cursor:pointer;">🆕 Zuletzt hinzugefügt ▲</h3>
+      <div id="lastAddedList" style="display:none;">–</div>
     </div>
   </div>
 </div>
@@ -198,27 +259,18 @@ document.addEventListener("DOMContentLoaded",()=>{
   const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech-/ Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
   const M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 
-  const status=document.getElementById("datasourceStatus"),
-        cat=document.getElementById("category"),
-        mSel=document.getElementById("mode"),
-        fT=document.getElementById("feedbackToggle"),
-        dT=document.getElementById("delayTime"),
-        learn=document.getElementById("learnBtn"),
-        cards=document.getElementById("cardsBtn"),
-        last30=document.getElementById("last30Btn"),
-        restart=document.getElementById("restartBtn"),
-        word=document.getElementById("word"),
-        feedback=document.getElementById("feedback"),
-        right=document.getElementById("rightBtn"),
-        wrong=document.getElementById("wrongBtn"),
-        skip=document.getElementById("skipBtn"),
-        progress=document.getElementById("progress"),
-        trainer=document.getElementById("trainer"),
-        result=document.getElementById("result"),
-        card=document.getElementById("card"),
-        badge=document.getElementById("categoryBadge");
+  const cat=document.getElementById("category"), mSel=document.getElementById("mode"),
+  fT=document.getElementById("feedbackToggle"), dT=document.getElementById("delayTime"),
+  learn=document.getElementById("learnBtn"), cards=document.getElementById("cardsBtn"),
+  last30=document.getElementById("last30Btn"), restart=document.getElementById("restartBtn"),
+  word=document.getElementById("word"), feedback=document.getElementById("feedback"),
+  right=document.getElementById("rightBtn"), wrong=document.getElementById("wrongBtn"),
+  skip=document.getElementById("skipBtn"), progress=document.getElementById("progress"),
+  trainer=document.getElementById("trainer"), result=document.getElementById("result"),
+  card=document.getElementById("card"), badge=document.getElementById("categoryBadge"),
+  status=document.getElementById("datasourceStatus");
 
-  let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",curr="",trap=false;
+  let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",trap=false;
 
   async function sync(){
     try{
@@ -226,7 +278,6 @@ document.addEventListener("DOMContentLoaded",()=>{
       if(!r.ok) throw new Error();
       const d=await r.json();
       localStorage.setItem("vokabeln",JSON.stringify(d));
-      localStorage.setItem("vokabeln_updated",new Date().toISOString());
       status.textContent="🌐 Datenquelle: GitHub (Online)";
     }catch{
       status.textContent="💾 Datenquelle: Lokaler Speicher";
@@ -243,8 +294,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     mode=sel;game=type;
     let f=(cat.value==="Alle"?list:list.filter(v=>v[2]===cat.value));
     if(custom)f=custom;
-    round=f.slice(0,15);
-    i=0;errors=[];skipped=[];
+    round=f.slice(0,15);i=0;errors=[];skipped=[];
     trainer.style.display="block";result.style.display="none";
     showNext();
   }
@@ -252,11 +302,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   function showNext(){
     const delay=parseInt(dT.value,10);
     if(i>=round.length){
-      if(skipped.length){
-        round=skipped;skipped=[];i=0;
-        feedback.textContent="📘 Jetzt die übersprungenen Vokabeln!";
-        updateProg();showNext();return;
-      }
+      if(skipped.length){round=skipped;skipped=[];i=0;feedback.textContent="📘 Jetzt die übersprungenen!";updateProg();showNext();return;}
       trainer.style.display="none";progress.style.display="none";
       let h="<h3>Runde beendet</h3>";
       h+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";
@@ -267,37 +313,36 @@ document.addEventListener("DOMContentLoaded",()=>{
     updateProg();
     const [en,de,catg]=round[i];
     let ask,answ;
-    if(mode==="toGerman"){ask=en;answ=de;}
-    else if(mode==="toEnglish"){ask=de;answ=en;}
+    if(mode==="toGerman"){ask=en;answ=de;} else if(mode==="toEnglish"){ask=de;answ=en;}
     else{if(Math.random()<.5){ask=en;answ=de;}else{ask=de;answ=en;}}
 
     const c=M[catg]||"#ccc";
-    badge.style.background=c;
-    badge.textContent=C[catg];
-    word.textContent=ask;
-    feedback.textContent="";
+    badge.style.background=c; badge.textContent=C[catg];
+    word.textContent=ask; feedback.textContent="";
 
     if(game==="learn"){
-      right.style.display="none";wrong.style.display="none";skip.style.display="inline-block";
-      feedback.innerHTML='<input id="answerInput" type="text" placeholder="Übersetzung eingeben...">';
+      right.style.display="none"; wrong.style.display="none"; skip.style.display="inline-block";
+      feedback.innerHTML=`
+        <div class="input-card">
+          <input id="answerInput" type="text" placeholder="Übersetzung eingeben...">
+          <span class="enter-icon">⏎</span>
+        </div>`;
       const input=document.getElementById("answerInput");
       input.focus();
       input.onkeydown=e=>{
         if(e.key==="Enter"){
           const ok=input.value.trim().toLowerCase()===answ.toLowerCase();
-          if(fT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! → ${answ}`;flash(ok?"correct":"wrong");}
+          feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! → ${answ}`;
+          flash(ok?"correct":"wrong");
           if(!ok)errors.push([ask,answ]);
           i++;setTimeout(showNext,delay);
         }
       };
       skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
-    }else{
+    } else {
       right.style.display="inline-block";wrong.style.display="inline-block";skip.style.display="inline-block";
-      trap=Math.random()<.3;curr=trap?getWrong(answ):answ;
+      trap=Math.random()<.3;const curr=trap?getWrong(answ):answ;
       feedback.innerHTML=`💡 <b>${curr}</b>`;
-      const parent=document.getElementById("cardButtons");
-      if(Math.random()<.5)parent.insertBefore(wrong,right);else parent.insertBefore(right,wrong);
-
       right.onclick=()=>{const ok=!trap;if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}if(!ok)errors.push([ask,answ]);i++;setTimeout(showNext,delay);};
       wrong.onclick=()=>{const ok=trap;if(fT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}if(!ok)errors.push([ask,answ]);i++;setTimeout(showNext,delay);};
       skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
@@ -312,36 +357,15 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   learn.onclick=()=>start(mSel.value,"learn");
   cards.onclick=()=>start(mSel.value,"cards");
-  last30.onclick=()=>{const all=S("vokabeln");if(!all.length){alert("Keine Vokabeln.");return;}const last=all.slice(-30);const choice=confirm("📚 Letzte 30 Vokabeln:\nOK = Karteikarten\nAbbrechen = Eingabe");start(mSel.value,choice?"cards":"learn",last);};
+  last30.onclick=()=>{const all=S("vokabeln");if(!all.length){alert("Keine Vokabeln.");return;}const last=all.slice(-30);const choice=confirm("📚 Letzte 30:\nOK = Karteikarten\nAbbrechen = Eingabe");start(mSel.value,choice?"cards":"learn",last);};
   restart.onclick=()=>location.reload();
 
-  function renderCats(){
-    for(const k in C){
-      const o=document.createElement("option");
-      o.value=k;o.textContent=" "+C[k];
-      o.style.backgroundColor=M[k];o.style.color="#fff";
-      cat.appendChild(o);
-    }
-  }
-  function lastAdded(){
-    const box=document.getElementById("lastAddedList"),all=S("vokabeln");
-    if(!all.length){box.textContent="Keine Vokabeln.";return;}
-    const last=all.slice(-5).reverse();
-    box.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${M[v[2]]}">(${C[v[2]]})</span></div>`).join("");
-  }
+  function renderCats(){for(const k in C){const o=document.createElement("option");o.value=k;o.textContent=" "+C[k];o.style.backgroundColor=M[k];o.style.color="#fff";cat.appendChild(o);}}
+  function lastAdded(){const box=document.getElementById("lastAddedList"),all=S("vokabeln");if(!all.length){box.textContent="Keine Vokabeln.";return;}const last=all.slice(-5).reverse();box.innerHTML=last.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style="color:${M[v[2]]}">(${C[v[2]]})</span></div>`).join("");}
 
   (async()=>{await sync();renderCats();lastAdded();})();
-
-  // Einklappbare "Zuletzt hinzugefügt"-Liste
-  const header=document.querySelector("#lastAddedBox h3");
-  const listBox=document.getElementById("lastAddedList");
-  let open=false;
-  header.style.cursor="pointer";
-  header.onclick=()=>{
-    open=!open;
-    listBox.style.display=open?"block":"none";
-    header.innerHTML=open?"🆕 Zuletzt hinzugefügt ▼":"🆕 Zuletzt hinzugefügt ▲";
-  };
+  const header=document.querySelector("#lastAddedBox h3"),listBox=document.getElementById("lastAddedList");
+  let open=false;header.onclick=()=>{open=!open;listBox.style.display=open?"block":"none";header.innerHTML=open?"🆕 Zuletzt hinzugefügt ▼":"🆕 Zuletzt hinzugefügt ▲";};
 });
 </script>
 </body>
