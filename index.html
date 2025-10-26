@@ -1,114 +1,509 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vokabeltrainer</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f4f6fb;--card:#fff;--primary:#2563eb;--accent:#1d4ed8;--green:#22c55e;--red:#ef4444;--grey:#94a3b8;--shadow:0 10px 30px rgba(0,0,0,.06);}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:#111}
-.app{max-width:900px;margin:40px auto;background:var(--card);border-radius:24px;box-shadow:var(--shadow);padding:28px 20px;overflow:hidden;position:relative}
-h1{text-align:center;margin:0;font-size:28px;color:var(--primary)}
-hr.titleLine{border:none;height:3px;width:120px;margin:10px auto 20px;border-radius:999px;background:linear-gradient(90deg,transparent,var(--primary),transparent)}
-.controls{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:16px}
-select,input[type=text]{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid #cbd5e1}
-button{font:inherit;cursor:pointer;border:none;border-radius:12px;padding:10px 16px;font-weight:600}
-.btn{background:var(--primary);color:#fff;box-shadow:0 6px 16px rgba(37,99,235,.2);transition:.2s}
-.btn:hover{background:var(--accent)}
-.btn.grey{background:#e2e8f0;color:#111;box-shadow:none}
-.btn.green{background:var(--green);color:#fff}
-.btn.red{background:var(--red);color:#fff}
-.row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
-.feedbackToggle{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:4px}
-.stageShell{position:relative;margin:12px 0;border-radius:20px;background:#f9fafb;min-height:200px;border:1px solid #e2e8f0;overflow:hidden;display:none}
-.stage{padding:26px 18px;text-align:center}
-.catChip{display:inline-block;padding:8px 14px;border-radius:999px;margin-bottom:8px;font-weight:700;background:#fff7e6;border:1px solid #fde68a;color:#111}
-.word{font-size:28px;font-weight:700;margin:8px 0 4px}
-.hint{color:#555;min-height:22px}
-.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px}
-.ioRow{display:flex;justify-content:center;gap:8px;margin-top:14px}
-.ioRow input{padding:10px 12px;border-radius:10px;border:1px solid #cbd5e1;min-width:320px}
-.progress{text-align:center;font-weight:600;color:#334155;margin:8px 0}
-.footerRow{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-details{background:#eef2ff;border-radius:12px;padding:6px 10px;text-align:center;margin-top:12px}
-summary{cursor:pointer;font-weight:700;color:var(--primary);list-style:none}
-summary::-webkit-details-marker{display:none}
-.lastList div{margin:3px 0}
-.source{text-align:center;color:#64748b;font-size:14px;margin-top:6px}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Vokabeltrainer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #fff;
+      --primary: #2563eb;
+      --accent: #1d4ed8;
+      --green: #22c55e;
+      --red: #ef4444;
+      --grey: #94a3b8;
+      --shadow: 0 10px 30px rgba(0,0,0,.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: var(--bg);
+      color: #111;
+    }
+
+    .app {
+      max-width: 900px;
+      margin: 40px auto;
+      background: var(--card);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 28px 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0;
+      font-size: 28px;
+      color: var(--primary);
+    }
+
+    hr.titleLine {
+      border: none;
+      height: 3px;
+      width: 120px;
+      margin: 10px auto 20px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    select, input[type=text] {
+      font: inherit;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+    }
+
+    button {
+      font: inherit;
+      cursor: pointer;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-weight: 600;
+    }
+
+    .btn {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 6px 16px rgba(37,99,235,.2);
+      transition: .2s;
+    }
+
+    .btn:hover { background: var(--accent); }
+    .btn.grey { background: #e2e8f0; color: #111; box-shadow: none; }
+    .btn.green { background: var(--green); color: #fff; }
+    .btn.red { background: var(--red); color: #fff; }
+
+    .row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .feedbackToggle {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .stageShell {
+      position: relative;
+      margin: 12px 0;
+      border-radius: 20px;
+      background: #f9fafb;
+      min-height: 200px;
+      border: 1px solid #e2e8f0;
+      overflow: hidden;
+      display: none;
+    }
+
+    .stage {
+      padding: 26px 18px;
+      text-align: center;
+    }
+
+    .catChip {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      background: #fff7e6;
+      border: 1px solid #fde68a;
+      color: #111;
+    }
+
+    .word {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 8px 0 4px;
+    }
+
+    .hint { color: #555; min-height: 22px; }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .ioRow {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .ioRow input {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      min-width: 320px;
+    }
+
+    .progress {
+      text-align: center;
+      font-weight: 600;
+      color: #334155;
+      margin: 8px 0;
+    }
+
+    .footerRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    details {
+      background: #eef2ff;
+      border-radius: 12px;
+      padding: 6px 10px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--primary);
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .lastList div { margin: 3px 0; }
+
+    .source {
+      text-align: center;
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 6px;
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-<h1>🎯 Vokabeltrainer</h1>
-<hr class="titleLine">
-<div class="controls">
-<label>Kategorie:<select id="category"><option value="Alle">Alle (bunt gemischt)</option></select></label>
-<label>Modus:<select id="mode"><option value="toGerman">Englisch → Deutsch</option><option value="toEnglish">Deutsch → Englisch</option><option value="mixed" selected>Gemischt</option></select></label>
-<label>Delay:<select id="delaySel"><option value="1000">1 s</option><option value="3000" selected>3 s</option><option value="5000">5 s</option></select></label>
-</div>
-<div class="row">
-<button class="btn" id="learnBtn">✍️ Vokabel-Abfrage</button>
-<button class="btn" id="last30Btn">📚 Letzte 30</button>
-<button class="btn" id="cardsBtn">🧠 Karteikarten (Mitdenker)</button>
-</div>
-<div class="feedbackToggle">
-<input type="checkbox" id="feedbackToggle" checked><span>Sofortiges Feedback</span>
-</div>
-<div class="progress" id="progress" style="display:none"></div>
-<div class="stageShell" id="stageShell">
-<div class="stage" id="trainer">
-<div class="catChip" id="catChip"></div>
-<div class="word" id="word"></div>
-<div class="hint" id="hint"></div>
-<div class="ioRow" id="inputRow" style="display:none">
-<input id="answerInput" type="text" placeholder="Übersetzung eingeben…">
-<button class="btn grey" id="submitInput">Eingabe</button>
-</div>
-<div class="actions" id="cardBtns" style="display:none">
-<button class="btn green" id="rightBtn">Richtig</button>
-<button class="btn red" id="trapBtn">Täuschung erkannt</button>
-<button class="btn grey" id="skipBtn">Überspringen</button>
-</div>
-<div class="ioRow" id="trapInputRow" style="display:none">
-<input id="trapAnswer" type="text" placeholder="Korrekte Übersetzung…">
-<button class="btn grey" id="trapSubmit">Eingabe</button>
-</div>
-</div>
-</div>
-<div class="footerRow">
-<button class="btn grey" id="openVocab">📘 Vokabeln</button>
-<button class="btn grey" id="restartBtn">🔄 Neustart</button>
-</div>
-<details id="lastBox">
-<summary>🆕 Zuletzt hinzugefügt ▼</summary>
-<div class="lastList" id="lastAddedList">–</div>
-</details>
-<div class="source" id="datasourceStatus">Datenquelle: –</div>
-<div class="source">© 2025 Beeferino | Vokabeltrainer</div>
-</div>
-<script>
-document.addEventListener("DOMContentLoaded",()=>{
-const CAT={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
-const COL={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-const catSel=category,modeSel=mode,delaySel=delaySel,feedbackT=feedbackToggle,learn=learnBtn,cards=cardsBtn,last30=last30Btn,stageShell=stageShell,trainer=trainer,catChip=catChip,word=word,hint=hint,inputRow=inputRow,answer=answerInput,submit=submitInput,cardBtns=cardBtns,right=rightBtn,trap=trapBtn,skip=skipBtn,trapRow=trapInputRow,trapAns=trapAnswer,trapSubmit=trapSubmit,progress=progress,restart=restartBtn,openVocab=openVocab,lastList=lastAddedList,lastBox=lastBox,status=datasourceStatus;
-let list=[],round=[],i=0,errors=0,errorList=[],mode="mixed",delay=3000,game=null,isTrap=false,correct="",askW="",catKey="";
-async function sync(){try{const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json?"+Date.now(),{cache:"no-store"});const d=await r.json();localStorage.vokabeln=JSON.stringify(d);status.textContent="Datenquelle: GitHub (Online)";}catch{status.textContent="Datenquelle: lokal";if(!localStorage.vokabeln)localStorage.vokabeln='[["hammer","Hammer","Pink"],["file","Feile","Gelb"]]';}list=JSON.parse(localStorage.vokabeln||"[]");}
-function fillCats(){for(const k in CAT){const o=document.createElement("option");o.value=k;o.textContent=" "+CAT[k];o.style.backgroundColor=COL[k];o.style.color="#fff";catSel.appendChild(o);}}
-function start(t,arr=null){game=t;delay=parseInt(delaySel.value,10);mode=modeSel.value;let pool=arr?arr:(catSel.value==="Alle"?list:list.filter(v=>v[2]===catSel.value));round=pool.slice(0,15);i=0;errors=0;errorList=[];stageShell.style.display="block";showCard();}
-function updateProg(){progress.style.display="block";progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors}`;}
-function pickLang([en,de]){if(mode==="toGerman")return{ask:en,ans:de};if(mode==="toEnglish")return{ask:de,ans:en};return Math.random()<.5?{ask:en,ans:de}:{ask:de,ans:en};}
-function next(){i++;if(i>=round.length){if(errorList.length){round=errorList.slice();errorList=[];i=0;hint.textContent="📘 Fehler wiederholen";showCard();return;}trainer.innerHTML=`<h2>Fertig!</h2><p>Fehler: ${errors}</p><button class='btn' onclick='location.reload()'>🔁 Neu starten</button>`;return;}showCard();}
-function showCard(){updateProg();const [en,de,c]=round[i];catKey=c;catChip.textContent=CAT[c];const p=pickLang([en,de]);askW=p.ask;correct=p.ans;inputRow.style.display="none";trapRow.style.display="none";cardBtns.style.display="none";answer.value="";hint.textContent="";
-if(game==="learn"){inputRow.style.display="flex";word.textContent=askW;const check=()=>{const ok=answer.value.trim().toLowerCase()===correct.toLowerCase();if(feedbackT.checked)hint.textContent=ok?"✅ Richtig":"❌ "+correct;if(!ok){errors++;errorList.push([en,de,c]);}setTimeout(next,delay);}submit.onclick=check;answer.onkeydown=e=>{if(e.key==="Enter")check();}}
-else{const pool=list.map(v=>({en:v[0],de:v[1]}));let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong.en===en&&wrong.de===de);isTrap=Math.random()<.35;const shown=isTrap?(Math.random()<.5?wrong.de:wrong.en):correct;word.textContent=askW;hint.textContent=shown;cardBtns.style.display="flex";right.onclick=()=>{const ok=!isTrap;if(!ok){errors++;errorList.push([en,de,c]);hint.textContent="❌ Täuschung – "+correct;}else hint.textContent="✅ Richtig";setTimeout(next,delay);}
-trap.onclick=()=>{if(isTrap){cardBtns.style.display="none";trapRow.style.display="flex";trapAns.value="";const chk=()=>{const ok=trapAns.value.trim().toLowerCase()===correct.toLowerCase();hint.textContent=ok?"✅ Korrekt":"❌ "+correct;if(!ok){errors++;errorList.push([en,de,c]);}setTimeout(next,delay);}trapSubmit.onclick=chk;trapAns.onkeydown=e=>{if(e.key==="Enter")chk();)}else{errors++;errorList.push([en,de,c]);hint.textContent="❌ Keine Täuschung! "+correct;setTimeout(next,delay);}}skip.onclick=()=>{next();}}
-function last(){const a=JSON.parse(localStorage.vokabeln||"[]").slice(-5).reverse();lastList.innerHTML=a.map(v=>`<div><b>${v[0]}</b> – ${v[1]} <span style='color:${COL[v[2]]}'>(${CAT[v[2]]})</span></div>`).join("");}
-learn.onclick=()=>start("learn");cards.onclick=()=>start("cards");last30.onclick=()=>{const all=JSON.parse(localStorage.vokabeln||"[]");if(!all.length)return alert("Keine Vokabeln");const l=all.slice(-30);const ch=confirm("📚 Letzte 30:\nOK = Karteikarten\nAbbrechen = Abfrage");start(ch?"cards":"learn",l);}
-restart.onclick=()=>location.reload();openVocab.onclick=()=>location.href="vokabeln.html";
-(async()=>{await sync();fillCats();last();lastBox.open=false;})();
-});
-</script>
+  <div class="app">
+    <h1>🎯 Vokabeltrainer</h1>
+    <hr class="titleLine">
+
+    <div class="controls">
+      <label>Kategorie:
+        <select id="category">
+          <option value="Alle">Alle (bunt gemischt)</option>
+        </select>
+      </label>
+      <label>Modus:
+        <select id="mode">
+          <option value="toGerman">Englisch → Deutsch</option>
+          <option value="toEnglish">Deutsch → Englisch</option>
+          <option value="mixed" selected>Gemischt</option>
+        </select>
+      </label>
+      <label>Delay:
+        <select id="delaySel">
+          <option value="1000">1 s</option>
+          <option value="3000" selected>3 s</option>
+          <option value="5000">5 s</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="row">
+      <button class="btn" id="learnBtn">✍️ Vokabel-Abfrage</button>
+      <button class="btn" id="last30Btn">📚 Letzte 30</button>
+      <button class="btn" id="cardsBtn">🧠 Karteikarten (Mitdenker)</button>
+    </div>
+
+    <div class="feedbackToggle">
+      <input type="checkbox" id="feedbackToggle" checked>
+      <span>Sofortiges Feedback</span>
+    </div>
+
+    <div class="progress" id="progress" style="display:none"></div>
+
+    <div class="stageShell" id="stageShell">
+      <div class="stage" id="trainer">
+        <div class="catChip" id="catChip"></div>
+        <div class="word" id="word"></div>
+        <div class="hint" id="hint"></div>
+
+        <div class="ioRow" id="inputRow" style="display:none">
+          <input id="answerInput" type="text" placeholder="Übersetzung eingeben…">
+          <button class="btn grey" id="submitInput">Eingabe</button>
+        </div>
+
+        <div class="actions" id="cardBtns" style="display:none">
+          <button class="btn green" id="rightBtn">Richtig</button>
+          <button class="btn red" id="trapBtn">Täuschung erkannt</button>
+          <button class="btn grey" id="skipBtn">Überspringen</button>
+        </div>
+
+        <div class="ioRow" id="trapInputRow" style="display:none">
+          <input id="trapAnswer" type="text" placeholder="Korrekte Übersetzung…">
+          <button class="btn grey" id="trapSubmit">Eingabe</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footerRow">
+      <button class="btn grey" id="openVocab">📘 Vokabeln</button>
+      <button class="btn grey" id="restartBtn">🔄 Neustart</button>
+    </div>
+
+    <details id="lastBox">
+      <summary>🆕 Zuletzt hinzugefügt ▼</summary>
+      <div class="lastList" id="lastAddedList">–</div>
+    </details>
+
+    <div class="source" id="datasourceStatus">Datenquelle: –</div>
+    <div class="source">© 2025 Beeferino | Vokabeltrainer</div>
+  </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const CAT = {
+      Gelb: "Grundwerkzeuge Metallverarbeitung",
+      Pink: "Werkzeugkasten Mechaniker",
+      Blau: "Blech- / Kunststoffarbeiten",
+      Gruen: "Drehen / Fräsen",
+      HellesPink: "Hydraulik / Pneumatik",
+      Orange: "Elektrotechnik",
+      Dunkelgruen: "Fluggerätemechanik allgemein",
+      Rot: "Verwechslungsgefahr"
+    };
+
+    const COL = {
+      Gelb: "#F4D03F",
+      Pink: "#E91E63",
+      Blau: "#1976D2",
+      Gruen: "#1E8449",
+      HellesPink: "#F54927",
+      Orange: "#E67E22",
+      Dunkelgruen: "#117A65",
+      Rot: "#C0392B"
+    };
+
+    const catSel = category,
+          modeSel = mode,
+          delaySel = delaySel,
+          feedbackT = feedbackToggle,
+          learn = learnBtn,
+          cards = cardsBtn,
+          last30 = last30Btn,
+          stageShell = stageShell,
+          trainer = trainer,
+          catChip = catChip,
+          word = word,
+          hint = hint,
+          inputRow = inputRow,
+          answer = answerInput,
+          submit = submitInput,
+          cardBtns = cardBtns,
+          right = rightBtn,
+          trap = trapBtn,
+          skip = skipBtn,
+          trapRow = trapInputRow,
+          trapAns = trapAnswer,
+          trapSubmit = trapSubmit,
+          progress = progress,
+          restart = restartBtn,
+          openVocab = openVocab,
+          lastList = lastAddedList,
+          lastBox = lastBox,
+          status = datasourceStatus;
+
+    let list = [], round = [], i = 0, errors = 0, errorList = [], mode = "mixed", delay = 3000, game = null,
+        isTrap = false, correct = "", askW = "", catKey = "";
+
+    async function sync() {
+      try {
+        const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json?" + Date.now(), { cache: "no-store" });
+        const d = await r.json();
+        localStorage.vokabeln = JSON.stringify(d);
+        status.textContent = "Datenquelle: GitHub (Online)";
+      } catch {
+        status.textContent = "Datenquelle: lokal";
+        if (!localStorage.vokabeln)
+          localStorage.vokabeln = '[["hammer","Hammer","Pink"],["file","Feile","Gelb"]]';
+      }
+      list = JSON.parse(localStorage.vokabeln || "[]");
+    }
+
+    function fillCats() {
+      for (const k in CAT) {
+        const o = document.createElement("option");
+        o.value = k;
+        o.textContent = " " + CAT[k];
+        o.style.backgroundColor = COL[k];
+        o.style.color = "#fff";
+        catSel.appendChild(o);
+      }
+    }
+
+    function start(t, arr = null) {
+      game = t;
+      delay = parseInt(delaySel.value, 10);
+      mode = modeSel.value;
+      let pool = arr ? arr : (catSel.value === "Alle" ? list : list.filter(v => v[2] === catSel.value));
+      round = pool.slice(0, 15);
+      i = 0; errors = 0; errorList = [];
+      stageShell.style.display = "block";
+      showCard();
+    }
+
+    function updateProg() {
+      progress.style.display = "block";
+      progress.textContent = `Vokabel ${i + 1}/${round.length} | Fehler: ${errors}`;
+    }
+
+    function pickLang([en, de]) {
+      if (mode === "toGerman") return { ask: en, ans: de };
+      if (mode === "toEnglish") return { ask: de, ans: en };
+      return Math.random() < .5 ? { ask: en, ans: de } : { ask: de, ans: en };
+    }
+
+    function next() {
+      i++;
+      if (i >= round.length) {
+        if (errorList.length) {
+          round = errorList.slice();
+          errorList = [];
+          i = 0;
+          hint.textContent = "📘 Fehler wiederholen";
+          showCard();
+          return;
+        }
+        trainer.innerHTML = `<h2>Fertig!</h2><p>Fehler: ${errors}</p><button class='btn' onclick='location.reload()'>🔁 Neu starten</button>`;
+        return;
+      }
+      showCard();
+    }
+
+    function showCard() {
+      updateProg();
+      const [en, de, c] = round[i];
+      catKey = c;
+      catChip.textContent = CAT[c];
+      const p = pickLang([en, de]);
+      askW = p.ask; correct = p.ans;
+
+      inputRow.style.display = "none";
+      trapRow.style.display = "none";
+      cardBtns.style.display = "none";
+      answer.value = "";
+      hint.textContent = "";
+
+      // Vokabel-Abfrage-Modus
+      if (game === "learn") {
+        inputRow.style.display = "flex";
+        word.textContent = askW;
+        const check = () => {
+          const ok = answer.value.trim().toLowerCase() === correct.toLowerCase();
+          if (feedbackT.checked) hint.textContent = ok ? "✅ Richtig" : "❌ " + correct;
+          if (!ok) { errors++; errorList.push([en, de, c]); }
+          setTimeout(next, delay);
+        };
+        submit.onclick = check;
+        answer.onkeydown = e => { if (e.key === "Enter") check(); };
+      }
+
+      // Karteikarten-Modus
+      else {
+        const pool = list.map(v => ({ en: v[0], de: v[1] }));
+        let wrong;
+        do { wrong = pool[Math.floor(Math.random() * pool.length)]; }
+        while (wrong.en === en && wrong.de === de);
+
+        isTrap = Math.random() < .35;
+        const shown = isTrap ? (Math.random() < .5 ? wrong.de : wrong.en) : correct;
+        word.textContent = askW;
+        hint.textContent = shown;
+        cardBtns.style.display = "flex";
+
+        right.onclick = () => {
+          const ok = !isTrap;
+          if (!ok) {
+            errors++;
+            errorList.push([en, de, c]);
+            hint.textContent = "❌ Täuschung – " + correct;
+          } else hint.textContent = "✅ Richtig";
+          setTimeout(next, delay);
+        };
+
+        trap.onclick = () => {
+          if (isTrap) {
+            cardBtns.style.display = "none";
+            trapRow.style.display = "flex";
+            trapAns.value = "";
+            const chk = () => {
+              const ok = trapAns.value.trim().toLowerCase() === correct.toLowerCase();
+              hint.textContent = ok ? "✅ Korrekt" : "❌ " + correct;
+              if (!ok) { errors++; errorList.push([en, de, c]); }
+              setTimeout(next, delay);
+            };
+            trapSubmit.onclick = chk;
+            trapAns.onkeydown = e => { if (e.key === "Enter") chk(); };
+          } else {
+            errors++;
+            errorList.push([en, de, c]);
+            hint.textContent = "❌ Keine Täuschung! " + correct;
+            setTimeout(next, delay);
+          }
+        };
+
+        skip.onclick = () => { next(); };
+      }
+    }
+
+    function last() {
+      const a = JSON.parse(localStorage.vokabeln || "[]").slice(-5).reverse();
+      lastList.innerHTML = a.map(v => `
+        <div><b>${v[0]}</b> – ${v[1]} 
+        <span style='color:${COL[v[2]]}'>(${CAT[v[2]]})</span></div>`).join("");
+    }
+
+    learn.onclick = () => start("learn");
+    cards.onclick = () => start("cards");
+    last30.onclick = () => {
+      const all = JSON.parse(localStorage.vokabeln || "[]");
+      if (!all.length) return alert("Keine Vokabeln");
+      const l = all.slice(-30);
+      const ch = confirm("📚 Letzte 30:\nOK = Karteikarten\nAbbrechen = Abfrage");
+      start(ch ? "cards" : "learn", l);
+    };
+
+    restart.onclick = () => location.reload();
+    openVocab.onclick = () => location.href = "vokabeln.html";
+
+    (async () => {
+      await sync();
+      fillCats();
+      last();
+      lastBox.open = false;
+    })();
+  });
+  </script>
 </body>
 </html>
