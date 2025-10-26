@@ -1,30 +1,130 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>🎯 Vokabeltrainer</title>
-  <style>
-    body { font-family: system-ui, sans-serif; background: #f5f8fc; color: #222; margin: 0; padding: 20px; text-align: center; }
-    .app { max-width: 900px; margin: auto; background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; }
-    h1 { margin-bottom: 10px; }
-    .controls label { margin: 0 10px; font-size: 1rem; }
-    select, input[type=text] { padding: 6px 8px; border-radius: 6px; border: 1px solid #ccc; }
-    .functions { display: flex; justify-content: center; flex-wrap: wrap; margin: 20px 0; gap: 15px; }
-    .kachel { background: #1e6ed8; color: white; padding: 14px 22px; border-radius: 10px; cursor: pointer; transition: 0.2s; font-weight: 500; }
-    .kachel:hover { background: #2980b9; transform: scale(1.04); }
-    .feedback-settings { margin-bottom: 15px; }
-    .progress { margin-top: 10px; font-weight: bold; color: #1e6ed8; }
-    .card { background: #fafafa; border-radius: 10px; padding: 20px; box-shadow: 0 1px 6px rgba(0,0,0,0.1); }
-    .word { font-size: 1.4rem; margin-bottom: 10px; }
-    .feedback { font-size: 1.1rem; margin-top: 8px; height: 24px; }
-    .footer { margin-top: 30px; font-size: 0.9rem; }
-    .linkbtn { text-decoration: none; color: #1e6ed8; }
-    #datasourceStatus { margin-top: 10px; color: #666; font-size: 0.9rem; }
-    #lastAddedBox { margin-top: 20px; background: #f4f7fb; border-radius: 10px; padding: 10px; }
-    #lastAddedList div { margin: 3px 0; }
-    #lastAddedList { transition: all 0.3s ease; }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🎯 Vokabeltrainer</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f5f8fc;
+    color: #222;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  .app {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 25px;
+  }
+  h1 { margin-bottom: 15px; }
+
+  .controls label { margin: 0 10px; font-size: 1rem; }
+  select, input[type=text] {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+
+  .functions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  .kachel {
+    background: #1e6ed8;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+  }
+  .kachel:hover { background: #2980b9; transform: scale(1.04); }
+
+  .progress {
+    font-weight: bold;
+    color: #1e6ed8;
+    margin-top: 20px;
+  }
+
+  .card {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 25px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-top: 20px;
+  }
+
+  .category-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    color: #fff;
+    font-weight: 500;
+    margin-bottom: 15px;
+  }
+
+  .word {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 10px 0;
+  }
+
+  .feedback {
+    font-size: 1.1rem;
+    color: #333;
+    margin: 12px 0;
+    min-height: 28px;
+  }
+
+  #cardButtons { margin-top: 12px; }
+  #cardButtons button {
+    padding: 8px 18px;
+    margin: 4px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  #cardButtons button:hover { transform: scale(1.05); }
+  #rightBtn { background: #2ecc71; color: white; }
+  #wrongBtn { background: #e74c3c; color: white; }
+  #skipBtn { background: #bdc3c7; color: white; }
+
+  .restart {
+    background: #1e6ed8;
+    color: #fff;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: 0.2s;
+  }
+  .restart:hover { background: #2980b9; transform: scale(1.05); }
+
+  .footer { margin-top: 40px; font-size: 0.9rem; }
+  .linkbtn { text-decoration: none; color: #1e6ed8; font-weight: 500; }
+  #datasourceStatus { margin-top: 10px; color: #666; font-size: 0.9rem; }
+
+  #lastAddedBox {
+    margin-top: 25px;
+    background: #f4f7fb;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  #lastAddedList { transition: all 0.3s ease; }
+</style>
 </head>
 
 <body>
@@ -47,13 +147,13 @@
   </div>
 
   <div class="functions">
-    <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
-    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
-    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten</div>
+    <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage</div>
+    <div class="kachel" id="last30Btn">📚 Letzte 30</div>
+    <div class="kachel" id="cardsBtn">🧠 Karteikarten</div>
   </div>
 
   <div class="feedback-settings">
-    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
+    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback</label>
     <label>Anzeigedauer:
       <select id="delayTime">
         <option value="3000" selected>3 Sekunden</option>
@@ -66,8 +166,8 @@
 
   <div id="trainer" style="display:none">
     <div class="card" id="card">
+      <div id="categoryBadge" class="category-badge"></div>
       <div id="word" class="word"></div>
-      <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none">
       <div id="feedback" class="feedback"></div>
       <div id="cardButtons">
         <button id="rightBtn" style="display:none">Richtig</button>
@@ -75,7 +175,7 @@
         <button id="skipBtn" style="display:none">Überspringen</button>
       </div>
     </div>
-    <button id="restartBtn" style="margin-top:10px">🔄 Neustart</button>
+    <button class="restart" id="restartBtn">🔄 Neustart</button>
   </div>
 
   <div id="result" style="display:none" class="card"></div>
@@ -95,8 +195,7 @@
 
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
-
-  const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
+  const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech-/ Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
   const M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 
   const status=document.getElementById("datasourceStatus"),
@@ -116,8 +215,8 @@ document.addEventListener("DOMContentLoaded",()=>{
         progress=document.getElementById("progress"),
         trainer=document.getElementById("trainer"),
         result=document.getElementById("result"),
-        ans=document.getElementById("answerInput"),
-        card=document.getElementById("card");
+        card=document.getElementById("card"),
+        badge=document.getElementById("categoryBadge");
 
   let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",curr="",trap=false;
 
@@ -135,7 +234,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   }
 
   const S=k=>JSON.parse(localStorage.getItem(k)||"[]");
-
   function flash(cls){if(!fT.checked)return;card.classList.add(cls);setTimeout(()=>card.classList.remove(cls),400);}
   function updateProg(){progress.style.display="block";progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errors.length}`;}
 
@@ -162,7 +260,7 @@ document.addEventListener("DOMContentLoaded",()=>{
       trainer.style.display="none";progress.style.display="none";
       let h="<h3>Runde beendet</h3>";
       h+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";
-      h+='<button onclick="location.reload()">🔄 Neue Runde</button>';
+      h+='<button class="restart" onclick="location.reload()">🔄 Neue Runde</button>';
       result.innerHTML=h;result.style.display="block";return;
     }
 
@@ -172,26 +270,30 @@ document.addEventListener("DOMContentLoaded",()=>{
     if(mode==="toGerman"){ask=en;answ=de;}
     else if(mode==="toEnglish"){ask=de;answ=en;}
     else{if(Math.random()<.5){ask=en;answ=de;}else{ask=de;answ=en;}}
+
     const c=M[catg]||"#ccc";
-    word.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${c};color:#fff;'>${C[catg]}</div><br><br><b>${ask}</b>`;
+    badge.style.background=c;
+    badge.textContent=C[catg];
+    word.textContent=ask;
     feedback.textContent="";
 
     if(game==="learn"){
-      ans.style.display="inline-block";right.style.display="none";wrong.style.display="none";skip.style.display="inline-block";
-      ans.value="";ans.focus();
-      ans.onkeydown=e=>{
+      right.style.display="none";wrong.style.display="none";skip.style.display="inline-block";
+      feedback.innerHTML='<input id="answerInput" type="text" placeholder="Übersetzung eingeben...">';
+      const input=document.getElementById("answerInput");
+      input.focus();
+      input.onkeydown=e=>{
         if(e.key==="Enter"){
-          const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();
-          if(fT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! Richtige Antwort: ${answ}`;flash(ok?"correct":"wrong");}
+          const ok=input.value.trim().toLowerCase()===answ.toLowerCase();
+          if(fT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch! → ${answ}`;flash(ok?"correct":"wrong");}
           if(!ok)errors.push([ask,answ]);
           i++;setTimeout(showNext,delay);
         }
       };
       skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
     }else{
-      ans.style.display="none";right.style.display="inline-block";wrong.style.display="inline-block";skip.style.display="inline-block";
+      right.style.display="inline-block";wrong.style.display="inline-block";skip.style.display="inline-block";
       trap=Math.random()<.3;curr=trap?getWrong(answ):answ;
-      card.style.background=trap?"#f3f3f3":"#fff";
       feedback.innerHTML=`💡 <b>${curr}</b>`;
       const parent=document.getElementById("cardButtons");
       if(Math.random()<.5)parent.insertBefore(wrong,right);else parent.insertBefore(right,wrong);
@@ -230,7 +332,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   (async()=>{await sync();renderCats();lastAdded();})();
 
-  // --- Einklappbare "Zuletzt hinzugefügt"-Liste ---
+  // Einklappbare "Zuletzt hinzugefügt"-Liste
   const header=document.querySelector("#lastAddedBox h3");
   const listBox=document.getElementById("lastAddedList");
   let open=true;
