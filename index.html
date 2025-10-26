@@ -1,4 +1,6 @@
-<html lang="de"><head>
+<!DOCTYPE html>
+<html lang="de">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vokabeltrainer</title>
@@ -97,21 +99,10 @@ const CATEGORY_NAMES={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeu
 const COLOR_MAP={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 const statusEl=document.getElementById('datasourceStatus');
 
-/* ========= ROBUSTER JSON-SYNC mit MERGE ========= */
 function keyOf(v){return `${(v[0]||'').toLowerCase()}|${(v[1]||'').toLowerCase()}`;}
-function mergeVocabLists(remote,local){
-  const map=new Map();
-  remote.forEach(v=>map.set(keyOf(v),v));
-  local.forEach(v=>{if(!map.has(keyOf(v)))map.set(keyOf(v),v);});
-  return Array.from(map.values());
-}
+function mergeVocabLists(remote,local){const map=new Map();remote.forEach(v=>map.set(keyOf(v),v));local.forEach(v=>{if(!map.has(keyOf(v)))map.set(keyOf(v),v);});return Array.from(map.values());}
 function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
 function saveLocal(v){localStorage.setItem("vokabeln",JSON.stringify(v));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
-function exportJson(){
-  const blob=new Blob([JSON.stringify(loadLocal(),null,2)],{type:"application/json"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download="vokabeln.json";a.click();URL.revokeObjectURL(url);
-}
 async function trySyncFromJson(){
   const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
   let remote=null;
@@ -133,7 +124,6 @@ async function trySyncFromJson(){
     statusEl.textContent="💾 Lokaler Speicher (Offline)";
   }
 }
-/* ================================================ */
 
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 const catSel=document.getElementById("category"),
@@ -176,10 +166,12 @@ function updateProgress(){
   progress.textContent=`Vokabel ${index+1}/ ${round.length} | Fehler: ${errors.length}`;
 }
 
-function startRound(selectedMode,type,customList=null){
+function startRound(selectedMode,newGameMode,customList=null){
   list=loadLocal();
   if(list.length===0){list=[["hammer","Hammer","Pink"]];saveLocal(list);}
-  category=catSel.value;mode=selectedMode;gameMode=type;
+  category=catSel.value;
+  mode=selectedMode;
+  gameMode=newGameMode;  // ✅ richtig speichern
   let f=(category==="Alle")?list:list.filter(v=>v[2]===category);
   if(customList)f=customList;
   shuffle(f);
@@ -212,6 +204,7 @@ function showNext(){
   wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${CATEGORY_NAMES[cat]}</div><br><br><b>${ask}</b>`;
   feedback.textContent="";
 
+  // ✅ Jetzt wird korrekt zwischen learn & cards unterschieden
   if(gameMode==="learn"){
     answerInput.style.display="inline-block";
     rightBtn.style.display="none";
@@ -233,6 +226,7 @@ function showNext(){
     };
     skipBtn.onclick=function(){skipped.push([en,de,cat]);index++;showNext();};
   }
+
   else if(gameMode==="cards"){
     answerInput.style.display="none";
     rightBtn.style.display="inline-block";
@@ -240,9 +234,8 @@ function showNext(){
     skipBtn.style.display="inline-block";
     isTrap=Math.random()<0.3;
     currentAnswer=isTrap?getRandomWrongAnswer(answer):answer;
-    card.style.background=isTrap?"#f3f3f3":"#fff";
     feedback.innerHTML=`💡 <b>${currentAnswer}</b>`;
-    wordDiv.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${catColor};color:#fff;'>${CATEGORY_NAMES[cat]}</div><br><br><b>${ask}</b>`;
+    card.style.background=isTrap?"#f3f3f3":"#fff";
     const parent=document.getElementById("cardButtons");
     if(Math.random()<0.5)parent.insertBefore(wrongBtn,rightBtn);else parent.insertBefore(rightBtn,wrongBtn);
     rightBtn.onclick=function(){const correct=!isTrap;if(feedbackToggle.checked){feedback.textContent=correct?"✅ Richtig!":"❌ Falsch!";flash(correct?"correct":"wrong");}if(!correct)errors.push([ask,answer]);index++;setTimeout(showNext,feedbackToggle.checked?600:0);};
@@ -257,14 +250,14 @@ function getRandomWrongAnswer(correct){
   return wrong;
 }
 
-last30Btn.onclick=()=>{const all=loadLocal();if(!all.length)return alert("Keine Vokabeln.");const last30=all.slice(-30);const choice=confirm("📚 Letzte 30 üben? OK=Karteikarten, Abbrechen=Abfrage");const selectedMode=choice?"cards":"learn";startRound(modeSel.value,selectedMode,last30);};
+last30Btn.onclick=()=>{const all=loadLocal();if(!all.length)return alert("Keine Vokabeln.");const last30=all.slice(-30);const confirmCard=confirm("📚 Letzte 30 üben? OK=Karteikarten, Abbrechen=Abfrage");const selectedMode=modeSel.value;const chosenMode=confirmCard?"cards":"learn";startRound(selectedMode,chosenMode,last30);};
 learnBtn.onclick=()=>startRound(modeSel.value,"learn");
 cardsBtn.onclick=()=>startRound(modeSel.value,"cards");
 restartBtn.onclick=()=>location.reload();
+
 renderCats();
 trySyncFromJson();
-
-document.getElementById("exportBtn").onclick=exportJson;
 })();
 </script>
-</body></html>
+</body>
+</html>
