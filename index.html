@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🎯 Vokabeltrainer 1.2 – Mitdenker</title>
+<title>🎯 Vokabeltrainer 1.3-fix</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 <style>
   body {
@@ -22,113 +22,61 @@
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     padding: 25px;
   }
-  h1 {
-    font-size: 1.8rem;
-    margin-bottom: 6px;
-  }
+  h1 { font-size: 1.8rem; margin-bottom: 6px; }
   hr.divider {
-    border: none;
-    height: 2px;
+    border: none; height: 2px;
     background: linear-gradient(90deg,#1e6ed8 0%,#4aa3ff 100%);
-    border-radius: 2px;
-    margin: 15px auto 25px;
-    width: 80%;
+    border-radius: 2px; margin: 15px auto 25px; width: 80%;
   }
-  .controls, .functions, .feedback-settings {
-    margin: 10px auto;
-  }
+  .controls, .functions { margin: 10px auto; }
   label { margin: 0 10px; font-weight: 500; }
   select, input, button {
-    font-family: inherit;
-    border: 1px solid #cfd6e4;
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 1rem;
+    font-family: inherit; border: 1px solid #cfd6e4; border-radius: 8px;
+    padding: 6px 10px; font-size: 1rem;
   }
   button {
-    background: #1e6ed8;
-    color: #fff;
-    cursor: pointer;
-    transition: background .2s;
+    background: #1e6ed8; color: #fff; cursor: pointer; transition: background .2s;
   }
   button:hover { background: #2980b9; }
-
   .functions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 15px;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 15px;
   }
   .kachel {
-    background: #eef4ff;
-    border-radius: 12px;
-    padding: 16px 20px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    transition: transform .2s, background .2s;
-    cursor: pointer;
-    width: 230px;
+    background: #eef4ff; border-radius: 12px; padding: 16px 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform .2s, background .2s;
+    cursor: pointer; width: 230px;
   }
-  .kachel:hover {
-    background: #dbe8ff;
-    transform: translateY(-2px);
-  }
+  .kachel:hover { background: #dbe8ff; transform: translateY(-2px); }
   .kachel small { display:block; margin-top:4px; font-style:italic; color:#666; }
-
   .trainer-area {
-    margin-top: 25px;
-    padding: 20px;
-    border-radius: 12px;
-    background: #fafcff;
-    border: 2px solid #e3ebf5;
+    margin-top: 25px; padding: 20px; border-radius: 12px;
+    background: #fafcff; border: 2px solid #e3ebf5;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.04);
   }
   .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    margin: 10px auto;
-    max-width: 500px;
+    background: #fff; border-radius: 12px; padding: 20px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1); margin: 10px auto; max-width: 500px;
   }
   .word { font-size: 1.4rem; margin-bottom: 10px; }
   .feedback { font-size: 1.1rem; margin: 10px; min-height: 24px; }
-
   .progress { font-weight: 500; margin-top: 10px; }
   #cardButtons button {
-    margin: 5px;
-    border-radius: 10px;
-    padding: 8px 14px;
-    font-size: 1rem;
+    margin: 5px; border-radius: 10px; padding: 8px 14px; font-size: 1rem;
   }
   #rightBtn { background:#2ecc71; }
   #trapBtn { background:#e67e22; }
   #skipBtn { background:#95a5a6; }
-
   .correct { background:#d4edda !important; transition: background .3s; }
   .wrong { background:#f8d7da !important; transition: background .3s; }
-
   .footer {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:30px;
+    display:flex; justify-content:space-between; align-items:center; margin-top:30px;
   }
   .linkbtn {
-    display:inline-block;
-    background:#1e6ed8;
-    color:#fff;
-    padding:8px 14px;
-    border-radius:10px;
-    text-decoration:none;
+    display:inline-block; background:#1e6ed8; color:#fff;
+    padding:8px 14px; border-radius:10px; text-decoration:none;
   }
   .linkbtn:hover { background:#2980b9; }
-
-  #datasourceStatus {
-    margin-top:20px;
-    color:#555;
-    font-size:.95rem;
-  }
+  #datasourceStatus { margin-top:20px; color:#555; font-size:.95rem; }
 </style>
 </head>
 <body>
@@ -176,7 +124,7 @@
     <div class="card" id="card">
       <div id="word" class="word"></div>
       <div id="hint" style="font-size:.9rem;color:#999;">💭 Täuschung möglich</div>
-      <input id="answerInput" type="text" placeholder="🔤 Richtige Übersetzung eingeben…" style="display:none;">
+      <input id="answerInput" type="text" placeholder="🔤 Übersetzung eingeben…" style="display:none;">
       <div id="feedback" class="feedback"></div>
       <div id="cardButtons">
         <button id="rightBtn">Richtig</button>
@@ -219,7 +167,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         trapBtn=document.getElementById("trapBtn"),
         skip=document.getElementById("skipBtn");
 
-  let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",delay=3000;
+  let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",delay=3000,game="learn";
 
   async function sync(){
     try{
@@ -245,6 +193,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
   function start(sel,type,custom=null){
     if(!list.length){alert("Keine Vokabeln gefunden.");return;}
+    game=type;
     mode=sel; delay=parseInt(delaySel.value,10);
     let f=cat.value==="Alle"?list:list.filter(v=>v[2]===cat.value);
     if(custom)f=custom;
@@ -261,7 +210,6 @@ document.addEventListener("DOMContentLoaded",()=>{
       trainer.style.display="none";progress.style.display="none";
       let h="<h3>Runde beendet</h3>";
       h+= errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";
-      if(errors.length)h+='<button onclick="location.reload()">🔁 Fehler wiederholen</button>';
       result.innerHTML=h; result.style.display="block"; return;
     }
     updateProg();
@@ -271,38 +219,49 @@ document.addEventListener("DOMContentLoaded",()=>{
     else if(mode==="toEnglish"){ask=de;answ=en;}
     else{if(Math.random()<.5){ask=en;answ=de;}else{ask=de;answ=en;}}
     const c=M[catg]||"#ccc";
-    const trap=Math.random()<.5; // immer 50% Chance auf Täuschung
-    let display=trap?getWrong(answ):answ;
     word.innerHTML=`<div style="display:inline-block;padding:6px 12px;border-radius:12px;background:${c};color:#fff;">${C[catg]}</div><br><br><b>${ask}</b>`;
     feedback.textContent="";
 
-    right.onclick=()=>{
-      const ok=!trap;
-      if(ok){flash("correct");} else{flash("wrong"); errors.push([ask,answ]);}
-      i++;setTimeout(showNext,delay);
-    };
-
-    trapBtn.onclick=()=>{
-      if(!trap){ // falsch alarmiert
-        flash("wrong"); errors.push([ask,answ]); i++; setTimeout(showNext,delay);
-      } else {
-        // echte Täuschung erkannt -> Eingabephase
-        ans.style.display="inline-block"; ans.focus();
-        feedback.textContent="💬 Gib die richtige Übersetzung ein:";
-        right.disabled=trapBtn.disabled=skip.disabled=true;
-        ans.onkeydown=(e)=>{
-          if(e.key==="Enter"){
-            const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();
-            if(ok){feedback.textContent="✅ Richtig erkannt!";flash("correct");}
-            else {feedback.textContent=`❌ Falsch! Richtige Antwort: ${answ}`;flash("wrong");errors.push([ask,answ]);}
-            right.disabled=trapBtn.disabled=skip.disabled=false;
-            i++;setTimeout(showNext,delay);
-          }
-        };
-      }
-    };
-
-    skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
+    if(game==="learn"){
+      // Klassische Eingabe
+      ans.style.display="inline-block"; ans.focus();
+      ans.onkeydown=(e)=>{
+        if(e.key==="Enter"){
+          const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();
+          if(ok){flash("correct");}else{flash("wrong");errors.push([ask,answ]);}
+          i++;setTimeout(showNext,delay);
+        }
+      };
+      right.style.display=trapBtn.style.display=skip.style.display="none";
+    } else {
+      // Karteikartenmodus
+      right.style.display=trapBtn.style.display=skip.style.display="inline-block";
+      const trap=Math.random()<.5;
+      const shown=trap?getWrong(answ):answ;
+      feedback.textContent=shown;
+      right.onclick=()=>{
+        const ok=!trap;
+        if(ok){flash("correct");}else{flash("wrong");errors.push([ask,answ]);}
+        i++;setTimeout(showNext,delay);
+      };
+      trapBtn.onclick=()=>{
+        if(!trap){flash("wrong");errors.push([ask,answ]);i++;setTimeout(showNext,delay);}
+        else{
+          feedback.textContent="💬 Richtige Übersetzung eingeben:";
+          ans.style.display="inline-block"; ans.focus();
+          right.disabled=trapBtn.disabled=skip.disabled=true;
+          ans.onkeydown=(e)=>{
+            if(e.key==="Enter"){
+              const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();
+              if(ok){flash("correct");}else{flash("wrong");errors.push([ask,answ]);}
+              right.disabled=trapBtn.disabled=skip.disabled=false;
+              i++;setTimeout(showNext,delay);
+            }
+          };
+        }
+      };
+      skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();};
+    }
   }
 
   function getWrong(correct){
