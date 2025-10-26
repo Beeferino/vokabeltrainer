@@ -8,6 +8,7 @@
     body { font-family: sans-serif; background: #f7f9fb; margin: 0; padding: 20px; text-align: center; }
     .app { max-width: 1100px; margin: auto; }
     h1 { font-size: 1.8rem; margin-bottom: 0.6rem; }
+    h3 { margin: 0.2rem 0 0.6rem; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
     th { background: #eef2f7; cursor: pointer; user-select: none; }
@@ -20,7 +21,6 @@
     button:hover { background: #3498db; }
     a.linkbtn { display: inline-block; padding: 10px 16px; border-radius: 8px; background: #74b9ff; color: #000; text-decoration: none; font-weight: 600; }
     a.linkbtn:hover { background: #a6d4ff; }
-    .info-footer { margin-top: 16px; font-size: 0.95rem; color: #555; }
     .lexica { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
     .lexica button { background: #ecf0f1; color: #333; border: 1px solid #ccc; font-weight: 600; padding: 6px 9px; }
     .lexica button.active { background: #2980b9; color: #fff; }
@@ -29,19 +29,29 @@
     .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
     .pagination button { background: #ecf0f1; color: #333; border: 1px solid #ccc; padding: 6px 10px; }
     .pagination button.active { background: #2980b9; color: #fff; }
-    .section-divider { margin: 24px 0; border-top: 3px solid #e3e7ef; }
-    .new-entry { margin-top: 10px; }
+    .section-divider { margin: 28px 0; border-top: 3px solid #e3e7ef; }
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; color: #fff; padding: 10px 16px; border-radius: 8px; display: none; z-index: 999; }
     .edit-btn { background: #f39c12; }
     .save-btn { background: #27ae60; }
     .save-btn:hover { background: #2ecc71; }
-    .colored { transition: background 0.4s ease; }
-    footer { margin-top: 30px; }
-    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none;}
-    #lastAdded{margin-top:10px;color:#2c3e50;}
-    #lastAdded ul{list-style:none;margin:6px 0 0;padding:0;}
-    #lastAdded li{padding:3px 0;border-bottom:1px dashed #d9e2ef;}
-    #lastAdded li:last-child{border-bottom:none;}
+    footer { margin-top: 35px; color: #555; }
+    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;}
+
+    /* === Popup „Zuletzt hinzugefügt“ === */
+    #recentPopupOverlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45); justify-content: center; align-items: center; z-index: 1000;
+    }
+    #recentPopup {
+      background: #fff; padding: 20px; border-radius: 12px;
+      max-width: 440px; width: 92%; text-align: left;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    #recentPopup h3 { margin-top: 0; }
+    #recentList ul { list-style: none; padding: 0; margin: 0; }
+    #recentList li { padding: 6px 0; border-bottom: 1px dashed #ddd; }
+    #recentList li:last-child { border-bottom: none; }
+    #closeRecent { margin-top: 10px; background: #555; }
   </style>
 </head>
 
@@ -49,8 +59,12 @@
   <div class="app">
     <h1>📘 Vokabelübersicht</h1>
 
+    <!-- A–Z -->
     <div id="lexica" class="lexica"></div>
 
+    <div class="section-divider"></div>
+
+    <!-- Filter & Suche -->
     <div class="filter-bar">
       <label>Kategorie:
         <select id="filterCategory" class="colored"><option value="Alle">Alle (bunt gemischt)</option></select>
@@ -62,6 +76,9 @@
       <button id="resetFilter">🔄 Filter zurücksetzen</button>
     </div>
 
+    <div class="section-divider"></div>
+
+    <!-- Tabelle -->
     <table id="vocabTable">
       <thead>
         <tr>
@@ -78,16 +95,10 @@
     </table>
 
     <div id="pagination" class="pagination"></div>
-    <div id="infoFooter" class="info-footer">📅 Letzte Änderung: – | 📚 Gesamt: 0 | 🔤 Angezeigt: 0</div>
-
-    <!-- Letzte 5 -->
-    <div id="lastAdded">
-      <small>🕓 Zuletzt hinzugefügt:</small>
-      <ul id="lastList"></ul>
-    </div>
 
     <div class="section-divider"></div>
 
+    <!-- Neue Vokabel -->
     <div class="new-entry">
       <h3>➕ Neue Vokabel hinzufügen</h3>
       <div>
@@ -104,14 +115,26 @@
       </div>
     </div>
 
-    <footer>
-      <div style="margin-top:18px;">
+    <div class="section-divider"></div>
+
+    <!-- Datei & JSON -->
+    <div>
+      <h3>💾 Datei- & JSON-Verwaltung</h3>
+      <div>
         <button id="exportBtn">📤 Exportieren</button>
         <input type="file" id="importFile" accept=".json" style="display:none;">
         <button id="importBtn">📥 Importieren</button>
         <button id="downloadMerged">💾 vokabeln.json herunterladen</button>
+        <button id="showRecent">🕓 Zuletzt hinzugefügt</button>
       </div>
-      <div style="margin-top:22px;">
+    </div>
+
+    <div class="section-divider"></div>
+
+    <!-- Footer: Letzte Änderung GANZ unten -->
+    <footer>
+      <div id="infoFooter" class="info-footer">📅 Letzte Änderung: – | 📚 Gesamt: 0 | 🔤 Angezeigt: 0</div>
+      <div style="margin-top:12px;">
         <a href="index.html" class="linkbtn">⬅️ Zurück zum Trainer</a>
       </div>
     </footer>
@@ -120,13 +143,21 @@
   <div id="toast" class="toast">💾 Gespeichert</div>
   <div id="datasourceStatus" aria-live="polite">📂 Datenquelle: wird geprüft…</div>
 
+  <!-- Popup -->
+  <div id="recentPopupOverlay">
+    <div id="recentPopup">
+      <h3>🕓 Zuletzt hinzugefügt</h3>
+      <div id="recentList"><ul id="recentUl"></ul></div>
+      <button id="closeRecent">Schließen</button>
+    </div>
+  </div>
+
   <script>
   (() => {
-    // --- Konstanten / Utils ---
+    // ===== Konstanten / Utils =====
     const CATEGORY_NAMES = { Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker", Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen", HellesPink:"Hydraulik / Pneumatik", Orange:"Elektrotechnik", Dunkelgruen:"Fluggerätemechanik allgemein", Rot:"Verwechslungsgefahr" };
     const COLOR_MAP = { Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449", HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B" };
-    const CATEGORY_EMOJI = { Gelb:"🟡", Pink:"🟣", Blau:"🔵", Gruen:"🟢", HellesPink:"🟥", Orange:"🟧", Dunkelgruen:"🟩", Rot:"🔴" };
-    const labelForCategory = k => `${CATEGORY_EMOJI[k] || "•"} ${CATEGORY_NAMES[k]}`;
+    const labelForCategory = k => CATEGORY_NAMES[k];
     const $ = s => document.querySelector(s);
     const $$ = s => [...document.querySelectorAll(s)];
     const toast = m => { const t=$("#toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",1500); };
@@ -135,66 +166,65 @@
     const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
     const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
 
-    const statusEl = document.getElementById('datasourceStatus');
+    const statusEl = $("#datasourceStatus");
 
-    // --- Merge / Sync ---
+    // ===== Merge/Sync =====
     function keyOf(v){ return `${(v[0]||"").toLowerCase().trim()}|${(v[1]||"").toLowerCase().trim()}`; }
-    function mergeVocabLists(remote, local) {
-      const map = new Map();
-      remote.map(normalize).forEach(v => map.set(keyOf(v), v));
-      local.map(normalize).forEach(v => { if (!map.has(keyOf(v))) map.set(keyOf(v), v); });
+    function mergeVocabLists(remote, local){
+      const map=new Map();
+      remote.map(normalize).forEach(v=>map.set(keyOf(v), v));
+      local.map(normalize).forEach(v=>{ if(!map.has(keyOf(v))) map.set(keyOf(v), v); });
       return Array.from(map.values());
     }
-    async function trySyncFromJson() {
-      const urls = ["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
-      let remote = null;
-      for (const u of urls) {
-        try { const r = await fetch(u, { cache:"no-store" }); if(!r.ok) continue;
-          const d = await r.json(); if (Array.isArray(d)) { remote = d; break; } } catch {}
+    async function trySyncFromJson(){
+      const urls=["./vokabeln.json","vokabeln.json",window.location.origin+"/vokabeln.json",window.location.origin+"/vokabeltrainer/vokabeln.json"];
+      let remote=null;
+      for(const u of urls){
+        try{ const r=await fetch(u,{cache:"no-store"}); if(!r.ok) continue;
+          const d=await r.json(); if(Array.isArray(d)){ remote=d; break; } }
+        catch{}
       }
-      const local = loadLocal();
-      if (!remote && local.length===0) {
+      const local=loadLocal();
+      if(!remote && local.length===0){
         const def=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"],["file","Feile","Gelb","","","2025-01-01T00:00:00Z"],["drill","Bohrer","Pink","","","2025-01-01T00:00:00Z"]];
         saveLocal(def); statusEl.textContent="✨ Standardliste verwendet";
-      } else if (remote) {
+      } else if(remote){
         saveLocal(mergeVocabLists(remote, local));
         statusEl.textContent="🔄 JSON + lokale Ergänzungen (gemergt)";
       } else {
         statusEl.textContent="💾 Lokaler Speicher (Offline)";
       }
       list = loadLocal();
-      renderFilterGroup(); renderLexica(); renderTable(); renderLastAdded();
+      renderFilterGroup(); renderLexica(); renderTable();
     }
-    function downloadBlob(name, json) {
-      const blob = new Blob([json], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a"); a.href = url; a.download = name; a.click();
-      URL.revokeObjectURL(url);
+    function downloadBlob(name, json){
+      const blob=new Blob([json],{type:"application/json"});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement("a"); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
     }
     function exportJson(){ downloadBlob("vokabeln.json", JSON.stringify(loadLocal(), null, 2)); }
-    function createBackup(){ const today=new Date().toISOString().slice(0,10); downloadBlob(`vokabeln_backup_${today}.json`, JSON.stringify(loadLocal(), null, 2)); }
+    function createBackup(){
+      const today=new Date().toISOString().slice(0,10);
+      downloadBlob(`vokabeln_backup_${today}.json`, JSON.stringify(loadLocal(), null, 2));
+    }
 
-    // --- Rendering UI ---
-    function renderCategorySelect(sel, setColor=false) {
-      sel.innerHTML = "";
-      Object.keys(CATEGORY_NAMES).forEach(k => {
+    // ===== Tabelle/Filter/Sort =====
+    let list=[], currentLetter="Alle", filterCat="Alle", filterGrp="Alle", searchTerm="", currentPage=1;
+    const perPage=15; let sortKey="en", sortDir="asc";
+
+    function renderCategorySelect(sel){
+      sel.innerHTML="";
+      Object.keys(CATEGORY_NAMES).forEach(k=>{
         const o=document.createElement("option");
         o.value=k; o.textContent=labelForCategory(k);
         sel.appendChild(o);
       });
-      if (setColor) setSelectColor(sel, sel.value);
-      sel.onchange = () => setSelectColor(sel, sel.value);
-    }
-    function setSelectColor(sel, val){
-      if (!val || val==="Alle"){ sel.style.background="#fff"; sel.style.color="#111"; sel.style.border="1px solid #cfd6e4"; return; }
-      const c = COLOR_MAP[val] || "#fff"; sel.style.background=c; sel.style.color="#fff"; sel.style.border="1px solid #999";
     }
     function renderFilterCategory(){
       const sel=$("#filterCategory");
       sel.innerHTML="<option value='Alle'>Alle (bunt gemischt)</option>";
       Object.keys(CATEGORY_NAMES).forEach(k=>{ const o=document.createElement("option"); o.value=k; o.textContent=labelForCategory(k); sel.appendChild(o); });
-      setSelectColor(sel,"Alle");
-      sel.onchange=e=>{ filterCat=e.target.value; setSelectColor(sel,filterCat); currentPage=1; renderTable(); };
+      sel.onchange=e=>{ filterCat=e.target.value; currentPage=1; renderTable(); };
     }
     function renderFilterGroup(){
       const groups=[...new Set(list.map(v=>v[3]).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"de"));
@@ -202,18 +232,25 @@
       sel.innerHTML="<option value='Alle'>Alle</option>"+groups.map(g=>`<option>${g}</option>`).join("");
       sel.onchange=e=>{ filterGrp=e.target.value; currentPage=1; renderTable(); };
     }
-    function renderLexica() {
+    function renderLexica(){
       const letters=["Alle",...Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")];
       const lx=$("#lexica"); lx.innerHTML="";
-      letters.forEach(l=>{ const b=document.createElement("button"); b.textContent=l; if(l===currentLetter)b.classList.add("active");
-        b.onclick=()=>{ currentLetter=l; currentPage=1; renderTable(); renderLexica(); }; lx.appendChild(b); });
+      letters.forEach(l=>{
+        const b=document.createElement("button");
+        b.textContent=l; if(l===currentLetter)b.classList.add("active");
+        b.onclick=()=>{ currentLetter=l; currentPage=1; renderTable(); renderLexica(); };
+        lx.appendChild(b);
+      });
     }
     function filtered(){
       return list.filter(([en,de,cat,grp,hint])=>{
         if(currentLetter!=="Alle" && !en.toUpperCase().startsWith(currentLetter)) return false;
         if(filterCat!=="Alle" && cat!==filterCat) return false;
         if(filterGrp!=="Alle" && grp!==filterGrp) return false;
-        if(searchTerm){ const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase(); if(!hay.includes(searchTerm)) return false; }
+        if(searchTerm){
+          const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase();
+          if(!hay.includes(searchTerm)) return false;
+        }
         return true;
       });
     }
@@ -231,10 +268,10 @@
     }
     function renderTable(){
       const all=sortList(filtered());
-      const pages=Math.max(1,Math.ceil(all.length/perPage));
+      const pages=Math.max(1, Math.ceil(all.length/perPage));
       if(currentPage>pages) currentPage=pages;
       const start=(currentPage-1)*perPage;
-      const rows=all.slice(start,start+perPage);
+      const rows=all.slice(start, start+perPage);
 
       const tbody=$("#vocabTable tbody"); tbody.innerHTML="";
       rows.forEach(v=>{
@@ -269,6 +306,7 @@
         };
       });
     }
+
     function editRow(i){
       const [en,de,cat,grp,hint,date]=list[i];
       const tr=$$("#vocabTable tbody tr").find(r=>parseInt(r.querySelector("input").dataset.index)===i);
@@ -276,58 +314,73 @@
         <td><input id="eEn" value="${en}"></td>
         <td><input id="eDe" value="${de}"></td>
         <td><select id="eCat" class="colored">
-          ${Object.keys(CATEGORY_NAMES).map(k=>`<option value="${k}" ${k===cat?"selected":""}>${labelForCategory(k)}</option>`).join("")}
+          ${Object.keys(CATEGORY_NAMES).map(k=>`<option value="${k}" ${k===cat?"selected":""}>${CATEGORY_NAMES[k]}</option>`).join("")}
         </select></td>
         <td><input id="eGrp" value="${grp||""}"></td>
         <td><input id="eHint" value="${hint||""}"></td>
         <td><button class="save-btn">💾</button></td>`;
-      const eCat=tr.querySelector("#eCat"); setSelectColor(eCat,eCat.value); eCat.onchange=()=>setSelectColor(eCat,eCat.value);
+
+      const eCat=tr.querySelector("#eCat");
+      eCat.onchange=null;
+
       tr.querySelector(".save-btn").onclick=()=>{
-        const newEn=$("#eEn").value.trim(), newDe=$("#eDe").value.trim(), newCat=eCat.value, newGrp=$("#eGrp").value.trim(), newHint=$("#eHint").value.trim();
+        const newEn=$("#eEn").value.trim(),
+              newDe=$("#eDe").value.trim(),
+              newCat=eCat.value,
+              newGrp=$("#eGrp").value.trim(),
+              newHint=$("#eHint").value.trim();
         if(!newEn||!newDe) return alert("Bitte ausfüllen!");
         list[i]=[newEn,newDe,newCat,newGrp,newHint,date];
-        saveLocal(list); renderFilterGroup(); renderTable(); renderLastAdded(); toast("💾 Gespeichert");
+        saveLocal(list);
+        renderFilterGroup(); renderTable();
+        toast("💾 Gespeichert");
       };
     }
 
-    function renderLastAdded(){
-      const l=loadLocal(); const last=l.slice(-5).reverse();
-      const ul=$("#lastList"); ul.innerHTML="";
+    // ===== Popup „Zuletzt hinzugefügt“ =====
+    function renderRecentPopup(){
+      const l=loadLocal();
+      const last=l.slice(-5).reverse();
+      const ul=$("#recentUl"); ul.innerHTML="";
+      if(!last.length){ ul.innerHTML="<li><em>Keine Vokabeln vorhanden.</em></li>"; return; }
       last.forEach(([en,de,cat])=>{
         const li=document.createElement("li");
-        li.innerHTML=`<b>${en}</b> – ${de} <span style="color:${COLOR_MAP[cat]}">(${CATEGORY_NAMES[cat]})</span>`;
+        li.innerHTML=`<b>${en}</b> – ${de} <span style="color:${COLOR_MAP[cat]}">(${CATEGORY_NAMES[cat]||cat})</span>`;
         ul.appendChild(li);
       });
     }
+    function openRecent(){ renderRecentPopup(); $("#recentPopupOverlay").style.display="flex"; }
+    function closeRecent(){ $("#recentPopupOverlay").style.display="none"; }
 
-    // --- State ---
-    let list=[];
-    let currentLetter="Alle";
-    let filterCat="Alle";
-    let filterGrp="Alle";
-    let searchTerm="";
-    let currentPage=1;
-    const perPage=15;
-    let sortKey="en", sortDir="asc";
-
-    // --- INIT ---
+    // ===== INIT / Events =====
     (async function init(){
-      renderCategorySelect($("#newCategory"), true);
+      // Selects vorbereiten
+      renderCategorySelect($("#newCategory"));
       renderFilterCategory();
       bindSort();
 
+      // Events
       $("#resetFilter").onclick=()=>{ filterCat="Alle"; filterGrp="Alle"; currentLetter="Alle"; searchTerm=""; renderFilterCategory(); renderFilterGroup(); renderLexica(); $("#searchInput").value=""; renderTable(); };
       $("#searchInput").addEventListener("input", e=>{ searchTerm=e.target.value.trim().toLowerCase(); currentPage=1; renderTable(); });
 
-      $("#toggleAdd").onclick=()=>{ const d=$("#newEnglish").disabled; ["newEnglish","newGerman","newCategory","newGroup","newHint","addBtn"].forEach(id=>$("#"+id).disabled=!d); $("#toggleAdd").textContent=d?"🔒 Eingabe sperren":"✏️ Eingabe aktivieren"; if(d)$("#newEnglish").focus(); };
+      $("#toggleAdd").onclick=()=>{
+        const d=$("#newEnglish").disabled;
+        ["newEnglish","newGerman","newCategory","newGroup","newHint","addBtn"].forEach(id=>$("#"+id).disabled=!d);
+        $("#toggleAdd").textContent=d?"🔒 Eingabe sperren":"✏️ Eingabe aktivieren";
+        if(d) $("#newEnglish").focus();
+      };
 
       $("#addBtn").onclick=()=>{
-        const en=$("#newEnglish").value.trim(), de=$("#newGerman").value.trim(), cat=$("#newCategory").value, grp=$("#newGroup").value.trim(), hint=$("#newHint").value.trim();
+        const en=$("#newEnglish").value.trim(),
+              de=$("#newGerman").value.trim(),
+              cat=$("#newCategory").value,
+              grp=$("#newGroup").value.trim(),
+              hint=$("#newHint").value.trim();
         if(!en||!de) return alert("Bitte ausfüllen!");
         list.push([en,de,cat,grp,hint,new Date().toISOString()]);
         saveLocal(list);
         $("#newEnglish").value=""; $("#newGerman").value=""; $("#newGroup").value=""; $("#newHint").value="";
-        renderFilterGroup(); renderTable(); renderLastAdded(); toast("➕ Hinzugefügt");
+        renderFilterGroup(); renderTable(); toast("➕ Hinzugefügt");
       };
 
       $("#deleteSelected").onclick=()=>{
@@ -337,7 +390,7 @@
         createBackup();
         const ids=sel.map(c=>parseInt(c.dataset.index)).sort((a,b)=>b-a);
         ids.forEach(i=>list.splice(i,1));
-        saveLocal(list); renderTable(); renderLastAdded(); toast("🗑️ Gelöscht");
+        saveLocal(list); renderTable(); toast("🗑️ Gelöscht");
       };
 
       $("#exportBtn").onclick=()=>{ downloadBlob("vokabeln.json", JSON.stringify(list, null, 2)); toast("📤 Exportiert"); };
@@ -351,13 +404,22 @@
             const incoming=JSON.parse(r.result).map(normalize);
             if(confirm("Bestehende überschreiben? (Abbrechen = Anhängen)")) list=incoming;
             else list=mergeVocabLists(list, incoming);
-            saveLocal(list); renderFilterGroup(); renderTable(); renderLastAdded(); toast("📥 Importiert");
+            saveLocal(list); renderFilterGroup(); renderTable(); toast("📥 Importiert");
           }catch{ alert("Fehler beim Import."); }
         }; r.readAsText(f);
       };
 
-      await trySyncFromJson(); // lädt + merged + rendert alles
+      // Popup
+      $("#showRecent").onclick=openRecent;
+      $("#closeRecent").onclick=closeRecent;
+      $("#recentPopupOverlay").addEventListener("click", e=>{ if(e.target.id==="recentPopupOverlay") closeRecent(); });
+
+      // Start: Daten laden + rendern
+      await trySyncFromJson();
     })();
+
+    // ===== Lexica / Globals, die nach init verwendet werden =====
+    let list=[], currentLetter="Alle", filterCat="Alle", filterGrp="Alle", searchTerm="", currentPage=1;
   })();
   </script>
 </body></html>
