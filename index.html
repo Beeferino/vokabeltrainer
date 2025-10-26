@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vokabeltrainer</title>
+<style>
+body {font-family:sans-serif;background:#f7f9fb;margin:0;padding:20px;text-align:center;}
+h1 {color:#333;}
+.card {background:#fff;border-radius:12px;box-shadow:0 0 10px rgba(0,0,0,0.2);padding:30px;max-width:400px;margin:30px auto;}
+button {padding:10px 20px;border:none;background:#007bff;color:white;border-radius:6px;cursor:pointer;}
+button:hover {background:#0056b3;}
+.linkbtn {display:inline-block;margin-top:20px;text-decoration:none;background:#28a745;color:white;padding:10px 15px;border-radius:6px;}
+.linkbtn:hover {background:#1f7e34;}
+</style>
+</head>
+<body>
+<h1>📘 Vokabeltrainer</h1>
+<div class="card">
+  <div id="frage">Wird geladen...</div>
+  <div id="antwort" style="display:none;margin-top:15px;font-weight:bold;"></div>
+  <div style="margin-top:20px;">
+    <button id="showAnswerBtn">Antwort zeigen</button>
+    <button id="nextBtn">Nächste</button>
+  </div>
+</div>
+<a href="vokabeln.html" class="linkbtn">📖 Vokabelübersicht öffnen</a>
+<script>
+
+async function ladeVokabeln() {
+  const statusEl = document.createElement('div');
+  statusEl.style.position = 'fixed';
+  statusEl.style.bottom = '8px';
+  statusEl.style.right = '10px';
+  statusEl.style.fontSize = '0.8em';
+  statusEl.style.opacity = '0.7';
+  statusEl.style.color = '#555';
+  document.body.appendChild(statusEl);
+
+  try {
+    const res = await fetch('vokabeln.json');
+    if (!res.ok) throw new Error('Fehler beim Laden');
+    const data = await res.json();
+    localStorage.setItem('vokabeln', JSON.stringify(data));
+    statusEl.textContent = '📂 Datenquelle: JSON-Datei (Online)';
+    return data;
+  } catch (err) {
+    const local = localStorage.getItem('vokabeln');
+    if (local) {
+      statusEl.textContent = '💾 Datenquelle: Lokaler Speicher';
+      return JSON.parse(local);
+    } else {
+      statusEl.textContent = '✨ Standardliste verwendet';
+      const defaults = [["angle", "Winkel", "Gelb"], ["broom", "Besen", "Gelb"], ["measuring tape", "Maßband", "Blau"], ["hammer", "Hammer", "Pink"], ["file", "Feile", "Gelb"], ["pliers", "Zange", "Blau"], ["saw", "Säge", "Gelb"], ["ruler", "Maßstab", "Gelb"], ["drill", "Bohrer", "Pink"], ["gloves", "Handschuhe", "Gelb"], ["chisel", "Meißel", "Gelb"], ["vice", "Schraubstock", "Pink"], ["square file", "Vierkantefeile", "Gelb"], ["screw", "Schraube", "Gelb"], ["tap wrench", "Windeisen", "Gruen"], ["counterbore", "Entgrater", "Orange"]];
+      localStorage.setItem('vokabeln', JSON.stringify(defaults));
+      return defaults;
+    }
+  }
+}
+
+
+let vokabeln = [], aktuelle = null;
+
+async function start() {
+  vokabeln = await ladeVokabeln();
+  neueFrage();
+}
+
+function neueFrage() {
+  if (vokabeln.length === 0) return;
+  aktuelle = vokabeln[Math.floor(Math.random() * vokabeln.length)];
+  document.getElementById('frage').textContent = aktuelle[0];
+  document.getElementById('antwort').style.display = 'none';
+}
+
+document.getElementById('showAnswerBtn').onclick = () => {
+  document.getElementById('antwort').textContent = aktuelle[1];
+  document.getElementById('antwort').style.display = 'block';
+};
+
+document.getElementById('nextBtn').onclick = neueFrage;
+start();
+</script>
+</body>
+</html>
