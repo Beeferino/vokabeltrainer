@@ -3,288 +3,194 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vokabelverwaltung – Beeferino</title>
+<title>📘 Vokabelübersicht – Beeferino</title>
 <style>
-:root{
-  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
-  --glass:rgba(255,255,255,.88);
-  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
-}
-body{
-  margin:0;font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);
-  color:var(--ink);
-}
-.app{
-  max-width:1000px;margin:32px auto;padding:22px;
-  background:var(--glass);border-radius:22px;
-  box-shadow:0 10px 32px rgba(0,0,0,.10);
-  backdrop-filter:blur(8px)
-}
-h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin-bottom:10px}
-h2{color:#1e3a8a;margin-top:32px}
-.section{margin-bottom:22px}
-.flex{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-input,select,button{
-  font-family:inherit;font-size:1rem;border-radius:10px;
-  padding:8px 10px;border:1px solid #d1d5db
-}
-button{cursor:pointer;font-weight:700;transition:all .2s ease;}
-button:hover{transform:translateY(-1px)}
-table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{border-bottom:1px solid #e5e7eb;padding:8px 6px;text-align:left}
-th{background:#f1f5ff;font-weight:700}
-tr:hover{background:#f9fbff}
-.pagination{text-align:center;margin-top:10px}
-.divider{
-  height:3px;width:60%;margin:40px auto 20px;
-  background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
-  border-radius:2px;animation:shine 5s linear infinite
-}
-@keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
-#modal{
-  position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;
-}
-#modalContent{
-  background:#fff;padding:24px;border-radius:20px;max-width:420px;width:90%;
-  box-shadow:0 8px 30px rgba(0,0,0,.25);text-align:center
-}
-#toast{
-  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-  background:#22c55e;color:#fff;padding:10px 20px;border-radius:12px;
-  display:none;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.2)
-}
-.footer{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-top:40px;flex-wrap:wrap;gap:10px
-}
-.link-trainer{
-  border:none;
-  padding:10px 18px;
-  border-radius:14px;
-  font-weight:700;
-  color:#fff;
-  background:linear-gradient(90deg,#2563eb,#1d4ed8);
-  box-shadow:0 6px 18px rgba(37,99,235,.3);
-  cursor:pointer;
-  transition:background 0.3s ease,transform 0.2s ease;
-}
-.link-trainer:hover{
-  background:linear-gradient(90deg,#1d4ed8,#2563eb);
-  transform:translateY(-2px);
-}
-.src{text-align:center;flex:1 1 100%;margin-top:8px;color:#6b7280;font-size:.9rem}
-#datasourceStatus{text-align:center;margin-top:12px;font-size:.9rem;color:#444}
-
-/* ---- MOBILE VIEW ---- */
-@media (max-width:768px){
-  .app{margin:0;border-radius:0;padding:14px;box-shadow:none;}
-  h1{font-size:1.6rem;}
-  .flex{flex-direction:column;align-items:stretch;}
-  .flex label,.flex input,.flex select,.flex button{width:100%;font-size:1rem;}
-  table{display:none;}
-  #mobileList{display:block;margin-top:12px;}
-  .mobile-card{
-    background:rgba(255,255,255,0.95);
-    border-radius:14px;
-    box-shadow:0 4px 12px rgba(0,0,0,.08);
-    padding:12px 16px;
-    margin-bottom:12px;
-    border-left:6px solid var(--cat-color);
-    opacity:0;
-    transform:translateY(15px);
-    animation:slideIn .4s forwards;
-  }
-  @keyframes slideIn{
-    to{opacity:1;transform:translateY(0);}
-  }
-  .mobile-card h4{margin:0;font-size:1.05rem;font-weight:700;color:#1e3a8a;}
-  .mobile-card p{margin:3px 0;font-size:.95rem;color:#111;}
-  .mobile-card small{display:block;margin-top:3px;font-size:.85rem;color:#555;opacity:.9;}
-  .mobile-card button{
-    margin-top:8px;width:100%;border:none;border-radius:10px;
-    background:linear-gradient(90deg,#2563eb,#1d4ed8);color:#fff;
-    padding:8px;font-weight:700;box-shadow:0 4px 10px rgba(37,99,235,.25);
-  }
-  .mobile-card button:hover{transform:scale(1.02)}
-  .footer{
-    position:fixed;bottom:0;left:0;width:100%;
-    background:rgba(255,255,255,.95);
-    padding:10px;box-shadow:0 -4px 12px rgba(0,0,0,.1);
-    border-radius:0;
-  }
-  .footer .link-trainer{flex:1;margin:0 4px;font-size:.9rem;padding:10px;}
-  #modalContent{width:94%;max-width:none;}
-}
+:root{--accent:#3b82f6;--accent2:#1d4ed8;--ok:#22c55e;--bad:#ef4444;--dark:#1e293b}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#e0e7ff,#f8fafc);color:var(--dark)}
+.app{max-width:1100px;margin:32px auto 140px;padding:24px;background:rgba(255,255,255,.95);border-radius:22px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
+h1{margin:0 0 6px;text-align:center;color:var(--accent)}
+hr{border:none;border-top:2px solid #e5e7eb;margin:12px 0 16px}
+.flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
+input,select,button{padding:10px 14px;border-radius:12px;border:1px solid #d1d5db;font-size:1rem}
+button{background:var(--accent);color:#fff;font-weight:700;cursor:pointer;transition:.15s}
+button:hover{background:var(--accent2)}
+#lexikon{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px;justify-content:center}
+#lexikon button{background:#e2e8f0;border:none;border-radius:10px;padding:8px 12px;font-weight:600}
+#lexikon button.active{background:var(--accent);color:#fff;transform:scale(1.05)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.card{position:relative;background:#fff;border-radius:18px;padding:16px;border:2px solid #e5e7eb;box-shadow:0 6px 16px rgba(0,0,0,.08);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.12)}
+.card .check{position:absolute;top:10px;left:10px;transform:scale(1.2)}
+.badge{position:absolute;top:-10px;right:14px;border-radius:999px;padding:6px 14px;font-size:.8rem;font-weight:700;background:var(--badge-bg,#e2e8f0);color:#fff;box-shadow:0 3px 6px rgba(0,0,0,.2);text-shadow:0 1px 3px rgba(0,0,0,.4);border:2px solid #fff}
+.word{font-size:1.15rem;font-weight:800;margin:28px 0 4px}
+.trans{font-size:1rem;color:#334155;margin:0 0 12px}
+.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+.actions button{border-radius:10px;padding:8px 10px}
+.actions .edit{background:#10b981}.actions .edit:hover{background:#0ea371}
+.actions .del{background:#ef4444}.actions .del:hover{background:#d83737}
+.table{width:100%;border-collapse:separate;border-spacing:0 10px;margin-top:14px}
+.table th,.table td{padding:10px;text-align:left;vertical-align:middle}
+.table th{background:#f1f5f9;border-radius:10px}
+.table tbody tr{background:#fff;border-radius:14px;box-shadow:0 2px 6px rgba(0,0,0,.05);transition:background .2s,transform .1s}
+.table tbody tr:hover{background:#f9fafb;transform:translateY(-1px)}
+.cat-cell{text-align:center;background:var(--cat-bg,#f1f5f9);color:#000;border:2px solid var(--cat-border,#ccc);border-radius:10px;font-weight:600;font-size:.9rem;padding:6px 10px}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable .arrow{margin-left:6px;font-size:.85em;color:#64748b}
+th.sortable.active{color:var(--accent)}
+.bottom-bar{position:fixed;left:0;right:0;bottom:0;z-index:999;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);border-top:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px}
+.bottom-left,.bottom-center,.bottom-right{display:flex;align-items:center;gap:10px}
+#bulkDelete{display:none;background:var(--bad)}
+.footer{margin-top:18px;padding-top:12px;border-top:1px solid #e5e7eb;text-align:center;color:#64748b;font-size:.95rem}
+.toast{position:fixed;bottom:62px;right:22px;background:var(--ok);color:#fff;padding:12px 18px;border-radius:12px;opacity:0;transition:opacity .3s;z-index:1001}
+.toast.show{opacity:1}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);z-index:1002;align-items:center;justify-content:center}
+.modal-box{background:#fff;padding:32px 30px 26px;border-radius:20px;width:95%;max-width:620px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.modal-box h3{text-align:center;color:var(--accent);margin-top:0;margin-bottom:16px}
+.modal-box label{font-weight:600;margin-bottom:3px;display:block;color:#334155}
+.modal-box input,.modal-box select{width:100%;margin:.4rem 0}
+.modal-box .row{display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;margin-top:12px}
+.modal-box input[disabled]{background:#f1f5f9;border:1px solid #d1d5db;color:#475569}
 </style>
 </head>
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
-
-  <div class="section">
-    <h2>🔍 Filter &amp; Suche</h2>
-    <div class="flex">
-      <label>Kategorie:
-        <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
-      </label>
-      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
-      <button id="resetFilter">🔄 Zurücksetzen</button>
+  <hr>
+  <div id="lexikon"></div>
+  <div class="flex">
+    <label>Sortierung:
+      <select id="sortABC">
+        <option value="en">A–Z Englisch</option>
+        <option value="de">A–Z Deutsch</option>
+        <option value="cat">Nach Kategorie</option>
+      </select>
+    </label>
+    <label>Kategorie:
+      <select id="filterCat"><option value="Alle">Alle</option></select>
+    </label>
+    <input id="searchInput" type="text" placeholder="🔎 Suchen …">
+    <button id="resetFilter">🔄 Reset</button>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button id="viewGrid" style="background:var(--ok)">🧱 Kacheln</button>
+      <button id="viewList" style="background:#94a3b8">📄 Liste</button>
+      <button id="newVocabBtn" style="background:var(--ok)">➕ Neue Vokabel</button>
     </div>
   </div>
-
-  <div class="section">
-    <h2>📄 Vokabelliste</h2>
-    <table id="vokabelTable">
-      <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th style="width:100px;">Aktion</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <div id="mobileList"></div>
-    <div id="pagination" class="pagination"></div>
-    <div id="infoFooter" style="margin-top:6px;font-size:.95rem;color:#555;"></div>
-  </div>
-
-  <div class="section">
-    <h2>➕ Neue Vokabel hinzufügen</h2>
-    <div class="flex">
-      <input id="newEn" type="text" placeholder="Englisch">
-      <input id="newDe" type="text" placeholder="Deutsch">
-      <select id="newCat"></select>
-      <input id="newGroup" type="text" placeholder="Gruppe / Variante">
-      <input id="newHint" type="text" placeholder="Hinweis">
-      <button id="addBtn">Hinzufügen</button>
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <details open class="section">
-    <summary><strong>🧾 Zuletzt hinzugefügt</strong></summary>
-    <div id="lastAdded">–</div>
-  </details>
-
-  <div class="footer">
-    <button class="link-trainer" id="btnBack">⬅️ Zurück zum Trainer</button>
-    <button id="btnCommit" class="link-trainer">📤 In Datenbank eintragen</button>
-    <div class="src">© 2025 Beeferino</div>
-  </div>
-
-  <div id="datasourceStatus">🔄 JSON + lokale Ergänzungen (gemergt)</div>
+  <div id="cards" class="grid"></div>
+  <table id="listView" class="table" style="display:none"></table>
+  <div class="footer">© 2025 Beeferino</div>
 </div>
 
-<div id="modal">
-  <div id="modalContent">
-    <h3>🔍 Vokabel-Details</h3>
-    <input id="editEn" type="text" placeholder="Englisch" readonly>
-    <input id="editDe" type="text" placeholder="Deutsch" readonly>
-    <select id="editCat" disabled></select>
-    <input id="editGroup" type="text" placeholder="Gruppe / Variante" readonly>
-    <input id="editHint" type="text" placeholder="Hinweis" readonly>
-    <div class="flex" style="margin-top:10px;justify-content:center">
-      <button id="toggleEdit">🔧 Bearbeiten</button>
-      <button id="closeModal">❌ Schließen</button>
+<div class="bottom-bar">
+  <div class="bottom-left"><button id="backBtn" style="background:#e2e8f0;color:#111827;border:1px solid #cbd5e1">⬅️ Zurück zum Trainer</button></div>
+  <div class="bottom-center"><button id="bulkDelete">🗑️ Auswahl löschen (<span id="selCount">0</span>)</button></div>
+  <div class="bottom-right">
+    <button id="setToken" style="background:#eab308;color:#111827">🔑 GitHub-Token</button>
+    <button id="syncNow" style="background:var(--accent2)">🔄 Jetzt synchronisieren</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="modal">
+  <div class="modal-box">
+    <h3 id="modalTitle">➕ Neue Vokabel</h3>
+    <label for="newEn">Englisch</label><input id="newEn" type="text" placeholder="Englisch">
+    <label for="newDe">Deutsch</label><input id="newDe" type="text" placeholder="Deutsch">
+    <label for="newCat">Kategorie</label><select id="newCat"></select>
+    <label for="newGroup">Gruppe / Variante</label><input id="newGroup" type="text" placeholder="Gruppe / Variante">
+    <label for="newHint">Hinweis</label><input id="newHint" type="text" placeholder="Hinweis">
+    <label for="newCreated">📅 Erstellt am:</label>
+    <input id="newCreated" type="text" disabled>
+    <div class="row">
+      <button id="saveVocab">Speichern</button>
+      <button id="deleteVocab" style="background:var(--bad)">Löschen</button>
+      <button id="cancelModal">Abbrechen</button>
     </div>
   </div>
 </div>
 
-<div id="toast">Gespeichert</div>
+<div id="toast" class="toast">Gespeichert</div>
 
 <script>
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
-};
-const el=id=>document.getElementById(id);
-const toast=t=>{const x=el("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",2000);};
-let list=[];
-for(const k in CATS){
-  let o=document.createElement("option");
-  o.value=k;o.textContent=CATS[k][0];
-  o.style.background=CATS[k][1];o.style.color=CATS[k][2];
-  el("filterCat").appendChild(o);
-  el("newCat").appendChild(o.cloneNode(true));
-  el("editCat").appendChild(o.cloneNode(true));
-}
-function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));}
-function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
-function dedup(arr){return Array.from(new Map(arr.map(v=>[v[0]+v[1],v])).values());}
-async function loadGitHub(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const d=await r.json();list=dedup([...d,...loadLocal()]);render();
-  }catch{list=loadLocal();render();}
-}
+(async()=>{
+const $=id=>document.getElementById(id);
+const cards=$("cards"),listView=$("listView"),toast=$("toast");
+const search=$("searchInput"),sortSel=$("sortABC"),catSel=$("filterCat"),resetBtn=$("resetFilter");
+const modal=$("modal"),saveBtn=$("saveVocab"),delBtn=$("deleteVocab"),cancelBtn=$("cancelModal");
+const enIn=$("newEn"),deIn=$("newDe"),catIn=$("newCat"),grpIn=$("newGroup"),hintIn=$("newHint"),createdIn=$("newCreated");
+const syncNow=$("syncNow"),backBtn=$("backBtn"),bulkDelete=$("bulkDelete"),selCount=$("selCount");
+const newBtn=$("newVocabBtn"),viewGrid=$("viewGrid"),viewList=$("viewList"),setToken=$("setToken");
+
+let data=[],selected=new Set(),viewMode="grid",editId=null;
+let listSortKey="en",listSortDir=1;
+const GITHUB_REPO="beeferino/vokabeltrainer",FILE_PATH="vokabeln.json";
+
+const CATS={Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],Gruen:["Drehen / Fräsen","#1E8449","#fff"],HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],Orange:["Elektrotechnik","#E67E22","#fff"],Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],Rot:["Verwechslungsgefahr","#C0392B","#fff"]};
+
+for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];catIn.appendChild(o);catSel.appendChild(o.cloneNode(true));}
+
+const lex=$("lexikon");
+lex.innerHTML='<button class="active" data-letter="Alle">Alle</button>'+[...Array(26)].map((_,i)=>`<button data-letter="${String.fromCharCode(65+i)}">${String.fromCharCode(65+i)}</button>`).join("");
+lex.querySelectorAll("button").forEach(b=>b.onclick=()=>{lex.querySelectorAll("button").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
+
+async function loadData(){try{const r=await fetch(`https://beeferino.github.io/vokabeltrainer/${FILE_PATH}`,{cache:"no-store"});data=(await r.json()).map(x=>({_id:crypto.randomUUID(),en:x[0],de:x[1],cat:x[2],group:x[3]||"",hint:x[4]||"",created:x[5]||new Date().toISOString()}));}catch{data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}localStorage.setItem("vokabeln",JSON.stringify(data));render();}
+function persist(){localStorage.setItem("vokabeln",JSON.stringify(data));}
+function fmt(d){try{return new Date(d).toLocaleDateString("de-DE");}catch{return ""}}
+
+function showToast(m){toast.textContent=m;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600);}
+
 function render(){
-  const t=el("vokabelTable").querySelector("tbody");
-  const q=el("searchInput").value.toLowerCase();
-  const f=el("filterCat").value;
-  let shown=list.filter(v=>(f==="Alle"||v[2]===f)&&(v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q)));
+  const s=search.value.toLowerCase(),cat=catSel.value,letter=document.querySelector("#lexikon button.active").dataset.letter;
+  let view=data.filter(v=>(cat==="Alle"||v.cat===cat)&&(!letter||letter==="Alle"||v.en.toLowerCase().startsWith(letter.toLowerCase()))&&(v.en.toLowerCase().includes(s)||v.de.toLowerCase().includes(s)));
+  if(sortSel.value==="en")view.sort((a,b)=>a.en.localeCompare(b.en));
+  if(sortSel.value==="de")view.sort((a,b)=>a.de.localeCompare(b.de));
+  if(sortSel.value==="cat")view.sort((a,b)=>a.cat.localeCompare(b.cat));
+  selCount.textContent=selected.size;bulkDelete.style.display=selected.size?"inline-flex":"none";
 
-  // Desktop: Tabelle
-  t.innerHTML=shown.map((v,i)=>{
-    const c=CATS[v[2]]||["","#ddd","#000"];
-    return `<tr><td>${v[0]}</td><td>${v[1]}</td><td style="color:${c[2]};font-weight:700;">${c[0]}</td><td><button onclick="openModal(${i})">🔍</button></td></tr>`;
-  }).join("")||"<tr><td colspan=4>Keine Ergebnisse</td></tr>";
-  el("infoFooter").textContent=`${shown.length} Einträge`;
+  if(viewMode==="grid"){listView.style.display="none";cards.style.display="grid";cards.innerHTML=view.map(v=>{const c=CATS[v.cat]||["","#ddd","#000"];return`<div class="card" style="border-color:${c[1]}"><input class="check" type="checkbox" onchange="toggleSel('${v._id}')" ${selected.has(v._id)?"checked":""}><span class="badge" style="background:${c[1]};color:${c[2]==='#000'?'#111':'#fff'}">${c[0]}</span><div style="margin-top:20px"></div><div class="word">${v.en}</div><div class="trans">${v.de}</div><div style="height:16px"></div><div class="actions"><button class="edit" onclick="editCard('${v._id}')">✏️</button><button class="del" onclick="delCard('${v._id}')">🗑️</button></div></div>`;}).join("");}
+  else{
+    cards.style.display="none";listView.style.display="table";
+    view.sort((a,b)=>{if(listSortKey==="created")return(new Date(a.created)-new Date(b.created))*listSortDir;return a[listSortKey].localeCompare(b[listSortKey])*listSortDir;});
+    const arrow=d=>d===1?"▲":"▼";const th=(k,l)=>`<th class="sortable ${listSortKey===k?"active":""}" data-key="${k}">${l}${listSortKey===k?`<span class='arrow'>${arrow(listSortDir)}</span>`:""}</th>`;
+    listView.innerHTML=`<thead><tr><th><input type="checkbox" onchange="toggleAll(this)"></th>${th("en","Englisch")}${th("de","Deutsch")}${th("cat","Kategorie")}${th("created","📅 Erstellt am")}<th>Aktion</th></tr></thead><tbody>${view.map(v=>{const c=CATS[v.cat]||["","#ddd","#000"];return`<tr><td><input type="checkbox" onchange="toggleSel('${v._id}')" ${selected.has(v._id)?"checked":""}></td><td>${v.en}</td><td>${v.de}</td><td class="cat-cell" style="--cat-bg:${c[1]}20;--cat-border:${c[1]}">${c[0]}</td><td>${fmt(v.created)}</td><td><button class="edit" onclick="editCard('${v._id}')">✏️</button><button class="del" onclick="delCard('${v._id}')">🗑️</button></td></tr>`;}).join("")}</tbody>`;
+    listView.querySelectorAll("th.sortable").forEach(th=>th.onclick=()=>{const k=th.dataset.key;if(listSortKey===k)listSortDir*=-1;else{listSortKey=k;listSortDir=1;}render();});
+  }
+}
 
-  // Mobile: Cards
-  const mob=el("mobileList");
-  if(window.innerWidth<=768){
-    mob.innerHTML=shown.map((v,i)=>{
-      const c=CATS[v[2]]||["","#ddd","#000"];
-      return `<div class="mobile-card" style="--cat-color:${c[1]}">
-        <h4>${v[0]}</h4>
-        <p>${v[1]}</p>
-        <small>${c[0]}</small>
-        <button onclick="openModal(${i})">🔍 Details</button>
-      </div>`;
-    }).join("")||"<p>Keine Ergebnisse</p>";
-  } else mob.innerHTML="";
-}
-function openModal(i){
-  const v=list[i];
-  el("editEn").value=v[0];el("editDe").value=v[1];
-  el("editCat").value=v[2];
-  el("editGroup").value=v[3]||"";el("editHint").value=v[4]||"";
-  el("modal").style.display="flex";
-}
-el("closeModal").onclick=()=>el("modal").style.display="none";
-el("searchInput").oninput=render;
-el("filterCat").onchange=render;
-el("resetFilter").onclick=()=>{el("filterCat").value="Alle";el("searchInput").value="";render();};
-el("addBtn").onclick=()=>{
-  const en=el("newEn").value.trim(),de=el("newDe").value.trim(),cat=el("newCat").value,group=el("newGroup").value.trim(),hint=el("newHint").value.trim();
-  if(!en||!de)return alert("Bitte Englisch und Deutsch angeben");
-  list.push([en,de,cat,group,hint]);
-  saveLocal();render();toast("Vokabel hinzugefügt");
-  el("newEn").value=el("newDe").value=el("newGroup").value=el("newHint").value="";
+window.toggleSel=id=>{selected.has(id)?selected.delete(id):selected.add(id);selCount.textContent=selected.size;bulkDelete.style.display=selected.size?"inline-flex":"none";}
+window.toggleAll=cb=>{if(cb.checked)data.forEach(v=>selected.add(v._id));else selected.clear();render();}
+window.delCard=id=>{if(!confirm("Löschen?"))return;data=data.filter(v=>v._id!==id);persist();render();sync();}
+window.editCard=id=>{editId=id;const v=data.find(x=>x._id===id);if(!v)return;enIn.value=v.en;deIn.value=v.de;catIn.value=v.cat;grpIn.value=v.group;hintIn.value=v.hint;createdIn.value=fmt(v.created);modal.style.display="flex";}
+bulkDelete.onclick=()=>{if(!selected.size)return;if(!confirm(`Auswahl löschen (${selected.size})?`))return;data=data.filter(v=>!selected.has(v._id));selected.clear();persist();render();sync();}
+newBtn.onclick=()=>{editId=null;enIn.value=deIn.value=grpIn.value=hintIn.value="";createdIn.value=fmt(new Date());modal.style.display="flex";}
+cancelBtn.onclick=()=>modal.style.display="none";
+saveBtn.onclick=()=>{if(!enIn.value||!deIn.value||!catIn.value)return;const obj={_id:editId??crypto.randomUUID(),en:enIn.value,de:deIn.value,cat:catIn.value,group:grpIn.value,hint:hintIn.value,created:editId?data.find(v=>v._id===editId).created:new Date().toISOString()};const i=data.findIndex(v=>v._id===editId);if(i>-1)data[i]=obj;else data.push(obj);modal.style.display="none";persist();render();sync();}
+delBtn.onclick=()=>{if(!editId)return;if(!confirm("Löschen?"))return;data=data.filter(v=>v._id!==editId);modal.style.display="none";persist();render();sync();}
+search.oninput=render;sortSel.onchange=render;catSel.onchange=render;
+resetBtn.onclick=()=>{search.value="";catSel.value="Alle";document.querySelector("#lexikon .active").classList.remove("active");document.querySelector("#lexikon [data-letter='Alle']").classList.add("active");render();}
+viewGrid.onclick=()=>{viewMode="grid";viewGrid.style.background="var(--ok)";viewList.style.background="#94a3b8";render();}
+viewList.onclick=()=>{viewMode="list";viewList.style.background="var(--ok)";viewGrid.style.background="#94a3b8";render();}
+backBtn.onclick=()=>location.href="index.html";
+
+setToken.onclick=()=>{
+  const tok=prompt("Bitte GitHub-Personal-Access-Token eingeben:");
+  if(tok){localStorage.setItem("GH_TOKEN",tok.trim());showToast("🔑 Token gespeichert!");}
 };
-el("btnBack").onclick=()=>location.href="index.html";
-el("btnCommit").onclick=async()=>{await githubSyncUpload("Manuell eingetragen");toast("📤 In Datenbank eingetragen");};
-async function githubSyncUpload(msg="Update"){
-  const token=localStorage.getItem("gh_token");
-  if(!token)return alert("Kein GitHub-Token gefunden");
-  const body=JSON.stringify(list,null,2);
-  const res=await fetch(`https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json`,{
-    method:"PUT",
-    headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
-    body:JSON.stringify({
-      message:msg,
-      content:btoa(unescape(encodeURIComponent(body))),
-      sha:undefined
-    })
-  });
-  if(res.ok)toast("✅ Synchronisiert mit GitHub");
-  else alert("Fehler beim Hochladen");
+async function sync(){
+  const t=localStorage.getItem("GH_TOKEN");
+  if(!t)return;
+  try{
+    const url=`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data.map(v=>[v.en,v.de,v.cat,v.group||"",v.hint||"",v.created]),null,2))));
+    const cur=await fetch(url,{headers:{Authorization:`Bearer ${t}`,Accept:"application/vnd.github+json"}}).then(r=>r.json());
+    const res=await fetch(url,{method:"PUT",headers:{Authorization:`Bearer ${t}`,"Content-Type":"application/json",Accept:"application/vnd.github+json"},body:JSON.stringify({message:"Auto Sync",content,sha:cur.sha||null})});
+    if(res.ok)showToast("✅ GitHub synchronisiert!");else showToast("❌ Sync fehlgeschlagen");
+  }catch{showToast("❌ Sync-Fehler");}
 }
-loadGitHub();
+syncNow.onclick=sync;
+await loadData();
+})();
 </script>
 </body>
 </html>
