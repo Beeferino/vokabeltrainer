@@ -317,8 +317,24 @@ deleteVocab.onclick=()=>{
   if(editIndex!==null){data.splice(editIndex,1);storeAndSync();render();}
   modal.style.display="none";
 };
+  // GitHub Token setzen
+const setTokenBtn = document.getElementById("setTokenBtn");
+setTokenBtn.onclick = async () => {
+  const token = prompt("Bitte deinen persönlichen GitHub Token eingeben (beginnt mit ghp_…):");
+  if (!token) return alert("❌ Kein Token eingegeben.");
+  localStorage.setItem("GH_TOKEN", token.trim());
+  alert("✅ GitHub Token gespeichert!\nEr bleibt im Browser erhalten, bis du den Cache löschst.");
+};
+
 loadData();
 })();
+
+  <div class="footer">
+  <button onclick="window.location.href='index.html'">⬅️ Zurück zum Trainer</button>
+  <button id="setTokenBtn">🔑 GitHub-Token setzen</button>
+  <p>© 2025 Beeferino</p>
+</div>
+
 </script>
 </body>
 </html>
