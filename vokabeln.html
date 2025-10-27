@@ -3,200 +3,173 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
+<title>Vokabelverwaltung – Beeferino</title>
 <style>
 :root{
   --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
-  --glass:rgba(255,255,255,.92);
-  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;
+  --glass:rgba(255,255,255,.88);
+  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
 }
-*{box-sizing:border-box}
 body{
   margin:0;font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  color:var(--ink);
 }
 .app{
-  max-width:980px;margin:28px auto;padding:22px;background:var(--glass);
-  border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)
+  max-width:1000px;margin:32px auto;padding:22px;
+  background:var(--glass);border-radius:22px;
+  box-shadow:0 10px 32px rgba(0,0,0,.10);
+  backdrop-filter:blur(8px)
 }
-h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin:0}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
-
-.alpha{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:14px}
-.alpha button{
-  border:none;background:#e0e7ff;color:#1e3a8a;padding:6px 10px;border-radius:8px;
-  font-weight:800;cursor:pointer;transition:.15s
+h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin-bottom:10px}
+h2{color:#1e3a8a;margin-top:32px}
+.section{margin-bottom:22px}
+.flex{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+input,select,button{
+  font-family:inherit;font-size:1rem;border-radius:10px;
+  padding:8px 10px;border:1px solid #d1d5db
 }
-.alpha button:hover{background:#c7d2fe;transform:translateY(-1px)}
-
-.toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:12px}
-.toolbar input,.toolbar button,.toolbar select{
-  font-size:1rem;padding:9px 12px;border-radius:12px;border:1px solid #cfd6e4;background:#fff
+button{
+  cursor:pointer;font-weight:700;transition:all .2s ease;
 }
-.toolbar button{cursor:pointer;font-weight:800;background:#e0e7ff;border:none}
-.toolbar button:hover{background:#c7d2fe}
-.toolbar .danger{background:#fee2e2;border:1px solid #fecaca}
-.toolbar .danger:hover{background:#fecaca}
-
-.tablewrap{background:#fff;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.06);overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:600px}
-th,td{border-bottom:1px solid #eef2f7;padding:10px 8px;text-align:left;vertical-align:middle}
-th{background:#f1f5f9;color:#1e3a8a;font-weight:800}
-tr:hover{background:#f9fafb}
-th:first-child,td:first-child{width:42px;text-align:center}
-
-.cat-chip{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:800;background:#f1f5f9}
-.row-actions{display:flex;gap:6px}
-.row-actions button{
-  border:none;background:#eef2ff;border-radius:10px;padding:6px 10px;
-  font-weight:800;cursor:pointer
+button:hover{transform:translateY(-1px)}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border-bottom:1px solid #e5e7eb;padding:8px 6px;text-align:left}
+th{background:#f1f5ff;font-weight:700}
+tr:hover{background:#f9fbff}
+.pagination{text-align:center;margin-top:10px}
+.divider{
+  height:3px;width:60%;margin:40px auto 20px;
+  background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
+  border-radius:2px;animation:shine 5s linear infinite
 }
-.row-actions button:hover{background:#dde6ff}
-
-.baukasten{
-  margin-top:24px;padding:18px;background:rgba(255,255,255,.96);
-  border-radius:20px;box-shadow:inset 0 0 12px rgba(0,0,0,.06)
+@keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
+#modal,#modalNew{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;
 }
-.baukasten h2{margin:0 0 10px;font-size:1.35rem;color:#1e3a8a;text-align:center}
-.bk-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.bk-row input,.bk-row select{
-  padding:10px 12px;border-radius:10px;border:1px solid #cfd6e4;min-width:160px
+#modalContent,#modalNewContent{
+  background:#fff;padding:24px;border-radius:20px;max-width:420px;width:90%;
+  box-shadow:0 8px 30px rgba(0,0,0,.25);text-align:center
 }
-#btnAdd{
-  background:var(--blue);color:#fff;border:none;border-radius:12px;
-  padding:10px 18px;font-weight:800;cursor:pointer
+#toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+  background:#22c55e;color:#fff;padding:10px 20px;border-radius:12px;
+  display:none;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.2)
 }
-#btnAdd:hover{background:var(--blue2)}
-
 .footer{
-  display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:40px;flex-wrap:wrap;gap:10px
 }
 .link-trainer{
-  display:inline-flex;align-items:center;gap:8px;
-  background:#111827;color:#fff;border:0;
-  padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer
+  border:none;
+  padding:10px 18px;
+  border-radius:14px;
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(90deg,#2563eb,#1d4ed8);
+  box-shadow:0 6px 18px rgba(37,99,235,.3);
+  cursor:pointer;
+  transition:background 0.3s ease,transform 0.2s ease;
 }
-.link-trainer:hover{background:#0b1220}
-.src{color:#6b7280;font-size:.95rem}
-
-.toast{
-  position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
-  background:#16a34a;color:#fff;padding:10px 16px;border-radius:12px;
-  font-weight:800;display:none;z-index:2000
+.link-trainer:hover{
+  background:linear-gradient(90deg,#1d4ed8,#2563eb);
+  transform:translateY(-2px);
 }
-
-/* Modals */
-#modal,#recentModal,#newPopup{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
-  z-index:3000;align-items:center;justify-content:center;padding:16px
+.src{text-align:center;flex:1 1 100%;margin-top:8px;color:#6b7280;font-size:.9rem}
+#datasourceStatus{text-align:center;margin-top:12px;font-size:.9rem;color:#444}
+.btn-add{
+  display:block;margin:0 auto 20px;
+  padding:12px 24px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(90deg,#1d4ed8,#2563eb);
+  color:#fff;font-weight:700;
+  box-shadow:0 6px 18px rgba(37,99,235,.25);
+  cursor:pointer;
+  transition:transform .2s ease;
 }
-.modal-card{
-  width:min(600px,92vw);background:#fff;border-radius:16px;
-  box-shadow:0 12px 32px rgba(0,0,0,.2);padding:18px;max-height:90vh;overflow:auto
-}
-.modal-card h3{margin:0 0 10px;color:#1e3a8a;text-align:center}
-.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.form label{font-size:.9rem;font-weight:800;color:#374151}
-.form input,.form select{padding:10px 12px;border:1px solid #cfd6e4;border-radius:10px;width:100%}
-.form .span2{grid-column:1 / -1}
-.modal-actions{display:flex;justify-content:space-between;gap:8px;margin-top:14px;flex-wrap:wrap}
-.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-.btn-ok{background:var(--blue);color:#fff}
-.btn-ok:hover{background:var(--blue2)}
-.btn-del{background:#fee2e2;color:#7f1d1d}
-.btn-del:hover{background:#fecaca}
-.btn-close{background:#e5e7eb}
-
-/* Mobile */
-@media (max-width:600px){
-  .form{grid-template-columns:1fr}
-}
+.btn-add:hover{transform:translateY(-2px)}
 </style>
 </head>
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
-  <div class="hr"></div>
 
-  <div class="alpha" id="alpha"></div>
+  <button id="btnNew" class="btn-add">➕ Neue Vokabel</button>
 
-  <div class="toolbar">
-    <input id="searchBox" type="text" placeholder="🔎 Suchen (EN / DE)">
-    <select id="filterCat"><option value="Alle">Alle Kategorien</option></select>
-    <button id="btnReset">♻️ Reset</button>
-    <button id="btnSync">🔄 GitHub Sync</button>
-    <button id="btnRecent">🕓 Zuletzt hinzugefügt</button>
-    <button id="btnDeleteSel" class="danger">🗑️ Löschen</button>
-  </div>
-
-  <div class="tablewrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th><input type="checkbox" id="chkAll"></th>
-          <th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <div class="baukasten">
-    <h2>➕ Neue Vokabel ergänzen</h2>
-    <div class="bk-row">
-      <input id="inEn" placeholder="Englisch">
-      <input id="inDe" placeholder="Deutsch">
-      <select id="inCat"></select>
-      <input id="inGrp" placeholder="Gruppe / Variante (optional)">
-      <input id="inHint" placeholder="Hinweis (optional)">
-      <button id="btnAdd">Speichern & Sync</button>
+  <div class="section">
+    <h2>🔍 Filter &amp; Suche</h2>
+    <div class="flex">
+      <label>Kategorie:
+        <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
+      </label>
+      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
+      <button id="resetFilter">🔄 Zurücksetzen</button>
     </div>
   </div>
+
+  <div class="section">
+    <h2>📄 Vokabelliste</h2>
+    <table id="vokabelTable">
+      <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th style="width:100px;">Aktion</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+    <div id="infoFooter" style="margin-top:6px;font-size:.95rem;color:#555;"></div>
+  </div>
+
+  <hr class="divider">
+
+  <details open class="section">
+    <summary><strong>🧾 Zuletzt hinzugefügt</strong></summary>
+    <div id="lastAdded">–</div>
+  </details>
 
   <div class="footer">
     <button class="link-trainer" id="btnBack">⬅️ Zurück zum Trainer</button>
-    <div class="src" id="srcInfo">Quelle: –</div>
+    <button id="btnCommit" class="link-trainer">📤 In Datenbank eintragen</button>
     <div class="src">© 2025 Beeferino</div>
   </div>
+
+  <div id="datasourceStatus">🔄 JSON + lokale Ergänzungen (gemergt)</div>
 </div>
 
-<div id="toast" class="toast"></div>
-
-<!-- Modal: Bearbeiten -->
+<!-- Details Modal -->
 <div id="modal">
-  <div class="modal-card">
+  <div id="modalContent">
     <h3>🔍 Vokabel-Details</h3>
-    <div class="form">
-      <label>Englisch<input id="edEn"></label>
-      <label>Deutsch<input id="edDe"></label>
-      <label>Kategorie<select id="edCat"></select></label>
-      <div></div>
-      <label class="span2">Gruppe / Variante<input id="edGrp"></label>
-      <label class="span2">Hinweis<input id="edHint"></label>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-del" id="edDelete">🗑️ Löschen</button>
-      <div>
-        <button class="btn btn-close" id="edClose">Schließen</button>
-        <button class="btn btn-ok" id="edSave">Speichern</button>
-      </div>
+    <input id="editEn" type="text" placeholder="Englisch" readonly>
+    <input id="editDe" type="text" placeholder="Deutsch" readonly>
+    <select id="editCat" disabled></select>
+    <input id="editGroup" type="text" placeholder="Gruppe / Variante" readonly>
+    <input id="editHint" type="text" placeholder="Hinweis" readonly>
+    <div class="flex" style="margin-top:10px;justify-content:center">
+      <button id="toggleEdit">🔧 Bearbeiten</button>
+      <button id="closeModal">❌ Schließen</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Zuletzt hinzugefügt -->
-<div id="recentModal">
-  <div class="modal-card" id="recentCard">
-    <h3>🕓 Zuletzt hinzugefügt</h3>
-    <div id="recentList"></div>
-    <div class="modal-actions" style="justify-content:center;margin-top:16px">
-      <button class="btn btn-close" id="recentClose">Schließen</button>
+<!-- New Entry Modal -->
+<div id="modalNew">
+  <div id="modalNewContent">
+    <h3>➕ Neue Vokabel</h3>
+    <input id="newEn" type="text" placeholder="Englisch">
+    <input id="newDe" type="text" placeholder="Deutsch">
+    <select id="newCat"></select>
+    <input id="newGroup" type="text" placeholder="Gruppe / Variante">
+    <input id="newHint" type="text" placeholder="Hinweis">
+    <div class="flex" style="margin-top:10px;justify-content:center">
+      <button id="saveNew">💾 Speichern</button>
+      <button id="closeNew">❌ Abbrechen</button>
     </div>
   </div>
 </div>
+
+<div id="toast">Gespeichert</div>
 
 <script>
-(()=>{
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
@@ -207,130 +180,82 @@ const CATS={
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
-const GH={owner:"Beeferino",repo:"vokabeltrainer",branch:"main",path:"vokabeln.json",api:"https://api.github.com"};
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const toast=m=>{const t=$("#toast");t.textContent=m;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",1600);};
 
-let list=[],filtered=[],editIndex=null,alphaFilter="Alle";
+const el=id=>document.getElementById(id);
+const toast=t=>{const x=el("toast");x.textContent=t;x.style.display="block";setTimeout(()=>x.style.display="none",2000);};
+const $=q=>document.querySelector(q);
+let list=[];
 
-function fillCats(sel){sel.innerHTML="";for(const [k,v] of Object.entries(CATS)){const o=document.createElement("option");o.value=k;o.textContent=v[0];o.style.background=v[1];o.style.color=v[2];sel.appendChild(o);}}
-fillCats($("#inCat")); fillCats($("#edCat"));
-$("#filterCat").innerHTML='<option value="Alle">Alle Kategorien</option>'+Object.entries(CATS).map(([k,v])=>`<option value="${k}">${v[0]}</option>`).join("");
-$("#alpha").innerHTML=['Alle',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].map(l=>`<button data-l="${l}">${l}</button>`).join("");
-$("#alpha").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;alphaFilter=b.dataset.l;applyFilters();render();});
+for(const k in CATS){let o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];el("filterCat").appendChild(o);el("newCat").appendChild(o.cloneNode(true));el("editCat").appendChild(o.cloneNode(true));}
 
-function key(v){return`${v[0].toLowerCase()}|${v[1].toLowerCase()}`;}
-function norm(v){return[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];}
-function dedup(arr){const m=new Map();arr.map(norm).forEach(v=>m.set(key(v),v));return[...m.values()];}
-
-function applyFilters(){
-  const q=$("#searchBox").value.toLowerCase(),cat=$("#filterCat").value;
-  filtered=list.filter(v=>{
-    const m1=!q||(v[0]+v[1]+(v[3]||"")+(v[4]||"")).toLowerCase().includes(q);
-    const m2=cat==="Alle"||v[2]===cat;
-    const m3=alphaFilter==="Alle"||v[0].toLowerCase().startsWith(alphaFilter.toLowerCase());
-    return m1&&m2&&m3;
-  });
-}
-function render(){
-  const tb=$("#tbl tbody");
-  tb.innerHTML=filtered.map(v=>{
-    const i=list.indexOf(v),c=CATS[v[2]]||["","#ddd","#000"];
-    return `<tr>
-      <td><input type="checkbox" data-i="${i}"></td>
-      <td>${v[0]}</td><td>${v[1]}</td>
-      <td><span class="cat-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
-      <td class="row-actions"><button data-ed="${i}">🔍</button></td>
-    </tr>`;
-  }).join("");
-  $$("button[data-ed]").forEach(b=>b.onclick=()=>openEdit(parseInt(b.dataset.ed)));
-  $("#chkAll").checked=false;
-}
-$("#chkAll").onchange=()=>$$('tbody input[type="checkbox"]').forEach(c=>c.checked=$("#chkAll").checked);
-
-// Reset Filter
-$("#btnReset").onclick=()=>{ $("#searchBox").value=""; $("#filterCat").value="Alle"; alphaFilter="Alle"; applyFilters(); render(); };
-
-// CRUD
-function openEdit(i){editIndex=i;const v=list[i];$("#edEn").value=v[0];$("#edDe").value=v[1];$("#edCat").value=v[2];$("#edGrp").value=v[3];$("#edHint").value=v[4];$("#modal").style.display="flex";}
-$("#edClose").onclick=()=>$("#modal").style.display="none";
-$("#edSave").onclick=async()=>{const v=list[editIndex];v[0]=$("#edEn").value;v[1]=$("#edDe").value;v[2]=$("#edCat").value;v[3]=$("#edGrp").value;v[4]=$("#edHint").value;await saveSync(list,"Bearbeitet");$("#modal").style.display="none";applyFilters();render();};
-$("#edDelete").onclick=async()=>{if(confirm("Löschen?")){list.splice(editIndex,1);await saveSync(list,"Gelöscht");$("#modal").style.display="none";applyFilters();render();toast("🗑️");}};
-
-// --- Speichern, GitHub & Popup ---
 function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));}
-function loadLocal(){try{return JSON.parse(localStorage.getItem("vokabeln")||"[]").map(norm);}catch{return[]}}
+function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+function dedup(arr){return Array.from(new Map(arr.map(v=>[v[0]+v[1],v])).values());}
+
 async function loadGitHub(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const d=await r.json();const local=loadLocal();list=dedup([...d,...local]);saveLocal();$("#srcInfo").textContent="Quelle: GitHub (Online)";
-  }catch{list=loadLocal();$("#srcInfo").textContent="Quelle: Lokal";}
-  applyFilters();render();
-}
-async function githubSyncUpload(msg){
-  const token=localStorage.getItem("gh_token");
-  if(!token){toast("⚠️ Kein GitHub-Token gefunden – lokal gespeichert");saveLocal();return;}
-  try{
-    const meta=await fetch(`${GH.api}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}?ref=${GH.branch}`,{
-      headers:{Authorization:`Bearer ${token}`}
-    }).then(r=>r.json());
-    const payload={message:`${msg} (Beeferino Trainer)`,content:btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2)))),sha:meta.sha,branch:GH.branch};
-    await fetch(`${GH.api}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`,{method:"PUT",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:JSON.stringify(payload)});
-    toast("✅ GitHub synchronisiert");
-  }catch(e){toast("⚠️ GitHub Sync fehlgeschlagen – lokal gespeichert");console.error(e);}
-}
-async function saveSync(arr,msg,newItem=null){list=dedup(arr);saveLocal();await githubSyncUpload(msg);if(newItem) showNewPopup([newItem]);}
-
-// Popup neue Vokabel
-function showNewPopup(items){
-  const box=document.createElement("div");
-  Object.assign(box.style,{position:"fixed",inset:"0",background:"rgba(0,0,0,.45)",zIndex:"4000",display:"flex",alignItems:"center",justifyContent:"center",padding:"20px"});
-  const card=document.createElement("div");
-  Object.assign(card.style,{background:"#fff",borderRadius:"16px",padding:"18px",maxWidth:"600px",width:"92vw",boxShadow:"0 10px 30px rgba(0,0,0,.25)",textAlign:"center"});
-  card.innerHTML=`<h3 style="color:#1e3a8a;margin-top:0">✅ Neue Vokabel gespeichert</h3><div id="newList" style="margin:12px 0;line-height:1.6"></div><button id="closeNew" style="background:#2563eb;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer">Schließen</button>`;
-  box.appendChild(card);document.body.appendChild(box);
-  const listDiv=card.querySelector("#newList");
-  listDiv.innerHTML=items.map(v=>{const c=CATS[v[2]]||["","#ddd","#000"];return `<div style="background:${c[1]};color:${c[2]};padding:8px 12px;border-radius:10px;margin:4px 0;font-weight:700">${v[0]} → ${v[1]} <span style="font-weight:400;opacity:.8">(${c[0]})</span></div>`;}).join("");
-  card.querySelector("#closeNew").onclick=()=>box.remove();
+    const d=await r.json();
+    list=dedup([...d,...loadLocal()]);
+    render();
+  }catch{list=loadLocal();render();}
 }
 
-$("#btnSync").onclick=()=>loadGitHub();
-$("#btnAdd").onclick=async()=>{const en=$("#inEn").value.trim(),de=$("#inDe").value.trim();if(!en||!de)return alert("Bitte Englisch & Deutsch eingeben!");const newItem=[en,de,$("#inCat").value,$("#inGrp").value.trim(),$("#inHint").value.trim(),new Date().toISOString()];list=dedup([...list,newItem]);await saveSync(list,"Neue Vokabel",newItem);$("#inEn").value=$("#inDe").value=$("#inGrp").value=$("#inHint").value="";applyFilters();render();};
+function render(){
+  const t=el("vokabelTable").querySelector("tbody");
+  const q=el("searchInput").value.toLowerCase();
+  const f=el("filterCat").value;
+  let shown=list.filter(v=>(f==="Alle"||v[2]===f)&&(v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q)));
+  t.innerHTML=shown.map((v,i)=>{
+    const c=CATS[v[2]]||["","#ddd","#000"];
+    return `<tr>
+      <td>${v[0]}</td><td>${v[1]}</td>
+      <td style="color:${c[2]};font-weight:700;">${c[0]}</td>
+      <td><button onclick="openModal(${i})">🔍</button></td>
+    </tr>`;
+  }).join("")||"<tr><td colspan=4>Keine Ergebnisse</td></tr>";
+  el("infoFooter").textContent=`${shown.length} Einträge angezeigt`;
+}
 
-// Mehrfachlöschen
-$("#btnDeleteSel").onclick=async()=>{const ids=$$('tbody input[type="checkbox"]:checked').map(c=>parseInt(c.dataset.i)).sort((a,b)=>b-a);if(!ids.length)return alert("Nichts markiert");if(!confirm(`${ids.length} löschen?`))return;ids.forEach(i=>list.splice(i,1));await saveSync(list,"Mehrfachlöschung");applyFilters();render();toast("🗑️");};
+function openModal(i){
+  const v=list[i];
+  el("editEn").value=v[0];el("editDe").value=v[1];el("editCat").value=v[2];
+  el("editGroup").value=v[3]||"";el("editHint").value=v[4]||"";
+  el("modal").style.display="flex";
+}
+el("closeModal").onclick=()=>el("modal").style.display="none";
 
-// Zuletzt hinzugefügt
-$("#btnRecent").onclick=()=>{const last=list.slice(-10).reverse();const modal=$("#recentModal");$("#recentList").innerHTML=last.map(v=>{const c=CATS[v[2]]||["","#ddd","#000"];return `<div style="background:${c[1]};color:${c[2]};padding:8px 10px;border-radius:10px;margin:4px 0;font-weight:700">${v[0]} → ${v[1]} <span style="font-weight:400;opacity:.8">(${c[0]})</span></div>`;}).join("")||"<p style='text-align:center;color:#6b7280'>Keine Vokabeln</p>";modal.style.display="flex";};
-$("#recentClose").onclick=()=>$("#recentModal").style.display="none";
+el("btnNew").onclick=()=>el("modalNew").style.display="flex";
+el("closeNew").onclick=()=>el("modalNew").style.display="none";
 
+el("saveNew").onclick=async()=>{
+  const en=el("newEn").value.trim(),de=el("newDe").value.trim(),cat=el("newCat").value,group=el("newGroup").value.trim(),hint=el("newHint").value.trim();
+  if(!en||!de)return alert("Bitte Englisch und Deutsch angeben");
+  list.push([en,de,cat,group,hint]);
+  saveLocal();render();await githubSyncUpload("Neue Vokabel");toast("✅ Gespeichert & synchronisiert");
+  el("modalNew").style.display="none";
+  el("newEn").value=el("newDe").value=el("newGroup").value=el("newHint").value="";
+};
+
+el("searchInput").oninput=render;
+el("filterCat").onchange=render;
+el("resetFilter").onclick=()=>{el("filterCat").value="Alle";el("searchInput").value="";render();};
 $("#btnBack").onclick=()=>location.href="index.html";
-// --- Auto-Sync beim Laden ---
-async function autoSync() {
-  const token = localStorage.getItem("gh_token");
-  try {
-    const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json", { cache: "no-store" });
-    const remote = await r.json();
-    const local = loadLocal();
-    const remoteJSON = JSON.stringify(remote);
-    const localJSON = JSON.stringify(local);
+$("#btnCommit").onclick=async()=>{await githubSyncUpload("Manuell eingetragen");toast("📤 In Datenbank eingetragen");};
 
-    if (remoteJSON !== localJSON) {
-      // Unterschied gefunden – merge + upload
-      list = dedup([...remote, ...local]);
-      saveLocal();
-      if (token) await githubSyncUpload("Automatischer Abgleich");
-      toast("✅ Daten automatisch synchronisiert");
-    } else {
-      toast("☁️ Daten bereits aktuell");
-    }
-  } catch (e) {
-    console.warn("Auto-Sync übersprungen:", e);
-  }
+async function githubSyncUpload(msg="Update"){
+  const token=localStorage.getItem("gh_token");
+  if(!token)return alert("Kein GitHub-Token gefunden");
+  const body=JSON.stringify(list,null,2);
+  const res=await fetch(`https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json`,{
+    method:"PUT",
+    headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
+    body:JSON.stringify({message:msg,content:btoa(unescape(encodeURIComponent(body))),sha:undefined})
+  });
+  if(res.ok)toast("✅ Synchronisiert mit GitHub");
+  else alert("Fehler beim Hochladen");
 }
-autoSync();
 loadGitHub();
-})();
 </script>
 </body>
 </html>
