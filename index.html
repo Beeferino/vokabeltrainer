@@ -306,7 +306,15 @@ async function loadData(){
 }
 
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
+function pick(list){
+  let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);
+  shuffle(l);
+  if(l.length>=15) return l.slice(0,15);
+  // Wenn zu wenige Vokabeln in Kategorie → auffüllen mit anderen
+  const rest=list.filter(v=>!l.includes(v));
+  shuffle(rest);
+  return l.concat(rest.slice(0,15-l.length));
+}
 function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
 function showStage(show){stage.style.display=show?"block":"none";}
 function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
@@ -314,9 +322,18 @@ function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=
 
 function next(){
   if(i>=round.length){
-    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
-    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
+    if(errorsList.length>0){
+      alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);
+      round=errorsList.map(v=>v);
+      errorsList=[];i=0;btnSkip.style.display="none";
+      next();return;
+    } else {
+      showStage(false);
+      alert(`🎉 Runde beendet – alles korrekt!`);
+      return;
+    }
   }
+
   delay=parseInt(selDelay.value,10);
   const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
@@ -326,18 +343,28 @@ function next(){
   const answer=askEN?de:en;
   correct=answer;
   q.textContent=question;
+
   if(game==="cards"){
     trap=false;
     if(Math.random()<0.3){
       const pool=data.map(v=>askEN?v[1]:v[0]);
       let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
       offer.textContent="💡 "+wrong;trap=true;
-    }else offer.textContent="💡 "+answer;
-    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
-  }else{
-    offer.textContent="";trap=false;
-    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
-    rowInput.style.display="flex";inp.value="";inp.focus();
+    } else offer.textContent="💡 "+answer;
+    rowButtons.style.display="flex";
+    rowInput.style.display="none";
+    inp.value="";
+    randomizeButtons();
+  } else {
+    offer.textContent="";
+    trap=false;
+    rowButtons.style.display="flex";
+    btnRight.style.display="none";
+    btnDec.style.display="none";
+    btnSkip.style.display="inline-block";
+    rowInput.style.display="flex";
+    inp.value="";
+    inp.focus();
   }
   setProg();showStage(true);
 }
@@ -348,11 +375,32 @@ btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
 btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
 inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
 
-btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
-btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
-btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
+btnLearn.onclick=()=>{
+  game="learn";i=0;errorsList=[];round=pick(data);
+  btnRight.style.display="none";btnDec.style.display="none";
+  btnSkip.style.display="inline-block";
+  next();
+};
+btnCards.onclick=()=>{
+  game="cards";i=0;errorsList=[];round=pick(data);
+  btnRight.style.display="inline-block";btnDec.style.display="inline-block";
+  btnSkip.style.display="inline-block";
+  next();
+};
+btnLast30.onclick=()=>{
+  const l=data.slice(-30);
+  if(!l.length)return alert("Keine Vokabeln vorhanden");
+  game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
+  round=l;i=0;errorsList=[];
+  btnRight.style.display=game==="cards"?"inline-block":"none";
+  btnDec.style.display=game==="cards"?"inline-block":"none";
+  btnSkip.style.display="inline-block";
+  next();
+};
+
 loadData();
 })();
 </script>
+
 </body>
 </html>
