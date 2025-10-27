@@ -5,32 +5,15 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>📘 Vokabelübersicht – Beeferino</title>
 <style>
-:root{
-  --accent:#3b82f6;--accent2:#1d4ed8;--ok:#22c55e;--bad:#ef4444;--dark:#1e293b;
-}
+:root{--accent:#3b82f6;--accent2:#1d4ed8;--ok:#22c55e;--bad:#ef4444;--dark:#1e293b}
 *{box-sizing:border-box}
-body{
-  margin:0;font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(135deg,#e0e7ff,#f8fafc);
-  color:var(--dark);
-}
-.app{
-  max-width:1100px;margin:32px auto 140px;padding:24px;
-  background:rgba(255,255,255,.95);
-  border-radius:22px;
-  box-shadow:0 10px 25px rgba(0,0,0,.1);
-}
-h1{text-align:center;margin:0;font-size:2rem;color:var(--accent)}
-hr{margin:20px 0;border:none;border-top:2px solid #e5e7eb}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(135deg,#e0e7ff,#f8fafc);color:var(--dark)}
+.app{max-width:1100px;margin:32px auto 140px;padding:24px;background:rgba(255,255,255,.95);border-radius:22px;box-shadow:0 10px 25px rgba(0,0,0,.1)}
+h1{margin:0 0 6px;text-align:center;color:var(--accent)}
+hr{border:none;border-top:2px solid #e5e7eb;margin:12px 0 16px}
 .flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px}
-input,select,button{
-  padding:10px 14px;font-size:1rem;border-radius:12px;
-  border:1px solid #d1d5db;
-}
-button{
-  background:var(--accent);color:#fff;cursor:pointer;
-  font-weight:700;transition:.2s;
-}
+input,select,button{padding:10px 14px;border-radius:12px;border:1px solid #d1d5db;font-size:1rem}
+button{background:var(--accent);color:#fff;font-weight:700;cursor:pointer;transition:.15s}
 button:hover{background:var(--accent2)}
 #lexikon{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 14px;justify-content:center}
 #lexikon button{background:#e2e8f0;border:none;border-radius:10px;padding:8px 12px;font-weight:600}
@@ -102,7 +85,10 @@ th.sortable.active{color:var(--accent)}
 <div class="bottom-bar">
   <div class="bottom-left"><button id="backBtn" style="background:#e2e8f0;color:#111827;border:1px solid #cbd5e1">⬅️ Zurück zum Trainer</button></div>
   <div class="bottom-center"><button id="bulkDelete">🗑️ Auswahl löschen (<span id="selCount">0</span>)</button></div>
-  <div class="bottom-right"><button id="syncNow" style="background:var(--accent2)">🔄 Jetzt synchronisieren</button></div>
+  <div class="bottom-right">
+    <button id="setToken" style="background:#eab308;color:#111827">🔑 GitHub-Token</button>
+    <button id="syncNow" style="background:var(--accent2)">🔄 Jetzt synchronisieren</button>
+  </div>
 </div>
 
 <!-- Modal -->
@@ -114,7 +100,6 @@ th.sortable.active{color:var(--accent)}
     <label for="newCat">Kategorie</label><select id="newCat"></select>
     <label for="newGroup">Gruppe / Variante</label><input id="newGroup" type="text" placeholder="Gruppe / Variante">
     <label for="newHint">Hinweis</label><input id="newHint" type="text" placeholder="Hinweis">
-    <div style="height:8px"></div>
     <label for="newCreated">📅 Erstellt am:</label>
     <input id="newCreated" type="text" disabled>
     <div class="row">
@@ -135,41 +120,25 @@ const search=$("searchInput"),sortSel=$("sortABC"),catSel=$("filterCat"),resetBt
 const modal=$("modal"),saveBtn=$("saveVocab"),delBtn=$("deleteVocab"),cancelBtn=$("cancelModal");
 const enIn=$("newEn"),deIn=$("newDe"),catIn=$("newCat"),grpIn=$("newGroup"),hintIn=$("newHint"),createdIn=$("newCreated");
 const syncNow=$("syncNow"),backBtn=$("backBtn"),bulkDelete=$("bulkDelete"),selCount=$("selCount");
-const newBtn=$("newVocabBtn"),viewGrid=$("viewGrid"),viewList=$("viewList");
+const newBtn=$("newVocabBtn"),viewGrid=$("viewGrid"),viewList=$("viewList"),setToken=$("setToken");
 
 let data=[],selected=new Set(),viewMode="grid",editId=null;
 let listSortKey="en",listSortDir=1;
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
-};
+const GITHUB_REPO="beeferino/vokabeltrainer",FILE_PATH="vokabeln.json";
 
-for(const k in CATS){
-  const o=document.createElement("option");
-  o.value=k;o.textContent=CATS[k][0];
-  o.style.background=CATS[k][1];o.style.color=CATS[k][2];
-  catIn.appendChild(o);catSel.appendChild(o.cloneNode(true));
-}
+const CATS={Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],Gruen:["Drehen / Fräsen","#1E8449","#fff"],HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],Orange:["Elektrotechnik","#E67E22","#fff"],Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],Rot:["Verwechslungsgefahr","#C0392B","#fff"]};
+
+for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];catIn.appendChild(o);catSel.appendChild(o.cloneNode(true));}
+
 const lex=$("lexikon");
 lex.innerHTML='<button class="active" data-letter="Alle">Alle</button>'+[...Array(26)].map((_,i)=>`<button data-letter="${String.fromCharCode(65+i)}">${String.fromCharCode(65+i)}</button>`).join("");
 lex.querySelectorAll("button").forEach(b=>b.onclick=()=>{lex.querySelectorAll("button").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
 
-async function loadData(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    data=(await r.json()).map(x=>({_id:crypto.randomUUID(),en:x[0],de:x[1],cat:x[2],group:x[3]||"",hint:x[4]||"",created:x[5]||new Date().toISOString()}));
-  }catch(e){data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
-  localStorage.setItem("vokabeln",JSON.stringify(data));
-  render();
-}
+async function loadData(){try{const r=await fetch(`https://beeferino.github.io/vokabeltrainer/${FILE_PATH}`,{cache:"no-store"});data=(await r.json()).map(x=>({_id:crypto.randomUUID(),en:x[0],de:x[1],cat:x[2],group:x[3]||"",hint:x[4]||"",created:x[5]||new Date().toISOString()}));}catch{data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}localStorage.setItem("vokabeln",JSON.stringify(data));render();}
 function persist(){localStorage.setItem("vokabeln",JSON.stringify(data));}
 function fmt(d){try{return new Date(d).toLocaleDateString("de-DE");}catch{return ""}}
+
+function showToast(m){toast.textContent=m;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600);}
 
 function render(){
   const s=search.value.toLowerCase(),cat=catSel.value,letter=document.querySelector("#lexikon button.active").dataset.letter;
@@ -177,75 +146,49 @@ function render(){
   if(sortSel.value==="en")view.sort((a,b)=>a.en.localeCompare(b.en));
   if(sortSel.value==="de")view.sort((a,b)=>a.de.localeCompare(b.de));
   if(sortSel.value==="cat")view.sort((a,b)=>a.cat.localeCompare(b.cat));
+  selCount.textContent=selected.size;bulkDelete.style.display=selected.size?"inline-flex":"none";
 
-  selCount.textContent=selected.size;
-  bulkDelete.style.display=selected.size?"inline-flex":"none";
-
-  if(viewMode==="grid"){
-    listView.style.display="none";cards.style.display="grid";
-    cards.innerHTML=view.map(v=>{
-      const c=CATS[v.cat]||["","#ddd","#000"];
-      return `<div class="card" style="border-color:${c[1]}">
-        <input class="check" type="checkbox" onchange="toggleSel('${v._id}')" ${selected.has(v._id)?"checked":""}>
-        <span class="badge" style="background:${c[1]};color:${c[2]==='#000'?'#111':'#fff'}">${c[0]}</span>
-        <div style="margin-top:20px"></div>
-        <div class="word">${v.en}</div>
-        <div class="trans">${v.de}</div>
-        <div style="height:16px"></div>
-        <div class="actions">
-          <button class="edit" onclick="editCard('${v._id}')">✏️</button>
-          <button class="del" onclick="delCard('${v._id}')">🗑️</button>
-        </div>
-      </div>`;
-    }).join("");
-  }else{
+  if(viewMode==="grid"){listView.style.display="none";cards.style.display="grid";cards.innerHTML=view.map(v=>{const c=CATS[v.cat]||["","#ddd","#000"];return`<div class="card" style="border-color:${c[1]}"><input class="check" type="checkbox" onchange="toggleSel('${v._id}')" ${selected.has(v._id)?"checked":""}><span class="badge" style="background:${c[1]};color:${c[2]==='#000'?'#111':'#fff'}">${c[0]}</span><div style="margin-top:20px"></div><div class="word">${v.en}</div><div class="trans">${v.de}</div><div style="height:16px"></div><div class="actions"><button class="edit" onclick="editCard('${v._id}')">✏️</button><button class="del" onclick="delCard('${v._id}')">🗑️</button></div></div>`;}).join("");}
+  else{
     cards.style.display="none";listView.style.display="table";
-    view.sort((a,b)=>{
-      if(listSortKey==="created")return(new Date(a.created)-new Date(b.created))*listSortDir;
-      return a[listSortKey].localeCompare(b[listSortKey])*listSortDir;
-    });
-    const arrow=d=>d===1?"▲":"▼";
-    const th=(k,l)=>`<th class="sortable ${listSortKey===k?"active":""}" data-key="${k}">${l}${listSortKey===k?`<span class='arrow'>${arrow(listSortDir)}</span>`:""}</th>`;
-    listView.innerHTML=`<thead><tr><th><input type="checkbox" onchange="toggleAll(this)"></th>${th("en","Englisch")}${th("de","Deutsch")}${th("cat","Kategorie")}${th("created","📅 Erstellt am")}<th>Aktion</th></tr></thead><tbody>${
-      view.map(v=>{
-        const c=CATS[v.cat]||["","#ddd","#000"];
-        return `<tr>
-          <td><input type="checkbox" onchange="toggleSel('${v._id}')" ${selected.has(v._id)?"checked":""}></td>
-          <td>${v.en}</td><td>${v.de}</td>
-          <td class="cat-cell" style="--cat-bg:${c[1]}20;--cat-border:${c[1]}">${c[0]}</td>
-          <td>${fmt(v.created)}</td>
-          <td><button class="edit" onclick="editCard('${v._id}')">✏️</button>
-          <button class="del" onclick="delCard('${v._id}')">🗑️</button></td>
-        </tr>`;
-      }).join("")
-    }</tbody>`;
+    view.sort((a,b)=>{if(listSortKey==="created")return(new Date(a.created)-new Date(b.created))*listSortDir;return a[listSortKey].localeCompare(b[listSortKey])*listSortDir;});
+    const arrow=d=>d===1?"▲":"▼";const th=(k,l)=>`<th class="sortable ${listSortKey===k?"active":""}" data-key="${k}">${l}${listSortKey===k?`<span class='arrow'>${arrow(listSortDir)}</span>`:""}</th>`;
+    listView.innerHTML=`<thead><tr><th><input type="checkbox" onchange="toggleAll(this)"></th>${th("en","Englisch")}${th("de","Deutsch")}${th("cat","Kategorie")}${th("created","📅 Erstellt am")}<th>Aktion</th></tr></thead><tbody>${view.map(v=>{const c=CATS[v.cat]||["","#ddd","#000"];return`<tr><td><input type="checkbox" onchange="toggleSel('${v._id}')" ${selected.has(v._id)?"checked":""}></td><td>${v.en}</td><td>${v.de}</td><td class="cat-cell" style="--cat-bg:${c[1]}20;--cat-border:${c[1]}">${c[0]}</td><td>${fmt(v.created)}</td><td><button class="edit" onclick="editCard('${v._id}')">✏️</button><button class="del" onclick="delCard('${v._id}')">🗑️</button></td></tr>`;}).join("")}</tbody>`;
     listView.querySelectorAll("th.sortable").forEach(th=>th.onclick=()=>{const k=th.dataset.key;if(listSortKey===k)listSortDir*=-1;else{listSortKey=k;listSortDir=1;}render();});
   }
 }
 
 window.toggleSel=id=>{selected.has(id)?selected.delete(id):selected.add(id);selCount.textContent=selected.size;bulkDelete.style.display=selected.size?"inline-flex":"none";}
 window.toggleAll=cb=>{if(cb.checked)data.forEach(v=>selected.add(v._id));else selected.clear();render();}
-window.delCard=id=>{if(!confirm("Löschen?"))return;data=data.filter(v=>v._id!==id);persist();render();}
+window.delCard=id=>{if(!confirm("Löschen?"))return;data=data.filter(v=>v._id!==id);persist();render();sync();}
 window.editCard=id=>{editId=id;const v=data.find(x=>x._id===id);if(!v)return;enIn.value=v.en;deIn.value=v.de;catIn.value=v.cat;grpIn.value=v.group;hintIn.value=v.hint;createdIn.value=fmt(v.created);modal.style.display="flex";}
-
-bulkDelete.onclick=()=>{if(!selected.size)return;if(!confirm(`Auswahl löschen (${selected.size})?`))return;data=data.filter(v=>!selected.has(v._id));selected.clear();persist();render();};
-
-newBtn.onclick=()=>{editId=null;enIn.value=deIn.value=grpIn.value=hintIn.value="";createdIn.value=fmt(new Date());modal.style.display="flex";};
+bulkDelete.onclick=()=>{if(!selected.size)return;if(!confirm(`Auswahl löschen (${selected.size})?`))return;data=data.filter(v=>!selected.has(v._id));selected.clear();persist();render();sync();}
+newBtn.onclick=()=>{editId=null;enIn.value=deIn.value=grpIn.value=hintIn.value="";createdIn.value=fmt(new Date());modal.style.display="flex";}
 cancelBtn.onclick=()=>modal.style.display="none";
-saveBtn.onclick=()=>{if(!enIn.value||!deIn.value||!catIn.value)return;
-  const obj={_id:editId??crypto.randomUUID(),en:enIn.value,de:deIn.value,cat:catIn.value,group:grpIn.value,hint:hintIn.value,created:editId?data.find(v=>v._id===editId).created:new Date().toISOString()};
-  const i=data.findIndex(v=>v._id===editId);if(i>-1)data[i]=obj;else data.push(obj);
-  modal.style.display="none";persist();render();
-};
-delBtn.onclick=()=>{if(!editId)return;if(!confirm("Löschen?"))return;data=data.filter(v=>v._id!==editId);modal.style.display="none";persist();render();};
-
+saveBtn.onclick=()=>{if(!enIn.value||!deIn.value||!catIn.value)return;const obj={_id:editId??crypto.randomUUID(),en:enIn.value,de:deIn.value,cat:catIn.value,group:grpIn.value,hint:hintIn.value,created:editId?data.find(v=>v._id===editId).created:new Date().toISOString()};const i=data.findIndex(v=>v._id===editId);if(i>-1)data[i]=obj;else data.push(obj);modal.style.display="none";persist();render();sync();}
+delBtn.onclick=()=>{if(!editId)return;if(!confirm("Löschen?"))return;data=data.filter(v=>v._id!==editId);modal.style.display="none";persist();render();sync();}
 search.oninput=render;sortSel.onchange=render;catSel.onchange=render;
 resetBtn.onclick=()=>{search.value="";catSel.value="Alle";document.querySelector("#lexikon .active").classList.remove("active");document.querySelector("#lexikon [data-letter='Alle']").classList.add("active");render();}
 viewGrid.onclick=()=>{viewMode="grid";viewGrid.style.background="var(--ok)";viewList.style.background="#94a3b8";render();}
 viewList.onclick=()=>{viewMode="list";viewList.style.background="var(--ok)";viewGrid.style.background="#94a3b8";render();}
 backBtn.onclick=()=>location.href="index.html";
-syncNow.onclick=()=>alert("🔄 GitHub Sync ausgelöst (Token nötig)");
 
+setToken.onclick=()=>{
+  const tok=prompt("Bitte GitHub-Personal-Access-Token eingeben:");
+  if(tok){localStorage.setItem("GH_TOKEN",tok.trim());showToast("🔑 Token gespeichert!");}
+};
+async function sync(){
+  const t=localStorage.getItem("GH_TOKEN");
+  if(!t)return;
+  try{
+    const url=`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(data.map(v=>[v.en,v.de,v.cat,v.group||"",v.hint||"",v.created]),null,2))));
+    const cur=await fetch(url,{headers:{Authorization:`Bearer ${t}`,Accept:"application/vnd.github+json"}}).then(r=>r.json());
+    const res=await fetch(url,{method:"PUT",headers:{Authorization:`Bearer ${t}`,"Content-Type":"application/json",Accept:"application/vnd.github+json"},body:JSON.stringify({message:"Auto Sync",content,sha:cur.sha||null})});
+    if(res.ok)showToast("✅ GitHub synchronisiert!");else showToast("❌ Sync fehlgeschlagen");
+  }catch{showToast("❌ Sync-Fehler");}
+}
+syncNow.onclick=sync;
 await loadData();
 })();
 </script>
