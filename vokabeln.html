@@ -294,15 +294,16 @@ function showNewPopup(items){
   card.querySelector("#closeNew").onclick=()=>box.remove();
 }
 
-// Add + Delete
+$("#btnSync").onclick=()=>loadGitHub();
 $("#btnAdd").onclick=async()=>{const en=$("#inEn").value.trim(),de=$("#inDe").value.trim();if(!en||!de)return alert("Bitte Englisch & Deutsch eingeben!");const newItem=[en,de,$("#inCat").value,$("#inGrp").value.trim(),$("#inHint").value.trim(),new Date().toISOString()];list=dedup([...list,newItem]);await saveSync(list,"Neue Vokabel",newItem);$("#inEn").value=$("#inDe").value=$("#inGrp").value=$("#inHint").value="";applyFilters();render();};
+
+// Mehrfachlöschen
 $("#btnDeleteSel").onclick=async()=>{const ids=$$('tbody input[type="checkbox"]:checked').map(c=>parseInt(c.dataset.i)).sort((a,b)=>b-a);if(!ids.length)return alert("Nichts markiert");if(!confirm(`${ids.length} löschen?`))return;ids.forEach(i=>list.splice(i,1));await saveSync(list,"Mehrfachlöschung");applyFilters();render();toast("🗑️");};
 
-// Recent
-$("#btnRecent").onclick=()=>{const last=list.slice(-10).reverse();$("#recentList").innerHTML=last.map(v=>{const c=CATS[v[2]]||["","#ddd","#000"];return `<div style="background:${c[1]};color:${c[2]};padding:8px 10px;border-radius:10px;margin:4px 0;font-weight:700">${v[0]} → ${v[1]} <span style="font-weight:400;opacity:.8">(${c[0]})</span></div>`;}).join("")||"<p style='text-align:center;color:#6b7280'>Noch keine Vokabeln</p>";$("#recentModal").style.display="flex";};
+// Zuletzt hinzugefügt
+$("#btnRecent").onclick=()=>{const last=list.slice(-10).reverse();const modal=$("#recentModal");$("#recentList").innerHTML=last.map(v=>{const c=CATS[v[2]]||["","#ddd","#000"];return `<div style="background:${c[1]};color:${c[2]};padding:8px 10px;border-radius:10px;margin:4px 0;font-weight:700">${v[0]} → ${v[1]} <span style="font-weight:400;opacity:.8">(${c[0]})</span></div>`;}).join("")||"<p style='text-align:center;color:#6b7280'>Keine Vokabeln</p>";modal.style.display="flex";};
 $("#recentClose").onclick=()=>$("#recentModal").style.display="none";
 
-$("#btnSync").onclick=()=>loadGitHub();
 $("#btnBack").onclick=()=>location.href="index.html";
 loadGitHub();
 })();
