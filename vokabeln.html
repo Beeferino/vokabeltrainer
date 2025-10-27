@@ -6,7 +6,7 @@
 <title>📘 Vokabelübersicht – Beeferino</title>
 <style>
 :root{
-  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--glass:rgba(255,255,255,.92);
+  --blue:#2563eb;--ink:#0f172a;--glass:rgba(255,255,255,.92);
   --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;--shadow:0 10px 32px rgba(0,0,0,.10);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -22,7 +22,7 @@ body{
 h1{text-align:center;margin:0;font-size:1.9rem;font-weight:800;color:#1e3a8a}
 .hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 18px}
 
-/* Mobile Slide Header */
+/* Mobile Header */
 .mobile-header{
   display:none;
   position:fixed;top:0;left:0;right:0;z-index:1000;
@@ -33,11 +33,13 @@ h1{text-align:center;margin:0;font-size:1.9rem;font-weight:800;color:#1e3a8a}
 }
 .mobile-header.show{transform:translateY(0)}
 .mobile-header h3{margin:0 0 8px;text-align:center;color:#1e3a8a}
-.mobile-header input{width:100%;padding:8px 10px;border:1px solid #d5d9f2;border-radius:10px}
-.mobile-header .lexica{margin-top:10px;justify-content:center;flex-wrap:wrap}
+.mobile-header input, .mobile-header select{
+  width:100%;padding:8px 10px;border:1px solid #d5d9f2;border-radius:10px;margin-bottom:8px;
+}
+.mobile-header .lexica{margin-top:6px;justify-content:center;flex-wrap:wrap}
 .mobile-header button{background:#eef4ff;color:#1e40af;border:none;padding:6px 9px;margin:2px;border-radius:999px;font-weight:600}
 
-/* A–Z Desktop */
+/* Desktop A–Z */
 .lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
 .lexica button{background:#ecf3ff;color:#1f3b76;border:1px solid #d6e4ff;
   padding:6px 10px;border-radius:999px;font-weight:700;cursor:pointer}
@@ -63,7 +65,7 @@ tr:hover{background:#f6faff}
     box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:1200;}
 }
 
-/* Modals (Touch optimiert) */
+/* Modal (Touch optimiert) */
 .modal{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
   align-items:center;justify-content:center;z-index:9999;padding:10px;
@@ -78,6 +80,7 @@ tr:hover{background:#f6faff}
 .modal .grid{display:grid;gap:12px}
 .modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
 .modal input,.modal select{padding:12px;border:1px solid #d6deee;border-radius:10px;font-size:1rem;width:100%;touch-action:manipulation;}
+.modal .info{font-size:.85rem;color:#555;text-align:center;margin-top:10px;}
 
 /* Buttons */
 button{cursor:pointer;border:none;font-weight:700;border-radius:12px}
@@ -106,7 +109,12 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
   <div class="section table-wrap">
     <table id="table">
       <thead>
-        <tr><th>EN</th><th>DE</th><th>Kategorie</th><th>Aktion</th></tr>
+        <tr>
+          <th data-col="0">EN</th>
+          <th data-col="1">DE</th>
+          <th>Kategorie</th>
+          <th>Aktion</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -121,9 +129,10 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
   <footer>© 2025 Beeferino</footer>
 </div>
 
-<!-- Mobile Header Slide-In -->
+<!-- Mobile Header -->
 <div id="mobileHeader" class="mobile-header">
   <h3>🔎 Filter & A–Z</h3>
+  <select id="mobCatFilter"><option value="Alle">Alle Kategorien</option></select>
   <input type="text" id="searchMobile" placeholder="Suchen (EN / DE)">
   <div id="mobileLexica" class="lexica"></div>
 </div>
@@ -139,6 +148,7 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
       <label>Kategorie<select id="vCat"></select></label>
       <label>Gruppe / Variante<input id="vGrp" type="text"></label>
       <label>Hinweis<input id="vHint" type="text"></label>
+      <div class="info" id="vDateInfo"></div>
     </div>
     <div class="row">
       <button id="btnDel" class="danger" style="display:none">Löschen</button>
@@ -163,12 +173,14 @@ const CATS={
 const $=s=>document.querySelector(s);
 const toast=msg=>{const t=$("#toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1400);}
 
-let list=[], editIdx=null;
+let list=[], editIdx=null, sortCol=null, sortDir=1;
 const owner="Beeferino", repo="vokabeltrainer", pathFile="vokabeln.json", branch="main";
 
-/* Kategorien füllen */
+/* Kategorien */
 function fillCats(sel){sel.innerHTML="";for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];sel.appendChild(o);} }
 fillCats($("#vCat"));
+const mobSel=$("#mobCatFilter");
+mobSel.innerHTML='<option value="Alle">Alle Kategorien</option>'+Object.keys(CATS).map(k=>`<option value="${k}">${CATS[k][0]}</option>`).join("");
 
 /* Laden */
 async function loadData(){
@@ -180,9 +192,9 @@ async function loadData(){
 }
 
 /* Render */
-function renderTable(){
+function renderTable(data=list){
   const tb=$("#table tbody");tb.innerHTML="";
-  list.forEach((v,i)=>{
+  data.forEach((v,i)=>{
     const c=CATS[v[2]]||["","#ccc","#111"];
     tb.innerHTML+=`
       <tr>
@@ -194,8 +206,20 @@ function renderTable(){
   });
 }
 
+/* Sortierung */
+document.querySelectorAll("th[data-col]").forEach(th=>{
+  th.addEventListener("click",()=>{
+    const col=parseInt(th.dataset.col);
+    if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}
+    list.sort((a,b)=>a[col].localeCompare(b[col])*sortDir);
+    document.querySelectorAll("th").forEach(h=>h.classList.remove("sort-asc","sort-desc"));
+    th.classList.add(sortDir===1?"sort-asc":"sort-desc");
+    renderTable();
+  });
+});
+
 /* Modal */
-const modal=$("#modalEdit"),vEn=$("#vEn"),vDe=$("#vDe"),vCat=$("#vCat"),vGrp=$("#vGrp"),vHint=$("#vHint");
+const modal=$("#modalEdit"),vEn=$("#vEn"),vDe=$("#vDe"),vCat=$("#vCat"),vGrp=$("#vGrp"),vHint=$("#vHint"),vDate=$("#vDateInfo");
 $("#btnAdd").onclick=()=>openModal();
 $("#btnClose").onclick=()=>modal.style.display="none";
 $("#btnSave").onclick=saveVokabel;
@@ -205,16 +229,25 @@ window.editVokabel=function(i){
   editIdx=i;const v=list[i];
   $("#modalTitle").textContent="✏️ Vokabel bearbeiten";
   vEn.value=v[0];vDe.value=v[1];vCat.value=v[2];vGrp.value=v[3]||"";vHint.value=v[4]||"";
+  vDate.textContent=v[5]?"Erstellt am: "+v[5]:"";
   $("#btnDel").style.display="inline-block";
   modal.style.display="flex";
 };
-function openModal(){editIdx=null;$("#modalTitle").textContent="➕ Neue Vokabel";vEn.value=vDe.value=vGrp.value=vHint.value="";vCat.value="Gelb";$("#btnDel").style.display="none";modal.style.display="flex";}
+function openModal(){
+  editIdx=null;
+  $("#modalTitle").textContent="➕ Neue Vokabel";
+  vEn.value=vDe.value=vGrp.value=vHint.value="";vCat.value="Gelb";
+  $("#btnDel").style.display="none";
+  vDate.textContent="";
+  modal.style.display="flex";
+}
 
 /* Speichern / Löschen */
 function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));}
 function saveVokabel(){
   const en=vEn.value.trim(),de=vDe.value.trim();if(!en||!de){toast("EN + DE erforderlich");return;}
-  const obj=[en,de,vCat.value,vGrp.value.trim(),vHint.value.trim()];
+  const date=editIdx!==null && list[editIdx][5]?list[editIdx][5]:new Date().toLocaleDateString("de-DE");
+  const obj=[en,de,vCat.value,vGrp.value.trim(),vHint.value.trim(),date];
   if(editIdx!==null)list[editIdx]=obj;else list.push(obj);
   saveLocal();renderTable();modal.style.display="none";toast("💾 Gespeichert");
 }
@@ -248,19 +281,24 @@ letters.forEach(l=>{
   $("#lexica").appendChild(b.cloneNode(true));
   mobLex.appendChild(b);
 });
-function filterLetter(l){const tb=$("#table tbody");tb.innerHTML="";
-  list.filter(v=>v[0].toUpperCase().startsWith(l)).forEach((v,i)=>{
-    const c=CATS[v[2]]||["","#ccc","#111"];
-    tb.innerHTML+=`<tr><td onclick="if(window.innerWidth<=768){editVokabel(${i})}">${v[0]}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td><td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td></tr>`;
-  });
+function filterLetter(l){
+  const filtered=list.filter(v=>v[0].toUpperCase().startsWith(l));
+  renderTable(filtered);
+  if(window.innerWidth<=768)mobH.classList.remove("show");
 }
 
+/* Kategorie-Filter mobil */
+mobSel.onchange=()=>{
+  const val=mobSel.value;
+  const filtered=val==="Alle"?list:list.filter(v=>v[2]===val);
+  renderTable(filtered);
+};
+
 /* Suche */
-mobSearch.oninput=()=>{const q=mobSearch.value.toLowerCase();const tb=$("#table tbody");tb.innerHTML="";
-  list.filter(v=>v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q)).forEach((v,i)=>{
-    const c=CATS[v[2]]||["","#ccc","#111"];
-    tb.innerHTML+=`<tr><td onclick="if(window.innerWidth<=768){editVokabel(${i})}">${v[0]}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td><td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td></tr>`;
-  });
+mobSearch.oninput=()=>{
+  const q=mobSearch.value.toLowerCase();
+  const filtered=list.filter(v=>v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q));
+  renderTable(filtered);
 };
 
 loadData();
