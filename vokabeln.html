@@ -134,11 +134,6 @@ details.recent summary{
 
   <div id="lexikon" class="section"></div>
 
-  <div class="footer">
-  <button onclick="window.location.href='index.html'">⬅️ Zurück zum Trainer</button>
-  <button id="setTokenBtn">🔑 GitHub-Token setzen</button>
-  <p>© 2025 Beeferino</p>
-</div>
   <div class="section">
     <table id="vokabelTable">
       <thead><tr>
@@ -160,6 +155,49 @@ details.recent summary{
 
 <button id="newVocabBtn">➕ Neue Vokabel</button>
 
+<!-- ⚙️ Settings Button -->
+<button id="settingsBtn" title="Einstellungen" style="
+  position:fixed;bottom:28px;right:28px;
+  background:#3b82f6;color:#fff;border:none;
+  border-radius:50%;width:58px;height:58px;
+  font-size:1.5rem;cursor:pointer;box-shadow:0 5px 12px rgba(0,0,0,.2);
+">⚙️</button>
+
+<!-- ⚙️ Settings Modal -->
+<div id="settingsModal" style="
+  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(6px);
+  justify-content:center;align-items:center;z-index:9999;
+  overflow:auto;
+">
+  <div style="
+    background:#fff;
+    padding:32px;
+    border-radius:22px;
+    width:90%;
+    max-width:600px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+  ">
+    <h3 style="text-align:center;color:#3b82f6;margin-top:0;font-size:1.5rem;">⚙️ Einstellungen</h3>
+    <label style="font-weight:600;font-size:1rem;">GitHub Token:</label>
+    <input id="tokenInput" type="password" placeholder="ghp_..." style="
+      width:100%;margin-top:10px;margin-bottom:16px;
+      padding:14px;font-size:1rem;border-radius:12px;
+      border:1px solid #d1d5db;
+    ">
+    <p style="font-size:0.9rem;color:#555;margin-bottom:20px;">
+      Der Token wird nur lokal im Browser gespeichert (localStorage.GH_TOKEN).<br>
+      Er ist nötig, damit Änderungen an <code>vokabeln.json</code> in GitHub gespeichert werden können.
+    </p>
+    <div class="flex" style="justify-content:space-between;margin-top:12px;">
+      <button id="saveTokenBtn">💾 Speichern</button>
+      <button id="clearTokenBtn" style="background:#ef4444;">❌ Löschen</button>
+      <button id="closeSettings">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vokabel-Modal -->
 <div id="modal">
   <div id="modalContent">
     <h3 id="modalTitle">➕ Neue Vokabel</h3>
@@ -191,7 +229,8 @@ const newEn=el("newEn"),newDe=el("newDe"),newCat=el("newCat"),newGroup=el("newGr
 const lexikon=el("lexikon");
 let data=[];let editIndex=null;let syncTimer;
 
-const GITHUB_REPO="beeferino/vokabeltrainer";const FILE_PATH="vokabeln.json";
+const GITHUB_REPO="beeferino/vokabeltrainer";
+const FILE_PATH="vokabeln.json";
 
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
@@ -276,33 +315,64 @@ window.edit=i=>{
 
 function storeAndSync(){
   localStorage.setItem("vokabeln",JSON.stringify(data));
+  toast.textContent="💾 Gespeichert (lokal)";
   toast.classList.add("show");
   setTimeout(()=>toast.classList.remove("show"),1500);
   if(syncTimer)clearTimeout(syncTimer);
   syncTimer=setTimeout(pushToGitHub,20000);
 }
 
-async function pushToGitHub(){
-  const token=localStorage.getItem("GH_TOKEN");
-  if(!token)return;
-  const content=btoa(unescape(encodeURIComponent(JSON.stringify(data,null,2))));
-  const url=`https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`;
-  const current=await fetch(url,{headers:{Authorization:`token ${token}`}}).then(r=>r.json());
-  await fetch(url,{
-    method:"PUT",
-    headers:{
-      Authorization:`token ${token}`,
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      message:"Automatische Synchronisierung",
-      content:content,
-      sha:current.sha
-    })
-  });
+async function pushToGitHub() {
+  const token = localStorage.getItem("GH_TOKEN");
+  if (!token) {
+    console.warn("❌ Kein GH_TOKEN im localStorage gefunden – keine Synchronisierung");
+    return;
+  }
+
+  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${FILE_PATH}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+
+  try {
+    const currentRes = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const current = await currentRes.json();
+    const sha = current.sha || null;
+
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: "Automatische Synchronisierung (Update durch Web-App)",
+        content,
+        sha
+      })
+    });
+
+    const result = await res.json();
+    if (!res.ok) {
+      console.error("❌ GitHub-Fehler:", result);
+      toast.textContent = "❌ GitHub Sync-Fehler – siehe Konsole";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+      return;
+    }
+
+    console.log("✅ Synchronisiert! Commit:", result.commit?.sha);
+    toast.textContent = "✅ GitHub synchronisiert!";
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 1500);
+
+  } catch (err) {
+    console.error("❌ Push zu GitHub fehlgeschlagen:", err);
+  }
 }
 
-searchInput.oninput=render;filterCat.onchange=render;
+searchInput.oninput=render;
+filterCat.onchange=render;
 resetFilter.onclick=()=>{filterCat.value="Alle";searchInput.value="";lexikon.querySelectorAll("button").forEach(b=>b.classList.remove("active"));lexikon.querySelector("button[data-letter='Alle']").classList.add("active");render();};
 sortSel.onchange=render;
 
@@ -322,15 +392,8 @@ deleteVocab.onclick=()=>{
   if(editIndex!==null){data.splice(editIndex,1);storeAndSync();render();}
   modal.style.display="none";
 };
-  // GitHub Token setzen
-const setTokenBtn = document.getElementById("setTokenBtn");
-setTokenBtn.onclick = async () => {
-  const token = prompt("Bitte deinen persönlichen GitHub Token eingeben (beginnt mit ghp_…):");
-  if (!token) return alert("❌ Kein Token eingegeben.");
-  localStorage.setItem("GH_TOKEN", token.trim());
-  alert("✅ GitHub Token gespeichert!\nEr bleibt im Browser erhalten, bis du den Cache löschst.");
-};
-// ⚙️ Einstellungen-Modal
+
+// ⚙️ Settings Modal
 const settingsBtn = document.getElementById("settingsBtn");
 const settingsModal = document.getElementById("settingsModal");
 const closeSettings = document.getElementById("closeSettings");
@@ -367,34 +430,6 @@ clearTokenBtn.onclick = () => {
 
 loadData();
 })();
-
-
 </script>
-  <!-- ⚙️ Einstellungen-Button -->
-<button id="settingsBtn" title="Einstellungen" style="
-  position:fixed;bottom:28px;right:28px;
-  background:#3b82f6;color:#fff;border:none;
-  border-radius:50%;width:58px;height:58px;
-  font-size:1.5rem;cursor:pointer;box-shadow:0 5px 12px rgba(0,0,0,.2);
-">⚙️</button>
-
-<!-- ⚙️ Modal für Einstellungen -->
-<div id="settingsModal" style="
-  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.4);backdrop-filter:blur(6px);
-  justify-content:center;align-items:center;z-index:9999;
-">
-  <div style="background:#fff;padding:22px;border-radius:18px;width:90%;max-width:400px;box-shadow:0 8px 24px rgba(0,0,0,.2);">
-    <h3 style="text-align:center;color:#3b82f6;margin-top:0;">⚙️ Einstellungen</h3>
-    <label style="font-weight:600;">GitHub Token:</label>
-    <input id="tokenInput" type="password" placeholder="ghp_..." style="width:100%;margin-top:8px;margin-bottom:8px;padding:10px;border-radius:10px;border:1px solid #d1d5db;">
-    <div class="flex" style="justify-content:space-between;margin-top:12px;">
-      <button id="saveTokenBtn">💾 Speichern</button>
-      <button id="clearTokenBtn" style="background:#ef4444;">❌ Löschen</button>
-      <button id="closeSettings">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
