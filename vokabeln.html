@@ -1,287 +1,166 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>📘 Vokabelübersicht</title>
-
-<style>
-:root {
-  --bg: #f7f9fb;
-  --card: #ffffff;
-  --border: #e5ebf3;
-  --muted: #667085;
-  --text: #222;
-  --primary: #1e6ed8;
-  --primary-2: #2d7ef0;
-  --shadow: 0 2px 10px rgba(0,0,0,.08);
-  --table-hover:#f4f9ff;
-}
-*{box-sizing:border-box;}
-body {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  margin: 0;
-  padding: 20px;
-  text-align: center;
-}
-.app {
-  max-width: 1100px;
-  margin: auto;
-  background: var(--card);
-  border-radius: 14px;
-  box-shadow: var(--shadow);
-  padding: 20px;
-}
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 10px;
-}
-h2 {
-  color: var(--primary);
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-.section {margin-top: 20px;}
-.divider {margin: 24px 0; border-top: 3px solid var(--border);}
-.flex {display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;}
-input, select, button {
-  font-size: 1rem;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #cfd6e4;
-}
-button {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  transition: .2s background;
-}
-button:hover {background: var(--primary-2);}
-.btn-ghost {background: #ecf0f1; color: #333;}
-.danger {background: #e74c3c; color: #fff;}
-
-table {width: 100%; border-collapse: collapse; margin-top: 10px;}
-th, td {padding: 10px; border-bottom: 1px solid #e0e6ef; text-align: left;}
-th {background: #eef4ff; cursor: pointer;}
-tr:hover {background: var(--table-hover);}
-th.sort-asc::after{content:" ↑"; color:#666}
-th.sort-desc::after{content:" ↓"; color:#666}
-
-.category-chip {
-  display:inline-block; padding:5px 10px; border-radius:999px;
-  color:#fff; font-weight:600; font-size:.9rem;
-}
-
-.lexica {
-  display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:8px 0;
-}
-.lexica button {
-  background:#ecf0f1; border:1px solid #d0d7e2; padding:6px 10px; font-weight:600;
-}
-.lexica button.active {background: var(--primary); color:#fff;}
-
-.pagination {display:flex; gap:6px; justify-content:center; margin-top:12px;}
-.pagination button {background:#ecf0f1; color:#333; border:1px solid #ccc;}
-.pagination button.active {background:var(--primary); color:#fff;}
-
-.toast {
-  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
-  background:#2ecc71; color:#fff; padding:10px 16px;
-  border-radius:8px; display:none;
-  box-shadow: var(--shadow); z-index:999;
-}
-
-/* MODAL */
-#modal {
-  position:fixed; inset:0; background:rgba(0,0,0,.45);
-  display:none; align-items:center; justify-content:center; z-index:9999;
-  padding:16px;
-}
-#modalContent {
-  width:min(720px, 96vw);
-  background:#fff; border-radius:14px; box-shadow:0 12px 28px rgba(0,0,0,.18);
-  padding:20px; text-align:left;
-}
-#modalContent h3 {
-  margin-top:0; text-align:center; font-size:1.3rem;
-}
-#modalContent label {
-  font-weight:600; font-size:.95rem; margin-top:8px; display:block;
-}
-#modalContent input,#modalContent select {
-  width:100%; margin:6px 0 12px; padding:10px;
-  border-radius:8px; border:1px solid #cfd6e4;
-}
-#modalActions {display:flex; gap:10px; justify-content:center; margin-top:10px;}
-
-/* Zuletzt hinzugefügt */
-.last-wrap {
-  margin-top:10px; background:#eef4ff;
-  border:1px solid var(--border); border-radius:10px; padding:14px;
-}
-.last-title {font-weight:700;}
-.last-list {
-  display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:10px;
-}
-.pill {
-  display:flex; align-items:center; gap:8px; padding:8px 12px;
-  border-radius:999px; background:var(--card); border:1px solid var(--border);
-  box-shadow:0 1px 3px rgba(0,0,0,.04);
-}
-.pill-bullet {width:10px; height:10px; border-radius:50%;}
-.subtle-sep {margin:18px auto 10px; height:1px; background:var(--border);}
-.bottom-bar {display:flex; justify-content:space-between; align-items:center; margin-top:20px; flex-wrap:wrap;}
-.muted {color:var(--muted);}
-</style>
-</head>
-
-<body>
-<div class="app">
-  <h1>📘 Vokabelübersicht</h1>
-  <div id="lexica" class="lexica"></div>
-
-  <div class="section">
-    <h2>🔍 Filter &amp; Suche</h2>
-    <div class="flex">
-      <label>Kategorie:
-        <select id="filterCat"><option value="Alle">Alle</option></select>
-      </label>
-      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)" />
-      <button id="resetFilter">🔄 Filter zurücksetzen</button>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>📄 Vokabelliste</h2>
-    <table id="vokabelTable">
-      <thead>
-        <tr>
-          <th style="width:36px;">&nbsp;</th>
-          <th data-key="en">Englisch</th>
-          <th data-key="de">Deutsch</th>
-          <th data-key="cat">Kategorie</th>
-          <th style="width:100px;">Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="pagination" class="pagination"></div>
-    <div id="infoFooter" class="muted" style="margin-top:6px"></div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <h2>➕ Neue Vokabel hinzufügen</h2>
-    <div class="flex">
-      <input id="newEn" type="text" placeholder="Englisch" />
-      <input id="newDe" type="text" placeholder="Deutsch" />
-      <select id="newCat"></select>
-      <input id="newGroup" type="text" placeholder="Gruppe / Variante" />
-      <input id="newHint" type="text" placeholder="Hinweis" />
-      <button id="addBtn">Hinzufügen</button>
-    </div>
-    <div class="flex" style="margin-top:10px;">
-      <button id="deleteSelected" class="danger">🗑️ Ausgewählte löschen</button>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="section">
-    <h2>💾 JSON &amp; Synchronisierung</h2>
-    <div class="flex">
-      <button id="syncBtn">🔄 Von GitHub neu laden</button>
-      <button id="downloadBtn">💾 vokabeln.json herunterladen</button>
-    </div>
-    <div id="datasourceStatus" class="muted">Quelle: –</div>
-  </div>
-
-  <div class="subtle-sep"></div>
-  <div class="section">
-    <div class="last-wrap">
-      <div class="last-title">Zuletzt hinzugefügt</div>
-      <div id="lastAdded" class="last-list"><div class="muted">–</div></div>
-    </div>
-  </div>
-
-  <div class="bottom-bar">
-    <a href="index.html" class="btn-ghost" style="padding:10px 14px; border-radius:10px; text-decoration:none;">⬅️ Zurück zum Trainer</a>
-    <div class="muted">© 2025 @Beefi</div>
-  </div>
-</div>
-
-<!-- Modal -->
-<div id="modal">
-  <div id="modalContent">
-    <h3>🔍 Vokabel-Details</h3>
-    <label>🇬🇧 Englisch</label>
-    <input id="editEn" type="text" />
-    <label>🇩🇪 Deutsch</label>
-    <input id="editDe" type="text" />
-    <label>🧰 Kategorie</label>
-    <select id="editCat"></select>
-    <label>🧩 Gruppe / Variante</label>
-    <input id="editGroup" type="text" />
-    <label>💡 Hinweis</label>
-    <input id="editHint" type="text" />
-    <div id="modalActions">
-      <button id="saveEdit">💾 Speichern</button>
-      <button id="deleteEdit" class="danger">🗑️ Löschen</button>
-      <button id="closeModal" class="btn-ghost">❌ Schließen</button>
-    </div>
-  </div>
-</div>
-
-<div id="toast" class="toast">Gespeichert</div>
-
 <script>
-// ------------- HILFSFUNKTIONEN / KONSTANTEN ----------------
-const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-const toast=msg=>{const t=$("#toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1300);};
+/* === GitHub Sync (Token) – fügt sich in bestehendes UI ein, Layout bleibt unverändert === */
+(() => {
+  const GH = {
+    owner: "Beeferino",
+    repo: "vokabeltrainer",
+    branch: "main",
+    path: "vokabeln.json",
+    apiBase: "https://api.github.com"
+  };
 
-const CATEGORY_NAMES={
-  Gelb:"Grundwerkzeuge Metallverarbeitung",
-  Pink:"Werkzeugkasten Mechaniker",
-  Blau:"Blech- / Kunststoffarbeiten",
-  Gruen:"Drehen / Fräsen",
-  HellesPink:"Hydraulik / Pneumatik",
-  Orange:"Elektrotechnik",
-  Dunkelgruen:"Fluggerätemechanik allgemein",
-  Rot:"Verwechslungsgefahr"
-};
-const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-const keyOf=v=>`${(v[0]||"").toLowerCase()}|${(v[1]||"").toLowerCase()}`;
-const merge=(remote,local)=>{const map=new Map();remote.forEach(v=>map.set(keyOf(v),v));local.forEach(v=>{if(!map.has(keyOf(v)))map.set(keyOf(v),v)});return[...map.values()];};
-const saveLocal=arr=>{localStorage.setItem("vokabeln",JSON.stringify(arr));localStorage.setItem("vokabeln_updated",new Date().toISOString());};
-const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  // ---- Mini-UI (nicht-invasiv): Token Modal nur bei Bedarf einblenden ----
+  function ensureTokenModal() {
+    if (document.getElementById("ghTokenModal")) return;
+    const modal = document.createElement("div");
+    modal.id = "ghTokenModal";
+    modal.style.cssText = "display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;align-items:center;justify-content:center;";
+    modal.innerHTML = `
+      <div style="background:#fff; padding:18px 20px; border-radius:12px; width:90%; max-width:420px; box-shadow:0 10px 30px rgba(0,0,0,.25); font-family:system-ui,sans-serif;">
+        <h3 style="margin:0 0 8px; font-size:1.1rem;">GitHub-Token</h3>
+        <p style="margin:0 0 10px; color:#444; line-height:1.4;">
+          Bitte ein <b>Fine-grained PAT</b> (Repo-Zugriff: Content: Read/Write) einfügen. Der Token wird <i>nur lokal</i> gespeichert.
+        </p>
+        <input id="ghTokenInput" type="password" placeholder="ghp_…"
+               style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:0.95rem;">
+        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+          <button id="ghTokenSave" style="background:#2563eb;color:#fff;border:none;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;">Token speichern</button>
+          <button id="ghTokenCancel" style="background:#e5e7eb;color:#111;border:none;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;">Abbrechen</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    document.getElementById("ghTokenSave").onclick = () => {
+      const t = document.getElementById("ghTokenInput").value.trim();
+      if (!t) { alert("Bitte Token eintragen."); return; }
+      localStorage.setItem("gh_token", t);
+      modal.style.display = "none";
+      toast("🔐 Token gespeichert");
+      // Optional: sofort Sync starten, wenn von Sync aufgerufen
+      _pendingAction && _pendingAction();
+      _pendingAction = null;
+    };
+    document.getElementById("ghTokenCancel").onclick = () => {
+      modal.style.display = "none";
+      _pendingAction = null;
+    };
+  }
 
-let list=[],filterCat="Alle",currentLetter="Alle",searchTerm="",sortKey="en",sortDir="asc",editIndex=-1;
-const perPage=15;
-const fillCats=sel=>{sel.innerHTML="";Object.keys(CATEGORY_NAMES).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);});};
-const renderFilterCats=()=>{const sel=$("#filterCat");sel.innerHTML="<option value='Alle'>Alle</option>";Object.keys(CATEGORY_NAMES).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);});sel.value=filterCat;};
-function renderLexica(){const letters=["Alle",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];const lx=$("#lexica");lx.innerHTML="";letters.forEach(l=>{const b=document.createElement("button");b.textContent=l;if(l===currentLetter)b.classList.add("active");b.onclick=()=>{currentLetter=l;renderTable();renderLexica();};lx.appendChild(b);});}
-function filtered(){return list.filter(([en,de,cat])=>{if(currentLetter!=="Alle"&&!en.toUpperCase().startsWith(currentLetter))return false;if(filterCat!=="Alle"&&cat!==filterCat)return false;if(searchTerm){const s=(en+" "+de).toLowerCase();if(!s.includes(searchTerm))return false;}return true;});}
-function sortRows(arr){const idx={en:0,de:1,cat:2}[sortKey];return arr.sort((a,b)=>{let A=a[idx].toLowerCase(),B=b[idx].toLowerCase();if(A<B)return sortDir==="asc"?-1:1;if(A>B)return sortDir==="asc"?1:-1;return 0;});}
-function renderTable(){const all=sortRows(filtered());const pages=Math.ceil(all.length/perPage)||1;const tb=$("#vokabelTable tbody");tb.innerHTML="";all.slice(0,perPage).forEach(v=>{const [en,de,cat]=v;const i=list.indexOf(v);tb.insertAdjacentHTML("beforeend",`<tr><td><input type='checkbox' data-index='${i}'></td><td>${en}</td><td>${de}</td><td><span class='category-chip' style='background:${COLOR_MAP[cat]}'>${CATEGORY_NAMES[cat]}</span></td><td><button class='btn-ghost' data-edit='${i}'>🔍</button></td></tr>`);});$$("button[data-edit]").forEach(b=>b.onclick=()=>openEdit(parseInt(b.dataset.edit)));
-renderLastAdded();}
-function renderLastAdded(){const w=$("#lastAdded");w.innerHTML="";if(!list.length){w.innerHTML="<div class='muted'>Keine Vokabeln vorhanden.</div>";return;}list.slice(-5).reverse().forEach(v=>{const[en,de,cat]=v;w.insertAdjacentHTML("beforeend",`<div class='pill'><span class='pill-bullet' style='background:${COLOR_MAP[cat]}'></span><b>${en}</b> – ${de} <span class='muted' style='font-size:.9rem;'>(${CATEGORY_NAMES[cat]})</span></div>`);});}
-function openEdit(i){editIndex=i;const v=list[i];if(!v)return;$("#editEn").value=v[0];$("#editDe").value=v[1];$("#editCat").value=v[2];$("#editGroup").value=v[3]||"";$("#editHint").value=v[4]||"";$("#modal").style.display="flex";}
-$("#closeModal").onclick=()=>$("#modal").style.display="none";
-$("#saveEdit").onclick=()=>{const v=list[editIndex];v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();saveLocal(list);toast("💾 Gespeichert");$("#modal").style.display="none";renderTable();};
-$("#deleteEdit").onclick=()=>{if(!confirm("Diese Vokabel löschen?"))return;list.splice(editIndex,1);saveLocal(list);toast("🗑️ Gelöscht");$("#modal").style.display="none";renderTable();};
-$("#addBtn").onclick=()=>{const en=$("#newEn").value.trim(),de=$("#newDe").value.trim(),cat=$("#newCat").value,grp=$("#newGroup").value.trim(),hint=$("#newHint").value.trim();if(!en||!de)return alert("Bitte Englisch & Deutsch eingeben.");list.push([en,de,cat,grp,hint,new Date().toISOString()]);saveLocal(list);renderTable();toast("➕ Hinzugefügt");["#newEn","#newDe","#newGroup","#newHint"].forEach(id=>$(id).value="");};
-$("#deleteSelected").onclick=()=>{const sel=$$('input[type="checkbox"][data-index]:checked');if(!sel.length)return alert("Keine Auswahl");if(!confirm(sel.length+" Einträge löschen?"))return;sel.map(c=>+c.dataset.index).sort((a,b)=>b-a).forEach(i=>list.splice(i,1));saveLocal(list);toast("🗑️ Gelöscht");renderTable();};
-$("#filterCat").onchange=e=>{filterCat=e.target.value;renderTable();};
-$("#searchInput").oninput=e=>{searchTerm=e.target.value.toLowerCase();renderTable();};
-$("#resetFilter").onclick=()=>{filterCat="Alle";searchTerm="";$("#searchInput").value="";$("#filterCat").value="Alle";renderLexica();renderTable();};
-async function trySync(){const urls=["./vokabeln.json",window.location.origin+"/vokabeln.json"];let remote=null;for(const u of urls){try{const r=await fetch(u,{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j)){remote=j;break;}}}catch{}}const local=loadLocal();list=remote?merge(remote,local):local;if(!list.length)list=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"]];saveLocal(list);$("#datasourceStatus").textContent=remote?"Quelle: GitHub (Online)":"Quelle: Lokaler Speicher";fillCats($("#newCat"));fillCats($("#editCat"));renderFilterCats();renderLexica();renderTable();}
-$("#syncBtn").onclick=trySync;
-trySync();
+  function openTokenModal() {
+    ensureTokenModal();
+    document.getElementById("ghTokenInput").value = localStorage.getItem("gh_token") || "";
+    document.getElementById("ghTokenModal").style.display = "flex";
+  }
+
+  function toast(msg) {
+    let t = document.getElementById("toast");
+    if (!t) {
+      t = document.createElement("div");
+      t.id = "toast";
+      t.style.cssText = "position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#16a34a;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;z-index:99999;display:none;";
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(t._h);
+    t._h = setTimeout(() => t.style.display = "none", 1600);
+  }
+
+  // ---- Daten-Helfer (mergen & normalisieren) ----
+  const normalize = (v) => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
+  const keyOf = (v) => `${(v[0]||"").toLowerCase().trim()}|${(v[1]||"").toLowerCase().trim()}`;
+
+  function mergeLists(remote, local) {
+    const map = new Map();
+    remote.map(normalize).forEach(v => map.set(keyOf(v), v));
+    local.map(normalize).forEach(v => { if (!map.has(keyOf(v))) map.set(keyOf(v), v); });
+    return [...map.values()];
+  }
+
+  function loadLocal() {
+    return (JSON.parse(localStorage.getItem("vokabeln") || "[]") || []).map(normalize);
+  }
+  function saveLocal(list) {
+    localStorage.setItem("vokabeln", JSON.stringify(list));
+    localStorage.setItem("vokabeln_updated", new Date().toISOString());
+  }
+
+  // ---- GitHub API Calls ----
+  async function ghGetContents(token) {
+    const url = `${GH.apiBase}/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}?ref=${encodeURIComponent(GH.branch)}`;
+    const r = await fetch(url, {
+      headers: token ? { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github+json" } : { "Accept": "application/vnd.github+json" }
+    });
+    if (!r.ok) throw new Error(`GET contents failed: ${r.status}`);
+    return r.json(); // { content(base64), sha, ... }
+  }
+
+  function b64EncodeUnicode(str) {
+    // sauberes Base64 für UTF-8 Inhalte
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  async function ghPutContents(token, sha, mergedList) {
+    const url = `${GH.apiBase}/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}`;
+    const body = {
+      message: `chore: sync vokabeln.json (auto)`,
+      content: b64EncodeUnicode(JSON.stringify(mergedList, null, 2)),
+      branch: GH.branch,
+      sha
+    };
+    const r = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Accept": "application/vnd.github+json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error(`PUT contents failed: ${r.status}`);
+    return r.json();
+  }
+
+  // ---- Hauptablauf: Sync (pull -> merge -> push) ----
+  let _pendingAction = null;
+
+  async function doSync() {
+    try {
+      const token = localStorage.getItem("gh_token");
+      if (!token) { _pendingAction = doSync; openTokenModal(); return; }
+
+      // 1) Remote laden (sha + content)
+      const remoteMeta = await ghGetContents(token);
+      const remoteContent = remoteMeta && remoteMeta.content ? atob(remoteMeta.content.replace(/\n/g, "")) : "[]";
+      const remote = JSON.parse(remoteContent || "[]");
+
+      // 2) Local laden & mergen
+      const local = loadLocal();
+      const merged = mergeLists(remote, local);
+
+      // 3) Upload (PUT) mit sha
+      await ghPutContents(token, remoteMeta.sha, merged);
+
+      // 4) Lokal auch speichern (und UI updaten)
+      saveLocal(merged);
+      toast("✅ Erfolgreich synchronisiert");
+      const info = document.getElementById("syncInfo");
+      if (info) info.textContent = "Quelle: GitHub (synchronisiert)";
+
+      // Falls du in deinem Code eine Render-Funktion hast, hier triggern:
+      if (typeof render === "function") render();
+      if (typeof renderLastAdded === "function") renderLastAdded();
+
+    } catch (e) {
+      console.error(e);
+      alert("❌ Synchronisation fehlgeschlagen.\n" + e.message + "\n\nBitte prüfe Token/Repo/Netzwerk.");
+    }
+  }
+
+  // ---- Button verdrahten (existierende UI wiederverwenden) ----
+  document.addEventListener("DOMContentLoaded", () => {
+    ensureTokenModal();
+    const syncBtn = document.getElementById("syncBtn");
+    if (syncBtn) syncBtn.onclick = doSync;
+  });
+})();
 </script>
-</body>
-</html>
