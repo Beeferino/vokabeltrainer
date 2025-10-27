@@ -1,353 +1,235 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vokabelübersicht – Beeferino</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vokabelübersicht – Mobile Mockup</title>
 <style>
-:root {
-  --blue:#2563eb;--blue2:#1d4ed8;
-  --ok:#22c55e;--bad:#ef4444;
-  --muted:#9ca3af;--ink:#0f172a;
-  --glass:rgba(255,255,255,.9);
-}
 body {
-  margin:0;font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);
-  color:var(--ink);
-}
-.app {
-  max-width:960px;margin:32px auto;padding:22px;
-  background:var(--glass);border-radius:22px;
-  box-shadow:0 10px 32px rgba(0,0,0,.1);
-  backdrop-filter:blur(8px);
-}
-h1 {text-align:center;margin:0;font-size:2rem;color:#1e3a8a;font-weight:800}
-h2 {margin-top:22px;color:#1e3a8a;font-size:1.3rem}
-.flex {display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-table {width:100%;border-collapse:collapse;margin-top:10px}
-th,td {padding:10px;text-align:left;border-bottom:1px solid #e5e7eb}
-th {cursor:pointer;background:#f9fafb}
-tr:hover {background:#f3f6ff}
-button,select,input {
-  font-family:inherit;font-size:1rem;
-  border-radius:10px;padding:8px 12px;
-}
-button {cursor:pointer;border:none;font-weight:700}
-button.primary {background:var(--blue);color:#fff}
-button.secondary {background:#e2e8f0}
-
-/* Modal */
-#modal {
-  position:fixed;inset:0;display:none;
-  align-items:center;justify-content:center;
-  background:rgba(0,0,0,.4);z-index:10;
-}
-#modalContent {
-  background:#fff;padding:22px;border-radius:16px;
-  max-width:360px;width:90%;text-align:center;
-  box-shadow:0 8px 28px rgba(0,0,0,.2);
-}
-#modalContent input,#modalContent select {
-  width:100%;margin-top:6px;padding:10px;
-  border:1px solid #d1d5db;border-radius:10px;
-}
-.toast {
-  position:fixed;bottom:20px;left:50%;
-  transform:translateX(-50%);
-  background:var(--blue);color:#fff;
-  padding:10px 16px;border-radius:10px;
-  opacity:0;transition:opacity .3s;
-}
-.toast.show {opacity:1}
-.footer {text-align:center;margin-top:20px;color:#6b7280}
-.category-chip {
-  display:inline-block;
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:700;
-  font-size:.85rem;
+  margin: 0;
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(145deg, #0f172a, #1e293b);
+  color: #e2e8f0;
 }
 
-/* === MOBILE OPTIMIERUNG === */
-@media(max-width:768px){
-  body {background:#0f172a;color:#e5e7eb}
-  .app {background:rgba(20,24,35,.8);color:#fff;box-shadow:0 0 20px rgba(0,0,0,.4)}
-  h1 {color:#93c5fd}
-  h2 {color:#bfdbfe}
-  input,select,button {background:#1e293b;color:#f9fafb;border:none}
-  table thead{display:none}
-  table,tbody,tr,td{display:block;width:100%}
-  tr{margin-bottom:14px;background:#1e293b;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
-  td{padding:10px;border:none}
-  td::before{font-weight:700;display:block;margin-bottom:4px;color:#60a5fa}
-  td:nth-child(1)::before{content:"Englisch";}
-  td:nth-child(2)::before{content:"Deutsch";}
-  td:nth-child(3)::before{content:"Kategorie";}
-  td:nth-child(4){display:none}
+/* --- HEADER --- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: rgba(15, 23, 42, 0.85);
+  position: sticky;
+  top: 0;
+  backdrop-filter: blur(8px);
+}
+header h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #93c5fd;
+  margin: 0;
+}
+header button {
+  background: none;
+  color: #93c5fd;
+  border: none;
+  font-size: 1rem;
 }
 
-/* Mobile Filter */
-#mobileHeader {margin-bottom:10px}
-#mobTopBar {
-  display:flex;justify-content:space-between;
-  align-items:center;gap:8px;margin-bottom:8px;
+/* --- KATEGORIE-KARUSSELL --- */
+#categories {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 14px;
+  scroll-snap-type: x mandatory;
 }
-#mobSearch {
-  flex:1;border:none;padding:10px 12px;
-  border-radius:10px;background:#f1f5f9;
+.category {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
-#mobReset {
-  background:#e2e8f0;padding:10px 14px;border-radius:10px;
-  color:#111827;font-weight:700;
+
+/* Beispiel-Farben */
+.gelb { background: #f4d03f; color: #111; }
+.pink { background: #e91e63; }
+.blau { background: #2563eb; }
+.gruen { background: #16a34a; }
+
+/* --- LISTE --- */
+#vocabList {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-#mobCatWrap {
-  display:flex;overflow-x:auto;gap:10px;padding:6px 2px;
-  -webkit-overflow-scrolling:touch;scroll-behavior:smooth;
+.vocab {
+  background: rgba(30, 41, 59, 0.85);
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
-#mobCatWrap button {
-  flex:0 0 auto;border:none;padding:10px 16px;
-  border-radius:999px;font-weight:700;font-size:.9rem;
-  box-shadow:0 3px 6px rgba(0,0,0,.1);
-  transition:all .25s ease;
+.vocab .en { font-weight: 600; font-size: 1.1rem; }
+.vocab .de { font-size: 0.95rem; color: #9ca3af; }
+
+/* --- FLOATING BUTTONS --- */
+#fabContainer {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
-#mobCatWrap button.active {
-  outline:3px solid rgba(255,255,255,.7);
-  transform:scale(1.05);
-  box-shadow:0 0 10px rgba(37,99,235,.4);
+.fab {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(145deg, #3b82f6, #2563eb);
+  color: #fff;
+  font-size: 1.4rem;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+}
+
+/* --- POPUPS --- */
+.popup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.5);
+  z-index: 20;
+}
+.popup.active { display: flex; }
+.popup-content {
+  background: #1e293b;
+  color: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  width: 90%;
+  max-width: 340px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+.popup-content h2 {
+  font-size: 1.1rem;
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #93c5fd;
+}
+.popup-content input,
+.popup-content select {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #334155;
+  color: #fff;
+}
+.popup-content button {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+}
+.popup-content button.secondary {
+  background: #475569;
+}
+
+/* --- FOOTER --- */
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 0.8rem;
+  padding: 20px 0 60px;
 }
 </style>
 </head>
 <body>
-<div class="app">
-  <h1>📘 Vokabelübersicht</h1>
 
-  <!-- MOBILE FILTER -->
-  <div id="mobileHeader">
-    <div id="mobTopBar">
-      <input id="mobSearch" type="text" placeholder="🔍 Suchen …">
-      <button id="mobReset">Alle</button>
-    </div>
-    <div id="mobCatWrap"></div>
+<header>
+  <button>←</button>
+  <h1>Vokabeln</h1>
+  <span></span>
+</header>
+
+<div id="categories">
+  <div class="category gelb">Metall</div>
+  <div class="category pink">Mechanik</div>
+  <div class="category blau">Kunststoff</div>
+  <div class="category gruen">Fräsen</div>
+</div>
+
+<section id="vocabList">
+  <div class="vocab">
+    <div class="en">hammer</div>
+    <div class="de">Hammer</div>
   </div>
-
-  <!-- DESKTOP FILTER -->
-  <div class="flex desktop-only">
-    <label>Kategorie:
-      <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
-    </label>
-    <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
-    <button id="resetFilter" class="secondary">🔄 Filter zurücksetzen</button>
+  <div class="vocab">
+    <div class="en">file</div>
+    <div class="de">Feile</div>
   </div>
+</section>
 
-  <div class="section">
-    <h2>📄 Vokabelliste</h2>
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th data-col="0">Englisch</th>
-          <th data-col="1">Deutsch</th>
-          <th data-col="2">Kategorie</th>
-          <th>Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+<div id="fabContainer">
+  <button class="fab" style="background:#10b981;">🔍</button>
+  <button class="fab">➕</button>
+  <button class="fab" style="background:#8b5cf6;">☁️</button>
+</div>
+
+<!-- POPUP FILTER -->
+<div id="popupFilter" class="popup">
+  <div class="popup-content">
+    <h2>🔍 Filter & Suche</h2>
+    <input type="text" placeholder="Suche...">
+    <select>
+      <option>Alle Kategorien</option>
+      <option>Mechanik</option>
+      <option>Metall</option>
+    </select>
+    <button class="secondary" onclick="closePopup('popupFilter')">Schließen</button>
   </div>
+</div>
 
-  <div class="section">
+<!-- POPUP NEUE VOKABEL -->
+<div id="popupAdd" class="popup">
+  <div class="popup-content">
     <h2>➕ Neue Vokabel</h2>
-    <button id="addBtn" class="primary">Vokabel hinzufügen</button>
-  </div>
-
-  <div class="section">
-    <button id="syncBtn" class="primary" style="width:100%">📡 In Datenbank eintragen</button>
-  </div>
-
-  <div class="footer">© 2025 Beeferino</div>
-</div>
-
-<!-- POPUP -->
-<div id="modal">
-  <div id="modalContent">
-    <h3>✏️ Vokabel bearbeiten</h3>
-    <input id="editEn" placeholder="Englisch">
-    <input id="editDe" placeholder="Deutsch">
-    <select id="editCat"></select>
-    <input id="editGroup" placeholder="Gruppe / Variante">
-    <input id="editHint" placeholder="Hinweis">
-    <div class="flex" style="margin-top:10px;justify-content:center">
-      <button id="saveModal" class="primary">💾 Speichern</button>
-      <button id="delModal" class="secondary">🗑️ Löschen</button>
-      <button id="closeModal" class="secondary">❌ Schließen</button>
-    </div>
+    <input type="text" placeholder="Englisch">
+    <input type="text" placeholder="Deutsch">
+    <select>
+      <option>Mechanik</option>
+      <option>Metall</option>
+    </select>
+    <button>Speichern</button>
+    <button class="secondary" onclick="closePopup('popupAdd')">Abbrechen</button>
   </div>
 </div>
-<div id="toast" class="toast">Gespeichert</div>
+
+<footer>
+  © 2025 Beeferino • Datenquelle: GitHub
+</footer>
 
 <script>
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
-};
-const el=id=>document.getElementById(id);
-const tbody=document.querySelector("#tbl tbody");
-const modal=el("modal"),toast=el("toast");
-const editEn=el("editEn"),editDe=el("editDe"),editCat=el("editCat"),
-editGroup=el("editGroup"),editHint=el("editHint");
-
-let list=[],editIndex=null;
-
-/* Kategorieoptionen */
-for(const k in CATS){
-  const o=document.createElement("option");
-  o.value=k;o.textContent=CATS[k][0];
-  o.style.background=CATS[k][1];o.style.color=CATS[k][2];
-  el("filterCat").appendChild(o);
-  editCat.appendChild(o.cloneNode(true));
+const popups = document.querySelectorAll('.popup');
+function closePopup(id){
+  document.getElementById(id).classList.remove('active');
 }
-
-/* Daten laden */
-async function loadData(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    list=await r.json();
-  }catch(e){list=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
-  renderTable();
-}
-
-/* Tabelle rendern */
-function renderTable(){
-  tbody.innerHTML="";
-  list.forEach((v,i)=>{
-    const c=CATS[v[2]]||["","#ddd","#000"];
-    tbody.insertAdjacentHTML("beforeend",`
-      <tr>
-        <td onclick="editVokabel(${i})">${v[0]}</td>
-        <td>${v[1]}</td>
-        <td><span class='category-chip' style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
-        <td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td>
-      </tr>`);
-  });
-}
-
-/* Toast */
-function showToast(msg){
-  toast.textContent=msg;toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),1600);
-}
-
-/* Bearbeiten */
-function editVokabel(i){
-  editIndex=i;
-  const v=list[i];
-  [editEn.value,editDe.value,editCat.value,editGroup.value,editHint.value]=v;
-  modal.style.display="flex";
-}
-
-/* Modal */
-el("closeModal").onclick=()=>modal.style.display="none";
-el("saveModal").onclick=()=>{
-  const e=editEn.value.trim(),d=editDe.value.trim(),
-        c=editCat.value,g=editGroup.value,h=editHint.value;
-  if(!e||!d)return;
-  if(editIndex!==null){list[editIndex]=[e,d,c,g,h];}
-  else list.push([e,d,c,g,h]);
-  modal.style.display="none";showToast("Gespeichert");renderTable();
-};
-el("delModal").onclick=()=>{
-  if(editIndex!==null){list.splice(editIndex,1);
-    modal.style.display="none";showToast("Gelöscht");renderTable();}
-};
-el("addBtn").onclick=()=>{
-  editIndex=null;editEn.value="";editDe.value="";
-  editCat.value="Gelb";editGroup.value="";editHint.value="";
-  modal.style.display="flex";
-};
-
-/* Filter Desktop */
-el("resetFilter").onclick=()=>{el("searchInput").value="";el("filterCat").value="Alle";renderTable();}
-el("searchInput").oninput=()=>filterTable();
-el("filterCat").onchange=()=>filterTable();
-function filterTable(){
-  const t=el("searchInput").value.toLowerCase();
-  const cat=el("filterCat").value;
-  tbody.innerHTML="";
-  list.filter(v=>{
-    const match=(v[0]+" "+v[1]).toLowerCase().includes(t);
-    const catOk=cat==="Alle"||v[2]===cat;
-    return match&&catOk;
-  }).forEach((v,i)=>{
-    const c=CATS[v[2]]||["","#ddd","#000"];
-    tbody.insertAdjacentHTML("beforeend",`
-      <tr>
-        <td onclick="editVokabel(${i})">${v[0]}</td>
-        <td>${v[1]}</td>
-        <td><span class='category-chip' style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
-        <td><button class='secondary' onclick='editVokabel(${i})'>✏️</button></td>
-      </tr>`);
-  });
-}
-
-/* Sync */
-el("syncBtn").onclick=()=>{
-  localStorage.setItem("vokabeln",JSON.stringify(list));
-  showToast("✅ In Datenbank eingetragen!");
-};
-
-/* === MOBILE UI === */
-const mobCatWrap=document.getElementById("mobCatWrap");
-const mobSearch=document.getElementById("mobSearch");
-const mobReset=document.getElementById("mobReset");
-let mobileActiveCat="Alle";
-
-function renderMobileCats(){
-  mobCatWrap.innerHTML="";
-  const btnAll=document.createElement("button");
-  btnAll.textContent="Alle";
-  btnAll.onclick=()=>{mobileActiveCat="Alle";
-    document.querySelectorAll("#mobCatWrap button").forEach(x=>x.classList.remove("active"));
-    btnAll.classList.add("active");updateMobileFilter();
-  };
-  mobCatWrap.appendChild(btnAll);
-  for(const k in CATS){
-    const [t,bg,fg]=CATS[k];
-    const b=document.createElement("button");
-    b.textContent=t;b.style.background=bg;b.style.color=fg;
-    b.onclick=()=>{
-      mobileActiveCat=k;
-      document.querySelectorAll("#mobCatWrap button").forEach(x=>x.classList.remove("active"));
-      b.classList.add("active");
-      updateMobileFilter();
-    };
-    mobCatWrap.appendChild(b);
-  }
-}
-function updateMobileFilter(){
-  const search=mobSearch.value.toLowerCase();
-  tbody.innerHTML="";
-  list.filter(v=>{
-    const catOk=mobileActiveCat==="Alle"||v[2]===mobileActiveCat;
-    const searchOk=!search||(v[0]+" "+v[1]).toLowerCase().includes(search);
-    return catOk&&searchOk;
-  }).forEach((v,i)=>{
-    const c=CATS[v[2]]||["","#ccc","#111"];
-    tbody.insertAdjacentHTML("beforeend",`
-      <tr><td onclick="editVokabel(${i})">${v[0]}</td>
-      <td>${v[1]}</td>
-      <td><span class='category-chip' style="background:${c[1]};color:${c[2]}">${c[0]}</span></td></tr>`);
-  });
-}
-mobSearch.oninput=updateMobileFilter;
-mobReset.onclick=()=>{mobSearch.value="";mobileActiveCat="Alle";updateMobileFilter();}
-renderMobileCats();
-loadData();
+document.querySelectorAll('.fab')[0].onclick=()=>document.getElementById('popupFilter').classList.add('active');
+document.querySelectorAll('.fab')[1].onclick=()=>document.getElementById('popupAdd').classList.add('active');
 </script>
+
 </body>
 </html>
