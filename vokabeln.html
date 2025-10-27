@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>📘 Vokabelübersicht</title>
 
-  <!-- Inter Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 
   <style>
@@ -19,617 +18,236 @@
       --primary-2: #2c7ef0;
       --ring: rgba(30,110,216,.25);
       --border: #dee6f2;
-      --chip:#eef4ff;
-      --shadow: 0 8px 24px rgba(16,24,40,.08), 0 2px 6px rgba(16,24,40,.06);
-      --blur: blur(10px);
+      --shadow: 0 8px 24px rgba(16,24,40,.08);
     }
-
     *{box-sizing:border-box}
-    html,body{height:100%}
     body{
-      margin:0; padding:22px;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      margin:0;padding:22px;
+      font-family:Inter,system-ui,sans-serif;
       color:var(--text);
-      background: radial-gradient(1200px 700px at 10% -10%, #dbe9ff 0%, transparent 60%),
-                  radial-gradient(900px 500px at 110% 0%, #fff4e2 0%, transparent 55%),
-                  linear-gradient(180deg, #f7f9fc 0%, #f0f4fa 100%);
+      background:linear-gradient(180deg,#f7f9fc 0%,#f0f4fa 100%);
     }
-
-    .app{
-      max-width: 1100px; margin: 0 auto;
-      background: var(--card);
-      backdrop-filter: var(--blur);
-      -webkit-backdrop-filter: var(--blur);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
-      padding: 22px;
-    }
-
-    .header{
-      text-align:center; margin-bottom:16px;
-    }
-    .title{
-      font-size: 1.9rem; font-weight: 800; letter-spacing:.2px;
-    }
-    .subline{
-      margin: 8px auto 18px; width: 92%;
-      height: 3px; border-radius: 3px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-2));
-    }
-
-    /* Sections */
-    .section{ margin-top:18px; }
-    .section h2{
-      font-size: 1.15rem; color: var(--primary); margin: 0 0 10px;
-      display:flex; align-items:center; gap:8px; justify-content:center;
-      font-weight: 800;
-    }
-
-    /* Controls row */
-    .controls{
-      display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;
-      background: var(--card-solid);
-      border:1px solid var(--border); border-radius:14px; padding:12px;
-    }
-
-    /* ABC Lexica */
-    .lexica{
-      display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin: 6px 0 12px;
-    }
-    .lexica button{
-      min-width: 34px; padding:6px 10px; border-radius:10px;
-      border:1px solid var(--border); background:#fff; color:#243041; font-weight:600;
-      cursor:pointer;
-    }
-    .lexica button.active{ background: var(--primary); color:#fff; border-color:var(--primary) }
-
-    /* Inputs */
-    select, input, button{
-      font: inherit;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 10px 12px;
-      background: #fff;
-      color: var(--text);
-      outline: none;
-    }
-    select:focus, input:focus, button:focus{
-      box-shadow: 0 0 0 4px var(--ring);
-      border-color: var(--primary);
-    }
-
-    button{
-      cursor:pointer;
-      background: var(--primary);
-      color: #fff; border: none; font-weight:700;
-    }
-    button:hover{ background: var(--primary-2)}
-
-    /* Table card */
-    .card{
-      background: var(--card-solid);
-      border:1px solid var(--border); border-radius:14px; padding:12px;
-    }
-    table{ width:100%; border-collapse: collapse; }
-    thead th{
-      background: #f4f7ff;
-      text-align:left; font-weight:800; user-select:none; cursor:pointer;
-      border-bottom:1px solid var(--border);
-      padding: 10px 10px;
-    }
-    tbody td{
-      border-bottom:1px solid var(--border);
-      padding: 10px 10px;
-    }
-    tr:hover td{ background:#f8fbff }
-
-    th.sort-asc::after{content:" ↑"; color:#6c7b95}
-    th.sort-desc::after{content:" ↓"; color:#6c7b95}
-
-    .category-chip{
-      display:inline-block; padding:4px 10px; border-radius:10px; color:#fff; font-weight:700; font-size:.92rem;
-      box-shadow: inset 0 -2px 0 rgba(0,0,0,.08);
-    }
-
-    .actions button{
-      background:#eef4ff; color:#1c3553; border:1px solid #d7e2f7;
-      padding:6px 10px; font-weight:700;
-    }
-    .actions button:hover{ background:#dfeaff }
-
-    /* Pagination */
-    .pagination{
-      display:flex; justify-content:center; gap:8px; margin-top:12px;
-    }
-    .pagination button{
-      background:#fff; color:#1c3553; border:1px solid var(--border);
-      padding:6px 10px;
-    }
-    .pagination button.active{
-      background: var(--primary); color:#fff; border-color: var(--primary);
-    }
-
-    /* Input card (add new) */
-    .input-card{
-      display:grid; grid-template-columns: 1fr 1fr 220px; gap:10px;
-      background: var(--card-solid);
-      border: 1px solid var(--border); border-radius:14px; padding:12px;
-    }
-    @media (max-width: 820px){
-      .input-card{ grid-template-columns: 1fr; }
-    }
-    .input-actions{ display:flex; justify-content:center; gap:10px; }
-
-    /* Last added */
-    .last-box{
-      background: var(--card-solid);
-      border:1px solid var(--border); border-radius:14px; padding:12px;
-    }
-    .last-list{
-      display:flex; flex-direction:column; gap:8px; align-items:center;
-    }
-    .last-item{
-      display:flex; gap:10px; align-items:center;
-      padding: 8px 12px; border-radius: 12px; background: #fff; border: 1px dashed var(--border);
-      width: max-content; max-width: 100%; overflow:hidden;
-      box-shadow: 0 4px 12px rgba(16,24,40,.04);
-    }
-    .last-term{ font-weight:800}
-    .last-cat{ padding:3px 8px; border-radius:8px; color:#000; font-weight:700; border:1px solid rgba(0,0,0,.08) }
-
-    .divider{ margin:20px auto; width:96%; height:2px; background: #e9eff8; border-radius:2px }
-
-    /* Footer */
-    .footer{
-      margin-top: 18px; text-align:center; color: var(--muted); font-size:.95rem;
-    }
-    #lastChange{ margin-top:6px }
-
-    /* Modal */
-    #modal{
-      display:none; position:fixed; inset:0; background: rgba(20,30,50,.45);
-      backdrop-filter: blur(6px);
-      align-items:center; justify-content:center; z-index: 9999;
-      padding:14px;
-    }
-    #modalContent{
-      width: 100%; max-width: 520px;
-      background: #fff; border:1px solid var(--border); border-radius:16px; padding:16px;
-      box-shadow: var(--shadow);
-    }
-    #modalContent h3{margin:0 0 8px; text-align:center}
-    .modal-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px }
-    .modal-grid-1{ display:grid; grid-template-columns: 1fr; gap:10px; margin-top:8px }
-    .modal-actions{ display:flex; justify-content:center; gap:10px; margin-top:10px }
-    .muted{ color: var(--muted); font-size:.92rem }
-
-    /* Status chip */
-    #datasourceStatus{
-      position:fixed; right:12px; bottom:10px; font-size:.85rem; opacity:.85; color:#36475e;
-      background:#fff; border:1px solid var(--border); border-radius:10px; padding:6px 10px;
-      box-shadow: 0 4px 12px rgba(16,24,40,.08);
-    }
-
-    .toast{
-      position: fixed; left:50%; bottom:18px; transform:translateX(-50%);
-      background:#1abc9c; color:#fff; font-weight:800;
-      padding:10px 14px; border-radius: 10px; display:none; z-index:99999;
-      box-shadow: var(--shadow);
-    }
+    .app{max-width:1100px;margin:auto;background:var(--card);border-radius:18px;padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(10px);}
+    .header{text-align:center;margin-bottom:16px;}
+    .title{font-size:1.9rem;font-weight:800;}
+    .subline{margin:8px auto 18px;width:92%;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--primary-2));}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;background:var(--card-solid);border:1px solid var(--border);border-radius:14px;padding:12px;}
+    select,input,button{font:inherit;border-radius:10px;border:1px solid var(--border);padding:10px 12px;background:#fff;outline:none;}
+    button{cursor:pointer;background:var(--primary);color:#fff;border:none;font-weight:700;}
+    button:hover{background:var(--primary-2);}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:10px;border-bottom:1px solid var(--border);}
+    th{background:#f4f7ff;font-weight:700;cursor:pointer;}
+    tr:hover td{background:#f8fbff;}
+    .category-chip{display:inline-block;padding:4px 10px;border-radius:10px;color:#fff;font-weight:700;font-size:.9rem;}
+    .pagination{display:flex;justify-content:center;gap:8px;margin-top:12px;}
+    .pagination button{background:#fff;color:#1c3553;border:1px solid var(--border);}
+    .pagination button.active{background:var(--primary);color:#fff;}
+    .input-card{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;background:var(--card-solid);border:1px solid var(--border);border-radius:14px;padding:12px;}
+    .footer{text-align:center;margin-top:20px;color:var(--muted);}
+    #modal{display:none;position:fixed;inset:0;background:rgba(20,30,50,.45);backdrop-filter:blur(6px);align-items:center;justify-content:center;z-index:9999;padding:14px;}
+    #modalContent{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;max-width:480px;width:100%;box-shadow:var(--shadow);}
+    #modalContent h3{text-align:center;margin-top:0;}
+    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .modal-grid-1{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px;}
+    .modal-actions{display:flex;justify-content:center;gap:10px;margin-top:10px;}
+    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.85rem;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px 10px;box-shadow:var(--shadow);}
+    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1abc9c;color:#fff;padding:10px 14px;border-radius:10px;display:none;z-index:99999;}
+    .multi-delete{display:none;justify-content:center;margin-bottom:10px;}
+    .multi-delete button{background:#e74c3c;}
+    .multi-delete button:hover{background:#c0392b;}
   </style>
 </head>
 <body>
-  <div class="app">
-
-    <div class="header">
-      <div class="title">📘 Vokabelübersicht</div>
-      <div class="subline"></div>
-    </div>
-
-    <!-- ABC -->
-    <div id="lexica" class="lexica"></div>
-
-    <!-- Filter & Suche -->
-    <div class="section">
-      <h2>🔍 Filter &amp; Suche</h2>
-      <div class="controls">
-        <label> Kategorie:
-          <select id="filterCat">
-            <option value="Alle">Alle (bunt gemischt)</option>
-          </select>
-        </label>
-        <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)" />
-        <button id="resetFilter">🔄 Filter zurücksetzen</button>
-      </div>
-    </div>
-
-    <!-- Tabelle -->
-    <div class="section">
-      <h2>📄 Vokabelliste</h2>
-      <div class="card">
-        <table id="vokabelTable">
-          <thead>
-            <tr>
-              <th data-col="0">Englisch</th>
-              <th data-col="1">Deutsch</th>
-              <th data-col="2">Kategorie</th>
-              <th style="width:100px;">Aktion</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-        <div id="pagination" class="pagination"></div>
-        <div id="infoFooter" class="muted" style="text-align:center;margin-top:6px;">–</div>
-      </div>
-    </div>
-
-    <!-- Neue Vokabel -->
-    <div class="section">
-      <h2>➕ Neue Vokabel hinzufügen</h2>
-      <div class="input-card">
-        <input id="newEn" type="text" placeholder="Englisch" />
-        <input id="newDe" type="text" placeholder="Deutsch" />
-        <select id="newCat"></select>
-
-        <input id="newGroup" type="text" placeholder="Gruppe / Variante" />
-        <input id="newHint" type="text" placeholder="Hinweis" />
-        <div class="input-actions">
-          <button id="addBtn">Hinzufügen</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- JSON & Sync -->
-    <div class="section">
-      <h2>💾 JSON &amp; Synchronisierung</h2>
-      <div class="controls">
-        <button id="syncBtn">🔄 Von GitHub neu laden</button>
-        <button id="downloadBtn">💾 vokabeln.json herunterladen</button>
-      </div>
-      <p id="syncInfo" class="muted" style="text-align:center;margin-top:8px;">Quelle: – | Letzter Abgleich: –</p>
-    </div>
-
-    <div class="divider"></div>
-
-    <!-- Zuletzt hinzugefügt -->
-    <div class="section">
-      <h2>🧾 Zuletzt hinzugefügt</h2>
-      <div class="last-box">
-        <div id="lastAdded" class="last-list">–</div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-      <button onclick="window.location.href='index.html'">⬅️ Zurück zum Trainer</button>
-      <div id="lastChange">📅 Letzte Änderung: –</div>
-      <p>© 2025 @Beefi</p>
-    </div>
-
+<div class="app">
+  <div class="header">
+    <div class="title">📘 Vokabelübersicht</div>
+    <div class="subline"></div>
   </div>
 
-  <!-- Modal Bearbeiten/Details -->
-  <div id="modal">
-    <div id="modalContent">
-      <h3>🔍 Vokabel-Details</h3>
-      <div class="modal-grid">
-        <input id="editEn" type="text" placeholder="Englisch" />
-        <input id="editDe" type="text" placeholder="Deutsch" />
-      </div>
-      <div class="modal-grid" style="margin-top:8px;">
-        <select id="editCat"></select>
-        <input id="editGroup" type="text" placeholder="Gruppe / Variante" />
-      </div>
-      <div class="modal-grid-1">
-        <input id="editHint" type="text" placeholder="Hinweis" />
-        <div class="muted" id="editMeta">Erstellt / geändert: –</div>
-      </div>
-      <div class="modal-actions">
-        <button id="saveEdit">💾 Speichern</button>
-        <button id="closeModal">❌ Schließen</button>
-      </div>
+  <div id="lexica" class="lexica"></div>
+
+  <div class="section">
+    <h2>🔍 Filter & Suche</h2>
+    <div class="controls">
+      <label>Kategorie:
+        <select id="filterCat"><option value="Alle">Alle</option></select>
+      </label>
+      <input id="searchInput" type="text" placeholder="🔎 Suchen...">
+      <button id="resetFilter">🔄 Zurücksetzen</button>
     </div>
   </div>
 
-  <div id="toast" class="toast">Gespeichert</div>
-  <div id="datasourceStatus" aria-live="polite">🔄 JSON + lokale Ergänzungen (gemergt)</div>
+  <div class="section">
+    <h2>📄 Vokabelliste</h2>
+    <div class="multi-delete"><button id="deleteSelected">🗑️ Ausgewählte löschen</button></div>
+    <div class="card">
+      <table id="vokabelTable">
+        <thead><tr>
+          <th></th><th data-col="0">Englisch</th><th data-col="1">Deutsch</th><th data-col="2">Kategorie</th><th>Aktion</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+      <div id="pagination" class="pagination"></div>
+    </div>
+  </div>
 
-  <script>
-    (()=>{
-      /* ======= Konstanten ======= */
-      const CATEGORY_NAMES = {
-        Gelb:"Grundwerkzeuge Metallverarbeitung",
-        Pink:"Werkzeugkasten Mechaniker",
-        Blau:"Blech- / Kunststoffarbeiten",
-        Gruen:"Drehen / Fräsen",
-        HellesPink:"Hydraulik / Pneumatik",
-        Orange:"Elektrotechnik",
-        Dunkelgruen:"Fluggerätemechanik allgemein",
-        Rot:"Verwechslungsgefahr"
-      };
-      const COLOR_MAP = {
-        Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
-        HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
-      };
-      const GITHUB_JSON = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  <div class="section">
+    <h2>➕ Neue Vokabel hinzufügen</h2>
+    <div class="input-card">
+      <input id="newEn" placeholder="Englisch">
+      <input id="newDe" placeholder="Deutsch">
+      <select id="newCat"></select>
+      <input id="newGroup" placeholder="Gruppe / Variante">
+      <input id="newHint" placeholder="Hinweis">
+      <button id="addBtn">Hinzufügen</button>
+    </div>
+  </div>
 
-      /* ======= DOM Helpers ======= */
-      const $ = s => document.querySelector(s);
-      const $$ = s => [...document.querySelectorAll(s)];
-      const toast = (m) => { const t=$("#toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",1400); };
+  <div class="footer">
+    <button onclick="window.location.href='index.html'">⬅️ Zurück</button>
+    <p>© 2025 @Beefi</p>
+  </div>
+</div>
 
-      /* ======= Storage / Normalisierung ======= */
-      // v = [en, de, cat, grp, hint, isoDate]
-      const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
-      const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-      const saveLocal = (arr) => { localStorage.setItem("vokabeln", JSON.stringify(arr)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
+<div id="modal">
+  <div id="modalContent">
+    <h3>🔍 Vokabel-Details</h3>
+    <div class="modal-grid">
+      <input id="editEn" placeholder="Englisch">
+      <input id="editDe" placeholder="Deutsch">
+    </div>
+    <div class="modal-grid-1">
+      <select id="editCat"></select>
+      <input id="editGroup" placeholder="Gruppe / Variante">
+      <input id="editHint" placeholder="Hinweis">
+    </div>
+    <div class="modal-actions">
+      <button id="saveEdit">💾 Speichern</button>
+      <button id="deleteSingle">🗑️ Löschen</button>
+      <button id="closeModal">❌ Schließen</button>
+    </div>
+  </div>
+</div>
 
-      const keyOf = v => `${(v[0]||"").toLowerCase().trim()}|${(v[1]||"").toLowerCase().trim()}`;
-      const mergeUnique = (a,b)=>{ const m=new Map(); a.map(normalize).forEach(v=>m.set(keyOf(v),v)); b.map(normalize).forEach(v=>{ if(!m.has(keyOf(v))) m.set(keyOf(v),v); }); return [...m.values()]; };
+<div id="toast" class="toast">Gespeichert</div>
+<div id="datasourceStatus">🔄 JSON geladen</div>
 
-      /* ======= State ======= */
-      let list = [];
-      let currentLetter = "Alle";
-      let sortCol = 0, sortDir = 1;
-      const perPage = 15;
-      let currentPage = 1;
+<script>
+(() => {
+  const C = {
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein",
+    Rot:"Verwechslungsgefahr"
+  };
+  const M = {
+    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
+    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
+  };
+  const GITHUB_JSON = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  let list = [];
 
-      /* ======= UI: Kategorie-Selects ======= */
-      function fillCategorySelect(sel, withAll=false){
-        sel.innerHTML = withAll ? "<option value='Alle'>Alle (bunt gemischt)</option>" : "";
-        for(const k in CATEGORY_NAMES){
-          const o=document.createElement("option");
-          o.value=k; o.textContent=CATEGORY_NAMES[k];
-          o.style.background=COLOR_MAP[k]; o.style.color="#fff";
-          sel.appendChild(o);
-        }
-      }
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const toast = m => {const t=$("#toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",1400);};
 
-      /* ======= ABC Leiste ======= */
-      function renderLexica(){
-        const letters = ["Alle", ...Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")];
-        const lx = $("#lexica"); lx.innerHTML="";
-        letters.forEach(l=>{
-          const b=document.createElement("button");
-          b.textContent=l;
-          if(l===currentLetter) b.classList.add("active");
-          b.onclick=()=>{ currentLetter=l; currentPage=1; renderTable(); renderPagination(); };
-          lx.appendChild(b);
-        });
-      }
+  function normalize(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||""];}
 
-      /* ======= Filter + Suche ======= */
-      function getFiltered(){
-        const search = $("#searchInput").value.trim().toLowerCase();
-        const cat = $("#filterCat").value;
-        return list.filter(v=>{
-          const [en,de,catKey,grp,hint] = v;
-          if(currentLetter!=="Alle" && !en.toUpperCase().startsWith(currentLetter)) return false;
-          if(cat!=="Alle" && catKey!==cat) return false;
-          if(search){
-            const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase();
-            if(!hay.includes(search)) return false;
-          }
-          return true;
-        });
-      }
+  async function sync(){
+    const r = await fetch(GITHUB_JSON+"?t="+Date.now(),{cache:"no-store"});
+    const d = await r.json();
+    list = d.map(normalize);
+    localStorage.setItem("vokabeln",JSON.stringify(list));
+    render();
+  }
 
-      /* ======= Rendering Tabelle ======= */
-      function renderTable(){
-        const tb = $("#vokabelTable tbody");
-        let filtered = getFiltered();
+  function render(){
+    const tb=$("#vokabelTable tbody");
+    tb.innerHTML=list.map((v,i)=>`
+      <tr>
+        <td><input type="checkbox" class="rowChk" data-i="${i}"></td>
+        <td>${v[0]}</td>
+        <td>${v[1]}</td>
+        <td><span class="category-chip" style="background:${M[v[2]]}">${C[v[2]]}</span></td>
+        <td><button class="viewBtn" data-i="${i}">🔍</button></td>
+      </tr>`).join("");
 
-        // Sort
-        filtered.sort((a,b)=>{
-          let A=a[sortCol]||"", B=b[sortCol]||"";
-          if(sortCol===2){ // Kategorie per Label sortieren
-            A = CATEGORY_NAMES[A]||A; B = CATEGORY_NAMES[B]||B;
-          }
-          A = A.toString().toLowerCase(); B=B.toString().toLowerCase();
-          if(A<B) return -1*sortDir;
-          if(A>B) return 1*sortDir;
-          return 0;
-        });
+    $$("#vokabelTable .viewBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.i));
+    $$("#vokabelTable .rowChk").forEach(chk=>chk.onchange=checkMultiDelete);
+  }
 
-        // Pagination
-        const pages = Math.max(1, Math.ceil(filtered.length/perPage));
-        if(currentPage>pages) currentPage=pages;
-        const start = (currentPage-1)*perPage;
-        const rows = filtered.slice(start, start+perPage);
+  function checkMultiDelete(){
+    const any=$$("#vokabelTable .rowChk:checked").length>0;
+    $(".multi-delete").style.display=any?"flex":"none";
+  }
 
-        // Fill
-        tb.innerHTML = rows.map((v,i)=>{
-          const [en,de,cat] = v;
-          return `<tr>
-            <td>${en}</td>
-            <td>${de}</td>
-            <td><span class="category-chip" style="background:${COLOR_MAP[cat]}">${CATEGORY_NAMES[cat]}</span></td>
-            <td class="actions">
-              <button data-index="${start+i}" class="viewBtn">🔍</button>
-            </td>
-          </tr>`;
-        }).join("");
+  $("#deleteSelected").onclick=()=>{
+    const sel=$$("#vokabelTable .rowChk:checked").map(c=>+c.dataset.i);
+    if(!sel.length) return;
+    if(!confirm("Diese "+sel.length+" Vokabel(n) wirklich löschen?"))return;
+    list=list.filter((_,i)=>!sel.includes(i));
+    localStorage.setItem("vokabeln",JSON.stringify(list));
+    render(); toast("🗑️ Gelöscht");
+    $(".multi-delete").style.display="none";
+  };
 
-        // Info Footer
-        const upd = localStorage.getItem("vokabeln_updated");
-        $("#infoFooter").textContent = `📚 Gesamt: ${list.length} | 🔎 Gefunden: ${filtered.length} | 🔤 Angezeigt: ${rows.length} | 📄 Seite ${currentPage}/${pages} | Letzte Änderung lokal: ${upd?new Date(upd).toLocaleString("de-DE"):"–"}`;
-        $("#lastChange").textContent = `📅 Letzte Änderung: ${upd?new Date(upd).toLocaleString("de-DE"):"–"}`;
+  let editIndex=-1;
+  function openEdit(i){
+    editIndex=i; const v=list[i]; if(!v)return;
+    $("#editEn").value=v[0];$("#editDe").value=v[1];
+    $("#editCat").value=v[2];$("#editGroup").value=v[3];$("#editHint").value=v[4];
+    $("#modal").style.display="flex";
+  }
+  $("#saveEdit").onclick=()=>{
+    if(editIndex<0)return;
+    const v=list[editIndex];
+    v[0]=$("#editEn").value.trim();
+    v[1]=$("#editDe").value.trim();
+    v[2]=$("#editCat").value;
+    v[3]=$("#editGroup").value.trim();
+    v[4]=$("#editHint").value.trim();
+    localStorage.setItem("vokabeln",JSON.stringify(list));
+    render(); toast("💾 Gespeichert");
+    $("#modal").style.display="none";
+  };
+  $("#deleteSingle").onclick=()=>{
+    if(editIndex<0)return;
+    if(!confirm("Diese Vokabel wirklich löschen?"))return;
+    list.splice(editIndex,1);
+    localStorage.setItem("vokabeln",JSON.stringify(list));
+    render(); toast("🗑️ Gelöscht");
+    $("#modal").style.display="none";
+  };
+  $("#closeModal").onclick=()=>$("#modal").style.display="none";
 
-        // Bind view/edit
-        $$("#vokabelTable .viewBtn").forEach(b=>{
-          b.onclick=()=>openEdit(parseInt(b.dataset.index,10));
-        });
+  $("#addBtn").onclick=()=>{
+    const en=$("#newEn").value.trim(),de=$("#newDe").value.trim(),cat=$("#newCat").value,grp=$("#newGroup").value.trim(),hint=$("#newHint").value.trim();
+    if(!en||!de)return alert("Bitte Englisch und Deutsch eingeben");
+    list.push([en,de,cat,grp,hint]);
+    localStorage.setItem("vokabeln",JSON.stringify(list));
+    render(); toast("➕ Hinzugefügt");
+    $("#newEn").value=$("#newDe").value=$("#newGroup").value=$("#newHint").value="";
+  };
 
-        // Headers sort state
-        $$("th[data-col]").forEach(th=>th.classList.remove("sort-asc","sort-desc"));
-        const activeTh = document.querySelector(`th[data-col="${sortCol}"]`);
-        if(activeTh) activeTh.classList.add(sortDir===1?"sort-asc":"sort-desc");
-      }
+  function fillCats(sel,withAll=false){
+    sel.innerHTML=withAll?"<option value='Alle'>Alle</option>":"";
+    for(const k in C){
+      const o=document.createElement("option");
+      o.value=k;o.textContent=C[k];o.style.background=M[k];o.style.color="#fff";
+      sel.appendChild(o);
+    }
+  }
 
-      function renderPagination(){
-        const filtered = getFiltered();
-        const pages = Math.max(1, Math.ceil(filtered.length/perPage));
-        const pag = $("#pagination"); pag.innerHTML="";
-        for(let p=1;p<=pages;p++){
-          const b=document.createElement("button");
-          b.textContent = p;
-          if(p===currentPage) b.classList.add("active");
-          b.onclick=()=>{ currentPage=p; renderTable(); };
-          pag.appendChild(b);
-        }
-      }
-
-      /* ======= Zuletzt hinzugefügt ======= */
-      function renderLastAdded(){
-        const box=$("#lastAdded");
-        if(!list.length){ box.innerHTML="–"; return; }
-        const last = [...list].sort((a,b)=>new Date(b[5])-new Date(a[5])).slice(0,5);
-        box.innerHTML = last.map(v=>{
-          const [en,de,cat] = v;
-          const bg = COLOR_MAP[cat] || "#eee";
-          const fg = "#000"; // bessere Lesbarkeit (dein Wunsch)
-          return `<div class="last-item">
-            <span class="last-term">${en}</span> – ${de}
-            <span class="last-cat" style="background:${bg}; color:${fg}">${CATEGORY_NAMES[cat]}</span>
-          </div>`;
-        }).join("");
-      }
-
-      /* ======= Modal ======= */
-      function fillCats(sel){ sel.innerHTML=""; for(const k in CATEGORY_NAMES){ const o=document.createElement("option"); o.value=k; o.textContent=CATEGORY_NAMES[k]; o.style.background=COLOR_MAP[k]; o.style.color="#fff"; sel.appendChild(o);} }
-      let editIndex = -1;
-      function openEdit(i){
-        editIndex = i;
-        const v = list[i];
-        if(!v) return;
-        $("#editEn").value = v[0];
-        $("#editDe").value = v[1];
-        $("#editCat").value = v[2];
-        $("#editGroup").value = v[3]||"";
-        $("#editHint").value = v[4]||"";
-        $("#editMeta").textContent = `Erstellt / geändert: ${v[5] ? new Date(v[5]).toLocaleString("de-DE") : "–"}`;
-        $("#modal").style.display="flex";
-      }
-      $("#saveEdit").onclick = ()=>{
-        if(editIndex<0) return;
-        const v = list[editIndex];
-        v[0] = $("#editEn").value.trim();
-        v[1] = $("#editDe").value.trim();
-        v[2] = $("#editCat").value;
-        v[3] = $("#editGroup").value.trim();
-        v[4] = $("#editHint").value.trim();
-        v[5] = new Date().toISOString();
-        saveLocal(list);
-        renderTable(); renderLastAdded();
-        $("#modal").style.display="none";
-        toast("💾 Gespeichert");
-      };
-      $("#closeModal").onclick = ()=> $("#modal").style.display="none";
-
-      /* ======= Sync / Download ======= */
-      const statusEl = $("#datasourceStatus");
-      async function syncFromGitHub(){
-        try{
-          const r = await fetch(GITHUB_JSON+"?t="+Date.now(), {cache:"no-store"});
-          if(!r.ok) throw new Error("http "+r.status);
-          const remote = await r.json();
-          const local  = loadLocal();
-          const merged = mergeUnique(remote, local);
-          list = merged;
-          saveLocal(list);
-          statusEl.textContent = "🔄 JSON + lokale Ergänzungen (gemergt)";
-          $("#syncInfo").textContent = `Quelle: GitHub | Letzter Abgleich: ${new Date().toLocaleString("de-DE")}`;
-          renderTable(); renderPagination(); renderLastAdded();
-        }catch(e){
-          const local = loadLocal();
-          if(local.length){
-            list = local;
-            statusEl.textContent = "💾 Lokaler Speicher (Offline)";
-            $("#syncInfo").textContent = `Quelle: Lokal | Letzter Abgleich: ${new Date().toLocaleString("de-DE")}`;
-            renderTable(); renderPagination(); renderLastAdded();
-          }else{
-            // kleine Defaultliste, falls weder GitHub noch lokal
-            list = [
-              ["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"],
-              ["file","Feile","Gelb","","","2025-01-01T00:00:00Z"],
-              ["drill","Bohrer","Pink","","","2025-01-01T00:00:00Z"]
-            ];
-            saveLocal(list);
-            statusEl.textContent = "✨ Standardliste verwendet";
-            $("#syncInfo").textContent = `Quelle: Standard | Letzter Abgleich: ${new Date().toLocaleString("de-DE")}`;
-            renderTable(); renderPagination(); renderLastAdded();
-          }
-        }
-      }
-
-      $("#syncBtn").onclick = syncFromGitHub;
-      $("#downloadBtn").onclick = ()=>{
-        const blob = new Blob([JSON.stringify(list,null,2)], {type:"application/json"});
-        const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
-        a.download = "vokabeln.json"; a.click();
-      };
-
-      /* ======= Add new ======= */
-      $("#addBtn").onclick = ()=>{
-        const en = $("#newEn").value.trim();
-        const de = $("#newDe").value.trim();
-        const cat = $("#newCat").value;
-        const grp = $("#newGroup").value.trim();
-        const hint= $("#newHint").value.trim();
-        if(!en || !de || !cat){ alert("Bitte Englisch, Deutsch & Kategorie ausfüllen."); return; }
-        const item = normalize([en,de,cat,grp,hint,new Date().toISOString()]);
-        // Duplikate vermeiden
-        if(list.some(v=>keyOf(v)===keyOf(item))){
-          alert("Diese Vokabel existiert bereits."); return;
-        }
-        list.push(item);
-        saveLocal(list);
-        renderTable(); renderPagination(); renderLastAdded();
-        $("#newEn").value = $("#newDe").value = $("#newGroup").value = $("#newHint").value = "";
-        toast("➕ Hinzugefügt");
-      };
-
-      /* ======= Sort headers ======= */
-      $$("th[data-col]").forEach(th=>{
-        th.onclick=()=>{
-          const c=parseInt(th.dataset.col,10);
-          sortDir = (sortCol===c) ? -sortDir : 1;
-          sortCol = c;
-          renderTable();
-        };
-      });
-
-      /* ======= Reset filter ======= */
-      $("#resetFilter").onclick = ()=>{
-        $("#filterCat").value="Alle";
-        $("#searchInput").value="";
-        currentLetter="Alle";
-        renderLexica();
-        currentPage=1;
-        renderTable();
-        renderPagination();
-      };
-
-      /* ======= INIT ======= */
-      fillCategorySelect($("#filterCat"), true);
-      fillCategorySelect($("#newCat"));
-      fillCategorySelect($("#editCat"));
-      renderLexica();
-
-      // erste Synchronisation
-      (async ()=>{
-        await syncFromGitHub();
-      })();
-
-      // Live-Suche
-      $("#searchInput").addEventListener("input", ()=>{
-        currentPage=1; renderTable(); renderPagination();
-      });
-
-    })();
-  </script>
+  fillCats($("#filterCat"),true);
+  fillCats($("#newCat"));
+  fillCats($("#editCat"));
+  sync();
+})();
+</script>
 </body>
 </html>
