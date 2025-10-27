@@ -2,153 +2,172 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🎯 Vokabeltrainer</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vokabeltrainer – Beeferino</title>
 <style>
-:root {
-  --bg: #eef3f9;
-  --card: rgba(255,255,255,.75);
-  --border: #dee6f2;
-  --text: #222;
-  --muted: #5b6b81;
-  --primary: #1e6ed8;
-  --primary-2: #2c7ef0;
-  --ring: rgba(30,110,216,.25);
-  --shadow: 0 8px 24px rgba(16,24,40,.08), 0 2px 6px rgba(16,24,40,.06);
-  --blur: blur(10px);
+:root{
+  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
+  --glass:rgba(255,255,255,.88);
+  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
 }
-body {
-  margin:0; padding:22px;
-  font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  color:var(--text);
-  background: radial-gradient(1200px 700px at 10% -10%, #dbe9ff 0%, transparent 60%),
-              radial-gradient(900px 500px at 110% 0%, #fff4e2 0%, transparent 55%),
-              linear-gradient(180deg, #f7f9fc 0%, #f0f4fa 100%);
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  color:var(--ink)
 }
-.app {
-  max-width:900px; margin:0 auto;
-  background:var(--card);
-  backdrop-filter:var(--blur);
-  border:1px solid var(--border);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  padding:22px;
+.app{
+  max-width:960px;margin:32px auto;
+  padding:22px;background:var(--glass);
+  border-radius:22px;
+  box-shadow:0 10px 32px rgba(0,0,0,.10);
+  backdrop-filter:blur(8px)
 }
-h1 {
-  text-align:center; font-weight:800; font-size:1.9rem;
+h1{
+  margin:0;text-align:center;
+  font-size:2rem;font-weight:800;color:#1e3a8a
 }
-.subline {
-  margin:8px auto 18px; width:92%; height:3px;
-  background:linear-gradient(90deg,var(--primary),var(--primary-2));
-  border-radius:3px;
+.hr{
+  width:160px;height:4px;background:var(--blue);
+  border-radius:4px;margin:10px auto 20px
 }
-.controls {
-  display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
-  background:#fff; border:1px solid var(--border);
-  border-radius:12px; padding:12px;
+.controls,.functions{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:12px
 }
-.functions {
-  display:flex; justify-content:center; flex-wrap:wrap; gap:14px; margin:18px 0;
+.controls label{display:flex;align-items:center;gap:6px}
+select{
+  padding:8px 12px;border:1px solid #d1d5db;
+  border-radius:10px;font-size:1rem
 }
-.kachel {
-  background:var(--primary); color:#fff; font-weight:700; cursor:pointer;
-  padding:14px 22px; border-radius:14px; box-shadow:var(--shadow);
-  transition:.2s; user-select:none;
+.kachel{
+  flex:1 1 240px;text-align:center;
+  background:var(--blue);color:#fff;
+  padding:14px 18px;border-radius:14px;
+  font-weight:700;cursor:pointer;
+  box-shadow:0 6px 16px rgba(37,99,235,.25);
+  transition:transform .15s,background .15s
 }
-.kachel:hover { background:var(--primary-2); transform:translateY(-2px); }
-.notice {
-  background:rgba(255,255,255,.7);
-  border:1px solid var(--border);
-  border-radius:14px;
-  box-shadow:0 4px 14px rgba(16,24,40,.05);
-  padding:10px 14px;
-  text-align:center;
-  color:var(--muted);
-  font-size:.9rem;
-  margin-bottom:18px;
+.kachel small{font-weight:600;opacity:.9}
+.kachel:hover{transform:translateY(-1px);background:var(--blue2)}
+.progress{text-align:center;font-weight:700;margin:8px 0 12px;min-height:1.2em}
+#stage{
+  display:none;margin-top:14px;padding:28px;border-radius:20px;
+  background:rgba(255,255,255,.95);
+  box-shadow:inset 0 0 10px rgba(0,0,0,.05);
+  text-align:center
 }
-.notice b { color:var(--primary); }
-.feedback-settings {
-  display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;
-  background:#fff; border:1px solid var(--border);
-  border-radius:12px; padding:12px;
+.chip{display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:10px}
+.word{font-size:1.9rem;font-weight:800;margin:8px 0 6px}
+.offer{font-size:1.1rem;color:#1f2937;margin:6px 0 12px;min-height:1.3em}
+.btnrow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.btn{
+  border:none;border-radius:12px;padding:10px 20px;
+  font-weight:700;font-size:1rem;cursor:pointer
 }
-button {
-  font:inherit; border:none; border-radius:10px;
-  padding:10px 14px; background:var(--primary); color:#fff;
-  font-weight:700; cursor:pointer;
+.ok{background:var(--ok);color:#fff}
+.bad{background:var(--bad);color:#fff}
+.skip{background:var(--muted);color:#fff}
+.inprow{
+  display:none;gap:8px;justify-content:center;margin-top:12px
 }
-button:hover { background:var(--primary-2); }
-.linkbtn {
-  display:inline-block; padding:10px 16px; background:var(--primary);
-  color:#fff; border-radius:10px; text-decoration:none; font-weight:700;
+.inprow input{
+  width:60%;min-width:260px;padding:10px 14px;
+  border:1px solid #d1d5db;border-radius:12px;font-size:1rem
 }
-.linkbtn:hover { background:var(--primary-2); }
-.card {
-  text-align:center; background:#fff; border:1px solid var(--border);
-  border-radius:18px; padding:20px; box-shadow:var(--shadow);
-  backdrop-filter:var(--blur); margin-top:20px;
+.inprow button{
+  background:var(--blue);color:#fff;border:none;
+  border-radius:12px;padding:10px 16px;font-weight:700
 }
-.footer {
-  text-align:center; margin-top:22px; color:var(--muted);
-  font-size:.9rem;
+.flash-correct{animation:good .4s}
+.flash-wrong{animation:bad .4s}
+@keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
+@keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
+.footer-actions{
+  display:flex;justify-content:space-between;
+  gap:12px;margin-top:24px
 }
-.footer-buttons {
-  display:flex; justify-content:space-between;
-  align-items:center; margin-top:12px;
+.footer-actions a,.footer-actions button{
+  background:#eaf0ff;border:1px solid #dbe3ff;
+  color:#1f2937;padding:10px 14px;border-radius:12px;
+  font-weight:700;cursor:pointer;text-decoration:none
 }
-#datasourceStatus {
-  position:fixed; right:12px; bottom:10px; font-size:.85rem;
-  opacity:.85; color:#36475e; background:#fff;
-  border:1px solid var(--border); border-radius:10px; padding:6px 10px;
-  box-shadow:0 4px 12px rgba(16,24,40,.08);
+.feedback-toggle{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;margin-bottom:10px
 }
+
+/* --- Stylischer Trenner & Section --- */
+.trenner{
+  height:3px;width:60%;margin:50px auto 20px;
+  background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
+  border-radius:2px;animation:shine 5s linear infinite
+}
+@keyframes shine{
+  0%{background-position:0 0}
+  100%{background-position:400px 0}
+}
+details.recent-section{
+  background:rgba(255,255,255,.9);
+  border-radius:20px;padding:22px;
+  margin-top:10px;text-align:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.08);
+  backdrop-filter:blur(12px);
+  transition:all .3s ease;
+}
+details.recent-section[open]{
+  background:rgba(255,255,255,1);
+  box-shadow:0 10px 32px rgba(0,0,0,.12);
+}
+details.recent-section summary{
+  font-weight:800;font-size:1.15rem;color:#1e3a8a;
+  cursor:pointer;list-style:none;
+  letter-spacing:.5px;text-transform:uppercase;
+  transition:color .3s ease;
+}
+details.recent-section summary:hover{color:#2563eb}
+#recent{
+  margin-top:18px;text-align:center;line-height:1.8;
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:12px;transition:opacity .4s ease;
+}
+.recent-item{
+  display:inline-block;min-width:160px;
+  border-radius:14px;padding:12px 18px;
+  font-weight:700;color:#111827;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  transition:transform .25s ease,box-shadow .25s ease;
+}
+.recent-item:hover{
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
+}
+.recent-item small{
+  display:block;font-weight:500;font-size:.85rem;
+  margin-top:4px;opacity:.8
+}
+.foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
+@media (hover:none){.kachel:active{transform:scale(.98)}}
 </style>
 </head>
 <body>
 <div class="app">
   <h1>🎯 Vokabeltrainer</h1>
-  <div class="subline"></div>
+  <div class="hr"></div>
 
   <div class="controls">
     <label>Kategorie:
-      <select id="category">
-        <option value="Alle">Alle (bunt gemischt)</option>
-        <option value="Gelb" style="background-color:#F4D03F;color:#fff;">Grundwerkzeuge Metallverarbeitung</option>
-        <option value="Pink" style="background-color:#E91E63;color:#fff;">Werkzeugkasten Mechaniker</option>
-        <option value="Blau" style="background-color:#1976D2;color:#fff;">Blech- / Kunststoffarbeiten</option>
-        <option value="Gruen" style="background-color:#1E8449;color:#fff;">Drehen / Fräsen</option>
-        <option value="HellesPink" style="background-color:#F54927;color:#fff;">Hydraulik / Pneumatik</option>
-        <option value="Orange" style="background-color:#E67E22;color:#fff;">Elektrotechnik</option>
-        <option value="Dunkelgruen" style="background-color:#117A65;color:#fff;">Fluggerätemechanik allgemein</option>
-        <option value="Rot" style="background-color:#C0392B;color:#fff;">Verwechslungsgefahr</option>
-      </select>
+      <select id="selCat"><option value="Alle">Alle (bunt gemischt)</option></select>
     </label>
     <label>Modus:
-      <select id="mode">
+      <select id="selMode">
+        <option value="mixed">Gemischt</option>
         <option value="toGerman">Englisch → Deutsch</option>
         <option value="toEnglish">Deutsch → Englisch</option>
-        <option value="mixed">Gemischt</option>
       </select>
     </label>
-  </div>
-
-  <div class="functions">
-    <div class="kachel" id="learnBtn">✍️ Vokabel-Abfrage starten</div>
-    <div class="kachel" id="last30Btn">📚 Letzte 30 Vokabeln</div>
-    <div class="kachel" id="cardsBtn">🧠 Karteikarten starten</div>
-  </div>
-
-  <div class="notice">
-    ⚠️ Bevor eine neue Runde gestartet werden kann, bitte zuerst auf <b>„Neustart“</b> klicken.<br>
-    So wird sichergestellt, dass alle Spielelemente korrekt geladen werden.
-  </div>
-
-  <div class="feedback-settings">
-    <label><input type="checkbox" id="feedbackToggle" checked> Sofortiges Feedback anzeigen</label>
-    <label>Toast-Dauer:
-      <select id="toastTime">
+    <label>Delay:
+      <select id="selDelay">
         <option value="1000">1 s</option>
         <option value="3000" selected>3 s</option>
         <option value="5000">5 s</option>
@@ -156,45 +175,138 @@ button:hover { background:var(--primary-2); }
     </label>
   </div>
 
-  <div class="progress" id="progress" style="display:none"></div>
-  <div id="trainer" style="display:none;">
-    <div class="card" id="card">
-      <div id="word" class="word"></div>
-      <input id="answerInput" type="text" placeholder="Übersetzung eingeben..." style="display:none;">
-      <div id="feedback" class="feedback"></div>
-      <div id="cardButtons">
-        <button id="rightBtn" style="display:none;">Richtig</button>
-        <button id="wrongBtn" style="display:none;">Falsch</button>
-        <button id="skipBtn" style="display:none;">Überspringen</button>
-        <button id="enterBtn" style="display:none;">Eingabe</button>
-      </div>
-    </div>
+  <div class="feedback-toggle">
+    <input type="checkbox" id="chkFeedback" checked>
+    <label for="chkFeedback">Feedback anzeigen</label>
   </div>
 
-  <div id="result" style="display:none;" class="card"></div>
-
-  <div class="footer">
-    <div class="footer-buttons">
-      <a href="vokabeln.html" class="linkbtn">📘 Vokabeln</a>
-      <button id="restartBtn">🔄 Neustart</button>
-    </div>
-    <div id="lastAddedBox" style="margin-top:18px;">
-      <h3 style="text-align:center;">🆕 Zuletzt hinzugefügt</h3>
-      <div id="lastAddedList" style="text-align:center;">
-        <div><b>counterbore</b> – Entgrater <span style="color:#E67E22">(Elektrotechnik)</span></div>
-        <div><b>tap wrench</b> – Windeisen <span style="color:#1E8449">(Drehen / Fräsen)</span></div>
-        <div><b>screw</b> – Schraube <span style="color:#F4D03F">(Grundwerkzeuge Metallverarbeitung)</span></div>
-        <div><b>square file</b> – Vierkantefeile <span style="color:#F4D03F">(Grundwerkzeuge Metallverarbeitung)</span></div>
-        <div><b>vice</b> – Schraubstock <span style="color:#E91E63">(Werkzeugkasten Mechaniker)</span></div>
-      </div>
-    </div>
-    <br>
-    <small>© 2025 @Beefi</small>
+  <div class="functions">
+    <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
+    <div id="btnLast30" class="kachel">📗 Letzte 30 Vokabeln</div>
+    <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
   </div>
+
+  <div id="progress" class="progress"></div>
+
+  <section id="stage">
+    <div id="chip" class="chip">Kategorie</div>
+    <div id="q" class="word"></div>
+    <div id="offer" class="offer"></div>
+
+    <div id="rowButtons" class="btnrow">
+      <button id="btnRight" class="btn ok">Richtig</button>
+      <button id="btnDec"   class="btn bad">Täuschung erkannt</button>
+      <button id="btnSkip"  class="btn skip">Überspringen</button>
+    </div>
+
+    <div id="rowInput" class="inprow">
+      <input id="inp" type="text" placeholder="Übersetzung eingeben …">
+      <button id="btnSub">Eingabe</button>
+    </div>
+  </section>
+
+  <div class="footer-actions">
+    <a href="vokabeln.html">📂 Vokabeln</a>
+    <button onclick="location.reload()">🔄 Neustart</button>
+  </div>
+
+  <div class="trenner"></div>
+
+  <details class="recent-section">
+    <summary>Zuletzt hinzugefügt</summary>
+    <div id="recent">–</div>
+  </details>
+
+  <div class="foot">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
 </div>
-<div id="datasourceStatus">🌐 Datenquelle: GitHub (Online)</div>
+
 <script>
-/* Dein bestehender JS-Code bleibt hier unverändert */
+(function(){
+const CATS={
+  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
+  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
+  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
+  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
+  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
+  Orange:["Elektrotechnik","#E67E22","#fff"],
+  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
+  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+};
+const el=id=>document.getElementById(id);
+const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
+const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
+const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
+const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
+const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
+
+for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];selCat.appendChild(o);}
+
+let data=[], round=[], i=0, game="learn", delay=3000, trap=false, correct="";
+let errorsList=[];
+
+async function loadData(){
+  try{
+    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+    data=await r.json();localStorage.setItem("vokabeln",JSON.stringify(data));
+  }catch{data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+  const last=data.slice(-5).reverse();
+  if(!last.length){recent.textContent="–";return;}
+  recent.innerHTML=last.map(v=>{
+    const c=CATS[v[2]]||["","#ccc","#000"];
+    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
+      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
+    </div>`;
+  }).join("");
+}
+
+function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
+function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
+function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
+function showStage(show){stage.style.display=show?"block":"none";}
+function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
+function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
+
+function next(){
+  if(i>=round.length){
+    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
+    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
+  }
+  delay=parseInt(selDelay.value,10);
+  const [en,de,cat]=round[i];
+  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
+  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
+  const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
+  const question=askEN?en:de;
+  const answer=askEN?de:en;
+  correct=answer;
+  q.textContent=question;
+  if(game==="cards"){
+    trap=false;
+    if(Math.random()<0.3){
+      const pool=data.map(v=>askEN?v[1]:v[0]);
+      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
+      offer.textContent="💡 "+wrong;trap=true;
+    }else offer.textContent="💡 "+answer;
+    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
+  }else{
+    offer.textContent="";trap=false;
+    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
+    rowInput.style.display="flex";inp.value="";inp.focus();
+  }
+  setProg();showStage(true);
+}
+
+btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
+btnDec.onclick=()=>{if(game!=="cards")return;if(trap){rowInput.style.display="flex";inp.focus();}else{errorsList.push(round[i]);flash(false);}};
+btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
+btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
+inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
+
+btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
+btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
+btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
+loadData();
+})();
 </script>
 </body>
 </html>
