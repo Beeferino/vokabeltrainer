@@ -2,319 +2,260 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vokabeln – Beeferino</title>
 <style>
-:root{--blue:#2563eb;--ink:#0f172a;--glass:rgba(255,255,255,.88)}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
-.app{max-width:1100px;margin:32px auto;padding:22px;background:var(--glass);border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)}
-h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin-bottom:12px}
-h2{color:#1e3a8a;margin:18px 0 6px}
-.controls,.lexica{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
-select,input,button{font-family:inherit;font-size:1rem;border-radius:10px;padding:8px 10px;border:1px solid #d1d5db}
-button{cursor:pointer;font-weight:700}
-.lexica{margin:8px 0 14px}
-.lexica button{border:1px solid #cfe3ff;background:#f3f7ff;padding:6px 10px;border-radius:999px}
-.lexica button.active{background:#2563eb;color:#fff;border-color:#2563eb}
-.tablewrap{margin-top:8px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:8px 10px;border-bottom:1px solid #e5e7eb;text-align:left}
-th{background:#eef4ff;user-select:none;cursor:pointer}
-tr:hover{background:#f7fbff}
-.category-chip{display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700}
-.actions{display:flex;gap:6px}
-.pagination{display:flex;justify-content:center;gap:6px;margin-top:10px}
-.pagination button{border:1px solid #cfd6e4;background:#ecf3ff;padding:6px 10px;border-radius:8px}
-.pagination button.active{background:#2563eb;color:#fff;border-color:#2563eb}
-.divider{height:3px;width:60%;margin:24px auto;background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);border-radius:2px;animation:shine 5s linear infinite}
-@keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
-.btnLink{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:10px 14px;border-radius:12px;font-weight:700;text-decoration:none}
-#datasourceStatus{text-align:center;margin-top:8px;color:#6b7280;font-size:.92rem}
+:root{
+  --blue:#2563eb;--ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;
+  --glass:rgba(255,255,255,0.85)
+}
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  margin:0;padding:20px;color:#111;
+}
+.app{
+  max-width:960px;margin:0 auto;
+  background:var(--glass);padding:22px;
+  border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.1);
+  backdrop-filter:blur(8px)
+}
+h1{text-align:center;color:#1e3a8a;font-weight:800;margin:0}
+.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
 
-/* Modals */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:10}
-.modal .box{background:#fff;max-width:520px;width:92%;padding:20px;border-radius:16px;box-shadow:0 10px 32px rgba(0,0,0,.25)}
-.box h3{margin:0 0 10px;color:#1e3a8a}
-.box .row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
-.box input,.box select{flex:1}
-.box .btns{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
-.pulse{animation:pulseGreen 1.2s ease}
-@keyframes pulseGreen{
-  0%{box-shadow:0 0 0 0 rgba(34,197,94,0.7)}
-  70%{box-shadow:0 0 0 18px rgba(34,197,94,0)}
-  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px
+}
+button{
+  border:none;padding:10px 16px;border-radius:12px;cursor:pointer;
+  font-weight:700;font-size:1rem;transition:all .2s ease;
+}
+.addBtn{
+  background:linear-gradient(90deg,#22c55e,#16a34a);
+  color:#fff;animation:pulse 2s infinite alternate;
+}
+@keyframes pulse{from{box-shadow:0 0 0 rgba(34,197,94,0)}to{box-shadow:0 0 12px rgba(34,197,94,.5)}}
+.syncBtn{
+  background:linear-gradient(90deg,#3b82f6,#2563eb);color:#fff
+}
+.syncBtn:hover{transform:scale(1.02)}
+input,select{
+  padding:8px 12px;border:1px solid #ccc;border-radius:10px;font-size:1rem
 }
 
-/* Recent block */
-details.recent{background:#fff;border-radius:16px;padding:16px;box-shadow:0 8px 24px rgba(0,0,0,.08)}
-details.recent summary{font-weight:800;cursor:pointer;color:#1e3a8a}
-#recent{margin-top:12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
-.recent-item{min-width:160px;border-radius:14px;padding:12px 18px;color:#111827;font-weight:700;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.recent-item small{display:block;font-weight:600;font-size:.85rem;margin-top:4px;opacity:.9}
+table{
+  width:100%;border-collapse:collapse;margin-top:14px;
+}
+th,td{
+  text-align:left;padding:8px 10px;border-bottom:1px solid #eee;
+}
+th{background:#f1f5f9;}
+.categoryTag{
+  font-weight:700;padding:6px 12px;border-radius:12px;color:#fff;display:inline-block
+}
 
-/* Mobile helpers */
-@media (max-width:640px){.hide-sm{display:none}}
+.actions button{
+  padding:6px 10px;font-size:.9rem;margin-right:6px
+}
+
+footer{
+  text-align:center;margin-top:22px;color:#6b7280;font-size:.9rem
+}
+
+/* Pop-up */
+#popupOverlay{
+  position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999
+}
+#popup{
+  background:#fff;border-radius:18px;padding:22px;max-width:420px;width:90%;
+  box-shadow:0 10px 28px rgba(0,0,0,.3);text-align:center;
+}
+#popup h2{margin-top:0;color:#1e3a8a}
+#popup input,#popup select{
+  width:100%;margin:6px 0;padding:10px;border-radius:10px;border:1px solid #ccc;font-size:1rem
+}
+.popupBtns{display:flex;justify-content:space-between;margin-top:14px}
+.popupBtns button{flex:1;margin:0 4px}
+
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>📘 Vokabelübersicht</h1>
+  <h1>📚 Vokabelverwaltung</h1>
+  <div class="hr"></div>
 
-  <div id="lexica" class="lexica"></div>
-
-  <div class="controls">
-    <label>Kategorie:
-      <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
-    </label>
-    <input id="search" type="text" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)">
-    <button id="btnReset">🔄 Zurücksetzen</button>
-    <button id="btnNew" style="margin-left:auto;background:#2563eb;color:#fff;border:none;border-radius:12px;padding:8px 14px">➕ Neue Vokabel</button>
-  </div>
-
-  <div class="tablewrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th class="hide-sm" style="width:36px"><input type="checkbox" id="chkAll"></th>
-          <th data-key="en">Englisch</th>
-          <th data-key="de">Deutsch</th>
-          <th data-key="cat">Kategorie</th>
-          <th style="width:100px">Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div class="pagination" id="pager"></div>
-    <div id="info" style="text-align:center;margin-top:6px;color:#555"></div>
-    <div style="text-align:center;margin-top:8px">
-      <button id="btnDelSel" style="background:#ef4444;color:#fff;border:none;border-radius:12px;padding:8px 12px">🗑️ Ausgewählte löschen</button>
+  <div class="topbar">
+    <div>
+      🔠 Sortierung:
+      <select id="sortMode" onchange="sortVokabeln()">
+        <option value="az">A → Z</option>
+        <option value="za">Z → A</option>
+      </select>
     </div>
+    <input id="search" placeholder="🔍 Suche oder Filter …" oninput="searchVokabeln()">
+    <button class="addBtn" onclick="openPopup()">+ Neue Vokabel</button>
   </div>
 
-  <div class="divider"></div>
+  <table id="vokabelTable">
+    <thead>
+      <tr><th><input type="checkbox" id="checkAll" onchange="toggleAll(this)"></th><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Aktionen</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 
-  <details class="recent">
-    <summary>🧾 Zuletzt hinzugefügt</summary>
-    <div id="recent">–</div>
-  </details>
+  <div style="margin-top:10px;text-align:right">
+    <button onclick="deleteSelected()" style="background:var(--bad);color:#fff">🗑️ Mehrfach löschen</button>
+  </div>
 
-  <footer>
-    <a class="btnLink" href="index.html">⬅️ Zurück zum Trainer</a>
-    <button id="btnPush" class="btnLink">📤 In Datenbank eintragen</button>
-    <div style="flex:1;text-align:right;color:#6b7280">© 2025 Beeferino</div>
-  </footer>
+  <div style="text-align:center;margin-top:18px">
+    <button id="btnSync" class="syncBtn" onclick="uploadJSON()">📤 In Datenbank eintragen</button>
+  </div>
 
-  <div id="datasourceStatus">🔄 Quelle: GitHub + lokal gemergt</div>
+  <footer>© 2025 Beeferino • Datenquelle: GitHub (Online)</footer>
 </div>
 
-<!-- Modal Details -->
-<div id="modal" class="modal">
-  <div class="box">
-    <h3>🔍 Vokabel-Details</h3>
-    <div class="row"><input id="eEn" placeholder="Englisch"><input id="eDe" placeholder="Deutsch"></div>
-    <div class="row"><select id="eCat"></select></div>
-    <div class="row"><input id="eGrp" placeholder="Gruppe / Variante"><input id="eHint" placeholder="Hinweis"></div>
-    <div class="btns">
-      <button id="btnDelOne" style="background:#ef4444;color:#fff;border:none;border-radius:10px;padding:8px 12px">🗑️ Löschen</button>
-      <button id="btnSave" style="background:#2563eb;color:#fff;border:none;border-radius:10px;padding:8px 12px">💾 Speichern</button>
-      <button id="btnClose">❌ Schließen</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Neu -->
-<div id="modalNew" class="modal">
-  <div id="boxNew" class="box">
-    <h3>➕ Neue Vokabel</h3>
-    <div class="row"><input id="nEn" placeholder="Englisch"><input id="nDe" placeholder="Deutsch"></div>
-    <div class="row"><select id="nCat"></select></div>
-    <div class="row"><input id="nGrp" placeholder="Gruppe / Variante"><input id="nHint" placeholder="Hinweis"></div>
-    <div class="btns">
-      <button id="btnSaveNew" style="background:#16a34a;color:#fff;border:none;border-radius:10px;padding:8px 12px">✅ Speichern</button>
-      <button id="btnCloseNew">❌ Abbrechen</button>
+<!-- Pop-up für neue Vokabel -->
+<div id="popupOverlay">
+  <div id="popup">
+    <h2>➕ Neue Vokabel</h2>
+    <input id="enInput" placeholder="Englisch">
+    <input id="deInput" placeholder="Deutsch">
+    <select id="catInput">
+      <option value="Grundwerkzeuge Metallverarbeitung">Grundwerkzeuge Metallverarbeitung</option>
+      <option value="Werkzeugkasten Mechaniker">Werkzeugkasten Mechaniker</option>
+      <option value="Blech- / Kunststoffarbeiten">Blech- / Kunststoffarbeiten</option>
+      <option value="Drehen / Fräsen">Drehen / Fräsen</option>
+      <option value="Hydraulik / Pneumatik">Hydraulik / Pneumatik</option>
+      <option value="Elektrotechnik">Elektrotechnik</option>
+      <option value="Fluggerätemechanik allgemein">Fluggerätemechanik allgemein</option>
+      <option value="Verwechslungsgefahr">Verwechslungsgefahr</option>
+    </select>
+    <div class="popupBtns">
+      <button onclick="saveVokabel()" style="background:var(--ok);color:#fff">Speichern</button>
+      <button onclick="closePopup()" style="background:var(--muted);color:#fff">Abbrechen</button>
     </div>
   </div>
 </div>
 
 <script>
-/* Kategorien */
 const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+  "Grundwerkzeuge Metallverarbeitung":"#F4D03F",
+  "Werkzeugkasten Mechaniker":"#E91E63",
+  "Blech- / Kunststoffarbeiten":"#1976D2",
+  "Drehen / Fräsen":"#1E8449",
+  "Hydraulik / Pneumatik":"#F54927",
+  "Elektrotechnik":"#E67E22",
+  "Fluggerätemechanik allgemein":"#117A65",
+  "Verwechslungsgefahr":"#C0392B"
 };
-const el=id=>document.getElementById(id);const $=q=>document.querySelector(q);const $$=q=>[...document.querySelectorAll(q)];
-let list=[],sortKey="en",sortDir=1,letter="Alle",page=1,perPage=15,editIndex=-1,ghSha=null;
+let vokabeln=[];
 
-/* GitHub I/O Fix */
-async function ghGet(){
+// Daten laden
+(async function(){
   try{
-    const r=await fetch("https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json",{cache:"no-store"});
-    if(!r.ok)throw new Error("get fail");
-    const j=await r.json();ghSha=j.sha;
-    const content=decodeURIComponent(escape(atob(j.content)));return JSON.parse(content);
-  }catch(e){console.warn("GitHub fetch fail, offline Modus",e);return [];}
-}
-async function ghPut(msg="Update"){
-  const token=localStorage.getItem("gh_token");
-  if(!token){alert("Kein GitHub Token gefunden");return false;}
-  const body=JSON.stringify(list,null,2);
-  const res=await fetch("https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json",{
-    method:"PUT",
-    headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
-    body:JSON.stringify({message:msg,content:btoa(unescape(encodeURIComponent(body))),sha:ghSha})
-  });
-  if(!res.ok){alert("Fehler beim Schreiben in GitHub");return false;}
-  const j=await res.json();ghSha=j.content.sha;console.log("Sync OK:",msg);return true;
-}
-
-/* Utils */
-function norm(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()]}
-function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
-function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]").map(norm)}
-function key(v){return(v[0]+"|"+v[1]).toLowerCase()}
-function dedup(a){const m=new Map();a.map(norm).forEach(v=>m.set(key(v),v));return [...m.values()]}
-function fillCats(sel){for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];sel.appendChild(o);}}
-fillCats(el("filterCat"));fillCats(el("eCat"));fillCats(el("nCat"));
-function renderLexica(){const lx=el("lexica");lx.innerHTML="";["Alle",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"].forEach(L=>{const b=document.createElement("button");b.textContent=L;if(L===letter)b.classList.add("active");b.onclick=()=>{letter=L;page=1;render();};lx.appendChild(b);});}
-
-/* Start */
-async function bootstrap(){
-  try{const remote=await ghGet();list=dedup([...remote,...loadLocal()]);el("datasourceStatus").textContent="🌐 Quelle: GitHub + lokal";}
-  catch{list=loadLocal();el("datasourceStatus").textContent="💾 Quelle: Lokaler Speicher";}
-  renderLexica();render();renderRecent();
-}
-
-/* Filter & Sort */
-function filtered(){
-  const term=el("search").value.toLowerCase(),cat=el("filterCat").value;
-  return list.filter(v=>{
-    if(letter!=="Alle"&&!v[0].toUpperCase().startsWith(letter))return false;
-    if(cat!=="Alle"&&v[2]!==cat)return false;
-    if(term&&!((v[0]+" "+v[1]+" "+(v[3]||"")+" "+(v[4]||"")).toLowerCase().includes(term)))return false;
-    return true;
-  });
-}
-function sortIt(a){const idx={en:0,de:1,cat:2}[sortKey];return a.sort((x,y)=>{const A=(x[idx]||"").toLowerCase(),B=(y[idx]||"").toLowerCase();return(A<B?-1:A>B?1:0)*sortDir;});}
-
-/* Render Table */
-function render(){
-  const tb=el("tbl").querySelector("tbody");
-  const arr=sortIt(filtered());
-  const pages=Math.max(1,Math.ceil(arr.length/perPage));if(page>pages)page=pages;
-  const rows=arr.slice((page-1)*perPage,(page-1)*perPage+perPage);
-  tb.innerHTML=rows.map(v=>{
-    const i=list.indexOf(v);const c=CATS[v[2]]||["","#ccc","#000"];
-    return `<tr><td class="hide-sm"><input type="checkbox" data-i="${i}"></td>
-    <td>${v[0]}</td><td>${v[1]}</td>
-    <td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
-    <td><button onclick="openModal(${i})">🔍</button></td></tr>`;
-  }).join("")||"<tr><td colspan=5>Keine Einträge</td></tr>";
-  const upd=localStorage.getItem("vokabeln_updated");
-  el("info").textContent=`📚 ${list.length} gesamt • 🔎 ${arr.length} gefunden • 📅 ${upd?new Date(upd).toLocaleString("de-DE"):"–"}`;
-  const pg=el("pager");pg.innerHTML="";for(let p=1;p<=pages;p++){const b=document.createElement("button");b.textContent=p;if(p===page)b.classList.add("active");b.onclick=()=>{page=p;render();};pg.appendChild(b);}
-}
-function renderRecent(){
-  const r=el("recent");if(!list.length){r.textContent="–";return;}
-  const last=list.slice(-5).reverse();
-  r.innerHTML=last.map(v=>{const c=CATS[v[2]]||["","#ddd","#000"];return `<div class="recent-item" style="background:${c[1]};color:${c[2]}"><b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small></div>`;}).join("");
-}
-
-/* Modal */
-window.openModal=function(i){editIndex=i;const v=list[i];el("eEn").value=v[0];el("eDe").value=v[1];el("eCat").value=v[2];el("eGrp").value=v[3]||"";el("eHint").value=v[4]||"";el("modal").style.display="flex";}
-el("btnClose").onclick=()=>el("modal").style.display="none";
-el("btnSave").onclick=async()=>{const v=list[editIndex];v[0]=el("eEn").value.trim();v[1]=el("eDe").value.trim();v[2]=el("eCat").value;v[3]=el("eGrp").value.trim();v[4]=el("eHint").value.trim();v[5]=new Date().toISOString();saveLocal();render();renderRecent();if(await ghPut("Bearbeitet"))el("modal").style.display="none";}
-el("btnDelOne").onclick=async()=>{if(!confirm("Diese Vokabel löschen?"))return;list.splice(editIndex,1);saveLocal();render();renderRecent();await ghPut("Eintrag gelöscht");el("modal").style.display="none";}
-
-/* Neue Vokabel */
-el("btnNew").onclick=()=>{el("modalNew").style.display="flex";el("nEn").focus();}
-el("btnCloseNew").onclick=()=>el("modalNew").style.display="none";
-el("btnSaveNew").onclick=async()=>{
-  const en=el("nEn").value.trim(),de=el("nDe").value.trim(),cat=el("nCat").value,grp=el("nGrp").value.trim(),hint=el("nHint").value.trim();
-  if(!en||!de){alert("Bitte Englisch & Deutsch angeben");return;}
-  list.push([en,de,cat,grp,hint,new Date().toISOString()]);
-  list=dedup(list);saveLocal();render();renderRecent();
-  const box=el("boxNew");box.classList.add("pulse");setTimeout(()=>box.classList.remove("pulse"),1200);
-  if(await ghPut("Neue Vokabel")){el("modalNew").style.display="none";el("nEn").value=el("nDe").value=el("nGrp").value=el("nHint").value="";}
-};
-
-/* Auswahl & Löschen */
-el("chkAll").onchange=()=>{$$("#tbl tbody input[type=checkbox]").forEach(c=>c.checked=el("chkAll").checked);}
-el("btnDelSel").onclick=async()=>{
-  const sel=$$("#tbl tbody input[type=checkbox]:checked").map(c=>parseInt(c.dataset.i));
-  if(!sel.length){alert("Nichts ausgewählt");return;}
-  if(!confirm(`${sel.length} Einträge löschen?`))return;
-  sel.sort((a,b)=>b-a).forEach(i=>list.splice(i,1));
-  saveLocal();render();renderRecent();await ghPut("Mehrfachlöschung");
-};
-
-/* Filter etc */
-el("filterCat").onchange=()=>{page=1;render();};
-el("search").oninput=()=>{page=1;render();};
-el("btnReset").onclick=()=>{el("filterCat").value="Alle";el("search").value="";letter="Alle";renderLexica();render();};
-
-/* Push Button */
-el("btnPush").onclick=async()=>await ghPut("Manuell eingetragen");
-
-/* Init */
-bootstrap();
-  /* --- Smart Sync-Statusanzeige für vokabeln.html --- */
-const foot = document.querySelector('.foot');
-let syncState = document.createElement('div');
-syncState.style.textAlign = 'center';
-syncState.style.marginTop = '6px';
-syncState.style.fontSize = '.9rem';
-syncState.style.color = '#2563eb';
-foot.insertAdjacentElement('afterend', syncState);
-
-function setSyncState(msg, color='#2563eb'){
-  syncState.textContent = msg;
-  syncState.style.color = color;
-  syncState.style.opacity = 1;
-  setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
-}
-
-/* --- GitHub Auto-Update Prüfer --- */
-async function checkRemoteUpdate(){
-  try{
-    const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const j = await r.json();
-    const local = JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    if(JSON.stringify(j)!==JSON.stringify(local)){
-      localStorage.setItem("vokabeln",JSON.stringify(j));
-      localStorage.setItem("vokabeln_updated",new Date().toISOString());
-      setSyncState('🔄 Neue Daten aus Cloud geladen', '#22c55e');
-      renderTable(j);
-    } else {
-      setSyncState('🟢 Daten aktuell', '#22c55e');
-    }
+    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+    vokabeln=await r.json();
+    localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
   }catch{
-    setSyncState('⚠️ Offline / kein Update möglich', '#ef4444');
+    vokabeln=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  }
+  renderTable();
+})();
+
+// Render
+function renderTable(list=vokabeln){
+  const tb=document.querySelector("#vokabelTable tbody");
+  tb.innerHTML=list.map((v,i)=>{
+    const c=CATS[v[2]]||"#ccc";
+    return `<tr>
+      <td><input type="checkbox" class="rowChk" data-idx="${i}"></td>
+      <td>${v[0]}</td>
+      <td>${v[1]}</td>
+      <td><span class="categoryTag" style="background:${c}">${v[2]}</span></td>
+      <td class="actions">
+        <button onclick="editVokabel(${i})">✏️</button>
+        <button onclick="deleteVokabel(${i})" style="background:var(--bad);color:#fff">🗑️</button>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+function sortVokabeln(){
+  const m=document.getElementById("sortMode").value;
+  vokabeln.sort((a,b)=>m==="az"?a[0].localeCompare(b[0]):b[0].localeCompare(a[0]));
+  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+  renderTable();
+}
+function searchVokabeln(){
+  const s=document.getElementById("search").value.toLowerCase();
+  const f=vokabeln.filter(v=>v[0].toLowerCase().includes(s)||v[1].toLowerCase().includes(s)||v[2].toLowerCase().includes(s));
+  renderTable(f);
+}
+function toggleAll(cb){
+  document.querySelectorAll(".rowChk").forEach(x=>x.checked=cb.checked);
+}
+function deleteSelected(){
+  const ids=[...document.querySelectorAll(".rowChk:checked")].map(x=>+x.dataset.idx);
+  if(!ids.length)return alert("Keine Auswahl");
+  if(!confirm("Sicher löschen?"))return;
+  vokabeln=vokabeln.filter((_,i)=>!ids.includes(i));
+  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+  renderTable();autoSync();
+}
+function deleteVokabel(i){
+  if(confirm("Wirklich löschen?")){
+    vokabeln.splice(i,1);
+    localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+    renderTable();autoSync();
   }
 }
-setSyncState('🟡 Prüfe auf Updates...');
-setInterval(checkRemoteUpdate,30000);
-checkRemoteUpdate();
-
-/* --- Erfolgsmeldungen nach Aktionen --- */
-async function pushToGitHub(){
-  try{
-    await uploadJSON(); // ← deine bestehende Funktion, die das JSON pusht
-    setSyncState('🟢 Erfolgreich in Datenbank eingetragen', '#22c55e');
-  }catch{
-    setSyncState('🔴 Upload fehlgeschlagen (offline?)', '#ef4444');
-  }
+function editVokabel(i){
+  const v=vokabeln[i];
+  openPopup(v,i);
+}
+function openPopup(v=null,i=null){
+  document.getElementById("popupOverlay").style.display="flex";
+  document.getElementById("enInput").value=v?v[0]:"";
+  document.getElementById("deInput").value=v?v[1]:"";
+  document.getElementById("catInput").value=v?v[2]:"Grundwerkzeuge Metallverarbeitung";
+  document.getElementById("popup").dataset.edit=i;
+}
+function closePopup(){
+  document.getElementById("popupOverlay").style.display="none";
+  document.getElementById("popup").dataset.edit="";
+}
+function saveVokabel(){
+  const en=enInput.value.trim(),de=deInput.value.trim(),cat=catInput.value;
+  if(!en||!de)return alert("Beide Felder ausfüllen");
+  const i=document.getElementById("popup").dataset.edit;
+  if(i) vokabeln[i]=[en,de,cat]; else vokabeln.push([en,de,cat]);
+  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+  closePopup();renderTable();autoSync();
 }
 
-/* Diese Funktion bitte überall aufrufen, wo du aktuell "GitHub Synchronisieren" nutzt */
-
+// --- GitHub Sync ---
+async function uploadJSON(auto=false){
+  try{
+    const content=JSON.stringify(vokabeln,null,2);
+    const btn=document.getElementById("btnSync");
+    if(btn && !auto){btn.textContent="🔄 Synchronisiere...";btn.disabled=true;}
+    const r=await fetch("https://api.github.com/repos/beeferino/vokabeltrainer/dispatches",{
+      method:"POST",
+      headers:{
+        "Accept":"application/vnd.github.everest-preview+json",
+        "Content-Type":"application/json",
+        "Authorization":"Bearer ghp_dummy_placeholder"
+      },
+      body:JSON.stringify({event_type:"update_vokabeln",client_payload:{content}})
+    });
+    if(r.ok){
+      console.log("✅ Sync erfolgreich gestartet");
+      if(btn && !auto){btn.textContent="✅ In Datenbank eingetragen";setTimeout(()=>{btn.textContent="📤 In Datenbank eintragen";btn.disabled=false;},2000);}
+    }else throw new Error(r.status);
+  }catch(e){console.error(e);if(!auto)alert("Fehler beim Synchronisieren");}
+}
+function autoSync(){uploadJSON(true);}
 </script>
 </body>
 </html>
