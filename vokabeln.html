@@ -255,7 +255,7 @@ bulkDelete.onclick=()=>{
 
 /* Neu / Speichern / Löschen im Modal */
 $("backBtn").onclick=()=>{location.href='index.html';};
-$("newVocabBtn")?.addEventListener?.("click",()=>{editId=null; modalTitle.textContent="➕ Neue Vokabel"; enIn.value=deIn.value=grpIn.value=hintIn.value=""; modal.style.display="flex";});
+$("newVocabBtn")?.addEventListener?.("click",()=>{editId=null; modalTitle.textContent="➕ Neue Vokabel"; enIn.value=deIn.value=grpIn.value=hintIn.value=""; modal.style.display="";});
 $("cancelModal").onclick=()=>modal.style.display="none";
 saveBtn.onclick=()=>{
   if(!enIn.value||!deIn.value||!catIn.value) return;
