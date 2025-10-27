@@ -1,6 +1,224 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vokabeln – Beeferino</title>
+<style>
+:root {
+  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
+  --glass:rgba(255,255,255,.88);
+  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  color:var(--ink)
+}
+.app{
+  max-width:980px;margin:30px auto;padding:24px;
+  background:var(--glass);border-radius:22px;
+  box-shadow:0 10px 32px rgba(0,0,0,.10);
+  backdrop-filter:blur(8px)
+}
+h1{text-align:center;margin:0;font-size:2rem;color:#1e3a8a;font-weight:800}
+.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
+.toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:18px}
+button,select,input[type=text]{font-size:1rem;padding:8px 12px;border-radius:10px;border:1px solid #ccc}
+button{cursor:pointer;font-weight:700;background:#e0e7ff;border:none}
+button:hover{background:#c7d2fe}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border-bottom:1px solid #e5e7eb;padding:8px 6px;text-align:left}
+th{background:#f1f5f9;color:#1e3a8a}
+tr:hover{background:#f9fafb}
+tr:nth-child(even){background:#f8fafc}
+.cat{padding:3px 10px;border-radius:10px;font-weight:600;font-size:.85rem;color:#fff;display:inline-block}
+.actions button{margin-right:6px}
+tfoot td{text-align:center;padding-top:12px;font-weight:600}
+#addForm{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:16px}
+#addForm input{flex:1 1 180px;padding:8px 10px;border-radius:10px;border:1px solid #ccc}
+#addForm select{flex:1 1 160px}
+#popup{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+  align-items:center;justify-content:center;z-index:9999
+}
+.popup-box{
+  background:#fff;padding:22px 24px;border-radius:16px;
+  width:90%;max-width:460px;box-shadow:0 10px 40px rgba(0,0,0,.3)
+}
+.popup-box h3{margin:0 0 10px;font-size:1.2rem;color:#1e3a8a}
+.popup-box label{display:block;margin-top:10px;font-weight:600}
+.popup-box input, .popup-box select{width:100%;padding:8px 10px;border-radius:10px;border:1px solid #ccc}
+.popup-btns{display:flex;justify-content:space-between;margin-top:16px}
+.popup-btns button{flex:1;margin:0 4px;padding:10px 12px;border:none;border-radius:10px;font-weight:700;cursor:pointer}
+.popup-save{background:var(--ok);color:#fff}
+.popup-delete{background:var(--bad);color:#fff}
+.popup-cancel{background:#e5e7eb;color:#111}
+.footer{margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937}
+.footer a{text-decoration:none;color:#1f2937;font-weight:700}
+#toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%);
+  background:#16a34a;color:#fff;padding:10px 16px;border-radius:12px;
+  font-weight:700;z-index:99999;display:none;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>📂 Vokabelverwaltung</h1>
+  <div class="hr"></div>
+
+  <div class="toolbar">
+    <button id="btnAdd">➕ Neue Vokabel</button>
+    <button id="syncBtn">🔄 Von GitHub neu laden</button>
+    <button id="btnExport">💾 Export JSON</button>
+  </div>
+
+  <table id="tab">
+    <thead>
+      <tr><th>A</th><th>B</th><th>Kategorie</th><th>Aktionen</th></tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot><tr><td colspan="4" id="count"></td></tr></tfoot>
+  </table>
+
+  <form id="addForm" style="display:none">
+    <input id="inEn" placeholder="Englisch">
+    <input id="inDe" placeholder="Deutsch">
+    <select id="inCat">
+      <option value="Gelb">Grundwerkzeuge Metallverarbeitung</option>
+      <option value="Pink">Werkzeugkasten Mechaniker</option>
+      <option value="Blau">Blech-/Kunststoffarbeiten</option>
+      <option value="Gruen">Drehen / Fräsen</option>
+      <option value="HellesPink">Hydraulik / Pneumatik</option>
+      <option value="Orange">Elektrotechnik</option>
+      <option value="Dunkelgruen">Fluggerätemechanik allgemein</option>
+      <option value="Rot">Verwechslungsgefahr</option>
+    </select>
+    <button type="button" id="btnSave">💾 Speichern</button>
+  </form>
+
+  <div id="popup">
+    <div class="popup-box">
+      <h3>Vokabel bearbeiten</h3>
+      <label>Englisch</label><input id="editEn">
+      <label>Deutsch</label><input id="editDe">
+      <label>Kategorie</label>
+      <select id="editCat">
+        <option value="Gelb">Grundwerkzeuge Metallverarbeitung</option>
+        <option value="Pink">Werkzeugkasten Mechaniker</option>
+        <option value="Blau">Blech-/Kunststoffarbeiten</option>
+        <option value="Gruen">Drehen / Fräsen</option>
+        <option value="HellesPink">Hydraulik / Pneumatik</option>
+        <option value="Orange">Elektrotechnik</option>
+        <option value="Dunkelgruen">Fluggerätemechanik allgemein</option>
+        <option value="Rot">Verwechslungsgefahr</option>
+      </select>
+      <div class="popup-btns">
+        <button class="popup-save" id="btnPopupSave">💾 Speichern</button>
+        <button class="popup-delete" id="btnPopupDel">🗑️ Löschen</button>
+        <button class="popup-cancel" id="btnPopupCancel">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="index.html">🏠 Zurück</a>
+    <div id="syncInfo">Quelle: Lokal (nicht synchronisiert)</div>
+  </div>
+</div>
+
+<!-- ================= JS ================= -->
 <script>
-/* === GitHub Sync (Token) – fügt sich in bestehendes UI ein, Layout bleibt unverändert === */
-(() => {
+const CATS = {
+  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
+  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
+  Blau:["Blech-/Kunststoffarbeiten","#1976D2","#fff"],
+  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
+  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
+  Orange:["Elektrotechnik","#E67E22","#fff"],
+  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
+  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+};
+const el=id=>document.getElementById(id);
+let vokabeln=[]; let editIndex=-1;
+
+// === Load local / render ===
+function loadLocal(){
+  vokabeln=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  render();
+}
+function saveLocal(){
+  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+}
+function render(){
+  const tb=el("tab").querySelector("tbody");
+  tb.innerHTML="";
+  vokabeln.forEach((v,i)=>{
+    const c=CATS[v[2]]||["","#ccc","#000"];
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${v[0]}</td><td>${v[1]}</td>
+      <td><span class="cat" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
+      <td class="actions">
+        <button onclick="editVoc(${i})">✏️</button>
+      </td>`;
+    tb.appendChild(tr);
+  });
+  el("count").textContent=`${vokabeln.length} Vokabeln`;
+}
+loadLocal();
+
+// === Add new ===
+el("btnAdd").onclick=()=>el("addForm").style.display="flex";
+el("btnSave").onclick=()=>{
+  const en=el("inEn").value.trim(), de=el("inDe").value.trim(), cat=el("inCat").value;
+  if(!en||!de) return alert("Bitte beide Felder ausfüllen.");
+  vokabeln.push([en,de,cat]);
+  saveLocal(); render();
+  el("inEn").value=el("inDe").value=""; toast("✅ Gespeichert");
+};
+
+// === Edit ===
+function editVoc(i){
+  editIndex=i;
+  const [en,de,cat]=vokabeln[i];
+  el("editEn").value=en; el("editDe").value=de; el("editCat").value=cat;
+  el("popup").style.display="flex";
+}
+el("btnPopupCancel").onclick=()=>el("popup").style.display="none";
+el("btnPopupDel").onclick=()=>{
+  if(confirm("Wirklich löschen?")){
+    vokabeln.splice(editIndex,1);
+    saveLocal(); render();
+    el("popup").style.display="none";
+  }
+};
+el("btnPopupSave").onclick=()=>{
+  vokabeln[editIndex]=[el("editEn").value.trim(),el("editDe").value.trim(),el("editCat").value];
+  saveLocal(); render(); toast("💾 Änderungen gespeichert"); el("popup").style.display="none";
+};
+
+// === Export ===
+el("btnExport").onclick=()=>{
+  const blob=new Blob([JSON.stringify(vokabeln,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="vokabeln.json"; a.click();
+};
+
+// === Toast ===
+function toast(msg){
+  const t=el("toast");
+  t.textContent=msg; t.style.display="block";
+  clearTimeout(t._h);
+  t._h=setTimeout(()=>t.style.display="none",1600);
+}
+</script>
+
+<!-- === GitHub Sync – stabil, kein Weißer-Screen mehr === -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
   const GH = {
     owner: "Beeferino",
     repo: "vokabeltrainer",
@@ -8,159 +226,55 @@
     path: "vokabeln.json",
     apiBase: "https://api.github.com"
   };
+  const el = id => document.getElementById(id);
 
-  // ---- Mini-UI (nicht-invasiv): Token Modal nur bei Bedarf einblenden ----
-  function ensureTokenModal() {
-    if (document.getElementById("ghTokenModal")) return;
-    const modal = document.createElement("div");
-    modal.id = "ghTokenModal";
-    modal.style.cssText = "display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;align-items:center;justify-content:center;";
-    modal.innerHTML = `
-      <div style="background:#fff; padding:18px 20px; border-radius:12px; width:90%; max-width:420px; box-shadow:0 10px 30px rgba(0,0,0,.25); font-family:system-ui,sans-serif;">
-        <h3 style="margin:0 0 8px; font-size:1.1rem;">GitHub-Token</h3>
-        <p style="margin:0 0 10px; color:#444; line-height:1.4;">
-          Bitte ein <b>Fine-grained PAT</b> (Repo-Zugriff: Content: Read/Write) einfügen. Der Token wird <i>nur lokal</i> gespeichert.
-        </p>
-        <input id="ghTokenInput" type="password" placeholder="ghp_…"
-               style="width:100%; padding:10px 12px; border:1px solid #d1d5db; border-radius:10px; font-size:0.95rem;">
-        <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
-          <button id="ghTokenSave" style="background:#2563eb;color:#fff;border:none;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;">Token speichern</button>
-          <button id="ghTokenCancel" style="background:#e5e7eb;color:#111;border:none;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;">Abbrechen</button>
-        </div>
-      </div>`;
-    document.body.appendChild(modal);
-    document.getElementById("ghTokenSave").onclick = () => {
-      const t = document.getElementById("ghTokenInput").value.trim();
-      if (!t) { alert("Bitte Token eintragen."); return; }
-      localStorage.setItem("gh_token", t);
-      modal.style.display = "none";
-      toast("🔐 Token gespeichert");
-      // Optional: sofort Sync starten, wenn von Sync aufgerufen
-      _pendingAction && _pendingAction();
-      _pendingAction = null;
-    };
-    document.getElementById("ghTokenCancel").onclick = () => {
-      modal.style.display = "none";
-      _pendingAction = null;
-    };
-  }
+  function toast(msg,color="#16a34a"){const t=el("toast");t.style.background=color;t.textContent=msg;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",1600)}
 
-  function openTokenModal() {
-    ensureTokenModal();
-    document.getElementById("ghTokenInput").value = localStorage.getItem("gh_token") || "";
-    document.getElementById("ghTokenModal").style.display = "flex";
-  }
-
-  function toast(msg) {
-    let t = document.getElementById("toast");
-    if (!t) {
-      t = document.createElement("div");
-      t.id = "toast";
-      t.style.cssText = "position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#16a34a;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;z-index:99999;display:none;";
-      document.body.appendChild(t);
-    }
-    t.textContent = msg;
-    t.style.display = "block";
-    clearTimeout(t._h);
-    t._h = setTimeout(() => t.style.display = "none", 1600);
-  }
-
-  // ---- Daten-Helfer (mergen & normalisieren) ----
-  const normalize = (v) => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
-  const keyOf = (v) => `${(v[0]||"").toLowerCase().trim()}|${(v[1]||"").toLowerCase().trim()}`;
-
-  function mergeLists(remote, local) {
-    const map = new Map();
-    remote.map(normalize).forEach(v => map.set(keyOf(v), v));
-    local.map(normalize).forEach(v => { if (!map.has(keyOf(v))) map.set(keyOf(v), v); });
-    return [...map.values()];
-  }
-
-  function loadLocal() {
-    return (JSON.parse(localStorage.getItem("vokabeln") || "[]") || []).map(normalize);
-  }
-  function saveLocal(list) {
-    localStorage.setItem("vokabeln", JSON.stringify(list));
-    localStorage.setItem("vokabeln_updated", new Date().toISOString());
-  }
-
-  // ---- GitHub API Calls ----
-  async function ghGetContents(token) {
-    const url = `${GH.apiBase}/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}?ref=${encodeURIComponent(GH.branch)}`;
-    const r = await fetch(url, {
-      headers: token ? { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github+json" } : { "Accept": "application/vnd.github+json" }
-    });
-    if (!r.ok) throw new Error(`GET contents failed: ${r.status}`);
-    return r.json(); // { content(base64), sha, ... }
-  }
-
-  function b64EncodeUnicode(str) {
-    // sauberes Base64 für UTF-8 Inhalte
-    return btoa(unescape(encodeURIComponent(str)));
-  }
-
-  async function ghPutContents(token, sha, mergedList) {
-    const url = `${GH.apiBase}/repos/${GH.owner}/${GH.repo}/contents/${encodeURIComponent(GH.path)}`;
-    const body = {
-      message: `chore: sync vokabeln.json (auto)`,
-      content: b64EncodeUnicode(JSON.stringify(mergedList, null, 2)),
-      branch: GH.branch,
-      sha
-    };
-    const r = await fetch(url, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Accept": "application/vnd.github+json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(body)
-    });
-    if (!r.ok) throw new Error(`PUT contents failed: ${r.status}`);
-    return r.json();
-  }
-
-  // ---- Hauptablauf: Sync (pull -> merge -> push) ----
-  let _pendingAction = null;
-
-  async function doSync() {
-    try {
-      const token = localStorage.getItem("gh_token");
-      if (!token) { _pendingAction = doSync; openTokenModal(); return; }
-
-      // 1) Remote laden (sha + content)
-      const remoteMeta = await ghGetContents(token);
-      const remoteContent = remoteMeta && remoteMeta.content ? atob(remoteMeta.content.replace(/\n/g, "")) : "[]";
-      const remote = JSON.parse(remoteContent || "[]");
-
-      // 2) Local laden & mergen
-      const local = loadLocal();
-      const merged = mergeLists(remote, local);
-
-      // 3) Upload (PUT) mit sha
-      await ghPutContents(token, remoteMeta.sha, merged);
-
-      // 4) Lokal auch speichern (und UI updaten)
-      saveLocal(merged);
-      toast("✅ Erfolgreich synchronisiert");
-      const info = document.getElementById("syncInfo");
-      if (info) info.textContent = "Quelle: GitHub (synchronisiert)";
-
-      // Falls du in deinem Code eine Render-Funktion hast, hier triggern:
-      if (typeof render === "function") render();
-      if (typeof renderLastAdded === "function") renderLastAdded();
-
-    } catch (e) {
-      console.error(e);
-      alert("❌ Synchronisation fehlgeschlagen.\n" + e.message + "\n\nBitte prüfe Token/Repo/Netzwerk.");
+  function showTokenModal(cb){
+    let m=el("ghTokenModal");
+    if(!m){
+      m=document.createElement("div");
+      m.id="ghTokenModal";
+      m.style="position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:9999";
+      m.innerHTML=`<div style="background:#fff;padding:20px 24px;border-radius:16px;width:90%;max-width:420px;">
+        <h3>GitHub Token</h3>
+        <p style="font-size:.9rem">Bitte Personal Access Token (Fine-grained, Content:Read/Write) eingeben. Wird nur lokal gespeichert.</p>
+        <input id="ghTokenInput" type="password" placeholder="ghp_…" style="width:100%;padding:8px 10px;border-radius:10px;border:1px solid #ccc">
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+          <button id="ghTokenCancel" style="background:#eee;border:none;padding:8px 14px;border-radius:8px">Abbrechen</button>
+          <button id="ghTokenSave" style="background:#2563eb;color:#fff;border:none;padding:8px 14px;border-radius:8px">Speichern</button>
+        </div></div>`;
+      document.body.appendChild(m);
+      el("ghTokenCancel").onclick=()=>m.remove();
+      el("ghTokenSave").onclick=()=>{const t=el("ghTokenInput").value.trim();if(!t)return alert("Token fehlt");localStorage.setItem("gh_token",t);m.remove();if(cb)cb(t)};
     }
   }
 
-  // ---- Button verdrahten (existierende UI wiederverwenden) ----
-  document.addEventListener("DOMContentLoaded", () => {
-    ensureTokenModal();
-    const syncBtn = document.getElementById("syncBtn");
-    if (syncBtn) syncBtn.onclick = doSync;
-  });
-})();
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb"];
+  const keyOf=v=>`${(v[0]||"").toLowerCase().trim()}|${(v[1]||"").toLowerCase().trim()}`;
+  const merge=(a,b)=>{const m=new Map();a.map(normalize).forEach(v=>m.set(keyOf(v),v));b.map(normalize).forEach(v=>m.set(keyOf(v),v));return [...m.values()];};
+
+  async function ghFetch(url,opt={}){const r=await fetch(url,opt);if(!r.ok)throw new Error(r.status+" "+r.statusText);return r.json();}
+
+  async function syncWithGitHub(){
+    try{
+      const token=localStorage.getItem("gh_token");
+      if(!token)return showTokenModal(()=>syncWithGitHub());
+      toast("⏳ Synchronisiere…","#2563eb");
+
+      const meta=await ghFetch(`${GH.apiBase}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}?ref=${GH.branch}`,{headers:{Authorization:`Bearer ${token}`}});
+      let remote=[];try{remote=JSON.parse(atob(meta.content.replace(/\n/g,"")))}catch(e){console.warn("Remote JSON leer",e)}
+      const merged=merge(remote,vokabeln);
+      const payload={message:"auto sync",content:btoa(unescape(encodeURIComponent(JSON.stringify(merged,null,2)))),sha:meta.sha,branch:GH.branch};
+      await ghFetch(`${GH.apiBase}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`,{method:"PUT",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      localStorage.setItem("vokabeln",JSON.stringify(merged));
+      vokabeln=merged; render(); toast("✅ Erfolgreich synchronisiert","#16a34a");
+      el("syncInfo").textContent="Quelle: GitHub (synchronisiert)";
+    }catch(e){console.error(e);toast("❌ Sync fehlgeschlagen","#dc2626")}
+  }
+
+  const btn=el("syncBtn"); if(btn) btn.onclick=syncWithGitHub;
+});
 </script>
+</body>
+</html>
