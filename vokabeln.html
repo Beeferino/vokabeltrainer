@@ -230,7 +230,7 @@ window.editCard=id=>{editId=id;const v=data.find(x=>x._id===id);if(!v)return;mod
 bulkDelete.onclick=()=>{if(selected.size===0)return;if(!confirm(`Auswahl wirklich löschen? (${selected.size})`))return;data=data.filter(v=>!selected.has(v._id));selected.clear();persistLocal();render();scheduleSync();};
 
 /* Neu / Speichern / Löschen im Modal */
-newBtn.onclick=()=>{editId=null;enIn.value=deIn.value=grpIn.value=hintIn.value="";modalTitle.textContent="➕ Neue Vokabel";modal.style.display="flex";};
+newBtn.onclick=()=>{editId=null;enIn.value=deIn.value=grpIn.value=hintIn.value="";modalTitle.textContent="➕ Neue Vokabel";modal.style.display="";};
 cancelBtn.onclick=()=>modal.style.display="none";
 saveBtn.onclick=()=>{if(!enIn.value||!deIn.value||!catIn.value)return;const obj={_id:editId??crypto.randomUUID(),en:enIn.value.trim(),de:deIn.value.trim(),cat:catIn.value,group:grpIn.value||"",hint:hintIn.value||""};const i=data.findIndex(v=>v._id===editId);if(i>-1)data[i]=obj;else data.push(obj);modal.style.display="none";persistLocal();render();scheduleSync();};
 delBtn.onclick=()=>{if(!editId)return;data=data.filter(v=>v._id!==editId);modal.style.display="none";persistLocal();render();scheduleSync();};
