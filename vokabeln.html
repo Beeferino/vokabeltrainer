@@ -559,6 +559,71 @@
     renderAll();
   }
   init();
+  // --- PATCH: Kategorie-Reset & AutoSync bei Speichern/Löschen ---
+$("#filterCat").onchange = e => {
+  filterCat = e.target.value;
+  currentPage = 1;
+  // wenn "Alle" gewählt wird, alles zurücksetzen
+  if (filterCat === "Alle") {
+    letter = "Alle";
+    searchTerm = "";
+    $("#searchInput").value = "";
+  }
+  renderTable();
+};
+
+// Mehrfach löschen (mit AutoSync)
+$("#btnDeleteSel").onclick = async () => {
+  const picks = [...document.querySelectorAll('input[type=checkbox][data-idx]:checked')];
+  if (!picks.length) return alert("Bitte Vokabeln auswählen.");
+  if (!confirm(`Wirklich ${picks.length} Vokabel(n) löschen?`)) return;
+  const ids = picks.map(i => parseInt(i.dataset.idx, 10)).sort((a, b) => b - a);
+  ids.forEach(i => list.splice(i, 1));
+  saveLocal(list);
+  renderAll();
+  toast("🗑️ Gelöscht");
+
+  // 🔁 GitHub-AutoSync
+  const ok = await githubPush(JSON.stringify(list, null, 2));
+  if (ok) toast("✅ Datenbank aktualisiert");
+};
+
+// Einzel-Löschung (im PopUp)
+$("#btnDelRow").onclick = async () => {
+  if (editIndex < 0) return;
+  if (!confirm("Diese Vokabel löschen?")) return;
+  list.splice(editIndex, 1);
+  saveLocal(list);
+  closeEdit();
+  renderAll();
+  toast("🗑️ Gelöscht");
+
+  const ok = await githubPush(JSON.stringify(list, null, 2));
+  if (ok) toast("✅ Datenbank aktualisiert");
+};
+
+// Bearbeiten / Speichern (im PopUp)
+$("#btnSaveRow").onclick = async () => {
+  if (editIndex < 0) return;
+  const en = $("#editEn").value.trim();
+  const de = $("#editDe").value.trim();
+  const cat = $("#editCat").value;
+  const grp = $("#editGroup").value.trim();
+  const hint = $("#editHint").value.trim();
+  if (!en || !de) return alert("Bitte Englisch & Deutsch ausfüllen.");
+
+  const old = list[editIndex];
+  list[editIndex] = [en, de, cat, grp, hint, old?.[5] || new Date().toISOString()];
+  saveLocal(list);
+  closeEdit();
+  renderAll();
+  toast("💾 Gespeichert");
+
+  // 🔁 GitHub-AutoSync nach Bearbeiten
+  const ok = await githubPush(JSON.stringify(list, null, 2));
+  if (ok) toast("✅ Datenbank aktualisiert");
+};
+
 })();
 </script>
 </body>
