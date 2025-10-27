@@ -2,87 +2,143 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vokabelübersicht – Beeferino</title>
 <style>
 :root{
-  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--glass:rgba(255,255,255,.92);
-  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;--shadow:0 10px 32px rgba(0,0,0,.10)
+  --blue:#2563eb;--blue2:#1d4ed8;
+  --ok:#22c55e;--bad:#ef4444;
+  --muted:#9ca3af;--ink:#0f172a;
+  --glass:rgba(255,255,255,.9)
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
-.app{max-width:1100px;margin:28px auto;padding:20px;background:var(--glass);border-radius:22px;box-shadow:var(--shadow);backdrop-filter:blur(8px)}
-h1{text-align:center;margin:0;font-size:1.9rem;font-weight:800;color:#1e3a8a}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 18px}
-
-/* A–Z (Desktop sichtbar, im Mobile nochmal im Slide-Header) */
-.lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
-.lexica button{background:#ecf3ff;color:#1f3b76;border:1px solid #d6e4ff;padding:6px 10px;border-radius:999px;font-weight:700;cursor:pointer}
-.lexica button.active{background:#1e6ed8;color:#fff}
-
-/* Abschnitt/Tabelle */
-.section{background:#fff;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:16px;margin:16px 0}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #e8eef9;text-align:left;vertical-align:top}
-th{background:#eef4ff;cursor:pointer;user-select:none}
-th.sort-asc::after{content:" ↑";color:#556} th.sort-desc::after{content:" ↓";color:#556}
-tr:hover{background:#f6faff}
-.category-chip{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700}
-
-/* Mobile Optimierungen */
-@media (max-width:768px){
-  th:last-child,td:last-child{display:none}
-  td:first-child{cursor:pointer;color:#2563eb;font-weight:600}
-  td:first-child:hover{text-decoration:underline}
-  .mobile-toggle{position:fixed;bottom:20px;right:20px;background:var(--blue);color:#fff;border:none;width:52px;height:52px;border-radius:50%;font-size:1.5rem;box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:1200}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  color:var(--ink);
+}
+.app{
+  max-width:960px;
+  margin:32px auto;
+  padding:22px;
+  background:var(--glass);
+  border-radius:22px;
+  box-shadow:0 10px 32px rgba(0,0,0,.1);
+  backdrop-filter:blur(8px);
+}
+h1{text-align:center;margin:0;font-size:2rem;color:#1e3a8a;font-weight:800}
+h2{margin-top:22px;color:#1e3a8a;font-size:1.3rem}
+.flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:10px;text-align:left;border-bottom:1px solid #e5e7eb}
+th{cursor:pointer;background:#f9fafb}
+tr:hover{background:#f3f6ff}
+button,select,input{
+  font-family:inherit;font-size:1rem;
+  border-radius:10px;padding:8px 12px;
+}
+button{cursor:pointer;border:none;font-weight:700}
+button.primary{background:var(--blue);color:#fff}
+button.secondary{background:#e2e8f0}
+#modal{
+  position:fixed;inset:0;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.4);z-index:10;
+}
+#modalContent{
+  background:#fff;padding:22px;
+  border-radius:16px;max-width:360px;
+  width:90%;text-align:center;
+  box-shadow:0 8px 28px rgba(0,0,0,.2);
+}
+#modalContent input,#modalContent select{
+  width:100%;margin-top:6px;padding:10px;
+  border:1px solid #d1d5db;border-radius:10px
+}
+.toast{
+  position:fixed;bottom:20px;left:50%;
+  transform:translateX(-50%);
+  background:var(--blue);color:#fff;
+  padding:10px 16px;border-radius:10px;
+  opacity:0;transition:opacity .3s
+}
+.toast.show{opacity:1}
+.footer{text-align:center;margin-top:20px;color:#6b7280}
+.category-chip{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.85rem;
+}
+@media(max-width:768px){
+  table thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{margin-bottom:14px;background:#fff;border-radius:16px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+  td{padding:10px;border:none}
+  td::before{font-weight:700;display:block;margin-bottom:4px;color:#2563eb}
+  td:nth-child(1)::before{content:"Englisch";}
+  td:nth-child(2)::before{content:"Deutsch";}
+  td:nth-child(3)::before{content:"Kategorie";}
+  td:nth-child(4){display:none}
 }
 
-/* Slide-In Header (nur Mobile) */
-.mobile-header{display:none;position:fixed;top:0;left:0;right:0;z-index:1000;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);transform:translateY(-100%);transition:.3s ease;border-bottom-left-radius:14px;border-bottom-right-radius:14px;padding:12px}
-.mobile-header.show{transform:translateY(0)}
-.mobile-header h3{margin:0 0 8px;text-align:center;color:#1e3a8a}
-.mobile-header input,.mobile-header select{width:100%;padding:8px 10px;border:1px solid #d5d9f2;border-radius:10px;margin-bottom:8px}
-.mobile-header .lexica{margin-top:6px;justify-content:center;flex-wrap:wrap}
-.mobile-header .lexica button{background:#eef4ff;color:#1e40af;border:none;padding:6px 9px;margin:2px;border-radius:999px;font-weight:600}
-
-/* Modal */
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center;z-index:9999;padding:10px}
-.modal-card{width:92%;max-width:520px;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:20px;animation:fadeIn .25s ease}
-@keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-.modal h3{text-align:center;margin-top:0;color:#1e3a8a}
-.modal .grid{display:grid;gap:12px}
-.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
-.modal input,.modal select{padding:12px;border:1px solid #d6deee;border-radius:10px;font-size:1rem;width:100%;touch-action:manipulation}
-.modal .info{font-size:.85rem;color:#555;text-align:center;margin-top:10px}
-
-/* Buttons / Footer */
-button{cursor:pointer;border:none;font-weight:700;border-radius:12px}
-button.primary{background:var(--blue);color:#fff;padding:10px 16px}
-button.secondary{background:#eaf0ff;color:#1f2937;padding:10px 16px}
-button.danger{background:var(--bad);color:#fff;padding:10px 16px}
-button.ghost{background:#f3f6ff;border:1px dashed #c7d2fe;color:#1f2937;padding:10px 16px}
-.footer-actions{display:flex;justify-content:space-between;margin-top:18px;gap:12px;flex-wrap:wrap}
-footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
-
-/* Toast */
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:12px;display:none;z-index:10000}
+/* === Mobile Kategorie-Kacheln === */
+#mobCatWrap{
+  display:flex;flex-wrap:nowrap;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  gap:10px;padding:6px 0;scroll-behavior:smooth;
+}
+#mobCatWrap::-webkit-scrollbar{height:6px}
+#mobCatWrap::-webkit-scrollbar-thumb{
+  background:rgba(37,99,235,.25);
+  border-radius:3px;
+}
+#mobCatWrap button{
+  flex:0 0 auto;border:none;padding:10px 16px;
+  border-radius:999px;font-weight:700;font-size:.9rem;
+  cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,.1);
+  transition:all .25s ease;
+}
+#mobCatWrap button:active{transform:scale(.97)}
+#mobCatWrap button.active{
+  outline:3px solid rgba(255,255,255,.7);
+  box-shadow:0 0 10px rgba(37,99,235,.4),
+              0 0 20px rgba(37,99,235,.2);
+  transform:scale(1.05);
+}
 </style>
 </head>
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
-  <div class="hr"></div>
-
-  <!-- Desktop A–Z -->
-  <div id="lexica" class="lexica"></div>
 
   <div class="section">
+    <h2>🔍 Filter &amp; Suche</h2>
+    <div id="mobileHeader">
+      <input id="mobSearch" type="text" placeholder="🔎 Suchen …">
+      <button id="mobReset" class="secondary">🔄 Zurücksetzen</button>
+      <div id="mobCatWrap"></div>
+    </div>
+    <div class="flex desktop-only">
+      <label>Kategorie:
+        <select id="filterCat">
+          <option value="Alle">Alle (bunt gemischt)</option>
+        </select>
+      </label>
+      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
+      <button id="resetFilter" class="secondary">🔄 Filter zurücksetzen</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📄 Vokabelliste</h2>
     <table id="tbl">
       <thead>
         <tr>
           <th data-col="0">Englisch</th>
           <th data-col="1">Deutsch</th>
-          <th>Kategorie</th>
+          <th data-col="2">Kategorie</th>
           <th>Aktion</th>
         </tr>
       </thead>
@@ -90,43 +146,31 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
     </table>
   </div>
 
-  <div class="footer-actions">
-    <button id="btnAdd" class="ghost">➕ Neue Vokabel</button>
-    <button id="btnSaveGithub" class="primary">💾 In Datenbank eintragen</button>
-    <a href="index.html" class="secondary">⬅️ Zurück zum Trainer</a>
+  <div class="section">
+    <h2>➕ Neue Vokabel</h2>
+    <button id="addBtn" class="primary">Vokabel hinzufügen</button>
   </div>
 
-  <footer>© 2025 Beeferino</footer>
-</div>
-
-<!-- Mobile Slide-In Header -->
-<div id="mobileHeader" class="mobile-header">
-  <h3>🔎 Filter & A–Z</h3>
-  <select id="mobCat"><option value="Alle">Alle Kategorien</option></select>
-  <input id="mobSearch" type="text" placeholder="Suchen (EN / DE)">
-  <div id="mobLex" class="lexica"></div>
-  <div style="text-align:center;margin-top:6px">
-    <button id="mobReset" class="secondary" style="width:100%">🔄 Zurücksetzen</button>
+  <div class="section">
+    <button id="syncBtn" class="primary" style="width:100%">📡 In Datenbank eintragen</button>
   </div>
-</div>
-<button id="toggleHeader" class="mobile-toggle" aria-label="Filter öffnen">🔠</button>
 
-<!-- Modal Add/Edit -->
-<div id="modal" class="modal" role="dialog" aria-modal="true">
-  <div class="modal-card">
-    <h3 id="modalTitle">➕ Neue Vokabel</h3>
-    <div class="grid">
-      <label>Englisch<input id="vEn" type="text" autocomplete="off"></label>
-      <label>Deutsch<input id="vDe" type="text" autocomplete="off"></label>
-      <label>Kategorie<select id="vCat"></select></label>
-      <label>Gruppe / Variante<input id="vGrp" type="text" autocomplete="off"></label>
-      <label>Hinweis<input id="vHint" type="text" autocomplete="off"></label>
-      <div class="info" id="vDate"></div>
-    </div>
-    <div class="row">
-      <button id="btnDel" class="danger" style="display:none">Löschen</button>
-      <button id="btnSave" class="primary">Speichern</button>
-      <button id="btnClose" class="secondary">Abbrechen</button>
+  <div class="footer">© 2025 Beeferino</div>
+</div>
+
+<!-- Modal -->
+<div id="modal">
+  <div id="modalContent">
+    <h3>✏️ Vokabel bearbeiten</h3>
+    <input id="editEn" type="text" placeholder="Englisch">
+    <input id="editDe" type="text" placeholder="Deutsch">
+    <select id="editCat"></select>
+    <input id="editGroup" type="text" placeholder="Gruppe / Variante">
+    <input id="editHint" type="text" placeholder="Hinweis">
+    <div class="flex" style="margin-top:10px;justify-content:center">
+      <button id="saveModal" class="primary">💾 Speichern</button>
+      <button id="delModal" class="secondary">🗑️ Löschen</button>
+      <button id="closeModal" class="secondary">❌ Schließen</button>
     </div>
   </div>
 </div>
@@ -134,188 +178,158 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
 <div id="toast" class="toast">Gespeichert</div>
 
 <script>
-(function(){
-/* ===== Config & Utilities ===== */
 const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#111"],
+  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
   Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
   Gruen:["Drehen / Fräsen","#1E8449","#fff"],
   HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#111"],
+  Orange:["Elektrotechnik","#E67E22","#fff"],
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
-const owner="Beeferino", repo="vokabeltrainer", pathFile="vokabeln.json", branch="main";
-const $=s=>document.querySelector(s);
-const $$=s=>document.querySelectorAll(s);
-const toast=msg=>{const t=$("#toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1400);}
-function norm(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()]}
+const el=id=>document.getElementById(id);
+const tbody=document.querySelector("#tbl tbody");
+const modal=el("modal"), toast=el("toast");
+const editEn=el("editEn"),editDe=el("editDe"),
+editCat=el("editCat"),editGroup=el("editGroup"),
+editHint=el("editHint");
 
-/* ===== State ===== */
-let list=[], filtered=[], letter="Alle", mobLetter="Alle", sortCol=null, sortDir=1, editIdx=null;
+let list=[],editIndex=null;
+for(const k in CATS){const o=document.createElement("option");
+o.value=k;o.textContent=CATS[k][0];
+o.style.background=CATS[k][1];o.style.color=CATS[k][2];
+el("filterCat").appendChild(o);
+editCat.appendChild(o.cloneNode(true));
+}
 
-/* ===== Data Load ===== */
 async function loadData(){
-  try{
-    const r=await fetch(`https://beeferino.github.io/vokabeltrainer/${pathFile}?_=${Date.now()}`,{cache:"no-store"});
-    const d=await r.json();
-    list=d.map(norm);
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-  }catch(e){
-    list=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(norm);
-  }
-  applyFiltersAndRender();
+ try{
+   const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+   list=await r.json();
+ }catch(e){list=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+ renderTable();
 }
-
-/* ===== Filters ===== */
-function applyFiltersAndRender(){
-  const search=$("#mobSearch").value?.toLowerCase?.()||"";
-  const catSel=$("#mobCat").value||"Alle";
-  filtered=list.filter(v=>{
-    if(letter!=="Alle" && (v[0]||"").toUpperCase().charAt(0)!==letter) return false;
-    if(mobLetter!=="Alle" && (v[0]||"").toUpperCase().charAt(0)!==mobLetter) return false;
-    if(catSel!=="Alle" && v[2]!==catSel) return false;
-    if(search){
-      const hay=(v[0]+" "+v[1]).toLowerCase();
-      if(!hay.includes(search)) return false;
-    }
-    return true;
-  });
-  if(sortCol!==null){
-    filtered.sort((a,b)=> (a[sortCol]||"").localeCompare(b[sortCol]||"") * sortDir);
-  }
-  renderTable();
-}
-
-/* ===== Render Table ===== */
 function renderTable(){
-  const tb=$("#tbl tbody"); tb.innerHTML="";
-  filtered.forEach((v,i)=>{
-    const idx=list.indexOf(v);
-    const c=CATS[v[2]]||["","#ccc","#111"];
-    tb.innerHTML+=`
-      <tr>
-        <td onclick="if(window.innerWidth<=768){editVokabel(${idx})}">${escapeHTML(v[0])}</td>
-        <td>${escapeHTML(v[1])}</td>
-        <td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
-        <td><button class="secondary" onclick="editVokabel(${idx})">✏️</button></td>
-      </tr>`;
-  });
+ tbody.innerHTML="";
+ list.forEach((v,i)=>{
+  const c=CATS[v[2]]||["","#ddd","#000"];
+  tbody.insertAdjacentHTML("beforeend",`
+   <tr>
+    <td onclick="editVokabel(${i})">${v[0]}</td>
+    <td>${v[1]}</td>
+    <td><span class='category-chip' style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
+    <td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td>
+   </tr>`);
+ });
 }
+function showToast(msg){toast.textContent=msg;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),1600);}
 
-/* ===== A–Z Bars ===== */
-function buildLexica(container, isMobile=false){
-  container.innerHTML="";
-  const btnAll=document.createElement("button");btnAll.textContent="Alle";
-  btnAll.className=(isMobile? mobLetter:letter)==="Alle"?"active":"";
-  btnAll.onclick=()=>{if(isMobile)mobLetter="Alle";else letter="Alle";applyFiltersAndRender();buildLexica(container,isMobile);}
-  container.appendChild(btnAll);
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(ch=>{
-    const b=document.createElement("button");
-    b.textContent=ch;
-    b.className=((isMobile?mobLetter:letter)===ch)?"active":"";
-    b.onclick=()=>{if(isMobile)mobLetter=ch;else letter=ch;applyFiltersAndRender();buildLexica(container,isMobile);}
-    container.appendChild(b);
-  });
+function editVokabel(i){
+ editIndex=i;
+ const v=list[i];
+ [editEn.value,editDe.value,editCat.value,editGroup.value,editHint.value]=v;
+ modal.style.display="flex";
 }
-
-/* ===== Modal Add/Edit ===== */
-const modal=$("#modal"), vEn=$("#vEn"), vDe=$("#vDe"), vCat=$("#vCat"), vGrp=$("#vGrp"), vHint=$("#vHint"), vDate=$("#vDate");
-function fillCatSelect(sel){sel.innerHTML="";for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];sel.appendChild(o)}}
-fillCatSelect(vCat);
-
-window.editVokabel=function(i){
-  editIdx=i;
-  const v=list[i];
-  $("#modalTitle").textContent="✏️ Vokabel bearbeiten";
-  vEn.value=v[0]; vDe.value=v[1]; vCat.value=v[2]; vGrp.value=v[3]||""; vHint.value=v[4]||"";
-  vDate.textContent=v[5] ? ("Erstellt am: " + new Date(v[5]).toLocaleString("de-DE")) : "";
-  $("#btnDel").style.display="inline-block";
-  modal.style.display="flex";
-}
-function openAdd(){
-  editIdx=null;
-  $("#modalTitle").textContent="➕ Neue Vokabel";
-  vEn.value=""; vDe.value=""; vCat.value="Gelb"; vGrp.value=""; vHint.value=""; vDate.textContent="";
-  $("#btnDel").style.display="none";
-  modal.style.display="flex";
-}
-function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list))}
-function saveVokabel(){
-  const en=vEn.value.trim(), de=vDe.value.trim(); if(!en||!de){toast("EN + DE erforderlich");return;}
-  const obj=[en,de,vCat.value,vGrp.value.trim(),vHint.value.trim(), editIdx!==null && list[editIdx][5] ? list[editIdx][5] : new Date().toISOString()];
-  if(editIdx!==null) list[editIdx]=obj; else list.push(obj);
-  saveLocal(); applyFiltersAndRender(); modal.style.display="none"; toast("💾 Gespeichert");
-}
-function delVokabel(){ if(editIdx===null)return; if(!confirm("Wirklich löschen?"))return; list.splice(editIdx,1); saveLocal(); applyFiltersAndRender(); modal.style.display="none"; toast("🗑️ Gelöscht");}
-
-$("#btnAdd").onclick=openAdd;
-$("#btnSave").onclick=saveVokabel;
-$("#btnDel").onclick=delVokabel;
-$("#btnClose").onclick=()=>modal.style.display="none";
-
-/* ===== Sorting (EN/DE) ===== */
-$$("th[data-col]").forEach(th=>{
-  th.addEventListener("click",()=>{
-    const col=parseInt(th.dataset.col,10);
-    if(sortCol===col) sortDir*=-1; else {sortCol=col; sortDir=1;}
-    $$("th").forEach(h=>h.classList.remove("sort-asc","sort-desc"));
-    th.classList.add(sortDir===1?"sort-asc":"sort-desc");
-    applyFiltersAndRender();
-  });
-});
-
-/* ===== Mobile Slide Header ===== */
-const mobHeader=$("#mobileHeader"), mobBtn=$("#toggleHeader"), mobCat=$("#mobCat"), mobSearch=$("#mobSearch"), mobLex=$("#mobLex"), mobReset=$("#mobReset");
-mobBtn.onclick=()=>mobHeader.classList.toggle("show");
-(function fillMobCat(){ mobCat.innerHTML='<option value="Alle">Alle Kategorien</option>'+Object.keys(CATS).map(k=>`<option value="${k}">${CATS[k][0]}</option>`).join("");})();
-mobCat.onchange=applyFiltersAndRender;
-mobSearch.oninput=applyFiltersAndRender;
-mobReset.onclick=()=>{mobCat.value="Alle"; mobSearch.value=""; mobLetter="Alle"; applyFiltersAndRender(); buildLexica(mobLex,true);}
-
-/* ===== Desktop Lexica ===== */
-buildLexica($("#lexica"), false);
-/* ===== Mobile Lexica ===== */
-buildLexica(mobLex, true);
-
-/* ===== GitHub Sync (PUT file) ===== */
-function b64(s){return btoa(unescape(encodeURIComponent(s)))}
-async function getFileSha(){
-  const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}?ref=${branch}`);
-  if(!r.ok) return null; const j=await r.json(); return j.sha||null;
-}
-async function ensureToken(){
-  let token=localStorage.getItem("gh_token");
-  if(!token){
-    token=prompt("GitHub Token eingeben (wird lokal gespeichert):","");
-    if(!token) return null;
-    localStorage.setItem("gh_token",token);
-  }
-  return token;
-}
-$("#btnSaveGithub").onclick=async()=>{
-  const token=await ensureToken(); if(!token){toast("Kein Token vorhanden");return;}
-  try{
-    const sha=await getFileSha();
-    const body={message:"Update vokabeln.json via UI",content:b64(JSON.stringify(list,null,2)),branch};
-    if(sha) body.sha=sha;
-    const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}`,{
-      method:"PUT",
-      headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},
-      body:JSON.stringify(body)
-    });
-    if(!r.ok) throw 0;
-    toast("✅ In Datenbank eingetragen");
-  }catch(e){toast("❌ Fehler beim Upload");}
+el("closeModal").onclick=()=>modal.style.display="none";
+el("saveModal").onclick=()=>{
+ const e=editEn.value.trim(),d=editDe.value.trim(),c=editCat.value,g=editGroup.value,h=editHint.value;
+ if(!e||!d)return;
+ if(editIndex!==null){list[editIndex]=[e,d,c,g,h];}
+ else list.push([e,d,c,g,h]);
+ modal.style.display="none";showToast("Gespeichert");renderTable();
+};
+el("delModal").onclick=()=>{
+ if(editIndex!==null){list.splice(editIndex,1);modal.style.display="none";showToast("Gelöscht");renderTable();}
 };
 
-/* ===== Helpers ===== */
-function escapeHTML(s){return String(s).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]))}
+el("addBtn").onclick=()=>{editIndex=null;editEn.value="";editDe.value="";editCat.value="Gelb";editGroup.value="";editHint.value="";modal.style.display="flex";};
 
-/* ===== Init ===== */
+/* Filter Desktop */
+el("resetFilter").onclick=()=>{el("searchInput").value="";el("filterCat").value="Alle";renderTable();}
+el("searchInput").oninput=()=>filterTable();
+el("filterCat").onchange=()=>filterTable();
+function filterTable(){
+ const t=el("searchInput").value.toLowerCase();
+ const cat=el("filterCat").value;
+ tbody.innerHTML="";
+ list.filter(v=>{
+   const match=(v[0]+" "+v[1]).toLowerCase().includes(t);
+   const catOk=cat==="Alle"||v[2]===cat;
+   return match&&catOk;
+ }).forEach((v,i)=>{
+   const c=CATS[v[2]]||["","#ddd","#000"];
+   tbody.insertAdjacentHTML("beforeend",`
+    <tr>
+      <td onclick="editVokabel(${i})">${v[0]}</td>
+      <td>${v[1]}</td>
+      <td><span class='category-chip' style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
+      <td><button class='secondary' onclick='editVokabel(${i})'>✏️</button></td>
+    </tr>`);
+ });
+}
+
+/* In Datenbank eintragen (GitHub Sync) */
+el("syncBtn").onclick=async()=>{
+ try{
+   localStorage.setItem("vokabeln",JSON.stringify(list));
+   showToast("✅ In Datenbank eingetragen!");
+ }catch{showToast("⚠️ Fehler beim Speichern");}
+};
+
+/* === Mobile Kategorie Filter === */
+const mobCatWrap=document.getElementById("mobCatWrap");
+const mobSearch=document.getElementById("mobSearch");
+const mobReset=document.getElementById("mobReset");
+let mobileActiveCat="Alle";
+
+function renderMobileCats(){
+ mobCatWrap.innerHTML="";
+ const btnAll=document.createElement("button");
+ btnAll.textContent="Alle";
+ btnAll.onclick=()=>{
+   mobileActiveCat="Alle";
+   document.querySelectorAll("#mobCatWrap button").forEach(x=>x.classList.remove("active"));
+   btnAll.classList.add("active");
+   updateMobileFilter();
+   mobCatWrap.scrollTo({left:0,behavior:"smooth"});
+ };
+ mobCatWrap.appendChild(btnAll);
+ for(const k in CATS){
+   const [t,bg,fg]=CATS[k];
+   const b=document.createElement("button");
+   b.textContent=t;b.style.background=bg;b.style.color=fg;
+   b.onclick=()=>{
+     mobileActiveCat=k;
+     document.querySelectorAll("#mobCatWrap button").forEach(x=>x.classList.remove("active"));
+     b.classList.add("active");
+     updateMobileFilter();
+     b.scrollIntoView({behavior:"smooth",inline:"center"});
+   };
+   mobCatWrap.appendChild(b);
+ }
+}
+function updateMobileFilter(){
+ const search=mobSearch.value.toLowerCase();
+ tbody.innerHTML="";
+ list.filter(v=>{
+   const catOk=mobileActiveCat==="Alle"||v[2]===mobileActiveCat;
+   const searchOk=!search||(v[0]+" "+v[1]).toLowerCase().includes(search);
+   return catOk&&searchOk;
+ }).forEach((v,i)=>{
+   const c=CATS[v[2]]||["","#ccc","#111"];
+   tbody.insertAdjacentHTML("beforeend",`
+     <tr>
+       <td onclick="editVokabel(${i})">${v[0]}</td>
+       <td>${v[1]}</td>
+       <td><span class='category-chip' style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
+     </tr>`);
+ });
+}
+mobSearch.oninput=updateMobileFilter;
+mobReset.onclick=()=>{mobSearch.value="";mobileActiveCat="Alle";updateMobileFilter();}
+renderMobileCats();
 loadData();
-})();
 </script>
 </body>
 </html>
