@@ -3,215 +3,477 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vokabeln – Beeferino</title>
+<title>📘 Vokabelübersicht – Beeferino</title>
 <style>
 :root{
-  --blue:#2563eb;--ink:#0f172a;
-  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;
-  --glass:rgba(255,255,255,.92)
+  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--glass:rgba(255,255,255,.92);
+  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;--chipText:#111827;
+  --card:#ffffff;--shadow:0 10px 32px rgba(0,0,0,.10);
 }
+*{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);
-  color:var(--ink)
+  margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink);
 }
 .app{
-  max-width:960px;margin:32px auto;padding:22px;
-  background:var(--glass);border-radius:22px;
-  box-shadow:0 10px 32px rgba(0,0,0,.10);
-  backdrop-filter:blur(8px)
+  max-width:1100px;margin:28px auto;padding:20px;background:var(--glass);
+  border-radius:22px;box-shadow:var(--shadow);backdrop-filter:blur(8px);
 }
-h1{text-align:center;margin:0;font-size:2rem;color:#1e3a8a;font-weight:800}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
-.actions{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;margin-bottom:14px}
-button{
-  border:none;padding:10px 16px;border-radius:12px;
-  font-weight:700;cursor:pointer
-}
-button.primary{background:var(--blue);color:#fff}
-button.secondary{background:#eaf0ff;color:#1f2937}
-table{
-  width:100%;border-collapse:collapse;margin-top:12px
-}
-th,td{
-  border-bottom:1px solid #e5e7eb;padding:8px 10px;text-align:left
-}
-th{background:#f1f5f9;font-weight:700}
-tbody tr:hover{background:#f9fafb}
-input,select{
-  border:1px solid #d1d5db;border-radius:10px;padding:6px 10px;font-size:1rem
-}
-.footer{
-  text-align:center;margin-top:22px;color:#6b7280;font-size:.92rem
-}
+h1{margin:0;text-align:center;font-size:1.9rem;font-weight:800;color:#1e3a8a}
+.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 18px}
+.section{background:#fff;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.06);padding:16px;margin:16px 0}
+.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.controls label{display:flex;align-items:center;gap:6px}
+select,input,button{padding:9px 12px;border-radius:12px;border:1px solid #d6deee;font-size:1rem}
+button{cursor:pointer;background:var(--blue);color:#fff;border:none;font-weight:700}
+button.secondary{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937}
+button.ghost{background:#f3f6ff;border:1px dashed #c7d2fe;color:#1f2937}
+button.danger{background:var(--bad);color:#fff}
+button:disabled{opacity:.6;cursor:not-allowed}
 
-/* --- Floating Add Button --- */
-#addMobile{
-  position:fixed;bottom:24px;right:24px;
-  background:var(--blue);color:#fff;
-  border:none;border-radius:50%;
-  width:64px;height:64px;font-size:2rem;
-  display:none;align-items:center;justify-content:center;
-  box-shadow:0 8px 22px rgba(37,99,235,.4);
-  transition:transform .2s ease,box-shadow .2s ease;
-  z-index:1001;
-}
-#addMobile:hover{transform:scale(1.05);box-shadow:0 10px 26px rgba(37,99,235,.5)}
+/* A–Z */
+.lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
+.lexica button{background:#ecf3ff;color:#1f3b76;border:1px solid #d6e4ff;padding:6px 10px;border-radius:999px;font-weight:700}
+.lexica button.active{background:#1e6ed8;color:#fff}
 
-/* --- Slide-Up Popup --- */
-#popup{
-  position:fixed;bottom:-100%;left:0;right:0;
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(12px);
-  border-top-left-radius:24px;border-top-right-radius:24px;
-  box-shadow:0 -6px 28px rgba(0,0,0,.25);
-  transition:bottom .4s ease;
-  z-index:1000;padding:24px;
-}
-#popup.show{bottom:0}
-#popup h2{text-align:center;margin-top:0;color:#1e3a8a}
-#popup input,#popup select{
-  width:100%;margin-bottom:10px;padding:10px;
-  border:1px solid #d1d5db;border-radius:12px;font-size:1rem
-}
-#popup .btnrow{display:flex;justify-content:space-between;gap:10px}
-#toast{
-  position:fixed;bottom:-50px;left:50%;transform:translateX(-50%);
-  background:var(--ok);color:#fff;padding:10px 18px;border-radius:12px;
-  font-weight:700;transition:bottom .4s ease;z-index:1002;
-}
-#toast.show{bottom:30px}
+/* Tabelle */
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #e8eef9;text-align:left}
+th{background:#eef4ff;cursor:pointer;user-select:none}
+th.sort-asc::after{content:" ↑";color:#556}
+th.sort-desc::after{content:" ↓";color:#556}
+tr:hover{background:#f6faff}
+.category-chip{display:inline-block;padding:6px 10px;border-radius:999px;color:#111827;font-weight:800}
 
-/* Mobile adjustments */
-@media(max-width:700px){
-  .app{margin:16px;padding:16px}
-  #addMobile{display:flex}
-  .desktopOnly{display:none}
+/* Pagination & Footerinfo */
+.pagination{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.pagination button{background:#ecf0f1;color:#333;border:1px solid #ccc}
+.pagination button.active{background:#1e6ed8;color:#fff}
+.info-footer{margin-top:6px;font-size:.95rem;color:#555;text-align:center}
+
+/* Modals */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);align-items:center;justify-content:center;z-index:9999}
+.modal-card{width:92%;max-width:480px;background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);padding:18px}
+.modal h3{margin:0 0 10px;font-size:1.25rem}
+.modal .grid{display:grid;grid-template-columns:1fr;gap:10px}
+.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+
+/* Toast */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:12px;display:none;z-index:10000}
+
+/* Zuletzt hinzugefügt (wie index) */
+.recent-wrap{background:#fff;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:18px}
+.recent-title{font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:#1e3a8a;text-align:center}
+.recent-grid{margin-top:14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.recent-item{display:inline-block;min-width:160px;border-radius:14px;padding:12px 18px;font-weight:700;color:#111827;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px;opacity:.9;color:#111}
+
+/* Headerzeile: mobile Tools */
+.topbar{display:none;justify-content:space-between;align-items:center;gap:10px;margin:8px 0}
+.topbar .pill{background:#fff;border:1px solid #e3e9fb;border-radius:999px;padding:8px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+
+/* Karten – Mobile Ansicht */
+.cards{display:none;gap:12px;flex-direction:column}
+.card{background:var(--card);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.08);padding:14px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card-title{font-size:1.15rem;font-weight:900}
+.card-sub{color:#111827;font-weight:700;opacity:.9}
+.card-actions button{background:#eef4ff;border:1px solid #dbe3ff;color:#1f2937}
+
+/* Footer */
+.footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:18px}
+footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
+
+/* Responsive Umschalter */
+@media (max-width: 768px){
+  .section.table-wrap{display:none}
+  .topbar{display:flex}
+  .cards{display:flex}
 }
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>📘 Vokabeln</h1>
+  <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <div class="actions desktopOnly">
-    <div>
-      <button id="sortABC" class="secondary">🔤 Sortieren A–Z</button>
-      <button id="btnEdit" class="secondary">✏️ Bearbeiten</button>
-    </div>
-    <div>
-      <input id="search" type="text" placeholder="Suchen …">
-      <button id="reset" class="secondary">Zurücksetzen</button>
+  <!-- A–Z -->
+  <div id="lexica" class="lexica"></div>
+
+  <!-- Filter & Suche -->
+  <div class="section">
+    <div class="controls">
+      <label>Kategorie:
+        <select id="filterCat"><option value="Alle">Alle (bunt gemischt)</option></select>
+      </label>
+      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)">
+      <button id="resetFilter" class="secondary">🔄 Zurücksetzen</button>
     </div>
   </div>
 
-  <table id="tbl" class="desktopOnly">
-    <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Aktionen</th></tr></thead>
-    <tbody></tbody>
-  </table>
+  <!-- Desktop Tabelle -->
+  <div class="section table-wrap">
+    <table id="vokabelTable">
+      <thead>
+        <tr>
+          <th style="width:36px">&nbsp;</th>
+          <th data-col="0">Englisch</th>
+          <th data-col="1">Deutsch</th>
+          <th data-col="2">Kategorie</th>
+          <th style="width:110px">Aktion</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+    <div id="infoFooter" class="info-footer"></div>
+  </div>
 
-  <div class="footer">© 2025 Beeferino • Datenquelle: GitHub</div>
+  <!-- Mobile Topbar -->
+  <div class="topbar">
+    <div class="pill"><span>🔍</span><input id="mSearch" type="text" placeholder="Suche..." style="border:none;outline:none"></div>
+    <div class="pill">
+      <select id="mFilterCat"><option value="Alle">Alle</option></select>
+    </div>
+    <button id="mReset" class="ghost">Reset</button>
+  </div>
+  <!-- Mobile Karten -->
+  <div id="cards" class="cards"></div>
+
+  <!-- Aktionsleiste -->
+  <div class="section">
+    <div class="controls" style="justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="btnAdd" class="ghost">➕ Neue Vokabel</button>
+        <button id="btnDeleteSel" class="danger">🗑️ Ausgewählte löschen</button>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button id="btnSaveGithub">💾 In Datenbank eintragen</button>
+        <button id="btnExport" class="secondary">📤 Export</button>
+        <input id="fileImport" type="file" accept=".json" hidden>
+        <button id="btnImport" class="secondary">📥 Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zuletzt hinzugefügt -->
+  <div class="section recent-wrap">
+    <div class="recent-title">Zuletzt hinzugefügt</div>
+    <div id="recent" class="recent-grid"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer-actions">
+    <a href="index.html" class="secondary">⬅️ Zurück zum Trainer</a>
+    <span></span>
+  </div>
+  <footer>© 2025 Beeferino</footer>
 </div>
 
-<!-- Floating Add Button -->
-<button id="addMobile">➕</button>
-
-<!-- Slide-Up Popup -->
-<div id="popup">
-  <h2>Neue Vokabel</h2>
-  <input id="en" type="text" placeholder="Englisch">
-  <input id="de" type="text" placeholder="Deutsch">
-  <select id="cat">
-    <option value="Gelb">Grundwerkzeuge Metallverarbeitung</option>
-    <option value="Pink">Werkzeugkasten Mechaniker</option>
-    <option value="Blau">Blech-/Kunststoffarbeiten</option>
-    <option value="Gruen">Drehen / Fräsen</option>
-    <option value="HellesPink">Hydraulik / Pneumatik</option>
-    <option value="Orange">Elektrotechnik</option>
-    <option value="Dunkelgruen">Fluggerätemechanik allgemein</option>
-    <option value="Rot">Verwechslungsgefahr</option>
-  </select>
-  <input id="group" type="text" placeholder="Gruppe / Variante (optional)">
-  <input id="note" type="text" placeholder="Hinweis (optional)">
-  <div class="btnrow">
-    <button id="cancel" class="secondary">Abbrechen</button>
-    <button id="save" class="primary">Speichern</button>
+<!-- Modal: Bearbeiten -->
+<div id="modalEdit" class="modal">
+  <div class="modal-card">
+    <h3>🔍 Vokabel bearbeiten</h3>
+    <div class="grid">
+      <label>Englisch<input id="eEn" type="text"></label>
+      <label>Deutsch<input id="eDe" type="text"></label>
+      <label>Kategorie<select id="eCat"></select></label>
+      <label>Gruppe / Variante<input id="eGrp" type="text" placeholder="optional"></label>
+      <label>Hinweis<input id="eHint" type="text" placeholder="optional"></label>
+    </div>
+    <div class="row">
+      <button id="btnDeleteOne" class="danger">Löschen</button>
+      <button id="btnSaveEdit">Speichern</button>
+      <button id="btnCloseEdit" class="secondary">Schließen</button>
+    </div>
   </div>
 </div>
 
-<div id="toast">Gespeichert!</div>
+<!-- Modal: Hinzufügen -->
+<div id="modalAdd" class="modal">
+  <div class="modal-card">
+    <h3>➕ Neue Vokabel</h3>
+    <div class="grid">
+      <label>Englisch<input id="aEn" type="text" placeholder="z. B. hammer"></label>
+      <label>Deutsch<input id="aDe" type="text" placeholder="z. B. Hammer"></label>
+      <label>Kategorie<select id="aCat"></select></label>
+      <label>Gruppe / Variante<input id="aGrp" type="text" placeholder="optional"></label>
+      <label>Hinweis<input id="aHint" type="text" placeholder="optional"></label>
+    </div>
+    <div class="row">
+      <button id="btnAddSave">Hinzufügen</button>
+      <button id="btnAddClose" class="secondary">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast">Gespeichert</div>
 
 <script>
-const tbl=document.querySelector("#tbl tbody");
-const popup=document.getElementById("popup");
-const btnAdd=document.getElementById("addMobile");
-const btnCancel=document.getElementById("cancel");
-const btnSave=document.getElementById("save");
-const toast=document.getElementById("toast");
-const btnEdit=document.getElementById("btnEdit");
-let editMode=false,vokabeln=[];
+(function(){
+const CATS={
+  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#111"],
+  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
+  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
+  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
+  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
+  Orange:["Elektrotechnik","#E67E22","#111"],
+  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
+  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+};
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+const toast=msg=>{const t=$("#toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1400);}
+const owner="Beeferino", repo="vokabeltrainer", branch="main", pathFile="vokabeln.json";
 
-/* --- Daten laden --- */
-async function load(){
+let list=[], page=1, perPage=15, sortCol=0, sortDir=1, letter="Alle", filterCat="Alle", searchTerm="";
+
+function norm(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];}
+function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));localStorage.setItem("vokabeln_updated",new Date().toISOString());}
+function loadLocal(){return JSON.parse(localStorage.getItem("vokabeln")||"[]").map(norm);}
+
+async function loadFromGitHub(){
   try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    vokabeln=await r.json();
-  }catch{
-    vokabeln=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    const r=await fetch(`https://beeferino.github.io/vokabeltrainer/${pathFile}?_=${Date.now()}`,{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const d=await r.json();
+    list=d.map(norm); saveLocal(); renderAll(); toast("🔄 Aus Datenbank geladen");
+  }catch(e){
+    list=loadLocal(); renderAll(); toast("💾 Lokaler Stand geladen");
   }
-  render();
 }
 
-/* --- Tabelle rendern --- */
-function render(){
-  tbl.innerHTML="";
-  vokabeln.forEach((v,i)=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`
+function fillCatSelect(sel, withAll=false){
+  sel.innerHTML=withAll?"<option value='Alle'>Alle</option>":"";
+  Object.keys(CATS).forEach(k=>{
+    const o=document.createElement("option");
+    o.value=k; o.textContent=CATS[k][0]; o.style.background=CATS[k][1]; o.style.color=CATS[k][2];
+    sel.appendChild(o);
+  });
+}
+
+/* A–Z */
+function renderLexica(){
+  const letters=["Alle",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+  const lx=$("#lexica"); lx.innerHTML="";
+  letters.forEach(L=>{
+    const b=document.createElement("button");
+    b.textContent=L; if(L===letter) b.classList.add("active");
+    b.onclick=()=>{letter=L; page=1; renderTable(); renderCards();}
+    lx.appendChild(b);
+  });
+}
+
+function filtered(){
+  return list.filter(([en,de,cat,grp,hint])=>{
+    if(letter!=="Alle" && !en.toUpperCase().startsWith(letter)) return false;
+    if(filterCat!=="Alle" && cat!==filterCat) return false;
+    if(searchTerm){
+      const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase();
+      if(!hay.includes(searchTerm)) return false;
+    }
+    return true;
+  });
+}
+
+function sortRows(rows){
+  return rows.sort((a,b)=>{
+    const A=(a[sortCol]||"").toString().toLowerCase();
+    const B=(b[sortCol]||"").toString().toLowerCase();
+    if(A<B) return sortDir===1?-1:1;
+    if(A>B) return sortDir===1?1:-1;
+    return 0;
+  });
+}
+
+/* Desktop Tabelle */
+function renderTable(){
+  const tb=$("#vokabelTable tbody"); if(!tb) return;
+  let rows=filtered(); rows=sortRows(rows);
+  const pages=Math.max(1,Math.ceil(rows.length/perPage));
+  if(page>pages) page=pages;
+  const start=(page-1)*perPage;
+  const slice=rows.slice(start,start+perPage);
+
+  tb.innerHTML=slice.map(v=>{
+    const idx=list.indexOf(v);
+    const c=CATS[v[2]]||["","#ddd","#111"];
+    return `<tr>
+      <td><input type="checkbox" class="sel" data-idx="${idx}"></td>
       <td>${v[0]}</td>
       <td>${v[1]}</td>
-      <td>${v[2]}</td>
-      <td>${editMode?`<button class='secondary del' data-i='${i}'>🗑️</button>`:""}</td>`;
-    tbl.appendChild(tr);
+      <td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
+      <td>
+        <button class="secondary btn-edit" data-idx="${idx}">🔍</button>
+      </td>
+    </tr>`;
+  }).join("");
+
+  const pag=$("#pagination"); pag.innerHTML="";
+  for(let p=1;p<=pages;p++){
+    const b=document.createElement("button");
+    b.textContent=p; if(p===page) b.classList.add("active");
+    b.onclick=()=>{page=p;renderTable();}
+    pag.appendChild(b);
+  }
+
+  const upd=localStorage.getItem("vokabeln_updated");
+  $("#infoFooter").textContent=`📚 Gesamt: ${list.length} | 🔎 Gefiltert: ${rows.length} | 🔤 Angezeigt: ${slice.length} | 📄 Seite ${page}/${pages} | ⏱️ Änderung: ${upd? new Date(upd).toLocaleString("de-DE"):"–"}`;
+
+  $$(".btn-edit").forEach(b=>b.onclick=()=>openEdit(+b.dataset.idx));
+}
+
+/* Mobile Karten */
+function renderCards(){
+  const wrap=$("#cards"); if(!wrap) return;
+  wrap.innerHTML="";
+  let rows=filtered(); rows=sortRows(rows);
+  rows.forEach(v=>{
+    const idx=list.indexOf(v);
+    const c=CATS[v[2]]||["","#ddd","#111"];
+    const card=document.createElement("div");
+    card.className="card";
+    card.innerHTML=`
+      <div class="card-head">
+        <span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span>
+        <div class="card-actions"><button class="secondary btn-edit">🖋️</button></div>
+      </div>
+      <div class="card-title">${v[0]}</div>
+      <div class="card-sub">${v[1]}</div>
+    `;
+    card.onclick=()=>openEdit(idx);
+    card.querySelector(".btn-edit").onclick=(e)=>{e.stopPropagation();openEdit(idx);}
+    wrap.appendChild(card);
   });
-  document.querySelectorAll(".del").forEach(b=>b.onclick=()=>{vokabeln.splice(b.dataset.i,1);saveLocal();render();});
 }
 
-/* --- Lokal speichern --- */
-function saveLocal(){
-  localStorage.setItem("vokabeln",JSON.stringify(vokabeln));
+/* Zuletzt hinzugefügt */
+function renderRecent(){
+  const r=$("#recent"); if(!r) return;
+  const last=list.slice(-5).reverse();
+  if(!last.length){r.textContent="–";return;}
+  r.innerHTML=last.map(v=>{
+    const c=CATS[v[2]]||["","#ddd","#111"];
+    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
+      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
+    </div>`;
+  }).join("");
 }
 
-/* --- Toast anzeigen --- */
-function showToast(){
-  toast.classList.add("show");
-  setTimeout(()=>toast.classList.remove("show"),1200);
+function renderAll(){ renderTable(); renderCards(); renderRecent(); }
+
+/* Sort Header */
+$$("th[data-col]").forEach(th=>{
+  th.onclick=()=>{
+    const col=+th.dataset.col;
+    if(sortCol===col) sortDir*=-1; else {sortCol=col;sortDir=1;}
+    $$("th[data-col]").forEach(x=>x.classList.remove("sort-asc","sort-desc"));
+    th.classList.add(sortDir===1?"sort-asc":"sort-desc");
+    renderTable(); renderCards();
+  };
+});
+
+/* Filter + Suche */
+$("#filterCat").onchange=e=>{filterCat=e.target.value;page=1;renderTable();renderCards();}
+$("#searchInput").oninput=e=>{searchTerm=e.target.value.trim().toLowerCase();page=1;renderTable();renderCards();}
+$("#resetFilter").onclick=()=>{$("#searchInput").value="";searchTerm="";$("#filterCat").value="Alle";filterCat="Alle";letter="Alle";renderLexica();page=1;renderTable();renderCards();}
+
+/* Mobile Filter */
+$("#mFilterCat").onchange=e=>{filterCat=e.target.value;renderCards();}
+$("#mSearch").oninput=e=>{searchTerm=e.target.value.trim().toLowerCase();renderCards();}
+$("#mReset").onclick=()=>{$("#mSearch").value="";searchTerm="";$("#mFilterCat").value="Alle";filterCat="Alle";letter="Alle";renderLexica();renderCards();}
+
+/* Edit-Popup */
+const modalEdit=$("#modalEdit"), eEn=$("#eEn"), eDe=$("#eDe"), eCat=$("#eCat"), eGrp=$("#eGrp"), eHint=$("#eHint");
+let editIdx=null;
+function openEdit(i){
+  editIdx=i; const v=list[i];
+  eEn.value=v[0]; eDe.value=v[1]; eCat.value=v[2]; eGrp.value=v[3]||""; eHint.value=v[4]||"";
+  modalEdit.style.display="flex";
 }
-
-/* --- Popup öffnen/schließen --- */
-btnAdd.onclick=()=>popup.classList.add("show");
-btnCancel.onclick=()=>popup.classList.remove("show");
-
-/* --- Speichern --- */
-btnSave.onclick=()=>{
-  const en=document.getElementById("en").value.trim();
-  const de=document.getElementById("de").value.trim();
-  const cat=document.getElementById("cat").value;
-  if(!en||!de)return alert("Bitte Englisch und Deutsch eingeben.");
-  vokabeln.push([en,de,cat]);
-  saveLocal();render();popup.classList.remove("show");showToast();
+$("#btnCloseEdit").onclick=()=>modalEdit.style.display="none";
+$("#btnSaveEdit").onclick=()=>{
+  const en=eEn.value.trim(), de=eDe.value.trim(); if(!en||!de){toast("Bitte EN & DE ausfüllen");return;}
+  list[editIdx]=[en,de,eCat.value,eGrp.value.trim(),eHint.value.trim(), list[editIdx][5]||new Date().toISOString()];
+  saveLocal(); renderAll(); modalEdit.style.display="none"; toast("💾 Gespeichert");
+};
+$("#btnDeleteOne").onclick=()=>{
+  if(!confirm("Diese Vokabel löschen?")) return;
+  list.splice(editIdx,1); saveLocal(); renderAll(); modalEdit.style.display="none"; toast("🗑️ Gelöscht");
 };
 
-/* --- Edit Mode --- */
-btnEdit.onclick=()=>{
-  editMode=!editMode;
-  btnEdit.textContent=editMode?"✅ Fertig":"✏️ Bearbeiten";
-  render();
+/* Add-Popup */
+const modalAdd=$("#modalAdd"), aEn=$("#aEn"), aDe=$("#aDe"), aCat=$("#aCat"), aGrp=$("#aGrp"), aHint=$("#aHint");
+$("#btnAdd").onclick=()=>{aEn.value=aDe.value=aGrp.value=aHint.value=""; modalAdd.style.display="flex"; aEn.focus();}
+$("#btnAddClose").onclick=()=>modalAdd.style.display="none";
+$("#btnAddSave").onclick=()=>{
+  const en=aEn.value.trim(), de=aDe.value.trim(); if(!en||!de){toast("Bitte EN & DE ausfüllen");return;}
+  list.push([en,de,aCat.value,aGrp.value.trim(),aHint.value.trim(), new Date().toISOString()]);
+  saveLocal(); renderAll(); modalAdd.style.display="none"; toast("➕ Hinzugefügt");
 };
 
-load();
+/* Mehrfach löschen (Desktop) */
+$("#btnDeleteSel").onclick=()=>{
+  const sel=$$(".sel:checked"); if(!sel.length){toast("Nichts ausgewählt");return;}
+  if(!confirm(`${sel.length} Vokabel(n) löschen?`)) return;
+  const idxs=sel.map(x=>+x.dataset.idx).sort((a,b)=>b-a);
+  idxs.forEach(i=>list.splice(i,1));
+  saveLocal(); renderAll(); toast("🗑️ Gelöscht");
+};
+
+/* Export / Import */
+$("#btnExport").onclick=()=>{
+  const blob=new Blob([JSON.stringify(list,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="vokabeln.json"; a.click();
+};
+$("#btnImport").onclick=()=>$("#fileImport").click();
+$("#fileImport").onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const incoming=JSON.parse(r.result).map(norm);
+      // Merge ohne Duplikate (EN|DE) – lokal dominiert
+      const key=v=>(v[0].toLowerCase()+"|"+v[1].toLowerCase());
+      const map=new Map(list.map(v=>[key(v),v]));
+      incoming.forEach(v=>{if(!map.has(key(v))) map.set(key(v),v);});
+      list=[...map.values()]; saveLocal(); renderAll(); toast("📥 Importiert (gemergt)");
+    }catch{toast("Fehler beim Import");}
+  };
+  r.readAsText(f);
+};
+
+/* GitHub speichern */
+async function getFileSha(){
+  const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}?ref=${branch}`);
+  if(!r.ok) return null;
+  const j=await r.json(); return j.sha||null;
+}
+function b64(str){return btoa(unescape(encodeURIComponent(str)));}
+$("#btnSaveGithub").onclick=async()=>{
+  const token=localStorage.getItem("gh_token");
+  if(!token){toast("Kein Token gespeichert");return;}
+  try{
+    const sha=await getFileSha();
+    const body={
+      message:"Update vokabeln.json via UI",
+      content:b64(JSON.stringify(list,null,2)),
+      branch
+    };
+    if(sha) body.sha=sha;
+    const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}`,{
+      method:"PUT",
+      headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},
+      body:JSON.stringify(body)
+    });
+    if(!r.ok){toast("❌ Konnte nicht schreiben");return;}
+    toast("✅ In Datenbank eingetragen");
+  }catch{toast("❌ Fehler beim Schreiben");}
+};
+
+/* Init */
+function initCats(){ fillCatSelect($("#filterCat"), true); fillCatSelect($("#mFilterCat"), true); fillCatSelect(aCat); fillCatSelect(eCat); }
+function initLexica(){ renderLexica(); }
+initCats(); initLexica(); loadFromGitHub();
+})();
 </script>
 </body>
 </html>
