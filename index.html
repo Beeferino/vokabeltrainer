@@ -83,15 +83,40 @@ select{
 .flash-wrong{animation:bad .4s}
 @keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
 @keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
-.footer-actions{
-  display:flex;justify-content:space-between;
-  gap:12px;margin-top:24px
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
 }
-.footer-actions a,.footer-actions button{
-  background:#eaf0ff;border:1px solid #dbe3ff;
-  color:#1f2937;padding:10px 14px;border-radius:12px;
-  font-weight:700;cursor:pointer;text-decoration:none
+
+/* Beide gleich aussehen lassen */
+.footer-actions a,
+.footer-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #eaf0ff, #f8faff);
+  border: 1px solid #dbe3ff;
+  color: #1f2937;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
 }
+
+.footer-actions a:hover,
+.footer-actions button:hover {
+  background: linear-gradient(135deg, #e0e7ff, #f1f5ff);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(37,99,235,0.15);
+}
+
 .feedback-toggle{
   display:flex;align-items:center;justify-content:center;
   gap:6px;margin-bottom:10px
