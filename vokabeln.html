@@ -9,7 +9,7 @@
   --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--glass:rgba(255,255,255,.92);
   --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;--shadow:0 10px 32px rgba(0,0,0,.10);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{
   margin:0;font-family:Inter,system-ui,sans-serif;
   background:linear-gradient(145deg,#eef4ff,#dbeafe);
@@ -22,7 +22,22 @@ body{
 h1{text-align:center;margin:0;font-size:1.9rem;font-weight:800;color:#1e3a8a}
 .hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 18px}
 
-/* A–Z */
+/* Mobile Slide Header */
+.mobile-header{
+  display:none;
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);
+  transform:translateY(-100%);transition:.3s ease;
+  border-bottom-left-radius:14px;border-bottom-right-radius:14px;
+  padding:12px;
+}
+.mobile-header.show{transform:translateY(0)}
+.mobile-header h3{margin:0 0 8px;text-align:center;color:#1e3a8a}
+.mobile-header input{width:100%;padding:8px 10px;border:1px solid #d5d9f2;border-radius:10px}
+.mobile-header .lexica{margin-top:10px;justify-content:center;flex-wrap:wrap}
+.mobile-header button{background:#eef4ff;color:#1e40af;border:none;padding:6px 9px;margin:2px;border-radius:999px;font-weight:600}
+
+/* A–Z Desktop */
 .lexica{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0}
 .lexica button{background:#ecf3ff;color:#1f3b76;border:1px solid #d6e4ff;
   padding:6px 10px;border-radius:999px;font-weight:700;cursor:pointer}
@@ -38,18 +53,17 @@ th.sort-desc::after{content:" ↓";color:#556}
 tr:hover{background:#f6faff}
 .category-chip{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700}
 
-/* Responsive Table Fix */
-@media (max-width: 1024px){
-  .section.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table{table-layout:fixed;width:100%}
-  th,td{word-wrap:break-word;white-space:normal;max-width:220px}
-}
-@media (max-width:768px){
-  th:nth-child(2),td:nth-child(2),th:nth-child(3),td:nth-child(3){max-width:140px}
-  th:nth-child(4),td:nth-child(4){max-width:100px}
+/* Responsive */
+@media (max-width: 768px){
+  th:last-child, td:last-child{display:none;}
+  td:first-child{cursor:pointer;color:#2563eb;font-weight:600;}
+  td:first-child:hover{text-decoration:underline;}
+  .mobile-toggle{position:fixed;bottom:20px;right:20px;background:var(--blue);color:#fff;
+    border:none;width:52px;height:52px;border-radius:50%;font-size:1.5rem;
+    box-shadow:0 4px 16px rgba(0,0,0,.2);z-index:1200;}
 }
 
-/* Modals */
+/* Modals (Touch optimiert) */
 .modal{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
   align-items:center;justify-content:center;z-index:9999;padding:10px;
@@ -61,9 +75,9 @@ tr:hover{background:#f6faff}
 }
 @keyframes fadeIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 .modal h3{text-align:center;margin-top:0;color:#1e3a8a}
-.modal .grid{display:grid;gap:10px}
-.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
-.modal input,.modal select{padding:10px;border:1px solid #d6deee;border-radius:10px;font-size:1rem;width:100%}
+.modal .grid{display:grid;gap:12px}
+.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.modal input,.modal select{padding:12px;border:1px solid #d6deee;border-radius:10px;font-size:1rem;width:100%;touch-action:manipulation;}
 
 /* Buttons */
 button{cursor:pointer;border:none;font-weight:700;border-radius:12px}
@@ -72,15 +86,13 @@ button.secondary{background:#eaf0ff;color:#1f2937;padding:10px 16px}
 button.danger{background:var(--bad);color:#fff;padding:10px 16px}
 button.ghost{background:#f3f6ff;border:1px dashed #c7d2fe;color:#1f2937;padding:10px 16px}
 
-/* Toast */
+/* Footer */
+.footer-actions{display:flex;justify-content:space-between;margin-top:18px;gap:12px;flex-wrap:wrap}
+footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
 .toast{
   position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
   background:#111827;color:#fff;padding:10px 16px;border-radius:12px;display:none;z-index:10000
 }
-
-/* Footer */
-.footer-actions{display:flex;justify-content:space-between;margin-top:18px;gap:12px;flex-wrap:wrap}
-footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
 </style>
 </head>
 <body>
@@ -88,17 +100,13 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
+  <!-- Desktop A–Z -->
   <div id="lexica" class="lexica"></div>
 
   <div class="section table-wrap">
     <table id="table">
       <thead>
-        <tr>
-          <th>EN</th>
-          <th>DE</th>
-          <th>Kategorie</th>
-          <th>Aktion</th>
-        </tr>
+        <tr><th>EN</th><th>DE</th><th>Kategorie</th><th>Aktion</th></tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -113,6 +121,14 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
   <footer>© 2025 Beeferino</footer>
 </div>
 
+<!-- Mobile Header Slide-In -->
+<div id="mobileHeader" class="mobile-header">
+  <h3>🔎 Filter & A–Z</h3>
+  <input type="text" id="searchMobile" placeholder="Suchen (EN / DE)">
+  <div id="mobileLexica" class="lexica"></div>
+</div>
+<button id="toggleHeader" class="mobile-toggle">🔠</button>
+
 <!-- Modal Add/Edit -->
 <div id="modalEdit" class="modal">
   <div class="modal-card">
@@ -121,8 +137,8 @@ footer{text-align:center;margin-top:10px;color:#6b7280;font-size:.92rem}
       <label>Englisch<input id="vEn" type="text"></label>
       <label>Deutsch<input id="vDe" type="text"></label>
       <label>Kategorie<select id="vCat"></select></label>
-      <label>Gruppe / Variante<input id="vGrp" type="text" placeholder="optional"></label>
-      <label>Hinweis<input id="vHint" type="text" placeholder="optional"></label>
+      <label>Gruppe / Variante<input id="vGrp" type="text"></label>
+      <label>Hinweis<input id="vHint" type="text"></label>
     </div>
     <div class="row">
       <button id="btnDel" class="danger" style="display:none">Löschen</button>
@@ -151,37 +167,26 @@ let list=[], editIdx=null;
 const owner="Beeferino", repo="vokabeltrainer", pathFile="vokabeln.json", branch="main";
 
 /* Kategorien füllen */
-function fillCats(sel){
-  sel.innerHTML="";
-  for(const k in CATS){
-    const o=document.createElement("option");
-    o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];
-    sel.appendChild(o);
-  }
-}
+function fillCats(sel){sel.innerHTML="";for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];sel.appendChild(o);} }
 fillCats($("#vCat"));
 
-/* Daten laden */
+/* Laden */
 async function loadData(){
   try{
     const r=await fetch(`https://beeferino.github.io/vokabeltrainer/${pathFile}?_=${Date.now()}`);
-    list=await r.json();
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-  }catch{
-    list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  }
+    list=await r.json();localStorage.setItem("vokabeln",JSON.stringify(list));
+  }catch{list=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
   renderTable();
 }
-function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));}
 
-/* Tabelle */
+/* Render */
 function renderTable(){
   const tb=$("#table tbody");tb.innerHTML="";
   list.forEach((v,i)=>{
     const c=CATS[v[2]]||["","#ccc","#111"];
     tb.innerHTML+=`
       <tr>
-        <td>${v[0]}</td>
+        <td onclick="if(window.innerWidth<=768){editVokabel(${i})}">${v[0]}</td>
         <td>${v[1]}</td>
         <td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td>
         <td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td>
@@ -190,7 +195,7 @@ function renderTable(){
 }
 
 /* Modal */
-const modal=$("#modalEdit"), vEn=$("#vEn"), vDe=$("#vDe"), vCat=$("#vCat"), vGrp=$("#vGrp"), vHint=$("#vHint");
+const modal=$("#modalEdit"),vEn=$("#vEn"),vDe=$("#vDe"),vCat=$("#vCat"),vGrp=$("#vGrp"),vHint=$("#vHint");
 $("#btnAdd").onclick=()=>openModal();
 $("#btnClose").onclick=()=>modal.style.display="none";
 $("#btnSave").onclick=saveVokabel;
@@ -203,46 +208,59 @@ window.editVokabel=function(i){
   $("#btnDel").style.display="inline-block";
   modal.style.display="flex";
 };
-function openModal(){
-  editIdx=null;$("#modalTitle").textContent="➕ Neue Vokabel";
-  vEn.value=vDe.value=vGrp.value=vHint.value="";vCat.value="Gelb";
-  $("#btnDel").style.display="none";
-  modal.style.display="flex";
-}
+function openModal(){editIdx=null;$("#modalTitle").textContent="➕ Neue Vokabel";vEn.value=vDe.value=vGrp.value=vHint.value="";vCat.value="Gelb";$("#btnDel").style.display="none";modal.style.display="flex";}
 
-/* Speichern */
+/* Speichern / Löschen */
+function saveLocal(){localStorage.setItem("vokabeln",JSON.stringify(list));}
 function saveVokabel(){
   const en=vEn.value.trim(),de=vDe.value.trim();if(!en||!de){toast("EN + DE erforderlich");return;}
   const obj=[en,de,vCat.value,vGrp.value.trim(),vHint.value.trim()];
-  if(editIdx!==null) list[editIdx]=obj; else list.push(obj);
+  if(editIdx!==null)list[editIdx]=obj;else list.push(obj);
   saveLocal();renderTable();modal.style.display="none";toast("💾 Gespeichert");
 }
-/* Löschen */
-function delVokabel(){
-  if(editIdx===null)return;
-  if(!confirm("Wirklich löschen?"))return;
-  list.splice(editIdx,1);saveLocal();renderTable();modal.style.display="none";toast("🗑️ Gelöscht");
-}
+function delVokabel(){if(editIdx===null)return;if(!confirm("Wirklich löschen?"))return;list.splice(editIdx,1);saveLocal();renderTable();modal.style.display="none";toast("🗑️ Gelöscht");}
 
 /* GitHub Sync */
-async function getFileSha(){
-  const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}?ref=${branch}`);
-  if(!r.ok)return null;const j=await r.json();return j.sha||null;
-}
+async function getFileSha(){const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}?ref=${branch}`);if(!r.ok)return null;const j=await r.json();return j.sha||null;}
 function b64(s){return btoa(unescape(encodeURIComponent(s)));}
 $("#btnSaveGithub").onclick=async()=>{
-  const token=localStorage.getItem("gh_token");
-  if(!token){toast("Kein Token gespeichert");return;}
+  const token=localStorage.getItem("gh_token");if(!token){toast("Kein Token gespeichert");return;}
   try{
     const sha=await getFileSha();
     const body={message:"Update vokabeln.json via UI",content:b64(JSON.stringify(list,null,2)),branch};
     if(sha)body.sha=sha;
     const r=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${pathFile}`,{
-      method:"PUT",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},
-      body:JSON.stringify(body)
+      method:"PUT",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:JSON.stringify(body)
     });
     if(!r.ok)throw 0;toast("✅ In Datenbank eingetragen");
   }catch{toast("❌ Fehler beim Upload");}
+};
+
+/* Mobile Header */
+const mobH=$("#mobileHeader"), mobBtn=$("#toggleHeader"), mobLex=$("#mobileLexica"), mobSearch=$("#searchMobile");
+mobBtn.onclick=()=>mobH.classList.toggle("show");
+
+/* A-Z Buttons */
+const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+letters.forEach(l=>{
+  const b=document.createElement("button");b.textContent=l;
+  b.onclick=()=>filterLetter(l);
+  $("#lexica").appendChild(b.cloneNode(true));
+  mobLex.appendChild(b);
+});
+function filterLetter(l){const tb=$("#table tbody");tb.innerHTML="";
+  list.filter(v=>v[0].toUpperCase().startsWith(l)).forEach((v,i)=>{
+    const c=CATS[v[2]]||["","#ccc","#111"];
+    tb.innerHTML+=`<tr><td onclick="if(window.innerWidth<=768){editVokabel(${i})}">${v[0]}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td><td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td></tr>`;
+  });
+}
+
+/* Suche */
+mobSearch.oninput=()=>{const q=mobSearch.value.toLowerCase();const tb=$("#table tbody");tb.innerHTML="";
+  list.filter(v=>v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q)).forEach((v,i)=>{
+    const c=CATS[v[2]]||["","#ccc","#111"];
+    tb.innerHTML+=`<tr><td onclick="if(window.innerWidth<=768){editVokabel(${i})}">${v[0]}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${c[1]};color:${c[2]}">${c[0]}</span></td><td><button class="secondary" onclick="editVokabel(${i})">✏️</button></td></tr>`;
+  });
 };
 
 loadData();
