@@ -92,67 +92,16 @@ select{
   color:#1f2937;padding:10px 14px;border-radius:12px;
   font-weight:700;cursor:pointer;text-decoration:none
 }
-
-/* --- moderner Feedback-Schalter (nur innerhalb feedback-toggle!) --- */
 .feedback-toggle{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  margin-bottom:10px;
-  font-weight:600;
-  color:#1e3a8a;
-  user-select:none;
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;margin-bottom:10px
 }
-.feedback-toggle input[type="checkbox"] {
-  appearance:none;
-  -webkit-appearance:none;
-  width:46px;
-  height:24px;
-  background:linear-gradient(145deg,#d1d5db,#e5e7eb);
-  border-radius:30px;
-  position:relative;
-  cursor:pointer;
-  transition:all .3s ease;
-  outline:none;
-  box-shadow:inset 0 2px 4px rgba(0,0,0,0.15);
-}
-.feedback-toggle input[type="checkbox"]::before {
-  content:"";
-  position:absolute;
-  top:3px; left:3px;
-  width:18px; height:18px;
-  background:white;
-  border-radius:50%;
-  transition:all .3s ease;
-  box-shadow:0 2px 5px rgba(0,0,0,0.15);
-}
-.feedback-toggle input[type="checkbox"]:checked {
-  background:linear-gradient(145deg,#2563eb,#1d4ed8);
-}
-.feedback-toggle input[type="checkbox"]:checked::before {
-  transform:translateX(22px);
-}
-.feedback-toggle input:focus-visible {
-  outline:2px solid #2563eb;
-  outline-offset:2px;
-}
-.feedback-toggle label {
-  cursor:pointer;
-  letter-spacing:.2px;
-  font-size:.97rem;
-}
-
-/* --- Stylischer Trenner & Section --- */
 .trenner{
   height:3px;width:60%;margin:50px auto 20px;
   background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
   border-radius:2px;animation:shine 5s linear infinite
 }
-@keyframes shine{
-  0%{background-position:0 0}
-  100%{background-position:400px 0}
-}
+@keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
 details.recent-section{
   background:rgba(255,255,255,.9);
   border-radius:20px;padding:22px;
@@ -161,10 +110,7 @@ details.recent-section{
   backdrop-filter:blur(12px);
   transition:all .3s ease;
 }
-details.recent-section[open]{
-  background:rgba(255,255,255,1);
-  box-shadow:0 10px 32px rgba(0,0,0,.12);
-}
+details.recent-section[open]{background:rgba(255,255,255,1);box-shadow:0 10px 32px rgba(0,0,0,.12)}
 details.recent-section summary{
   font-weight:800;font-size:1.15rem;color:#1e3a8a;
   cursor:pointer;list-style:none;
@@ -193,7 +139,6 @@ details.recent-section summary:hover{color:#2563eb}
   margin-top:4px;opacity:.8
 }
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
-@media (hover:none){.kachel:active{transform:scale(.98)}}
 </style>
 </head>
 <body>
@@ -203,7 +148,7 @@ details.recent-section summary:hover{color:#2563eb}
 
   <div class="controls">
     <label>Kategorie:
-      <select id="selCat"></select>
+      <select id="selCat"><option value="Alle">Alle (bunt gemischt)</option></select>
     </label>
     <label>Modus:
       <select id="selMode">
@@ -260,10 +205,10 @@ details.recent-section summary:hover{color:#2563eb}
 
   <details class="recent-section">
     <summary>Zuletzt hinzugefügt</summary>
-    <div id="recent"></div>
+    <div id="recent">–</div>
   </details>
 
-  <div class="foot" id="datasourceStatus">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
+  <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
 </div>
 
 <script>
@@ -285,16 +230,92 @@ const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), of
 const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
 const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
 
-for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];selCat.appendChild(o);}
+/* --- Synchronisierte Datenverwaltung --- */
+let data=[], lastSync=null;
 
-let data=[], round=[], i=0, game="learn", delay=3000, trap=false, correct="";
-let errorsList=[];
-
-async function loadData(){
+async function fetchFromGitHub(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    data=await r.json();localStorage.setItem("vokabeln",JSON.stringify(data));
-  }catch{data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+    if(!r.ok)throw new Error("fetch failed");
+    const j=await r.json();
+    localStorage.setItem("vokabeln",JSON.stringify(j));
+    localStorage.setItem("vokabeln_updated",new Date().toISOString());
+    data=j;lastSync=new Date();
+  }catch(e){
+    console.warn("Offline – lokale Daten:",e);
+    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  }
+}
+
+async function loadData(){
+  const localUpd=localStorage.getItem("vokabeln_updated");
+  const lastUsed=localStorage.getItem("index_last_sync");
+  const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
+  if(localNewer){
+    console.log("Lokale Daten neuer → direkt geladen");
+    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  }else{
+    console.log("GitHub prüfen …");
+    await fetchFromGitHub();
+  }
+  localStorage.setItem("index_last_sync",new Date().toISOString());
+  renderRecent();
+}
+
+/* --- UI & Spielmechanik --- */
+for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];selCat.appendChild(o);}
+
+let round=[], i=0, game="learn", delay=3000, trap=false, correct="";
+let errorsList=[];
+
+function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
+function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
+function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
+function showStage(show){stage.style.display=show?"block":"none";}
+function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
+function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
+
+function next(){
+  if(i>=round.length){
+    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
+    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
+  }
+  delay=parseInt(selDelay.value,10);
+  const [en,de,cat]=round[i];
+  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
+  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
+  const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
+  const question=askEN?en:de;
+  const answer=askEN?de:en;
+  correct=answer;
+  q.textContent=question;
+  if(game==="cards"){
+    trap=false;
+    if(Math.random()<0.3){
+      const pool=data.map(v=>askEN?v[1]:v[0]);
+      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
+      offer.textContent="💡 "+wrong;trap=true;
+    }else offer.textContent="💡 "+answer;
+    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
+  }else{
+    offer.textContent="";trap=false;
+    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
+    rowInput.style.display="flex";inp.value="";inp.focus();
+  }
+  setProg();showStage(true);
+}
+
+btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
+btnDec.onclick=()=>{if(game!=="cards")return;if(trap){rowInput.style.display="flex";inp.focus();offer.textContent="✅ "+correct;}else{errorsList.push(round[i]);flash(false);}}; 
+btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
+btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
+inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
+
+btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
+btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
+btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
+
+function renderRecent(){
   const last=data.slice(-5).reverse();
   if(!last.length){recent.textContent="–";return;}
   recent.innerHTML=last.map(v=>{
@@ -305,119 +326,8 @@ async function loadData(){
   }).join("");
 }
 
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function pick(list){
-  let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);
-  shuffle(l);
-  if(l.length>=15) return l.slice(0,15);
-  // Wenn zu wenige Vokabeln in Kategorie → auffüllen mit anderen
-  const rest=list.filter(v=>!l.includes(v));
-  shuffle(rest);
-  return l.concat(rest.slice(0,15-l.length));
-}
-function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
-function showStage(show){stage.style.display=show?"block":"none";}
-function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
-function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
-
-function next(){
-  if(i>=round.length){
-    if(errorsList.length>0){
-      alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);
-      round=errorsList.map(v=>v);
-      errorsList=[];i=0;btnSkip.style.display="none";
-      next();return;
-    } else {
-      showStage(false);
-      alert(`🎉 Runde beendet – alles korrekt!`);
-      return;
-    }
-  }
-
-  delay=parseInt(selDelay.value,10);
-  const [en,de,cat]=round[i];
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
-  const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
-  const question=askEN?en:de;
-  const answer=askEN?de:en;
-  correct=answer;
-  q.textContent=question;
-
-  if(game==="cards"){
-    trap=false;
-    if(Math.random()<0.3){
-      const pool=data.map(v=>askEN?v[1]:v[0]);
-      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
-      offer.textContent="💡 "+wrong;trap=true;
-    } else offer.textContent="💡 "+answer;
-    rowButtons.style.display="flex";
-    rowInput.style.display="none";
-    inp.value="";
-    randomizeButtons();
-  } else {
-    offer.textContent="";
-    trap=false;
-    rowButtons.style.display="flex";
-    btnRight.style.display="none";
-    btnDec.style.display="none";
-    btnSkip.style.display="inline-block";
-    rowInput.style.display="flex";
-    inp.value="";
-    inp.focus();
-  }
-  setProg();showStage(true);
-}
-
-btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
-btnDec.onclick=()=>{if(game!=="cards")return;if(trap){rowInput.style.display="flex";inp.focus();}else{errorsList.push(round[i]);flash(false);}};
-btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
-btnSub.onclick=()=>{
-  const userInput = inp.value.trim().toLowerCase();
-  const ok = userInput === correct.toLowerCase();
-
-  if(game === "cards" && rowInput.style.display === "flex"){ 
-    // Nur im Karteikartenmodus nach Täuschung
-    offer.innerHTML = ok
-      ? `✅ Richtig! <br><small>Korrekt: <b>${correct}</b></small>`
-      : `❌ Falsch. <br><small>Richtig wäre: <b>${correct}</b></small>`;
-    if(!ok) errorsList.push(round[i]);
-    setTimeout(()=>{ flash(true); }, delay); // gehe nach Delay weiter
-    return;
-  }
-
-  if(!ok) errorsList.push(round[i]);
-  flash(ok);
-};
-
-inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
-
-btnLearn.onclick=()=>{
-  game="learn";i=0;errorsList=[];round=pick(data);
-  btnRight.style.display="none";btnDec.style.display="none";
-  btnSkip.style.display="inline-block";
-  next();
-};
-btnCards.onclick=()=>{
-  game="cards";i=0;errorsList=[];round=pick(data);
-  btnRight.style.display="inline-block";btnDec.style.display="inline-block";
-  btnSkip.style.display="inline-block";
-  next();
-};
-btnLast30.onclick=()=>{
-  const l=data.slice(-30);
-  if(!l.length)return alert("Keine Vokabeln vorhanden");
-  game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
-  round=l;i=0;errorsList=[];
-  btnRight.style.display=game==="cards"?"inline-block":"none";
-  btnDec.style.display=game==="cards"?"inline-block":"none";
-  btnSkip.style.display="inline-block";
-  next();
-};
-
 loadData();
 })();
 </script>
-
 </body>
 </html>
