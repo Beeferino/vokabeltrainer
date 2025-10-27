@@ -5,14 +5,33 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>📘 Vokabelübersicht – Beeferino</title>
 <style>
-:root{--blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;--glass:rgba(255,255,255,.9);--ok:#22c55e;--bad:#ef4444}
+:root{
+  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
+  --glass:rgba(255,255,255,.9);--ok:#22c55e;--bad:#ef4444
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
-.app{max-width:980px;margin:30px auto;padding:22px;background:var(--glass);border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)}
-h1{margin:0;text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a}
+body{
+  margin:0;font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)
+}
+.app{
+  max-width:980px;margin:30px auto;padding:22px;background:var(--glass);
+  border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);
+  backdrop-filter:blur(8px)
+}
+h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin:0}
 .hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
+.alpha{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-bottom:20px}
+.alpha button{
+  border:none;background:#e0e7ff;color:#1e3a8a;
+  padding:6px 10px;border-radius:6px;font-weight:700;cursor:pointer;
+  transition:.15s
+}
+.alpha button:hover{background:#c7d2fe;transform:translateY(-1px)}
 .toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:12px}
-.toolbar button,.toolbar input,.toolbar select{font-size:1rem;padding:8px 12px;border-radius:10px;border:1px solid #cfd6e4;background:#fff}
+.toolbar input,.toolbar button,.toolbar select{
+  font-size:1rem;padding:8px 12px;border-radius:10px;border:1px solid #cfd6e4;background:#fff
+}
 .toolbar button{cursor:pointer;font-weight:700;background:#e0e7ff;border:none}
 .toolbar button:hover{background:#c7d2fe}
 .tablewrap{background:#fff;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.06);overflow:hidden}
@@ -20,17 +39,40 @@ table{width:100%;border-collapse:collapse}
 th,td{border-bottom:1px solid #eef2f7;padding:10px 8px;text-align:left}
 th{background:#f1f5f9;color:#1e3a8a}
 tr:hover{background:#f9fafb}
-.cat-chip{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;color:#111}
-.actions button{border:none;background:#eef2ff;border-radius:10px;padding:6px 10px;font-weight:700;cursor:pointer}
+.cat-chip{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700}
+.actions button{
+  border:none;background:#eef2ff;border-radius:10px;padding:6px 10px;font-weight:700;cursor:pointer
+}
 .actions button:hover{background:#dde6ff}
-.controls-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
-#addToggle{background:#e8f0ff;border:1px solid #dbe3ff}
-#addForm{display:none;gap:8px;flex-wrap:wrap;justify-content:center}
-#addForm input,#addForm select{padding:8px 10px;border:1px solid #cfd6e4;border-radius:10px;min-width:180px}
-#addForm button{padding:10px 14px;border:none;border-radius:10px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff}
-.footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:18px}
-.footer a,.footer button{background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#16a34a;color:#fff;padding:10px 16px;border-radius:12px;font-weight:800;display:none;z-index:2000}
+.baukasten{
+  margin-top:30px;padding:22px;background:rgba(255,255,255,.95);
+  border-radius:20px;box-shadow:inset 0 0 12px rgba(0,0,0,.06);
+  display:flex;flex-direction:column;align-items:center;gap:12px
+}
+.baukasten h2{margin:0;font-size:1.4rem;color:#1e3a8a}
+.baukasten-row{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.baukasten input,.baukasten select{
+  padding:10px 12px;border-radius:10px;border:1px solid #cfd6e4;min-width:180px
+}
+.baukasten button{
+  background:var(--blue);color:#fff;border:none;border-radius:12px;
+  padding:10px 18px;font-weight:700;cursor:pointer
+}
+.baukasten button:hover{background:var(--blue2)}
+.footer{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;
+  gap:8px;margin-top:24px
+}
+.footer a,.footer button{
+  background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;
+  padding:10px 14px;border-radius:12px;font-weight:700;cursor:pointer;
+  text-decoration:none
+}
+.toast{
+  position:fixed;left:50%;bottom:20px;transform:translateX(-50%);
+  background:#16a34a;color:#fff;padding:10px 16px;border-radius:12px;
+  font-weight:800;display:none;z-index:2000
+}
 </style>
 </head>
 <body>
@@ -38,9 +80,10 @@ tr:hover{background:#f9fafb}
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
+  <div class="alpha" id="alpha"></div>
+
   <div class="toolbar">
     <input id="searchBox" type="text" placeholder="🔎 Suchen (EN / DE)">
-    <button id="addToggle">➕ Neue Vokabel</button>
     <button id="syncBtn">🔄 GitHub synchronisieren</button>
     <button id="exportBtn">📤 Export</button>
   </div>
@@ -52,11 +95,14 @@ tr:hover{background:#f9fafb}
     </table>
   </div>
 
-  <div id="addForm">
-    <input id="newEn" placeholder="Englisch">
-    <input id="newDe" placeholder="Deutsch">
-    <select id="newCat"></select>
-    <button id="addBtn">Speichern</button>
+  <div class="baukasten">
+    <h2>➕ Neue Vokabel ergänzen</h2>
+    <div class="baukasten-row">
+      <input id="newEn" placeholder="Englisch">
+      <input id="newDe" placeholder="Deutsch">
+      <select id="newCat"></select>
+      <button id="addBtn">Speichern & Sync</button>
+    </div>
   </div>
 
   <div class="footer">
@@ -85,12 +131,25 @@ const toast=m=>{const t=el("toast");t.textContent=m;t.style.display="block";clea
 
 let vokabeln=[];
 
-Object.entries(CATS).forEach(([k,v])=>{
+// Kategorieauswahl
+for(const [k,v] of Object.entries(CATS)){
   const o=document.createElement("option");
   o.value=k;o.textContent=v[0];o.style.background=v[1];o.style.color=v[2];
   el("newCat").appendChild(o);
+}
+
+// A-Z Navigation
+const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+el("alpha").innerHTML=letters.map(l=>`<button>${l}</button>`).join("");
+el("alpha").addEventListener("click",e=>{
+  if(e.target.tagName!=="BUTTON")return;
+  const letter=e.target.textContent.toLowerCase();
+  [...el("tbl").querySelectorAll("tbody tr")].forEach(r=>{
+    r.style.display=r.textContent.toLowerCase().trim().startsWith(letter)? "":"none";
+  });
 });
 
+// Renderfunktion
 function render(){
   const tb=el("tbl").querySelector("tbody");
   tb.innerHTML=vokabeln.map((v,i)=>{
@@ -126,7 +185,7 @@ async function loadGitHub(){
     [...d,...local].forEach(v=>map.set((v[0]+"|"+v[1]).toLowerCase(),v));
     vokabeln=[...map.values()];
     saveLocal();
-    el("srcInfo").textContent="Quelle: GitHub (gemergt)";
+    el("srcInfo").textContent="Quelle: GitHub (Online)";
   }catch{
     vokabeln=loadLocal();
     el("srcInfo").textContent="Quelle: Lokal";
@@ -134,32 +193,41 @@ async function loadGitHub(){
   render();
 }
 
-async function syncGitHub(){
-  const token=localStorage.getItem("gh_token")||prompt("GitHub Token?");
-  if(!token)return alert("Kein Token angegeben.");
+// Automatischer GitHub-Sync bei neuem Eintrag
+async function saveToGitHubAndSync(newItem){
+  vokabeln.push(newItem);
+  saveLocal();render();
+  const token=localStorage.getItem("gh_token")||prompt("GitHub Token eingeben:");
+  if(!token){toast("💾 Lokal gespeichert – kein Token");return;}
   localStorage.setItem("gh_token",token);
-  toast("⏳ Synchronisiere ...");
   try{
-    const meta=await fetch(`${GH.api}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}?ref=${GH.branch}`,{
-      headers:{Authorization:`Bearer ${token}`}
-    }).then(r=>r.json());
-    const merged=JSON.stringify(vokabeln,null,2);
-    const payload={message:"update via vokabeln.html",content:btoa(unescape(encodeURIComponent(merged))),sha:meta.sha,branch:GH.branch};
+    const meta=await fetch(`${GH.api}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}?ref=${GH.branch}`,
+      {headers:{Authorization:`Bearer ${token}`}}).then(r=>r.json());
+    const remote=JSON.parse(atob(meta.content));
+    const map=new Map([...remote,...vokabeln].map(v=>[(v[0]+"|"+v[1]).toLowerCase(),v]));
+    const merged=[...map.values()];
+    const payload={
+      message:"Auto Sync (Beeferino Trainer)",
+      content:btoa(unescape(encodeURIComponent(JSON.stringify(merged,null,2)))),
+      sha:meta.sha,branch:GH.branch
+    };
     await fetch(`${GH.api}/repos/${GH.owner}/${GH.repo}/contents/${GH.path}`,{
       method:"PUT",
       headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},
       body:JSON.stringify(payload)
     });
-    toast("✅ GitHub aktualisiert!");
-  }catch(e){console.error(e);toast("❌ Fehler beim Sync");}
+    toast("✅ GitHub synchronisiert!");
+  }catch(e){
+    console.error(e);
+    toast("⚠️ GitHub Sync fehlgeschlagen (lokal gesichert)");
+  }
 }
 
-el("addToggle").onclick=()=>{const f=el("addForm");f.style.display=f.style.display==="flex"?"none":"flex";};
-el("addBtn").onclick=()=>{
+// Eingabe + Suche
+el("addBtn").onclick=async()=>{
   const en=el("newEn").value.trim(),de=el("newDe").value.trim(),cat=el("newCat").value;
   if(!en||!de)return alert("Bitte ausfüllen!");
-  vokabeln.push([en,de,cat]);
-  saveLocal();render();toast("💾 Gespeichert (lokal)");
+  await saveToGitHubAndSync([en,de,cat]);
   el("newEn").value=el("newDe").value="";
 };
 el("searchBox").oninput=e=>{
@@ -169,7 +237,7 @@ el("searchBox").oninput=e=>{
     r.style.display=r.textContent.toLowerCase().includes(val)?"":"none";
   });
 };
-el("syncBtn").onclick=syncGitHub;
+el("syncBtn").onclick=()=>saveToGitHubAndSync();
 el("exportBtn").onclick=()=>{
   const blob=new Blob([JSON.stringify(vokabeln,null,2)],{type:"application/json"});
   const a=document.createElement("a");
