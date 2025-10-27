@@ -330,11 +330,71 @@ setTokenBtn.onclick = async () => {
   localStorage.setItem("GH_TOKEN", token.trim());
   alert("✅ GitHub Token gespeichert!\nEr bleibt im Browser erhalten, bis du den Cache löschst.");
 };
+// ⚙️ Einstellungen-Modal
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsModal = document.getElementById("settingsModal");
+const closeSettings = document.getElementById("closeSettings");
+const saveTokenBtn = document.getElementById("saveTokenBtn");
+const clearTokenBtn = document.getElementById("clearTokenBtn");
+const tokenInput = document.getElementById("tokenInput");
+
+settingsBtn.onclick = () => {
+  tokenInput.value = localStorage.getItem("GH_TOKEN") || "";
+  settingsModal.style.display = "flex";
+};
+closeSettings.onclick = () => settingsModal.style.display = "none";
+
+saveTokenBtn.onclick = () => {
+  if(!tokenInput.value.startsWith("ghp_")) {
+    alert("❌ Ungültiger Token – er sollte mit 'ghp_' beginnen.");
+    return;
+  }
+  localStorage.setItem("GH_TOKEN", tokenInput.value.trim());
+  settingsModal.style.display = "none";
+  toast.textContent = "✅ GitHub Token gespeichert!";
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),1500);
+};
+
+clearTokenBtn.onclick = () => {
+  localStorage.removeItem("GH_TOKEN");
+  tokenInput.value = "";
+  settingsModal.style.display = "none";
+  toast.textContent = "🗑️ GitHub Token gelöscht!";
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),1500);
+};
 
 loadData();
 })();
 
 
 </script>
+  <!-- ⚙️ Einstellungen-Button -->
+<button id="settingsBtn" title="Einstellungen" style="
+  position:fixed;bottom:28px;right:28px;
+  background:#3b82f6;color:#fff;border:none;
+  border-radius:50%;width:58px;height:58px;
+  font-size:1.5rem;cursor:pointer;box-shadow:0 5px 12px rgba(0,0,0,.2);
+">⚙️</button>
+
+<!-- ⚙️ Modal für Einstellungen -->
+<div id="settingsModal" style="
+  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.4);backdrop-filter:blur(6px);
+  justify-content:center;align-items:center;z-index:9999;
+">
+  <div style="background:#fff;padding:22px;border-radius:18px;width:90%;max-width:400px;box-shadow:0 8px 24px rgba(0,0,0,.2);">
+    <h3 style="text-align:center;color:#3b82f6;margin-top:0;">⚙️ Einstellungen</h3>
+    <label style="font-weight:600;">GitHub Token:</label>
+    <input id="tokenInput" type="password" placeholder="ghp_..." style="width:100%;margin-top:8px;margin-bottom:8px;padding:10px;border-radius:10px;border:1px solid #d1d5db;">
+    <div class="flex" style="justify-content:space-between;margin-top:12px;">
+      <button id="saveTokenBtn">💾 Speichern</button>
+      <button id="clearTokenBtn" style="background:#ef4444;">❌ Löschen</button>
+      <button id="closeSettings">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
