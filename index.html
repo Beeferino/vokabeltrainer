@@ -372,7 +372,24 @@ function next(){
 btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
 btnDec.onclick=()=>{if(game!=="cards")return;if(trap){rowInput.style.display="flex";inp.focus();}else{errorsList.push(round[i]);flash(false);}};
 btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
-btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
+btnSub.onclick=()=>{
+  const userInput = inp.value.trim().toLowerCase();
+  const ok = userInput === correct.toLowerCase();
+
+  if(game === "cards" && rowInput.style.display === "flex"){ 
+    // Nur im Karteikartenmodus nach Täuschung
+    offer.innerHTML = ok
+      ? `✅ Richtig! <br><small>Korrekt: <b>${correct}</b></small>`
+      : `❌ Falsch. <br><small>Richtig wäre: <b>${correct}</b></small>`;
+    if(!ok) errorsList.push(round[i]);
+    setTimeout(()=>{ flash(true); }, delay); // gehe nach Delay weiter
+    return;
+  }
+
+  if(!ok) errorsList.push(round[i]);
+  flash(ok);
+};
+
 inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
 
 btnLearn.onclick=()=>{
