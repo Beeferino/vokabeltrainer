@@ -265,6 +265,56 @@ el("btnPush").onclick=async()=>await ghPut("Manuell eingetragen");
 
 /* Init */
 bootstrap();
+  /* --- Smart Sync-Statusanzeige für vokabeln.html --- */
+const foot = document.querySelector('.foot');
+let syncState = document.createElement('div');
+syncState.style.textAlign = 'center';
+syncState.style.marginTop = '6px';
+syncState.style.fontSize = '.9rem';
+syncState.style.color = '#2563eb';
+foot.insertAdjacentElement('afterend', syncState);
+
+function setSyncState(msg, color='#2563eb'){
+  syncState.textContent = msg;
+  syncState.style.color = color;
+  syncState.style.opacity = 1;
+  setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
+}
+
+/* --- GitHub Auto-Update Prüfer --- */
+async function checkRemoteUpdate(){
+  try{
+    const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+    const j = await r.json();
+    const local = JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    if(JSON.stringify(j)!==JSON.stringify(local)){
+      localStorage.setItem("vokabeln",JSON.stringify(j));
+      localStorage.setItem("vokabeln_updated",new Date().toISOString());
+      setSyncState('🔄 Neue Daten aus Cloud geladen', '#22c55e');
+      renderTable(j);
+    } else {
+      setSyncState('🟢 Daten aktuell', '#22c55e');
+    }
+  }catch{
+    setSyncState('⚠️ Offline / kein Update möglich', '#ef4444');
+  }
+}
+setSyncState('🟡 Prüfe auf Updates...');
+setInterval(checkRemoteUpdate,30000);
+checkRemoteUpdate();
+
+/* --- Erfolgsmeldungen nach Aktionen --- */
+async function pushToGitHub(){
+  try{
+    await uploadJSON(); // ← deine bestehende Funktion, die das JSON pusht
+    setSyncState('🟢 Erfolgreich in Datenbank eingetragen', '#22c55e');
+  }catch{
+    setSyncState('🔴 Upload fehlgeschlagen (offline?)', '#ef4444');
+  }
+}
+
+/* Diese Funktion bitte überall aufrufen, wo du aktuell "GitHub Synchronisieren" nutzt */
+
 </script>
 </body>
 </html>
