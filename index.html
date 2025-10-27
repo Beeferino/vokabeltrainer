@@ -92,6 +92,8 @@ select{
   color:#1f2937;padding:10px 14px;border-radius:12px;
   font-weight:700;cursor:pointer;text-decoration:none
 }
+
+/* --- moderner Feedback-Schalter (nur innerhalb feedback-toggle!) --- */
 .feedback-toggle{
   display:flex;
   align-items:center;
@@ -102,8 +104,6 @@ select{
   color:#1e3a8a;
   user-select:none;
 }
-
-/* moderner Switch */
 .feedback-toggle input[type="checkbox"] {
   appearance:none;
   -webkit-appearance:none;
@@ -133,14 +133,14 @@ select{
 .feedback-toggle input[type="checkbox"]:checked::before {
   transform:translateX(22px);
 }
+.feedback-toggle input:focus-visible {
+  outline:2px solid #2563eb;
+  outline-offset:2px;
+}
 .feedback-toggle label {
   cursor:pointer;
   letter-spacing:.2px;
   font-size:.97rem;
-}
-.feedback-toggle input:focus-visible {
-  outline:2px solid #2563eb;
-  outline-offset:2px;
 }
 
 /* --- Stylischer Trenner & Section --- */
@@ -202,10 +202,8 @@ details.recent-section summary:hover{color:#2563eb}
   <div class="hr"></div>
 
   <div class="controls">
-   
-
     <label>Kategorie:
-      <select id="selCat"><option value="Alle">Alle (bunt gemischt)</option></select>
+      <select id="selCat"></select>
     </label>
     <label>Modus:
       <select id="selMode">
@@ -243,8 +241,8 @@ details.recent-section summary:hover{color:#2563eb}
 
     <div id="rowButtons" class="btnrow">
       <button id="btnRight" class="btn ok">Richtig</button>
-      <button id="btnDec"   class="btn bad">Täuschung erkannt</button>
-      <button id="btnSkip"  class="btn skip">Überspringen</button>
+      <button id="btnDec" class="btn bad">Täuschung erkannt</button>
+      <button id="btnSkip" class="btn skip">Überspringen</button>
     </div>
 
     <div id="rowInput" class="inprow">
@@ -262,10 +260,10 @@ details.recent-section summary:hover{color:#2563eb}
 
   <details class="recent-section">
     <summary>Zuletzt hinzugefügt</summary>
-    <div id="recent">–</div>
+    <div id="recent"></div>
   </details>
 
-  <div class="foot">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
+  <div class="foot" id="datasourceStatus">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
 </div>
 
 <script>
