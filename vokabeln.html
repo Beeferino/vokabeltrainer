@@ -305,6 +305,30 @@ $("#btnRecent").onclick=()=>{const last=list.slice(-10).reverse();const modal=$(
 $("#recentClose").onclick=()=>$("#recentModal").style.display="none";
 
 $("#btnBack").onclick=()=>location.href="index.html";
+// --- Auto-Sync beim Laden ---
+async function autoSync() {
+  const token = localStorage.getItem("gh_token");
+  try {
+    const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json", { cache: "no-store" });
+    const remote = await r.json();
+    const local = loadLocal();
+    const remoteJSON = JSON.stringify(remote);
+    const localJSON = JSON.stringify(local);
+
+    if (remoteJSON !== localJSON) {
+      // Unterschied gefunden – merge + upload
+      list = dedup([...remote, ...local]);
+      saveLocal();
+      if (token) await githubSyncUpload("Automatischer Abgleich");
+      toast("✅ Daten automatisch synchronisiert");
+    } else {
+      toast("☁️ Daten bereits aktuell");
+    }
+  } catch (e) {
+    console.warn("Auto-Sync übersprungen:", e);
+  }
+}
+autoSync();
 loadGitHub();
 })();
 </script>
