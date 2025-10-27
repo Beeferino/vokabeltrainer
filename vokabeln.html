@@ -24,7 +24,7 @@ body{
 h1{text-align:center;margin:0;font-size:2rem;color:var(--accent)}
 hr{margin:20px 0;border:none;border-top:2px solid #e5e7eb}
 .section{margin-top:20px}
-.flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center}
+.flex{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 input,select,button{
   padding:10px 14px;font-size:1rem;border-radius:12px;
   border:1px solid #d1d5db;
@@ -56,16 +56,16 @@ tbody tr:hover{background:#f9fafb}
 .toast.show{opacity:1}
 #modal{
   display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  background:rgba(0,0,0,.45);backdrop-filter:blur(6px);
+  background:rgba(0,0,0,.4);backdrop-filter:blur(6px);
   justify-content:center;align-items:center;z-index:999;
 }
 #modalContent{
-  background:#fff;padding:28px;border-radius:18px;
-  width:92%;max-width:500px;box-shadow:0 8px 24px rgba(0,0,0,.2);
+  background:#fff;padding:22px;border-radius:18px;
+  width:90%;max-width:400px;box-shadow:0 8px 24px rgba(0,0,0,.2);
 }
 #modalContent h3{text-align:center;margin-top:0;color:var(--accent)}
 #modalContent input,#modalContent select{
-  width:100%;margin-top:8px;margin-bottom:10px;
+  width:100%;margin-top:8px;margin-bottom:8px;
 }
 #modalContent .flex{justify-content:space-between}
 #newVocabBtn{
@@ -98,20 +98,16 @@ details.recent summary{
   font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.1);
   text-align:center;
 }
-.alpha-bar{
-  display:flex;flex-wrap:wrap;justify-content:center;
-  gap:6px;margin-top:12px
+#lexikon{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;
+  justify-content:center;
 }
-.alpha-bar button{
-  background:#e2e8f0;color:var(--dark);
-  border:none;padding:6px 10px;border-radius:6px;
-  font-weight:700;font-size:.9rem;cursor:pointer
+#lexikon button{
+  background:#e2e8f0;color:#1e293b;border:none;
+  padding:6px 10px;font-weight:600;border-radius:8px;
 }
-.alpha-bar button:hover{background:#c7d2fe}
-#multiDelete{
-  background:var(--bad);margin-left:10px
-}
-#multiDelete:hover{background:#dc2626}
+#lexikon button.active{background:var(--accent);color:#fff}
+#lexikon button:hover{background:#cbd5e1}
 </style>
 </head>
 <body>
@@ -134,20 +130,17 @@ details.recent summary{
     </label>
     <input id="searchInput" type="text" placeholder="🔎 Suchen …">
     <button id="resetFilter">🔄 Reset</button>
-    <button id="multiDelete">🗑️ Ausgewählte löschen</button>
   </div>
 
-  <div class="alpha-bar" id="alphaBar"></div>
+  <div id="lexikon" class="section"></div>
 
   <div class="section">
     <table id="vokabelTable">
       <thead><tr>
-        <th><input type="checkbox" id="selectAll"></th>
         <th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Aktion</th>
       </tr></thead>
       <tbody></tbody>
     </table>
-    <div id="pagination" class="pagination"></div>
   </div>
 
   <details class="recent"><summary>🧾 Zuletzt hinzugefügt</summary>
@@ -164,7 +157,7 @@ details.recent summary{
 
 <div id="modal">
   <div id="modalContent">
-    <h3>➕ Neue Vokabel</h3>
+    <h3 id="modalTitle">➕ Neue Vokabel</h3>
     <input id="newEn" type="text" placeholder="Englisch">
     <input id="newDe" type="text" placeholder="Deutsch">
     <select id="newCat"></select>
@@ -172,6 +165,7 @@ details.recent summary{
     <input id="newHint" type="text" placeholder="Hinweis">
     <div class="flex">
       <button id="saveVocab">Speichern</button>
+      <button id="deleteVocab" style="background:var(--bad)">Löschen</button>
       <button id="cancelModal">Abbrechen</button>
     </div>
   </div>
@@ -185,12 +179,13 @@ const el=id=>document.getElementById(id);
 const tBody=el("vokabelTable").querySelector("tbody");
 const filterCat=el("filterCat"),searchInput=el("searchInput");
 const resetFilter=el("resetFilter"),toast=el("toast");
-const modal=el("modal"),saveVocab=el("saveVocab"),cancelModal=el("cancelModal");
+const modal=el("modal"),saveVocab=el("saveVocab"),cancelModal=el("cancelModal"),deleteVocab=el("deleteVocab");
 const newBtn=el("newVocabBtn"),recentList=el("recentList");
-const sortSel=el("sortABC");
+const sortSel=el("sortABC"),modalTitle=el("modalTitle");
 const newEn=el("newEn"),newDe=el("newDe"),newCat=el("newCat"),newGroup=el("newGroup"),newHint=el("newHint");
-const selectAll=el("selectAll"),multiDelete=el("multiDelete"),alphaBar=el("alphaBar");
-let data=[];let syncTimer;
+const lexikon=el("lexikon");
+let data=[];let editIndex=null;let syncTimer;
+
 const GITHUB_REPO="beeferino/vokabeltrainer";const FILE_PATH="vokabeln.json";
 
 const CATS={
@@ -211,11 +206,15 @@ for(const k in CATS){
   newCat.appendChild(o);filterCat.appendChild(o.cloneNode(true));
 }
 
-"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(ch=>{
-  const b=document.createElement("button");
-  b.textContent=ch;
-  b.onclick=()=>{searchInput.value=ch.toLowerCase();render();};
-  alphaBar.appendChild(b);
+const LETTERS="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+lexikon.innerHTML='<button class="active" data-letter="Alle">Alle</button>'+
+  LETTERS.map(l=>`<button data-letter="${l}">${l}</button>`).join("");
+lexikon.querySelectorAll("button").forEach(btn=>{
+  btn.onclick=()=>{
+    lexikon.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    render();
+  };
 });
 
 async function loadData(){
@@ -230,20 +229,24 @@ async function loadData(){
 function render(){
   const search=searchInput.value.toLowerCase();
   const cat=filterCat.value;
+  const letter=lexikon.querySelector("button.active").dataset.letter;
   let filtered=data.filter(v=>
     (cat==="Alle"||v[2]===cat)&&
     (v[0].toLowerCase().includes(search)||v[1].toLowerCase().includes(search))
   );
+  if(letter!=="Alle") filtered=filtered.filter(v=>v[0][0]?.toUpperCase()===letter);
   if(sortSel.value==="en")filtered.sort((a,b)=>a[0].localeCompare(b[0]));
   if(sortSel.value==="de")filtered.sort((a,b)=>a[1].localeCompare(b[1]));
   if(sortSel.value==="cat")filtered.sort((a,b)=>a[2].localeCompare(b[2]));
   tBody.innerHTML=filtered.map((v,i)=>{
     const c=CATS[v[2]]||["","#eee","#000"];
     return `<tr>
-      <td><input type='checkbox' class='rowSel' data-i='${i}'></td>
       <td>${v[0]}</td><td>${v[1]}</td>
       <td style="background:${c[1]};color:${c[2]};font-weight:700">${c[0]}</td>
-      <td><button onclick="del(${i})">🗑️</button></td>
+      <td>
+        <button onclick="edit(${i})">✏️</button>
+        <button onclick="del(${i})">🗑️</button>
+      </td>
     </tr>`;
   }).join("");
   const last=data.slice(-5).reverse();
@@ -255,19 +258,15 @@ function render(){
   }).join("");
 }
 
-window.del=i=>{data.splice(i,1);storeAndSync();};
+window.del=i=>{data.splice(i,1);storeAndSync();render();};
 
-selectAll.onclick=()=>{
-  document.querySelectorAll(".rowSel").forEach(ch=>ch.checked=selectAll.checked);
-};
-
-multiDelete.onclick=()=>{
-  const indices=[...document.querySelectorAll(".rowSel")]
-    .map((c,i)=>c.checked?i:null).filter(v=>v!==null).reverse();
-  if(!indices.length)return alert("Keine Vokabeln ausgewählt.");
-  if(!confirm(`${indices.length} Vokabel(n) löschen?`))return;
-  indices.forEach(i=>data.splice(i,1));
-  storeAndSync();
+window.edit=i=>{
+  editIndex=i;
+  const v=data[i];
+  newEn.value=v[0];newDe.value=v[1];newCat.value=v[2];
+  newGroup.value=v[3]||"";newHint.value=v[4]||"";
+  modalTitle.textContent="✏️ Vokabel bearbeiten";
+  modal.style.display="flex";
 };
 
 function storeAndSync(){
@@ -299,19 +298,25 @@ async function pushToGitHub(){
 }
 
 searchInput.oninput=render;filterCat.onchange=render;
-resetFilter.onclick=()=>{filterCat.value="Alle";searchInput.value="";render();};
+resetFilter.onclick=()=>{filterCat.value="Alle";searchInput.value="";lexikon.querySelectorAll("button").forEach(b=>b.classList.remove("active"));lexikon.querySelector("button[data-letter='Alle']").classList.add("active");render();};
 sortSel.onchange=render;
 
-newBtn.onclick=()=>{modal.style.display="flex";}
+newBtn.onclick=()=>{editIndex=null;modalTitle.textContent="➕ Neue Vokabel";modal.style.display="flex";}
 cancelModal.onclick=()=>modal.style.display="none";
 
 saveVocab.onclick=()=>{
   if(!newEn.value||!newDe.value||!newCat.value)return;
-  data.push([newEn.value.trim(),newDe.value.trim(),newCat.value,newGroup.value,newHint.value]);
-  modal.style.display="none";newEn.value=newDe.value=newGroup.value=newHint.value="";
+  const entry=[newEn.value.trim(),newDe.value.trim(),newCat.value,newGroup.value,newHint.value];
+  if(editIndex!==null) data[editIndex]=entry;
+  else data.push(entry);
+  modal.style.display="none";
+  newEn.value=newDe.value=newGroup.value=newHint.value="";
   storeAndSync();render();
 };
-
+deleteVocab.onclick=()=>{
+  if(editIndex!==null){data.splice(editIndex,1);storeAndSync();render();}
+  modal.style.display="none";
+};
 loadData();
 })();
 </script>
