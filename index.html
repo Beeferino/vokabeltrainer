@@ -1,40 +1,52 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>🎯 Vokabeltrainer</title>
 
 <style>
 :root {
-  --bg: #eef3fa;
-  --card: #ffffff;
-  --border: #dde3ee;
-  --text: #1b1d21;
+  --primary: #2d7ef0;
+  --primary-light: #3b8cff;
+  --green: #14d383;
+  --purple: #b46cff;
+  --bg: #eef4ff;
+  --card: #fff;
+  --border: #d9e3f4;
   --muted: #667085;
-  --primary: #2563eb;
-  --shadow: 0 6px 18px rgba(0,0,0,0.08);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
-*{box-sizing:border-box;}
+
 body {
-  margin:0; padding:20px;
   font-family: "Inter", system-ui, sans-serif;
   background: var(--bg);
-  color: var(--text);
-  text-align:center;
+  color: #222;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  margin: 0;
 }
+
 .app {
+  max-width: 900px;
+  width: 100%;
   background: var(--card);
-  max-width: 950px;
-  margin:auto;
-  border-radius:18px;
+  border-radius: 18px;
   box-shadow: var(--shadow);
-  padding: 25px 30px 35px;
+  padding: 30px;
+  text-align: center;
 }
+
+/* --- Header --- */
 h1 {
-  font-size: 2rem;
-  margin-bottom: 4px;
+  font-size: 1.9rem;
+  margin: 0 0 10px;
   color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 h1::after {
   content: "";
@@ -42,36 +54,41 @@ h1::after {
   width: 100px;
   height: 3px;
   background: var(--primary);
-  margin: 10px auto 0;
-  border-radius: 999px;
-  opacity: .4;
+  border-radius: 2px;
+  margin-top: 6px;
 }
 
-/* --- Steuerzeile --- */
+/* --- Steuerleiste --- */
 .control-row {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:12px;
-  margin:20px 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0 25px;
 }
 select {
-  font-size:1rem;
-  padding:8px 10px;
-  border-radius:8px;
-  border:1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
-/* --- Toggle für Feedback --- */
+/* --- Toggle Switch --- */
 .toggle {
   position: relative;
   display: inline-block;
   width: 46px;
   height: 24px;
   vertical-align: middle;
+  margin-right: 8px;
 }
-.toggle input {opacity:0;width:0;height:0;}
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
 .slider {
   position: absolute;
   cursor: pointer;
@@ -97,7 +114,7 @@ select {
 }
 .feedback-label {
   font-size: 0.95rem;
-  color: #333;
+  color: #444;
   vertical-align: middle;
 }
 
@@ -106,129 +123,163 @@ select {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
-  margin: 25px 0 30px;
+  gap: 18px;
+  margin: 20px 0 30px;
 }
 .mode-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   font-weight: 600;
-  text-align: center;
-  background: linear-gradient(145deg,#2563eb,#3b82f6);
-  color: #fff;
   border: none;
   border-radius: 16px;
-  padding: 16px 28px;
-  font-size: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 16px 26px;
+  font-size: 1.05rem;
+  color: #fff;
+  min-width: 230px;
+  cursor: pointer;
   transition: all 0.25s ease;
-  min-width: 220px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
 }
 .mode-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.14);
+  box-shadow: 0 5px 14px rgba(0,0,0,0.18);
 }
-.mode-btn.secondary {
-  background: linear-gradient(145deg,#059669,#10b981);
-}
-.mode-btn.purple {
-  background: linear-gradient(145deg,#7c3aed,#9d68ff);
-}
+.btn-orange {background: linear-gradient(145deg, #2d7ef0, #3b8cff);}
+.btn-green {background: linear-gradient(145deg, #00b56a, #14d383);}
+.btn-purple {background: linear-gradient(145deg, #aa5ef9, #c77bff);}
 
 /* --- Spielbereich --- */
-#gameArea {
-  display: none;
-  background: rgba(255,255,255,0.8);
-  backdrop-filter: blur(6px);
+.game-area {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 25px;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 30px;
-  margin-top: 25px;
-  box-shadow: var(--shadow);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
 }
 
-/* Buttons */
-button {
-  cursor:pointer;
-  transition: 0.2s ease-in-out;
+/* --- Footer Bereich --- */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  flex-wrap: wrap;
 }
-.green-btn {background:#16a34a;color:#fff;padding:10px 18px;border:none;border-radius:10px;}
-.red-btn {background:#dc2626;color:#fff;padding:10px 18px;border:none;border-radius:10px;}
-.gray-btn {background:#9ca3af;color:#fff;padding:10px 18px;border:none;border-radius:10px;}
-.green-btn:hover{background:#22c55e;}
-.red-btn:hover{background:#ef4444;}
-.gray-btn:hover{background:#a1a1aa;}
-
-/* --- Untere Sektionen --- */
-.divider {margin:28px auto;border-top:2px solid var(--border);width:80%;}
-.bottom {
-  display:flex;
-  justify-content:space-between;
-  flex-wrap:wrap;
-  align-items:center;
-  margin-top:25px;
-}
-.bottom button {
-  background: #2563eb;
-  color: white;
+.footer button {
+  background: var(--primary);
+  color: #fff;
   border: none;
   border-radius: 10px;
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
 }
-.bottom .gray {background:#e5e7eb;color:#111;}
-.bottom small {color:var(--muted);}
+.footer button:hover {background: var(--primary-light);}
+.muted {color: var(--muted);}
+.divider {
+  margin: 30px auto 20px;
+  height: 2px;
+  background: var(--border);
+  width: 80%;
+  border-radius: 2px;
+}
+.last-section {
+  background: #f6f9ff;
+  border-radius: 10px;
+  padding: 14px;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+}
+.last-title {
+  font-weight: 700;
+  color: #223;
+  margin-bottom: 10px;
+}
+.last-content {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill {
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
 </style>
 </head>
 
 <body>
-<div class="app">
-  <h1>🎯 Vokabeltrainer</h1>
+  <div class="app">
+    <h1>🎯 Vokabeltrainer</h1>
 
-  <div class="control-row">
-    <label for="category">Kategorie:</label>
-    <select id="category"><option>Alle (bunt gemischt)</option></select>
-    <label for="mode">Modus:</label>
-    <select id="mode"><option>Gemischt</option></select>
-    <label for="delay">Delay:</label>
-    <select id="delay"><option>3 s</option></select>
+    <div class="control-row">
+      <label>Kategorie:</label>
+      <select id="category">
+        <option>Alle (bunt gemischt)</option>
+      </select>
 
-    <div class="feedback-toggle">
-      <label class="toggle">
-        <input type="checkbox" id="feedbackToggle">
-        <span class="slider"></span>
-      </label>
-      <span class="feedback-label">Feedback anzeigen</span>
+      <label>Modus:</label>
+      <select id="mode">
+        <option>Gemischt</option>
+      </select>
+
+      <label>Delay:</label>
+      <select id="delay">
+        <option>3 s</option>
+        <option>5 s</option>
+      </select>
+
+      <div class="feedback-toggle">
+        <label class="toggle">
+          <input type="checkbox" id="feedbackToggle" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="feedback-label">Feedback anzeigen</span>
+      </div>
+    </div>
+
+    <div class="mode-buttons">
+      <button class="mode-btn btn-orange">🔥 Vokabel-Abfrage starten</button>
+      <button class="mode-btn btn-green">📗 Letzte 30 Vokabeln</button>
+      <button class="mode-btn btn-purple">🧠 Karteikarten<br>
+        <i style="font-style:italic;font-size:0.9rem;">Mitdenker Edition</i>
+      </button>
+    </div>
+
+    <div id="gameArea" class="game-area">
+      <span>Wähle oben einen Spielmodus…</span>
+    </div>
+
+    <div class="footer">
+      <button id="vokabelnBtn">📁 Vokabeln</button>
+      <button id="restartBtn">🔄 Neustart</button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="last-section">
+      <div class="last-title">Zuletzt hinzugefügt</div>
+      <div class="last-content">
+        <div class="pill">🔧 angle – Winkel (Grundwerkzeuge Metallverarbeitung)</div>
+      </div>
+    </div>
+
+    <div style="margin-top:15px;" class="muted">
+      © 2025 <b>Beefireno</b> • Datenquelle: GitHub (Online)
     </div>
   </div>
-
-  <div class="mode-buttons">
-    <button class="mode-btn">🔥 Vokabel-Abfrage starten</button>
-    <button class="mode-btn secondary">📗 Letzte Vokabeln</button>
-    <button class="mode-btn purple">🧠 Karteikarten<br><i style="font-style:italic;font-size:0.9rem;">Mitdenker Edition</i></button>
-  </div>
-
-  <div id="gameArea">
-    <h2 id="categoryLabel">Grundwerkzeuge Metallverarbeitung</h2>
-    <div id="vocabWord" style="font-size:1.6rem;font-weight:600;margin:10px 0;">angle</div>
-    <div id="translation" style="font-size:1.2rem;color:#444;margin-bottom:20px;">Winkel</div>
-
-    <div class="flex" style="display:flex;justify-content:center;gap:10px;">
-      <button class="green-btn">Richtig</button>
-      <button class="red-btn">Falsch</button>
-      <button class="gray-btn">Überspringen</button>
-    </div>
-  </div>
-
-  <div class="divider"></div>
-
-  <div class="bottom">
-    <button class="gray">📁 Vokabeln</button>
-    <button>🔄 Neustart</button>
-    <small>© 2025 Beefi • Datenquelle: GitHub (Online)</small>
-  </div>
-</div>
 </body>
 </html>
