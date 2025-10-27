@@ -1,253 +1,287 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>📘 Vokabelübersicht</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>📘 Vokabelübersicht</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f7f9fb;
+  --card: #ffffff;
+  --border: #e5ebf3;
+  --muted: #667085;
+  --text: #222;
+  --primary: #1e6ed8;
+  --primary-2: #2d7ef0;
+  --shadow: 0 2px 10px rgba(0,0,0,.08);
+  --table-hover:#f4f9ff;
+}
+*{box-sizing:border-box;}
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 20px;
+  text-align: center;
+}
+.app {
+  max-width: 1100px;
+  margin: auto;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+}
+h2 {
+  color: var(--primary);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.section {margin-top: 20px;}
+.divider {margin: 24px 0; border-top: 3px solid var(--border);}
+.flex {display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center;}
+input, select, button {
+  font-size: 1rem;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cfd6e4;
+}
+button {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: .2s background;
+}
+button:hover {background: var(--primary-2);}
+.btn-ghost {background: #ecf0f1; color: #333;}
+.danger {background: #e74c3c; color: #fff;}
 
-  <style>
-    :root{
-      --bg: #eef3f9;
-      --card: rgba(255,255,255,.75);
-      --card-solid: #fff;
-      --text: #222;
-      --muted: #5b6b81;
-      --primary: #1e6ed8;
-      --primary-2: #2c7ef0;
-      --ring: rgba(30,110,216,.25);
-      --border: #dee6f2;
-      --shadow: 0 8px 24px rgba(16,24,40,.08);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;padding:22px;
-      font-family:Inter,system-ui,sans-serif;
-      color:var(--text);
-      background:linear-gradient(180deg,#f7f9fc 0%,#f0f4fa 100%);
-    }
-    .app{max-width:1100px;margin:auto;background:var(--card);border-radius:18px;padding:22px;box-shadow:var(--shadow);backdrop-filter:blur(10px);}
-    .header{text-align:center;margin-bottom:16px;}
-    .title{font-size:1.9rem;font-weight:800;}
-    .subline{margin:8px auto 18px;width:92%;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--primary),var(--primary-2));}
-    .controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center;background:var(--card-solid);border:1px solid var(--border);border-radius:14px;padding:12px;}
-    select,input,button{font:inherit;border-radius:10px;border:1px solid var(--border);padding:10px 12px;background:#fff;outline:none;}
-    button{cursor:pointer;background:var(--primary);color:#fff;border:none;font-weight:700;}
-    button:hover{background:var(--primary-2);}
-    table{width:100%;border-collapse:collapse;}
-    th,td{padding:10px;border-bottom:1px solid var(--border);}
-    th{background:#f4f7ff;font-weight:700;cursor:pointer;}
-    tr:hover td{background:#f8fbff;}
-    .category-chip{display:inline-block;padding:4px 10px;border-radius:10px;color:#fff;font-weight:700;font-size:.9rem;}
-    .pagination{display:flex;justify-content:center;gap:8px;margin-top:12px;}
-    .pagination button{background:#fff;color:#1c3553;border:1px solid var(--border);}
-    .pagination button.active{background:var(--primary);color:#fff;}
-    .input-card{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;background:var(--card-solid);border:1px solid var(--border);border-radius:14px;padding:12px;}
-    .footer{text-align:center;margin-top:20px;color:var(--muted);}
-    #modal{display:none;position:fixed;inset:0;background:rgba(20,30,50,.45);backdrop-filter:blur(6px);align-items:center;justify-content:center;z-index:9999;padding:14px;}
-    #modalContent{background:#fff;border:1px solid var(--border);border-radius:16px;padding:16px;max-width:480px;width:100%;box-shadow:var(--shadow);}
-    #modalContent h3{text-align:center;margin-top:0;}
-    .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .modal-grid-1{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px;}
-    .modal-actions{display:flex;justify-content:center;gap:10px;margin-top:10px;}
-    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.85rem;background:#fff;border:1px solid var(--border);border-radius:10px;padding:6px 10px;box-shadow:var(--shadow);}
-    .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#1abc9c;color:#fff;padding:10px 14px;border-radius:10px;display:none;z-index:99999;}
-    .multi-delete{display:none;justify-content:center;margin-bottom:10px;}
-    .multi-delete button{background:#e74c3c;}
-    .multi-delete button:hover{background:#c0392b;}
-  </style>
+table {width: 100%; border-collapse: collapse; margin-top: 10px;}
+th, td {padding: 10px; border-bottom: 1px solid #e0e6ef; text-align: left;}
+th {background: #eef4ff; cursor: pointer;}
+tr:hover {background: var(--table-hover);}
+th.sort-asc::after{content:" ↑"; color:#666}
+th.sort-desc::after{content:" ↓"; color:#666}
+
+.category-chip {
+  display:inline-block; padding:5px 10px; border-radius:999px;
+  color:#fff; font-weight:600; font-size:.9rem;
+}
+
+.lexica {
+  display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin:8px 0;
+}
+.lexica button {
+  background:#ecf0f1; border:1px solid #d0d7e2; padding:6px 10px; font-weight:600;
+}
+.lexica button.active {background: var(--primary); color:#fff;}
+
+.pagination {display:flex; gap:6px; justify-content:center; margin-top:12px;}
+.pagination button {background:#ecf0f1; color:#333; border:1px solid #ccc;}
+.pagination button.active {background:var(--primary); color:#fff;}
+
+.toast {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  background:#2ecc71; color:#fff; padding:10px 16px;
+  border-radius:8px; display:none;
+  box-shadow: var(--shadow); z-index:999;
+}
+
+/* MODAL */
+#modal {
+  position:fixed; inset:0; background:rgba(0,0,0,.45);
+  display:none; align-items:center; justify-content:center; z-index:9999;
+  padding:16px;
+}
+#modalContent {
+  width:min(720px, 96vw);
+  background:#fff; border-radius:14px; box-shadow:0 12px 28px rgba(0,0,0,.18);
+  padding:20px; text-align:left;
+}
+#modalContent h3 {
+  margin-top:0; text-align:center; font-size:1.3rem;
+}
+#modalContent label {
+  font-weight:600; font-size:.95rem; margin-top:8px; display:block;
+}
+#modalContent input,#modalContent select {
+  width:100%; margin:6px 0 12px; padding:10px;
+  border-radius:8px; border:1px solid #cfd6e4;
+}
+#modalActions {display:flex; gap:10px; justify-content:center; margin-top:10px;}
+
+/* Zuletzt hinzugefügt */
+.last-wrap {
+  margin-top:10px; background:#eef4ff;
+  border:1px solid var(--border); border-radius:10px; padding:14px;
+}
+.last-title {font-weight:700;}
+.last-list {
+  display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:10px;
+}
+.pill {
+  display:flex; align-items:center; gap:8px; padding:8px 12px;
+  border-radius:999px; background:var(--card); border:1px solid var(--border);
+  box-shadow:0 1px 3px rgba(0,0,0,.04);
+}
+.pill-bullet {width:10px; height:10px; border-radius:50%;}
+.subtle-sep {margin:18px auto 10px; height:1px; background:var(--border);}
+.bottom-bar {display:flex; justify-content:space-between; align-items:center; margin-top:20px; flex-wrap:wrap;}
+.muted {color:var(--muted);}
+</style>
 </head>
+
 <body>
 <div class="app">
-  <div class="header">
-    <div class="title">📘 Vokabelübersicht</div>
-    <div class="subline"></div>
-  </div>
-
+  <h1>📘 Vokabelübersicht</h1>
   <div id="lexica" class="lexica"></div>
 
   <div class="section">
-    <h2>🔍 Filter & Suche</h2>
-    <div class="controls">
+    <h2>🔍 Filter &amp; Suche</h2>
+    <div class="flex">
       <label>Kategorie:
         <select id="filterCat"><option value="Alle">Alle</option></select>
       </label>
-      <input id="searchInput" type="text" placeholder="🔎 Suchen...">
-      <button id="resetFilter">🔄 Zurücksetzen</button>
+      <input id="searchInput" type="text" placeholder="🔎 Suchen (EN / DE)" />
+      <button id="resetFilter">🔄 Filter zurücksetzen</button>
     </div>
   </div>
 
   <div class="section">
     <h2>📄 Vokabelliste</h2>
-    <div class="multi-delete"><button id="deleteSelected">🗑️ Ausgewählte löschen</button></div>
-    <div class="card">
-      <table id="vokabelTable">
-        <thead><tr>
-          <th></th><th data-col="0">Englisch</th><th data-col="1">Deutsch</th><th data-col="2">Kategorie</th><th>Aktion</th>
-        </tr></thead>
-        <tbody></tbody>
-      </table>
-      <div id="pagination" class="pagination"></div>
-    </div>
+    <table id="vokabelTable">
+      <thead>
+        <tr>
+          <th style="width:36px;">&nbsp;</th>
+          <th data-key="en">Englisch</th>
+          <th data-key="de">Deutsch</th>
+          <th data-key="cat">Kategorie</th>
+          <th style="width:100px;">Aktion</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="pagination" class="pagination"></div>
+    <div id="infoFooter" class="muted" style="margin-top:6px"></div>
   </div>
+
+  <div class="divider"></div>
 
   <div class="section">
     <h2>➕ Neue Vokabel hinzufügen</h2>
-    <div class="input-card">
-      <input id="newEn" placeholder="Englisch">
-      <input id="newDe" placeholder="Deutsch">
+    <div class="flex">
+      <input id="newEn" type="text" placeholder="Englisch" />
+      <input id="newDe" type="text" placeholder="Deutsch" />
       <select id="newCat"></select>
-      <input id="newGroup" placeholder="Gruppe / Variante">
-      <input id="newHint" placeholder="Hinweis">
+      <input id="newGroup" type="text" placeholder="Gruppe / Variante" />
+      <input id="newHint" type="text" placeholder="Hinweis" />
       <button id="addBtn">Hinzufügen</button>
+    </div>
+    <div class="flex" style="margin-top:10px;">
+      <button id="deleteSelected" class="danger">🗑️ Ausgewählte löschen</button>
     </div>
   </div>
 
-  <div class="footer">
-    <button onclick="window.location.href='index.html'">⬅️ Zurück</button>
-    <p>© 2025 @Beefi</p>
+  <div class="divider"></div>
+
+  <div class="section">
+    <h2>💾 JSON &amp; Synchronisierung</h2>
+    <div class="flex">
+      <button id="syncBtn">🔄 Von GitHub neu laden</button>
+      <button id="downloadBtn">💾 vokabeln.json herunterladen</button>
+    </div>
+    <div id="datasourceStatus" class="muted">Quelle: –</div>
+  </div>
+
+  <div class="subtle-sep"></div>
+  <div class="section">
+    <div class="last-wrap">
+      <div class="last-title">Zuletzt hinzugefügt</div>
+      <div id="lastAdded" class="last-list"><div class="muted">–</div></div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <a href="index.html" class="btn-ghost" style="padding:10px 14px; border-radius:10px; text-decoration:none;">⬅️ Zurück zum Trainer</a>
+    <div class="muted">© 2025 @Beefi</div>
   </div>
 </div>
 
+<!-- Modal -->
 <div id="modal">
   <div id="modalContent">
     <h3>🔍 Vokabel-Details</h3>
-    <div class="modal-grid">
-      <input id="editEn" placeholder="Englisch">
-      <input id="editDe" placeholder="Deutsch">
-    </div>
-    <div class="modal-grid-1">
-      <select id="editCat"></select>
-      <input id="editGroup" placeholder="Gruppe / Variante">
-      <input id="editHint" placeholder="Hinweis">
-    </div>
-    <div class="modal-actions">
+    <label>🇬🇧 Englisch</label>
+    <input id="editEn" type="text" />
+    <label>🇩🇪 Deutsch</label>
+    <input id="editDe" type="text" />
+    <label>🧰 Kategorie</label>
+    <select id="editCat"></select>
+    <label>🧩 Gruppe / Variante</label>
+    <input id="editGroup" type="text" />
+    <label>💡 Hinweis</label>
+    <input id="editHint" type="text" />
+    <div id="modalActions">
       <button id="saveEdit">💾 Speichern</button>
-      <button id="deleteSingle">🗑️ Löschen</button>
-      <button id="closeModal">❌ Schließen</button>
+      <button id="deleteEdit" class="danger">🗑️ Löschen</button>
+      <button id="closeModal" class="btn-ghost">❌ Schließen</button>
     </div>
   </div>
 </div>
 
 <div id="toast" class="toast">Gespeichert</div>
-<div id="datasourceStatus">🔄 JSON geladen</div>
 
 <script>
-(() => {
-  const C = {
-    Gelb:"Grundwerkzeuge Metallverarbeitung",
-    Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech- / Kunststoffarbeiten",
-    Gruen:"Drehen / Fräsen",
-    HellesPink:"Hydraulik / Pneumatik",
-    Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein",
-    Rot:"Verwechslungsgefahr"
-  };
-  const M = {
-    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
-    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
-  };
-  const GITHUB_JSON = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  let list = [];
+// ------------- HILFSFUNKTIONEN / KONSTANTEN ----------------
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const toast=msg=>{const t=$("#toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",1300);};
 
-  const $ = s => document.querySelector(s);
-  const $$ = s => [...document.querySelectorAll(s)];
-  const toast = m => {const t=$("#toast");t.textContent=m;t.style.display="block";setTimeout(()=>t.style.display="none",1400);};
+const CATEGORY_NAMES={
+  Gelb:"Grundwerkzeuge Metallverarbeitung",
+  Pink:"Werkzeugkasten Mechaniker",
+  Blau:"Blech- / Kunststoffarbeiten",
+  Gruen:"Drehen / Fräsen",
+  HellesPink:"Hydraulik / Pneumatik",
+  Orange:"Elektrotechnik",
+  Dunkelgruen:"Fluggerätemechanik allgemein",
+  Rot:"Verwechslungsgefahr"
+};
+const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
+const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+const keyOf=v=>`${(v[0]||"").toLowerCase()}|${(v[1]||"").toLowerCase()}`;
+const merge=(remote,local)=>{const map=new Map();remote.forEach(v=>map.set(keyOf(v),v));local.forEach(v=>{if(!map.has(keyOf(v)))map.set(keyOf(v),v)});return[...map.values()];};
+const saveLocal=arr=>{localStorage.setItem("vokabeln",JSON.stringify(arr));localStorage.setItem("vokabeln_updated",new Date().toISOString());};
+const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
 
-  function normalize(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||""];}
-
-  async function sync(){
-    const r = await fetch(GITHUB_JSON+"?t="+Date.now(),{cache:"no-store"});
-    const d = await r.json();
-    list = d.map(normalize);
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-    render();
-  }
-
-  function render(){
-    const tb=$("#vokabelTable tbody");
-    tb.innerHTML=list.map((v,i)=>`
-      <tr>
-        <td><input type="checkbox" class="rowChk" data-i="${i}"></td>
-        <td>${v[0]}</td>
-        <td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${M[v[2]]}">${C[v[2]]}</span></td>
-        <td><button class="viewBtn" data-i="${i}">🔍</button></td>
-      </tr>`).join("");
-
-    $$("#vokabelTable .viewBtn").forEach(b=>b.onclick=()=>openEdit(b.dataset.i));
-    $$("#vokabelTable .rowChk").forEach(chk=>chk.onchange=checkMultiDelete);
-  }
-
-  function checkMultiDelete(){
-    const any=$$("#vokabelTable .rowChk:checked").length>0;
-    $(".multi-delete").style.display=any?"flex":"none";
-  }
-
-  $("#deleteSelected").onclick=()=>{
-    const sel=$$("#vokabelTable .rowChk:checked").map(c=>+c.dataset.i);
-    if(!sel.length) return;
-    if(!confirm("Diese "+sel.length+" Vokabel(n) wirklich löschen?"))return;
-    list=list.filter((_,i)=>!sel.includes(i));
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-    render(); toast("🗑️ Gelöscht");
-    $(".multi-delete").style.display="none";
-  };
-
-  let editIndex=-1;
-  function openEdit(i){
-    editIndex=i; const v=list[i]; if(!v)return;
-    $("#editEn").value=v[0];$("#editDe").value=v[1];
-    $("#editCat").value=v[2];$("#editGroup").value=v[3];$("#editHint").value=v[4];
-    $("#modal").style.display="flex";
-  }
-  $("#saveEdit").onclick=()=>{
-    if(editIndex<0)return;
-    const v=list[editIndex];
-    v[0]=$("#editEn").value.trim();
-    v[1]=$("#editDe").value.trim();
-    v[2]=$("#editCat").value;
-    v[3]=$("#editGroup").value.trim();
-    v[4]=$("#editHint").value.trim();
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-    render(); toast("💾 Gespeichert");
-    $("#modal").style.display="none";
-  };
-  $("#deleteSingle").onclick=()=>{
-    if(editIndex<0)return;
-    if(!confirm("Diese Vokabel wirklich löschen?"))return;
-    list.splice(editIndex,1);
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-    render(); toast("🗑️ Gelöscht");
-    $("#modal").style.display="none";
-  };
-  $("#closeModal").onclick=()=>$("#modal").style.display="none";
-
-  $("#addBtn").onclick=()=>{
-    const en=$("#newEn").value.trim(),de=$("#newDe").value.trim(),cat=$("#newCat").value,grp=$("#newGroup").value.trim(),hint=$("#newHint").value.trim();
-    if(!en||!de)return alert("Bitte Englisch und Deutsch eingeben");
-    list.push([en,de,cat,grp,hint]);
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-    render(); toast("➕ Hinzugefügt");
-    $("#newEn").value=$("#newDe").value=$("#newGroup").value=$("#newHint").value="";
-  };
-
-  function fillCats(sel,withAll=false){
-    sel.innerHTML=withAll?"<option value='Alle'>Alle</option>":"";
-    for(const k in C){
-      const o=document.createElement("option");
-      o.value=k;o.textContent=C[k];o.style.background=M[k];o.style.color="#fff";
-      sel.appendChild(o);
-    }
-  }
-
-  fillCats($("#filterCat"),true);
-  fillCats($("#newCat"));
-  fillCats($("#editCat"));
-  sync();
-})();
+let list=[],filterCat="Alle",currentLetter="Alle",searchTerm="",sortKey="en",sortDir="asc",editIndex=-1;
+const perPage=15;
+const fillCats=sel=>{sel.innerHTML="";Object.keys(CATEGORY_NAMES).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);});};
+const renderFilterCats=()=>{const sel=$("#filterCat");sel.innerHTML="<option value='Alle'>Alle</option>";Object.keys(CATEGORY_NAMES).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];o.style.background=COLOR_MAP[k];o.style.color="#fff";sel.appendChild(o);});sel.value=filterCat;};
+function renderLexica(){const letters=["Alle",..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];const lx=$("#lexica");lx.innerHTML="";letters.forEach(l=>{const b=document.createElement("button");b.textContent=l;if(l===currentLetter)b.classList.add("active");b.onclick=()=>{currentLetter=l;renderTable();renderLexica();};lx.appendChild(b);});}
+function filtered(){return list.filter(([en,de,cat])=>{if(currentLetter!=="Alle"&&!en.toUpperCase().startsWith(currentLetter))return false;if(filterCat!=="Alle"&&cat!==filterCat)return false;if(searchTerm){const s=(en+" "+de).toLowerCase();if(!s.includes(searchTerm))return false;}return true;});}
+function sortRows(arr){const idx={en:0,de:1,cat:2}[sortKey];return arr.sort((a,b)=>{let A=a[idx].toLowerCase(),B=b[idx].toLowerCase();if(A<B)return sortDir==="asc"?-1:1;if(A>B)return sortDir==="asc"?1:-1;return 0;});}
+function renderTable(){const all=sortRows(filtered());const pages=Math.ceil(all.length/perPage)||1;const tb=$("#vokabelTable tbody");tb.innerHTML="";all.slice(0,perPage).forEach(v=>{const [en,de,cat]=v;const i=list.indexOf(v);tb.insertAdjacentHTML("beforeend",`<tr><td><input type='checkbox' data-index='${i}'></td><td>${en}</td><td>${de}</td><td><span class='category-chip' style='background:${COLOR_MAP[cat]}'>${CATEGORY_NAMES[cat]}</span></td><td><button class='btn-ghost' data-edit='${i}'>🔍</button></td></tr>`);});$$("button[data-edit]").forEach(b=>b.onclick=()=>openEdit(parseInt(b.dataset.edit)));
+renderLastAdded();}
+function renderLastAdded(){const w=$("#lastAdded");w.innerHTML="";if(!list.length){w.innerHTML="<div class='muted'>Keine Vokabeln vorhanden.</div>";return;}list.slice(-5).reverse().forEach(v=>{const[en,de,cat]=v;w.insertAdjacentHTML("beforeend",`<div class='pill'><span class='pill-bullet' style='background:${COLOR_MAP[cat]}'></span><b>${en}</b> – ${de} <span class='muted' style='font-size:.9rem;'>(${CATEGORY_NAMES[cat]})</span></div>`);});}
+function openEdit(i){editIndex=i;const v=list[i];if(!v)return;$("#editEn").value=v[0];$("#editDe").value=v[1];$("#editCat").value=v[2];$("#editGroup").value=v[3]||"";$("#editHint").value=v[4]||"";$("#modal").style.display="flex";}
+$("#closeModal").onclick=()=>$("#modal").style.display="none";
+$("#saveEdit").onclick=()=>{const v=list[editIndex];v[0]=$("#editEn").value.trim();v[1]=$("#editDe").value.trim();v[2]=$("#editCat").value;v[3]=$("#editGroup").value.trim();v[4]=$("#editHint").value.trim();saveLocal(list);toast("💾 Gespeichert");$("#modal").style.display="none";renderTable();};
+$("#deleteEdit").onclick=()=>{if(!confirm("Diese Vokabel löschen?"))return;list.splice(editIndex,1);saveLocal(list);toast("🗑️ Gelöscht");$("#modal").style.display="none";renderTable();};
+$("#addBtn").onclick=()=>{const en=$("#newEn").value.trim(),de=$("#newDe").value.trim(),cat=$("#newCat").value,grp=$("#newGroup").value.trim(),hint=$("#newHint").value.trim();if(!en||!de)return alert("Bitte Englisch & Deutsch eingeben.");list.push([en,de,cat,grp,hint,new Date().toISOString()]);saveLocal(list);renderTable();toast("➕ Hinzugefügt");["#newEn","#newDe","#newGroup","#newHint"].forEach(id=>$(id).value="");};
+$("#deleteSelected").onclick=()=>{const sel=$$('input[type="checkbox"][data-index]:checked');if(!sel.length)return alert("Keine Auswahl");if(!confirm(sel.length+" Einträge löschen?"))return;sel.map(c=>+c.dataset.index).sort((a,b)=>b-a).forEach(i=>list.splice(i,1));saveLocal(list);toast("🗑️ Gelöscht");renderTable();};
+$("#filterCat").onchange=e=>{filterCat=e.target.value;renderTable();};
+$("#searchInput").oninput=e=>{searchTerm=e.target.value.toLowerCase();renderTable();};
+$("#resetFilter").onclick=()=>{filterCat="Alle";searchTerm="";$("#searchInput").value="";$("#filterCat").value="Alle";renderLexica();renderTable();};
+async function trySync(){const urls=["./vokabeln.json",window.location.origin+"/vokabeln.json"];let remote=null;for(const u of urls){try{const r=await fetch(u,{cache:"no-store"});if(r.ok){const j=await r.json();if(Array.isArray(j)){remote=j;break;}}}catch{}}const local=loadLocal();list=remote?merge(remote,local):local;if(!list.length)list=[["hammer","Hammer","Pink","","","2025-01-01T00:00:00Z"]];saveLocal(list);$("#datasourceStatus").textContent=remote?"Quelle: GitHub (Online)":"Quelle: Lokaler Speicher";fillCats($("#newCat"));fillCats($("#editCat"));renderFilterCats();renderLexica();renderTable();}
+$("#syncBtn").onclick=trySync;
+trySync();
 </script>
 </body>
 </html>
