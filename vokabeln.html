@@ -368,6 +368,30 @@ tr:hover{background:#f8fbff}
   $('#fabBack').onclick=()=>location.href="index.html";
   $('#fabAdjust').onclick=()=>toggleAdjust(true);
   $('#fabSync').onclick=githubSync;
+  // --- Desktop Sortierung (Spalte 1 & 2) ---
+  let sortState = {col: null, dir: 1};
+
+  $$('#tbl thead th[data-sort]').forEach(th => {
+    th.style.cursor = "pointer";
+    th.title = "Sortieren";
+    th.onclick = () => {
+      const col = parseInt(th.dataset.sort);
+      if (sortState.col === col) sortState.dir *= -1; 
+      else { sortState.col = col; sortState.dir = 1; }
+
+      list.sort((a, b) => {
+        const A = (a[col] || "").toLowerCase();
+        const B = (b[col] || "").toLowerCase();
+        return A.localeCompare(B) * sortState.dir;
+      });
+      saveLocal(list);
+      renderAll();
+
+      // visueller Hinweis
+      $$('#tbl thead th').forEach(x => x.style.textDecoration = "none");
+      th.style.textDecoration = sortState.dir === 1 ? "underline" : "overline";
+    };
+  });
 
   loadData();
 })();
