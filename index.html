@@ -33,8 +33,10 @@ select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid
 .card{font-size:1.8rem;font-weight:800;margin:20px 0}
 .feedback{font-size:1.1rem;margin-top:10px;color:var(--muted)}
 .footer{text-align:center;margin-top:20px;color:var(--muted);font-size:.9rem}
-.category-select{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.category-select select{min-width:220px}
+.category-select{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;position:relative}
+.feedback-toggle{position:absolute;right:0;top:0}
+.toggle-btn{background:#94a3b8;color:#fff;border-radius:999px;padding:6px 14px;font-weight:700;font-size:.9rem;transition:all .2s}
+.toggle-btn.active{background:var(--accent)}
 .correct{animation:flashGreen .3s}
 .wrong{animation:flashRed .3s}
 @keyframes flashGreen{0%{background:#bbf7d0}100%{background:transparent}}
@@ -69,7 +71,9 @@ select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid
       <option value="3000" selected>3 Sekunden</option>
       <option value="5000">5 Sekunden</option>
     </select>
-    <label><input type="checkbox" id="feedbackToggle" checked> Feedback anzeigen</label>
+    <div class="feedback-toggle">
+      <button id="feedbackBtn" class="toggle-btn active">Feedback: AN</button>
+    </div>
   </div>
   <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:16px">
     <button id="learnBtn" class="btn">✍️ Vokabel-Abfrage starten</button>
@@ -105,7 +109,7 @@ const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mecha
 const M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 const statusUrl="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
 const cat=document.getElementById("category"),modeSel=document.getElementById("mode"),
-fbT=document.getElementById("feedbackToggle"),delaySel=document.getElementById("delay"),
+fbBtn=document.getElementById("feedbackBtn"),delaySel=document.getElementById("delay"),
 learn=document.getElementById("learnBtn"),cards=document.getElementById("cardsBtn"),
 last30=document.getElementById("last30Btn"),restart=document.getElementById("restartBtn"),
 word=document.getElementById("word"),feedback=document.getElementById("feedback"),
@@ -113,7 +117,13 @@ ans=document.getElementById("answerInput"),right=document.getElementById("rightB
 wrong=document.getElementById("wrongBtn"),skip=document.getElementById("skipBtn"),
 trainer=document.getElementById("trainer"),result=document.getElementById("result");
 
-let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",trap=false,curr="";
+let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",trap=false,curr="",feedbackOn=true;
+
+fbBtn.onclick=()=>{
+  feedbackOn=!feedbackOn;
+  fbBtn.classList.toggle("active",feedbackOn);
+  fbBtn.textContent=feedbackOn?"Feedback: AN":"Feedback: AUS";
+};
 
 async function loadList(){
   try{
@@ -157,7 +167,7 @@ function showNext(){
     ans.onkeydown=e=>{
       if(e.key==="Enter"){
         const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();
-        if(fbT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch → ${answ}`;flash(ok?"correct":"wrong")}
+        if(feedbackOn){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch → ${answ}`;flash(ok?"correct":"wrong")}
         if(!ok)errors.push([ask,answ]);
         i++;setTimeout(showNext,delay);
       }
@@ -180,14 +190,14 @@ function openInput(correct,ask){
   ans.onkeydown=e=>{
     if(e.key==="Enter"){
       const ok=ans.value.trim().toLowerCase()===correct.toLowerCase();
-      if(fbT.checked){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch → ${correct}`;flash(ok?"correct":"wrong")}
+      if(feedbackOn){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch → ${correct}`;flash(ok?"correct":"wrong")}
       if(!ok)errors.push([ask,correct]);
       i++;setTimeout(showNext,parseInt(delaySel.value));
     }
   };
 }
 function nextCard(ok,ask,answ){
-  if(fbT.checked){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong")}
+  if(feedbackOn){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong")}
   if(!ok)errors.push([ask,answ]);
   i++;setTimeout(showNext,parseInt(delaySel.value));
 }
