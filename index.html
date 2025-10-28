@@ -8,125 +8,127 @@
 <style>
 :root{
   --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
-  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
+  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af;
+  --glass:rgba(255,255,255,.95)
 }
 *{box-sizing:border-box}
 body{
-  margin:0;
-  font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);
-  color:var(--ink)
+  margin:0;font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)
 }
 .app{
-  max-width:960px;
-  margin:32px auto;
-  padding:22px;
-  background:rgba(255,255,255,.9);
-  border-radius:22px;
-  box-shadow:0 10px 32px rgba(0,0,0,.10);
-  backdrop-filter:blur(8px)
+  max-width:980px;margin:28px auto;padding:24px;background:var(--glass);
+  border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)
 }
-h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin:0}
+h1{margin:0;text-align:center;font-size:2rem;font-weight:900;color:#1e3a8a}
 .hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
+
 .controls,.functions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.controls label{display:flex;align-items:center;gap:8px}
+select{
+  padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;background:#fff
+}
+
+/* Gleichwertige Kacheln */
 .kachel{
-  flex:1 1 240px;text-align:center;
-  background:var(--blue);color:#fff;padding:14px 18px;
-  border-radius:14px;font-weight:700;cursor:pointer;
-  box-shadow:0 6px 16px rgba(37,99,235,.25);
-  transition:transform .15s,background .15s
+  flex:1 1 260px;max-width:320px;text-align:center;
+  background:var(--blue);color:#fff;padding:14px 20px;border-radius:14px;
+  font-weight:800;cursor:pointer;letter-spacing:.2px;
+  box-shadow:0 8px 20px rgba(37,99,235,.25);
+  transition:transform .15s,background .15s,box-shadow .15s
 }
-.kachel:hover{transform:translateY(-1px);background:var(--blue2)}
-.progress{text-align:center;font-weight:700;margin:8px 0 10px;min-height:1.2em}
-.subnote{text-align:center;font-size:.95rem;color:#334155;margin:16px 0 12px;line-height:1.4}
-.subnote b{font-weight:800;color:#1e3a8a}
+.kachel:hover{transform:translateY(-2px);background:var(--blue2);box-shadow:0 10px 22px rgba(37,99,235,.3)}
 
-/* ==== Feedback Toggle ==== */
-.feedback-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 18px;
-  border-radius: 16px;
-  background: linear-gradient(135deg, #f8fafc, #eef2ff);
-  box-shadow: 0 2px 8px rgba(0,0,0,.08);
-  transition: all .25s ease;
-  margin: 16px auto 22px;
-  width: fit-content;
+.progress{text-align:center;font-weight:800;margin:12px 0 0}
+.subnote{
+  text-align:center;font-size:.98rem;color:#334155;margin:10px 0 18px;line-height:1.45
 }
-.feedback-toggle:hover {
-  box-shadow: 0 4px 12px rgba(37,99,235,.15);
-  transform: translateY(-1px);
-}
-.feedback-toggle label {
-  font-weight: 700;
-  color: #1e3a8a;
-  font-size: 1.05rem;
-  letter-spacing: 0.3px;
-  cursor: pointer;
-}
-#chkFeedback {
-  appearance: none;
-  width: 46px;
-  height: 26px;
-  background: #d1d5db;
-  border-radius: 999px;
-  position: relative;
-  outline: none;
-  cursor: pointer;
-  transition: background .3s ease;
-}
-#chkFeedback::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  background: white;
-  border-radius: 50%;
-  transition: all .3s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,.2);
-}
-#chkFeedback:checked {background: #2563eb;}
-#chkFeedback:checked::before {left: 23px;background: #fff;}
-#chkFeedback:checked::after {
-  content:"";
-  position:absolute;inset:0;
-  border-radius:999px;
-  box-shadow:0 0 12px rgba(37,99,235,.4);
-  animation: glow .6s ease-out;
-}
-@keyframes glow{
-  from{box-shadow:0 0 16px rgba(37,99,235,.6);}
-  to{box-shadow:0 0 0 rgba(37,99,235,0);}
-}
+.subnote b{color:#1e3a8a}
 
-/* === Flashcard === */
+/* Feedback-Schalter hübsch */
+.feedback-toggle{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:12px 18px;margin:12px auto 18px;width:fit-content;
+  border-radius:16px;background:linear-gradient(135deg,#f8fafc,#eef2ff);
+  box-shadow:0 2px 8px rgba(0,0,0,.08)
+}
+.feedback-toggle label{font-weight:800;color:#1e3a8a;cursor:pointer}
+#chkFeedback{
+  appearance:none;width:48px;height:26px;border-radius:999px;background:#d1d5db;position:relative;cursor:pointer;transition:.25s
+}
+#chkFeedback::before{
+  content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.2);transition:.25s
+}
+#chkFeedback:checked{background:#2563eb}
+#chkFeedback:checked::before{left:25px}
+
+/* Spielbereich */
+#stage{
+  display:none;margin-top:14px;padding:26px;border-radius:20px;background:#fff;
+  box-shadow:inset 0 0 10px rgba(0,0,0,.05);text-align:center
+}
+.chip{
+  display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:14px
+}
+.word{font-size:1.9rem;font-weight:900;margin:8px 0 6px}
+.offer{font-size:1.1rem;color:#1f2937;margin:6px 0 14px;min-height:1.3em}
+
+.btnrow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:8px}
+.btn{
+  border:none;border-radius:12px;padding:10px 20px;font-weight:800;font-size:1rem;cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.08)
+}
+.ok{background:var(--ok);color:#fff}
+.bad{background:var(--bad);color:#fff}
+.skip{background:var(--muted);color:#fff}
+
+.inprow{display:none;gap:8px;justify-content:center;margin-top:12px}
+.inprow input{
+  width:60%;min-width:260px;padding:10px 14px;border:1px solid #d1d5db;border-radius:12px;font-size:1rem
+}
+.inprow button{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:800}
+
+/* Flash-Feedback */
+.flash-correct{animation:good .4s}
+.flash-wrong{animation:bad .4s}
+@keyframes good{from{background:#dcfce7}to{background:#fff}}
+@keyframes bad{from{background:#fee2e2}to{background:#fff}}
+
+/* 3D-Karte – zentriert & begrenzt */
 .flashcard{
-  width:min(420px,90%);
-  height:260px;
-  margin:0 auto 20px;
-  perspective:1000px;
-  position:relative;
+  width:min(70%,560px);height:260px;margin:6px auto 14px;perspective:1000px;position:relative
 }
 .flashcard-inner{
-  position:absolute;width:100%;height:100%;
-  transform-style:preserve-3d;
-  transition:transform .8s ease;
-  border-radius:18px;
-  box-shadow:0 8px 28px rgba(0,0,0,.15);
-  background:linear-gradient(145deg,#fff,#f8faff);
+  position:absolute;inset:0;transform-style:preserve-3d;transition:transform .8s ease;
+  border-radius:18px;background:linear-gradient(145deg,#fff,#f8faff);box-shadow:0 10px 26px rgba(0,0,0,.15)
 }
-.flashcard.flip .flashcard-inner{transform:rotateY(180deg);}
+.flashcard.flip .flashcard-inner{transform:rotateY(180deg)}
 .flashcard-face{
-  position:absolute;width:100%;height:100%;backface-visibility:hidden;
-  border-radius:18px;display:flex;align-items:center;justify-content:center;
-  font-size:1.6rem;font-weight:800;padding:20px
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;
+  display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;padding:20px
 }
-.flashcard-front{background:linear-gradient(135deg,#dbeafe,#eff6ff);color:#1e3a8a;}
-.flashcard-back{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#064e3b;transform:rotateY(180deg);}
+.flashcard-front{background:linear-gradient(135deg,#dbeafe,#eff6ff);color:#1e3a8a}
+.flashcard-back{background:linear-gradient(135deg,#dcfce7,#bbf7d0);color:#064e3b;transform:rotateY(180deg)}
+
+/* Einfaches helles Modal */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.25);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
+}
+.modal{
+  width:min(860px,96vw);max-height:85vh;overflow:auto;background:#fff;border-radius:16px;border:1px solid #e5e7eb;
+  box-shadow:0 20px 50px rgba(0,0,0,.25)
+}
+.modal header{padding:16px 18px;border-bottom:1px solid #eef2ff}
+.modal h2{margin:0;font-size:1.15rem}
+.modal .content{padding:14px 18px}
+.modal footer{padding:12px 18px;border-top:1px solid #eef2ff;display:flex;gap:10px;justify-content:flex-end}
+.table{width:100%;border-collapse:collapse;font-size:.98rem}
+.table th,.table td{border-bottom:1px solid #eef2ff;padding:8px 10px;text-align:left}
+.table th{background:#f8fafc}
+.badge{padding:4px 10px;border-radius:999px;font-weight:800;font-size:.85rem}
+.btn-ghost{background:#f3f4f6;border:1px solid #e5e7eb}
+.btn-primary{background:#2563eb;color:#fff}
 </style>
 </head>
 
@@ -137,13 +139,22 @@ h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin:0}
 
   <div class="controls">
     <label>Kategorie:
-      <select id="selCat"><option value="Alle">Alle (bunt gemischt)</option></select>
+      <select id="selCat">
+        <option value="Alle">Alle (bunt gemischt)</option>
+      </select>
     </label>
     <label>Modus:
       <select id="selMode">
         <option value="mixed">Gemischt</option>
         <option value="toGerman">Englisch → Deutsch</option>
         <option value="toEnglish">Deutsch → Englisch</option>
+      </select>
+    </label>
+    <label>Delay:
+      <select id="selDelay">
+        <option value="1000">1 s</option>
+        <option value="3000" selected>3 s</option>
+        <option value="5000">5 s</option>
       </select>
     </label>
   </div>
@@ -154,9 +165,9 @@ h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin:0}
   </div>
 
   <div class="functions">
-    <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage</div>
+    <div id="btnLearn"  class="kachel">✍️ Vokabel-Abfrage</div>
     <div id="btnLast30" class="kachel">📗 Letzte Vokabeln</div>
-    <div id="btnCards" class="kachel">🧠 Karteikarten</div>
+    <div id="btnCards"  class="kachel">🧠 Karteikarten</div>
   </div>
 
   <div id="progress" class="progress">Bereit.</div>
@@ -166,76 +177,306 @@ h1{text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a;margin:0}
 
   <section id="stage">
     <div id="chip" class="chip">–</div>
+
+    <!-- Grafische Karteikarte -->
     <div id="flashcard" class="flashcard" style="display:none;">
       <div class="flashcard-inner">
         <div id="cardFront" class="flashcard-face flashcard-front"></div>
-        <div id="cardBack" class="flashcard-face flashcard-back"></div>
+        <div id="cardBack"  class="flashcard-face flashcard-back"></div>
       </div>
     </div>
+
+    <!-- Textfrage für Abfragemodi -->
     <div id="q" class="word" style="display:none;">–</div>
+
     <div id="offer" class="offer"></div>
-    <div id="rowButtons" class="btnrow">
+
+    <div id="rowButtons" class="btnrow" style="display:none;">
       <button id="btnRight" class="btn ok">Richtig</button>
-      <button id="btnDec" class="btn bad">Falsch</button>
+      <button id="btnWrong" class="btn bad">Falsch</button>
+      <button id="btnSkip"  class="btn skip">Überspringen</button>
+    </div>
+
+    <div id="rowInput" class="inprow" style="display:none;">
+      <input id="inp" type="text" placeholder="Übersetzung eingeben …">
+      <button id="btnSub">Eingabe</button>
     </div>
   </section>
 
-  <div class="foot" style="text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem">
+  <div class="foot" style="text-align:center;margin-top:16px;color:#6b7280;font-size:.92rem">
     © 2025 Beeferino
+  </div>
+</div>
+
+<!-- Helles, schlichtes Modal -->
+<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <header><h2 id="modalTitle">Rundenende • Fehlerübersicht</h2></header>
+    <div class="content">
+      <div id="stats" style="margin-bottom:8px;font-weight:700"></div>
+      <table class="table" id="tblErrors">
+        <thead><tr><th>Frage</th><th>Richtig</th><th>Kategorie</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <footer>
+      <button id="btnContinue" class="btn btn-ghost">Weiter üben</button>
+      <button id="btnClose" class="btn btn-primary">Schließen</button>
+    </footer>
   </div>
 </div>
 
 <script>
 (function(){
-const CATS={Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"]};
+/* ===== Kategorien & DOM ===== */
+const CATS={
+  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
+  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
+  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
+  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
+  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
+  Orange:["Elektrotechnik","#E67E22","#fff"],
+  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
+  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+};
 const el=id=>document.getElementById(id);
-const btnLearn=el("btnLearn"),btnCards=el("btnCards"),btnLast=el("btnLast30"),
-stage=el("stage"),flashcard=el("flashcard"),
-cardFront=el("cardFront"),cardBack=el("cardBack"),chip=el("chip"),
-q=el("q"),btnRight=el("btnRight"),btnDec=el("btnDec");
+const selCat=el("selCat"), selMode=el("selMode"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback");
+const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
+const progress=el("progress"), startNote=el("startNote");
+const stage=el("stage"), chip=el("chip"), offer=el("offer");
+const flashcard=el("flashcard"), cardFront=el("cardFront"), cardBack=el("cardBack");
+const q=el("q"), rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp");
+const btnRight=el("btnRight"), btnWrong=el("btnWrong"), btnSkip=el("btnSkip"), btnSub=el("btnSub");
 
-let data=[["vice","Schraubstock","Pink"],["saw","Säge","Gelb"],["ruler","Maßstab","Gelb"],["pliers","Zange","Blau"],["hammer","Hammer","Gelb"]];
-let i=0,round=[],mode="",flipTimer=null;
+/* Modal */
+const modalBackdrop=el("modalBackdrop"), stats=el("stats"), tblErrors=el("tblErrors").querySelector("tbody");
+const btnClose=el("btnClose"), btnContinue=el("btnContinue");
+function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
+function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
 
+/* Build category options */
+(function(){
+  for(const k in CATS){
+    const [label,bg,fg]=CATS[k];
+    const o=document.createElement("option");
+    o.value=k;o.textContent=label;o.style.background=bg;o.style.color=fg;
+    selCat.appendChild(o);
+  }
+})();
+
+/* ===== Daten laden ===== */
+let data=[];
+async function fetchFromGitHub(){
+  try{
+    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+    if(!r.ok) throw 0;
+    const j=await r.json();
+    localStorage.setItem("vokabeln",JSON.stringify(j));
+    data=j;
+  }catch{
+    // Fallback
+    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    if(!data.length){
+      data=[["vice","Schraubstock","Pink"],["saw","Säge","Gelb"],["ruler","Maßstab","Gelb"],["pliers","Zange","Blau"],["measuring tape","Maßband","Blau"]];
+    }
+  }
+}
+fetchFromGitHub();
+
+/* ===== Utils ===== */
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function pick(n){let list=data.slice();shuffle(list);return list.slice(0,n);}
-function showCard(en,de,cat){
-  const c=CATS[cat]||["","#ccc","#000"];
-  chip.textContent=c[0];chip.style.background=c[1];chip.style.color=c[2];
-  cardFront.textContent=en;cardBack.textContent=de;
-  flashcard.classList.remove("flip");
-  clearTimeout(flipTimer);
-  flipTimer=setTimeout(()=>flashcard.classList.add("flip"),3000);
+function normalize(s){return s.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu,"").replace(/\s+/g," "); }
+function isCorrectInput(input,sol){const a=normalize(input); return sol.split(/[\/;|,]/).map(x=>normalize(x)).includes(a); }
+function filterByCat(list){ return selCat.value==="Alle" ? list.slice() : list.filter(v=>v[2]===selCat.value); }
+function setChip(cat){
+  const meta=CATS[cat]||["Kategorie","#ddd","#000"];
+  chip.textContent=meta[0]; chip.style.background=meta[1]; chip.style.color=meta[2];
 }
+
+/* ===== Spiel-States ===== */
+let mode="";            // learn | last | cards
+let source=[], idx=0;   // für endlos (learn,last) oder Runde (cards)
+let curr=null, askEN=true, correct="";
+let delay=3000, flipTimer=null;
+let totalAsked=0, sinceCheck=0, totalErrors=0;
+const errorRows=[];     // {q,correct,cat}
+
+/* ===== Anzeige Helpers ===== */
+function showStage(show){ stage.style.display=show?"block":"none"; }
+function setProg(){
+  if(mode==="cards"){ progress.textContent = `Karte ${Math.min(idx+1, source.length)} / ${source.length}`; }
+  else{ progress.textContent = `Frage ${totalAsked+1} | Fehler: ${totalErrors} (Checkpoint alle 15)`; }
+}
+function flash(ok){
+  if(!chkFeedback.checked){ return advance(); }
+  stage.classList.add(ok?"flash-correct":"flash-wrong");
+  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); advance(); }, delay);
+}
+
+/* ===== Modal: Fehlerübersicht ===== */
+function showEndModal(){
+  // Stats
+  const asked=totalAsked, errors=totalErrors, good=Math.max(0,asked-errors);
+  const acc=asked? Math.round(good/asked*100) : 100;
+  stats.textContent = `Beantwortet: ${asked} • Korrekt: ${good} • Fehler: ${errors} • Trefferquote: ${acc}%`;
+  // Tabelle
+  tblErrors.innerHTML="";
+  if(!errorRows.length){
+    const tr=document.createElement("tr");
+    const td=document.createElement("td"); td.colSpan=3; td.textContent="🎉 Keine Fehler in dieser Runde!";
+    tr.appendChild(td); tblErrors.appendChild(tr);
+  }else{
+    errorRows.forEach(r=>{
+      const tr=document.createElement("tr");
+      tr.innerHTML = `<td>${r.q}</td><td><b>${r.correct}</b></td>
+        <td><span class="badge" style="background:${(CATS[r.cat]||["","#eee","#111"])[1]};color:${(CATS[r.cat]||["","#eee","#111"])[2]}">${(CATS[r.cat]||["Kategorie"])[0]}</span></td>`;
+      tblErrors.appendChild(tr);
+    });
+  }
+  openModal();
+}
+
+/* ===== Spiellogik ===== */
+function advance(){
+  if(mode==="cards"){
+    idx++; next();
+    return;
+  }
+  // Endlos (learn/last)
+  totalAsked++; sinceCheck++;
+  if(sinceCheck>=15){
+    sinceCheck=0;
+    if(confirm("✅ 15 Fragen beantwortet. Runde beenden und Fehler anzeigen?")){
+      showStage(false); showEndModal(); return;
+    }
+  }
+  next();
+}
+
 function next(){
-  if(i>=round.length){alert("🎉 Runde beendet!");flashcard.style.display="none";return;}
-  const [en,de,cat]=round[i];
-  showCard(en,de,cat);
+  delay=parseInt(selDelay.value,10);
+
+  if(mode==="cards"){
+    if(idx>=source.length){
+      alert("🎉 Runde beendet!");
+      showStage(false);
+      return;
+    }
+    const [en,de,cat]=source[idx];
+    setChip(cat);
+    // Frage (Vorderseite) & Antwort (Rückseite)
+    askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
+    const question = askEN? en : de;
+    const answer   = askEN? de : en;
+    correct=answer;
+
+    q.style.display="none"; rowInput.style.display="none";
+    rowButtons.style.display="flex";
+    flashcard.style.display="block";
+    offer.textContent="";
+
+    cardFront.textContent=question;
+    cardBack.textContent=answer;
+    flashcard.classList.remove("flip");
+    clearTimeout(flipTimer);
+    flipTimer=setTimeout(()=>flashcard.classList.add("flip"),3000);
+
+    setProg(); showStage(true);
+    return;
+  }
+
+  // Endlosfrage (learn/last)
+  if(!source.length){ alert("Keine Vokabeln in dieser Auswahl."); return; }
+  curr = source[idx];
+  idx = (idx+1) % source.length; // Endlos im Kreis
+  if(idx===0) shuffle(source);
+
+  const [en,de,cat]=curr;
+  setChip(cat);
+
+  askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
+  const question = askEN? en : de;
+  const answer   = askEN? de : en;
+  correct=answer;
+
+  flashcard.style.display="none";
+  rowButtons.style.display="flex";
+  rowInput.style.display="flex";
+  q.style.display="block";
+  q.textContent=question;
+  offer.textContent="";
+  inp.value=""; inp.focus();
+
+  setProg(); showStage(true);
 }
-btnCards.onclick=()=>{
-  mode="cards";round=pick(10);i=0;stage.style.display="block";
-  flashcard.style.display="block";q.style.display="none";next();
+
+/* ===== Button-Handler ===== */
+btnRight.onclick=()=>{
+  // Bei Karten: „Richtig“; bei Abfrage: hat keine Bedeutung (nur Learn-Flow)
+  if(mode!=="cards"){ flash(true); return; }
+  flash(true);
 };
-btnLearn.onclick=()=>{
-  mode="learn";round=pick(10);i=0;stage.style.display="block";
-  flashcard.style.display="none";q.style.display="block";
-  nextText();
+btnWrong.onclick=()=>{
+  const item = mode==="cards" ? source[idx] : curr;
+  if(item){
+    const [en,de,cat]=item;
+    const qText = askEN ? (mode==="cards"? (selMode.value==="toGerman"? en : de) : q.textContent) : (mode==="cards"? (selMode.value==="toGerman"? de : en) : q.textContent);
+    errorRows.push({q:qText, correct:correct, cat});
+    totalErrors++;
+  }
+  flash(false);
 };
-btnLast.onclick=()=>{
-  mode="last";round=data.slice(-5);i=0;stage.style.display="block";
-  flashcard.style.display="block";q.style.display="none";next();
+btnSkip.onclick=()=>{
+  const item = mode==="cards" ? source[idx] : curr;
+  if(item){
+    const [en,de,cat]=item;
+    const qText = askEN ? (mode==="cards"? (selMode.value==="toGerman"? en : de) : q.textContent) : (mode==="cards"? (selMode.value==="toGerman"? de : en) : q.textContent);
+    errorRows.push({q:qText, correct:correct, cat});
+    totalErrors++;
+  }
+  advance();
 };
-function nextText(){
-  if(i>=round.length){alert("✅ Abfrage beendet!");q.style.display="none";return;}
-  const [en,de,cat]=round[i];
-  const c=CATS[cat]||["","#ccc","#000"];
-  chip.textContent=c[0];chip.style.background=c[1];chip.style.color=c[2];
-  q.textContent=en;
+btnSub.onclick=()=>{
+  const ok = isCorrectInput(inp.value, correct);
+  if(!ok){
+    const [en,de,cat]=curr;
+    errorRows.push({q:q.textContent, correct:correct, cat});
+    totalErrors++;
+  }
+  flash(ok);
+};
+inp.addEventListener("keydown",e=>{ if(e.key==="Enter") btnSub.click(); });
+
+/* ===== Start-Buttons ===== */
+function startLearn(pool){
+  mode="learn";
+  source=filterByCat(pool); if(!source.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
+  shuffle(source); idx=0; totalAsked=0; sinceCheck=0; totalErrors=0; errorRows.length=0;
+  startNote.style.opacity=.5; next();
 }
-btnRight.onclick=()=>{i++;mode==="learn"?nextText():next();};
-btnDec.onclick=()=>{i++;mode==="learn"?nextText():next();};
+function startLast(pool){
+  mode="last";
+  source=filterByCat(pool.slice(-30)); if(!source.length){ alert("Keine Vokabeln vorhanden."); return; }
+  shuffle(source); idx=0; totalAsked=0; sinceCheck=0; totalErrors=0; errorRows.length=0;
+  startNote.style.opacity=.5; next();
+}
+function startCards(pool){
+  mode="cards";
+  const all=filterByCat(pool); if(!all.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
+  shuffle(all); source=all.slice(0,15); idx=0; errorRows.length=0; totalErrors=0;
+  startNote.style.opacity=.5; next();
+}
+
+btnLearn.onclick = ()=> startLearn(data);
+btnLast30.onclick= ()=> startLast(data);
+btnCards.onclick  = ()=> startCards(data);
+
+/* ===== Modal Aktionen ===== */
+btnClose.onclick=()=>{ closeModal(); startNote.style.opacity=1; };
+btnContinue.onclick=()=>{ closeModal(); next(); };
+
+/* Init */
+progress.textContent="Bereit.";
 })();
 </script>
 </body>
