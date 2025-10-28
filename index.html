@@ -347,6 +347,7 @@ const CATS={
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
+
 const el=id=>document.getElementById(id);
 const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
 const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
@@ -354,9 +355,9 @@ const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), of
 const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
 const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
 
-/* --- Synchronisierte Datenverwaltung --- */
 let data=[], lastSync=null;
 
+/* --- Daten laden & Sync --- */
 async function fetchFromGitHub(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
@@ -370,28 +371,28 @@ async function fetchFromGitHub(){
     data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
   }
 }
-
 async function loadData(){
   const localUpd=localStorage.getItem("vokabeln_updated");
   const lastUsed=localStorage.getItem("index_last_sync");
   const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
-  if(localNewer){
-    console.log("Lokale Daten neuer → direkt geladen");
-    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  }else{
-    console.log("GitHub prüfen …");
-    await fetchFromGitHub();
-  }
+  if(localNewer){data=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+  else{await fetchFromGitHub();}
   localStorage.setItem("index_last_sync",new Date().toISOString());
   renderRecent();
 }
 
-/* --- UI & Spielmechanik --- */
-for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];selCat.appendChild(o);}
+/* --- Setup --- */
+for(const k in CATS){
+  const o=document.createElement("option");
+  o.value=k;o.textContent=CATS[k][0];
+  o.style.background=CATS[k][1];o.style.color=CATS[k][2];
+  selCat.appendChild(o);
+}
 
 let round=[], i=0, game="learn", delay=3000, trap=false, correct="";
 let errorsList=[];
 
+/* Hilfsfunktionen */
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
 function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
 function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
@@ -399,119 +400,155 @@ function showStage(show){stage.style.display=show?"block":"none";}
 function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
 function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
 
+/* Zusammenfassung am Ende */
+function showSummary(){
+  if(!errorsList.length){alert("🎉 Runde beendet – alles korrekt!");return;}
+  let msg="❌ Fehlerübersicht:\n\n";
+  errorsList.forEach(e=>{
+    if(e.input){ // Eingabe-Fehler
+      msg+=`• ${e.word} → [${e.input}]\n   richtig: ${e.correct}\n\n`;
+    }else{
+      msg+=`• ${e[0]} → ${e[1]}\n\n`;
+    }
+  });
+  alert(msg.trim());
+}
+
+/* Nächste Runde */
 function next(){
   if(i>=round.length){
-    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
-    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
+    if(errorsList.length>0){
+      alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);
+      round=errorsList.map(v=>v.word?[v.word,v.correct]:v);errorsList=[];
+      i=0;btnSkip.style.display="none";next();return;
+    } else {
+      showStage(false);
+      showSummary();
+      return;
+    }
   }
+
   delay=parseInt(selDelay.value,10);
   const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
+  chip.textContent=catMeta[0];
+  chip.style.background=catMeta[1];
+  chip.style.color=catMeta[2];
+
   const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
   const question=askEN?en:de;
   const answer=askEN?de:en;
   correct=answer;
   q.textContent=question;
+
   if(game==="cards"){
-    trap=false;
-    if(Math.random()<0.3){
+    trap=Math.random()<0.3;
+    if(trap){
       const pool=data.map(v=>askEN?v[1]:v[0]);
       let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
-      offer.textContent="💡 "+wrong;trap=true;
+      offer.textContent="💡 "+wrong;
     }else offer.textContent="💡 "+answer;
-    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
+    rowButtons.style.display="flex";
+    rowInput.style.display="none";
+    inp.value="";
+    randomizeButtons();
   }else{
-    offer.textContent="";trap=false;
-    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
-    rowInput.style.display="flex";inp.value="";inp.focus();
-  }
-  setProg();showStage(true);
-}
-
-btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
-btnDec.onclick=()=>{
-  if(game!=="cards") return;
-
-  // Täuschung korrekt erkannt → Eingabefeld anzeigen
-  if(trap){
+    offer.textContent="";
+    trap=false;
+    rowButtons.style.display="flex";
+    btnRight.style.display="none";
+    btnDec.style.display="none";
+    btnSkip.style.display="inline-block";
     rowInput.style.display="flex";
     inp.value="";
     inp.focus();
+  }
 
-    // Nach Eingabe prüfen
+  setProg();
+  showStage(true);
+}
+
+/* Buttons */
+btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
+btnDec.onclick=()=>{
+  if(game!=="cards")return;
+  if(trap){
+    rowInput.style.display="flex";inp.value="";inp.focus();
     btnSub.onclick=()=>{
-      const ok = inp.value.trim().toLowerCase() === correct.toLowerCase();
-      if(ok){
-        flash(true);
-      } else {
-        // Nur bei falscher Eingabe Lösung zeigen
-        offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-        errorsList.push(round[i]);
-        setTimeout(()=>flash(false), parseInt(selDelay.value,10));
+      const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();
+      if(ok){flash(true);}
+      else{
+        offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+        errorsList.push({word:q.textContent,correct,input:inp.value});
+        setTimeout(()=>flash(false),delay);
       }
     };
-
   } else {
-    // Täuschung nicht erkannt → Fehler
     errorsList.push(round[i]);
     flash(false);
   }
 };
-
 btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
-btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
+btnSub.onclick=()=>{
+  const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();
+  if(!ok){
+    errorsList.push({word:q.textContent,correct,input:inp.value});
+    offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+  }
+  flash(ok);
+};
 inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
 
+/* Startspiele */
 btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
 btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
-btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
+btnLast30.onclick=()=>{
+  const l=data.slice(-30);
+  if(!l.length)return alert("Keine Vokabeln vorhanden");
+  game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
+  round=l;i=0;errorsList=[];
+  btnSkip.style.display="inline-block";
+  next();
+};
 
+/* Zuletzt hinzugefügt */
 function renderRecent(){
   const last=data.slice(-5).reverse();
   if(!last.length){recent.textContent="–";return;}
   recent.innerHTML=last.map(v=>{
     const c=CATS[v[2]]||["","#ccc","#000"];
     return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
-      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
-    </div>`;
+      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small></div>`;
   }).join("");
 }
 
+/* Syncanzeige */
 loadData();
-  /* --- Automatischer Live-Sync & Statusanzeige --- */
-const foot = document.querySelector('.foot');
-let syncState = document.createElement('div');
-syncState.style.textAlign = 'center';
-syncState.style.marginTop = '6px';
-syncState.style.fontSize = '.9rem';
-syncState.style.color = '#2563eb';
-foot.insertAdjacentElement('afterend', syncState);
+const foot=document.querySelector('.foot');
+let syncState=document.createElement('div');
+syncState.style.textAlign='center';
+syncState.style.marginTop='6px';
+syncState.style.fontSize='.9rem';
+foot.insertAdjacentElement('afterend',syncState);
 
-function setSyncState(msg, color='#2563eb'){
-  syncState.textContent = msg;
-  syncState.style.color = color;
-  syncState.style.opacity = 1;
-  setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
+function setSyncState(msg,color='#2563eb'){
+  syncState.textContent=msg;
+  syncState.style.color=color;
+  syncState.style.opacity=1;
+  setTimeout(()=>{syncState.style.transition='opacity 1s';syncState.style.opacity=0.4;},4000);
 }
-
 async function checkRemoteUpdate(){
   try{
-    const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const j = await r.json();
-    const local = JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+    const j=await r.json();
+    const local=JSON.parse(localStorage.getItem("vokabeln")||"[]");
     if(JSON.stringify(j)!==JSON.stringify(local)){
       localStorage.setItem("vokabeln",JSON.stringify(j));
       localStorage.setItem("vokabeln_updated",new Date().toISOString());
-      setSyncState('🔄 Neue Daten aus Cloud geladen', '#22c55e');
-      data = j;
-      renderRecent();
-    } else {
-      setSyncState('🟢 Daten aktuell', '#22c55e');
-    }
-  }catch{
-    setSyncState('⚠️ Offline / kein Update möglich', '#ef4444');
-  }
+      setSyncState('🔄 Neue Daten geladen','#22c55e');
+      data=j;renderRecent();
+    }else setSyncState('🟢 Daten aktuell','#22c55e');
+  }catch{setSyncState('⚠️ Offline','#ef4444');}
 }
 setSyncState('🟡 Prüfe auf Updates...');
 setInterval(checkRemoteUpdate,30000);
@@ -519,5 +556,6 @@ checkRemoteUpdate();
 
 })();
 </script>
+
 </body>
 </html>
