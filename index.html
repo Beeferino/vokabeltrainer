@@ -9,6 +9,15 @@
 <meta name="theme-color" content="#2563eb">
 
 <style>
+  @media (max-width: 600px) {
+  .controls {
+    gap: 20px;
+  }
+  select {
+    min-width: 120px;
+  }
+}
+
 :root{
   --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
   --glass:rgba(255,255,255,.88);
@@ -28,7 +37,7 @@ body.dark .app{background:rgba(30,41,59,.85)}
 h1{margin:0;text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a}
 body.dark h1{color:#93c5fd}
 .hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
-.controls,.functions, .toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.controls,.functions, .toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:20px}
 .controls label{display:flex;align-items:center;gap:6px}
 select, .tbtn{
   padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem;background:#fff
@@ -113,6 +122,7 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 .btn-primary{background:#2563eb;color:#fff}
 .btn-ghost,.btn-primary,.download{border-radius:10px;padding:10px 14px;font-weight:800;border:none;cursor:pointer}
 .download{margin-right:auto;background:#e5f2ff;border:1px solid #c7ddff;color:#0f172a}
+  
 </style>
 </head>
 <body>
@@ -752,6 +762,14 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
 })();
+// ===== Start-Hinweis ausblenden, wenn eine Kachel angeklickt wird =====
+[btnLearn, btnLast30, btnCards].forEach(btn => {
+  btn.addEventListener("click", () => {
+    startNote.style.display = "none";
+  });
+});
+
+  
 </script>
 </body>
 </html>
