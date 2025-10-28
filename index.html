@@ -316,22 +316,44 @@ async function fetchFromGitHub(){
   try{
     const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("fetch failed");
     const j=await r.json();
-    localStorage.setItem("vokabeln",JSON.stringify(j));
+    // >> Normalisieren: [en,de,cat,group,hint,created,confuseFlag]
+    const norm = j.map(v=>[
+      v[0]||"", v[1]||"", v[2]||"Gelb",
+      v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
+      !!v[6] // wichtig: Flag sicherstellen
+    ]);
+    localStorage.setItem("vokabeln",JSON.stringify(norm));
     localStorage.setItem("vokabeln_updated",new Date().toISOString());
-    data=j; lastSync=new Date();
+    data=norm; lastSync=new Date();
   }catch(e){
-    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    const localRaw = JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    data = localRaw.map(v=>[
+      v[0]||"", v[1]||"", v[2]||"Gelb",
+      v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
+      !!v[6]
+    ]);
   }
 }
+
 async function loadData(){
   const localUpd=localStorage.getItem("vokabeln_updated");
   const lastUsed=localStorage.getItem("index_last_sync");
   const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
-  if(localNewer){ data=JSON.parse(localStorage.getItem("vokabeln")||"[]"); }
-  else{ await fetchFromGitHub(); }
+  if(localNewer){
+    const localRaw = JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    data = localRaw.map(v=>[
+      v[0]||"", v[1]||"", v[2]||"Gelb",
+      v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
+      !!v[6]
+    ]);
+  } else {
+    await fetchFromGitHub();
+  }
   localStorage.setItem("index_last_sync",new Date().toISOString());
   renderRecent();
 }
+
+  
 function renderRecent(){
   const last=data.slice(-5).reverse();
   if(!last.length){ recent.textContent="–"; return; }
