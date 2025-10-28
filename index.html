@@ -1,413 +1,423 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Beeferino Vokabeltrainer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vokabeltrainer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#0f172a; --muted:#6b7280; --glass:rgba(255,255,255,.9);
-  --blue:#2563eb; --blue2:#1d4ed8; --ok:#22c55e; --bad:#ef4444; --gray:#9ca3af;
-  --card:#ffffff; --ring:rgba(37,99,235,.16);
+  --blue:#2563eb; --blue2:#1d4ed8; --ok:#22c55e; --bad:#ef4444; --grey:#9ca3af;
+  --card:#fff; --shadow:0 12px 32px rgba(0,0,0,.12);
 }
 *{box-sizing:border-box}
-html,body{margin:0}
+html,body{margin:0;height:100%}
 body{
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+  font-family:Inter,system-ui,sans-serif; color:var(--ink);
   background:linear-gradient(145deg,#eef4ff,#dbeafe);
-  color:var(--ink);
 }
-.container{
-  max-width:1100px; margin:34px auto; padding:0 16px;
-}
-h1{
-  text-align:center; margin:0 0 8px; font-size:2rem; font-weight:800; color:#1e3a8a;
-}
-.hr{width:180px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 22px}
+.wrap{max-width:1100px;margin:32px auto;padding:16px}
 
-.controls{
-  display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:center;
-  background:var(--glass); border-radius:18px; padding:14px;
-  box-shadow:0 10px 28px rgba(0,0,0,.10);
+/* Title */
+h1{margin:0;text-align:center;font-weight:800;color:#1e3a8a;font-size:2rem}
+.hr{width:180px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 24px}
+
+/* Top controls */
+.toolbar{
+  display:grid;gap:10px;grid-template-columns:1fr 1fr 1fr auto;
+  background:var(--glass);backdrop-filter:blur(10px);
+  border-radius:18px;padding:16px;box-shadow:var(--shadow)
 }
 select{
-  appearance:none; -webkit-appearance:none; -moz-appearance:none;
-  padding:10px 12px; border:1px solid #d1d5db; border-radius:12px; font-size:1rem;
-  background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath fill='%236b7280' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 10px center/14px;
+  width:100%;padding:12px;border:1px solid #dbe3ff;border-radius:12px;
+  font-weight:600; appearance:none; background:#fff; cursor:pointer;
 }
-.btn{
-  background:var(--blue); color:#fff; border:none; border-radius:12px;
-  padding:10px 16px; font-weight:800; cursor:pointer; display:inline-flex; align-items:center; gap:8px;
-  box-shadow:0 6px 16px rgba(37,99,235,.25);
+.btn-kachel{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  border:none;border-radius:14px;padding:16px 18px;
+  font-weight:800;color:#fff;cursor:pointer;transition:.18s transform, .18s filter;
+  box-shadow:0 10px 24px rgba(37,99,235,.20)
 }
-.btn:hover{background:var(--blue2)}
-.btn.gray{background:#e5e7eb; color:#111; box-shadow:none}
-.btn.red{background:#ef4444}
-.badge-dot{width:8px;height:8px;border-radius:999px;background:#22d3ee;display:inline-block}
-.feedback-toggle{
-  margin-left:auto; display:flex; align-items:center; gap:8px;
-}
-.feedback-toggle .pill{
-  background:var(--blue); color:#fff; border:none; border-radius:999px; padding:8px 14px; font-weight:800; cursor:pointer;
-}
-.feedback-toggle .pill.off{background:#d1d5db; color:#111}
+.btn-kachel:hover{transform:translateY(-1px);filter:brightness(1.02)}
+.k1{background:var(--blue)}
+.k2{background:#3b82f6aa;color:#111}
+.k3{background:#ef4444}
+.krow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:8px}
+.krow small{display:block;text-align:center;margin-top:2px;color:#334155;font-style:italic}
 
-/* Stage */
-.stage-wrap{margin-top:22px}
-#stage{
-  display:none; background:rgba(255,255,255,.95); border-radius:20px; padding:26px;
-  box-shadow:inset 0 0 10px rgba(0,0,0,.05); text-align:center;
+/* Feedback switch */
+.fb-wrap{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.switch{
+  --w:64px; --h:34px;
+  width:var(--w);height:var(--h);border-radius:999px;position:relative;background:#e5e7eb;cursor:pointer
 }
-.chip{display:inline-block; font-weight:800; padding:8px 14px; border-radius:999px; margin-bottom:10px; color:#fff}
-.word{
-  font-size:2rem; font-weight:800; padding:10px 12px; border-radius:14px; color:#fff; display:inline-block; min-width:240px;
+.switch::after{
+  content:"";position:absolute;inset:3px;left:3px;width:28px;height:28px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:.22s left, .22s background
 }
-.offer{font-size:1.1rem; color:#1f2937; margin:10px 0 14px; min-height:1.5em}
-.btnrow{display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:6px}
-.smallbtn{
-  border:none; border-radius:12px; padding:10px 16px; font-weight:800; cursor:pointer; color:#fff
+.switch.on{background:var(--blue)}
+.switch.on::after{left:calc(var(--w) - 31px)}
+
+/* Mobile placement for feedback */
+@media (max-width:820px){
+  .toolbar{grid-template-columns:1fr;gap:12px}
+  .krow{grid-template-columns:1fr}
+  .fb-wrap{justify-content:center}
 }
-.smallbtn.ok{background:var(--ok)}
-.smallbtn.bad{background:var(--bad)}
-.smallbtn.skip{background:var(--gray)}
-.inprow{display:none; gap:8px; justify-content:center; margin-top:12px}
-.inprow input{
-  width:60%; min-width:260px; padding:10px 14px; border:1px solid #d1d5db; border-radius:12px; font-size:1rem
+
+/* Stage (game area) */
+.stage-outer{
+  margin-top:20px;background:var(--glass);backdrop-filter:blur(8px);
+  border-radius:18px;padding:26px;box-shadow:var(--shadow)
 }
-.inprow button{background:var(--blue); color:#fff; border:none; border-radius:12px; padding:10px 16px; font-weight:800}
-.progress{text-align:center; font-weight:800; margin:10px 0 12px; min-height:1.2em}
+.progress{text-align:center;font-weight:800;margin-bottom:8px;min-height:1.3em}
+.stage{
+  margin:0 auto;max-width:900px;border-radius:18px;padding:28px;
+  background:var(--card);box-shadow:inset 0 0 0 9999px rgba(255,255,255,.0);
+  transition:background-color .25s ease, color .25s ease;
+}
+.cat-chip{
+  display:inline-block;font-weight:800;padding:8px 16px;border-radius:999px;margin-bottom:14px;
+  color:#111;background:#e5e7eb
+}
+.round-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:#00000022;color:#fff;font-weight:700}
+.word{font-size:2.2rem;font-weight:900;margin:10px 0 8px}
+.offer{font-size:1.2rem;margin:8px 0 14px}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.btn{
+  border:none;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;transition:.15s transform
+}
+.btn:active{transform:scale(.98)}
+.ok{background:var(--ok);color:#fff}
+.bad{background:var(--bad);color:#fff}
+.skip{background:var(--grey);color:#fff}
+.inputrow{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.inputrow input{
+  width:60%;min-width:260px;max-width:620px;padding:12px 14px;border:1px solid #dbe3ff;border-radius:12px;font-size:1rem
+}
+.inputrow button{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:12px 16px;font-weight:800}
 
 /* Flash feedback */
-.flash-correct{animation:good .45s}
-.flash-wrong{animation:bad .45s}
-@keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
-@keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
+.flash-good{animation:good .35s}
+.flash-bad{animation:bad .35s}
+@keyframes good{from{filter:brightness(1.05)}to{filter:brightness(1)}}
+@keyframes bad{from{filter:contrast(1.15)}to{filter:contrast(1)}}
 
-/* Link unten */
-.footer-actions{display:flex; justify-content:center; margin-top:18px}
-.footer-actions a{
-  text-decoration:none; font-weight:800; color:#1e3a8a; background:#eaf0ff; border:1px solid #dbe3ff; padding:10px 14px; border-radius:12px;
-}
-
-/* mobile: Feedback-Pill unter die Auswahl */
-@media (max-width:780px){
-  .controls{position:relative; padding-bottom:56px}
-  .feedback-toggle{position:absolute; left:50%; transform:translateX(-50%); bottom:10px; margin-left:0}
-}
-
-/* Farbliche Kategorie im Select (aktuell) */
-.cat-colored{
-  color:var(--catText, #111) !important;
-  background:var(--catBg, #fff) !important;
-  border-color:var(--catBg, #d1d5db) !important;
-  box-shadow:0 0 0 6px var(--ring);
-}
-
-/* helper */
-.hidden{display:none}
+/* Footer */
+.footer{text-align:center;margin:18px 0;color:#64748b;font-weight:600}
+.footer a{font-weight:800;text-decoration:none}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1>🐝 Beeferino Vokabeltrainer</h1>
+<div class="wrap">
+  <h1>Vokabeltrainer</h1>
   <div class="hr"></div>
 
-  <div class="controls" id="controls">
-    <select id="selCat" title="Kategorie">
-      <option value="Alle">Alle (bunt gemischt)</option>
-    </select>
-
-    <select id="selMode" title="Modus">
-      <option value="mixed">Gemischt</option>
+  <!-- Controls -->
+  <div class="toolbar">
+    <select id="selCat" title="Kategorie"></select>
+    <select id="selMode" title="Abfrageart">
+      <option value="mixed" selected>Gemischt</option>
       <option value="toGerman">Englisch → Deutsch</option>
       <option value="toEnglish">Deutsch → Englisch</option>
     </select>
-
-    <select id="selDelay" title="Feedback-Verzögerung">
+    <select id="selDelay" title="Delay">
       <option value="1000">1 Sekunde</option>
       <option value="3000" selected>3 Sekunden</option>
       <option value="5000">5 Sekunden</option>
     </select>
 
-    <button id="btnLearn" class="btn">✍️ Vokabel-Abfrage starten</button>
-    <button id="btnCards" class="btn gray">🧠 Karteikarten (Mitdenker)</button>
-    <button id="btnLast30" class="btn red">📕 Letzte 30 Vokabeln</button>
-
-    <div class="feedback-toggle">
+    <div class="fb-wrap">
       <span style="font-weight:800;color:#1e3a8a">Feedback:</span>
-      <button id="btnFeedback" class="pill">AN</button>
+      <div id="fbSwitch" class="switch"></div>
+    </div>
+
+    <div class="krow" id="krow">
+      <button id="btnLearn" class="btn-kachel k1">✍️ Vokabel-Abfrage starten</button>
+      <button id="btnCards" class="btn-kachel k2">🧠 Karteikarten</button>
+      <button id="btnLast30" class="btn-kachel k3">📗 Letzte 30 Vokabeln</button>
+      <div style="grid-column:1/-1"><small>Mitdenker Edition</small></div>
     </div>
   </div>
 
-  <div class="stage-wrap">
+  <!-- Stage -->
+  <div class="stage-outer">
     <div id="progress" class="progress"></div>
-    <section id="stage">
-      <div id="chip" class="chip">Kategorie</div>
-      <div id="word" class="word"></div>
+    <div id="stage" class="stage" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap">
+        <div id="chip" class="cat-chip">Kategorie</div>
+        <div id="roundChip" class="round-chip" style="display:none">♦ Runde 1 / 1</div>
+      </div>
+      <div id="q" class="word"></div>
       <div id="offer" class="offer"></div>
 
-      <div class="btnrow" id="rowButtons">
-        <button id="btnRight" class="smallbtn ok">Richtig</button>
-        <button id="btnDec" class="smallbtn bad">Täuschung erkannt</button>
-        <button id="btnSkip" class="smallbtn skip">Überspringen</button>
+      <div id="rowButtons" class="btnrow">
+        <button id="btnRight" class="btn ok">Richtig</button>
+        <button id="btnDecoy" class="btn bad">Täuschung erkannt</button>
+        <button id="btnSkip" class="btn skip">Überspringen</button>
       </div>
 
-      <div id="rowInput" class="inprow">
-        <input id="inp" type="text" placeholder="Übersetzung eingeben …"/>
-        <button id="btnSub">Eingabe</button>
+      <div id="rowInput" class="inputrow">
+        <input id="inp" type="text" placeholder="Übersetzung eingeben …">
+        <button id="btnSubmit">Eingabe</button>
       </div>
-      <div id="fb" class="offer" style="min-height:1.3em;"></div>
-    </section>
+    </div>
   </div>
 
-  <div class="footer-actions">
-    <a href="vokabeln.html">📂 Vokabelliste öffnen</a>
-  </div>
-
-  <div style="text-align:center; color:#6b7280; margin-top:10px">
+  <div class="footer">
+    <a href="vokabeln.html">📂 Vokabelliste öffnen</a><br>
     © 2025 Beeferino • Online-Datenquelle: GitHub
   </div>
 </div>
 
 <script>
-/* ===== Kategorien + Farben ===== */
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+/* ===== Kategorien (Name, bg, fg) ===== */
+const CATS = {
+  Gelb:        ["Grundwerkzeuge Metallverarbeitung", "#F4D03F", "#000"],
+  Pink:        ["Werkzeugkasten Mechaniker",         "#E91E63", "#fff"],
+  Blau:        ["Blech- / Kunststoffarbeiten",       "#1976D2", "#fff"],
+  Gruen:       ["Drehen / Fräsen",                   "#1E8449", "#fff"],
+  HellesPink:  ["Hydraulik / Pneumatik",             "#F54927", "#fff"],
+  Orange:      ["Elektrotechnik",                     "#E67E22", "#fff"],
+  Dunkelgruen: ["Fluggerätemechanik allgemein",      "#117A65", "#fff"],
+  Rot:         ["Verwechslungsgefahr",               "#C0392B", "#fff"]
 };
-
-const $=id=>document.getElementById(id);
-const el={
-  selCat: $("selCat"), selMode: $("selMode"), selDelay:$("selDelay"),
-  btnLearn:$("btnLearn"), btnCards:$("btnCards"), btnLast30:$("btnLast30"),
-  stage:$("stage"), chip:$("chip"), word:$("word"), offer:$("offer"),
-  rowButtons:$("rowButtons"), rowInput:$("rowInput"),
-  btnRight:$("btnRight"), btnDec:$("btnDec"), btnSkip:$("btnSkip"),
-  inp:$("inp"), btnSub:$("btnSub"), fb:$("fb"), progress:$("progress"),
-  btnFeedback:$("btnFeedback"), controls: $("controls")
-};
-
-let data=[], currentSet=[], errors=[], skipped=[];
-let index=0, game=""; // "learn" | "cards"
-let feedbackOn=true;
-let trap=false, currentAnswer="", modeSel="mixed";
+const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
 
 /* ===== Helpers ===== */
-function shuffle(a){for(let i=a.length-1;i>0;i--){const r=Math.floor(Math.random()*(i+1));[a[i],a[r]]=[a[r],a[i]]}}
-function byCategory(list, cat){return cat==="Alle" ? list.slice() : list.filter(v=>v[2]===cat)}
-function setProgress(){ el.progress.textContent = currentSet.length ? `Vokabel ${index+1}/${currentSet.length} | Fehler: ${errors.length}` : "" }
-function showStage(show){ el.stage.style.display = show ? "block" : "none" }
-function flash(cls){ el.stage.classList.add("flash-"+cls); setTimeout(()=>el.stage.classList.remove("flash-"+cls),380) }
+const el = id => document.getElementById(id);
+const selCat = el("selCat"), selMode = el("selMode"), selDelay = el("selDelay");
+const fbSwitch = el("fbSwitch");
+const progress = el("progress"), stage = el("stage"), chip = el("chip");
+const roundChip = el("roundChip"), q = el("q"), offer = el("offer");
+const rowButtons = el("rowButtons"), btnRight = el("btnRight"), btnDecoy = el("btnDecoy"), btnSkip = el("btnSkip");
+const rowInput = el("rowInput"), inp = el("inp"), btnSubmit = el("btnSubmit");
+const btnLearn = el("btnLearn"), btnCards = el("btnCards"), btnLast30 = el("btnLast30");
 
-/* farbige Kategorie im Select (aktuelle Auswahl) */
-function paintCategorySelect(){
-  const val=el.selCat.value;
-  const meta=CATS[val];
-  if(!meta){ el.selCat.classList.remove("cat-colored"); el.selCat.style.setProperty('--catBg',''); return; }
-  el.selCat.classList.add("cat-colored");
-  el.selCat.style.setProperty('--catBg', meta[1]);
-  el.selCat.style.setProperty('--catText', meta[2]);
+/* ===== State ===== */
+let data = [];
+let game = null; // 'learn' | 'cards'
+let round = [];
+let i = 0;
+let errors = [];
+let roundIndex = 1, totalRounds = 1;
+let trap = false;
+let correct = "";
+let feedbackOn = JSON.parse(localStorage.getItem("fb_on") ?? "true");
+
+/* ===== Init ===== */
+(function init(){
+  // fill category select
+  selCat.innerHTML = `<option value="Alle">Alle (bunt gemischt)</option>` +
+    Object.keys(CATS).map(k=>{
+      const [name,bg,fg]=CATS[k];
+      return `<option value="${k}" style="background:${bg};color:${fg}">${name}</option>`;
+    }).join("");
+  attachCatBG(); // paints the select according to chosen cat
+
+  fbSwitch.classList.toggle("on", feedbackOn);
+
+  loadData().then(()=>{
+    // noop
+  });
+
+  /* events */
+  fbSwitch.addEventListener("click", ()=>{
+    feedbackOn = !feedbackOn;
+    fbSwitch.classList.toggle("on", feedbackOn);
+    localStorage.setItem("fb_on", JSON.stringify(feedbackOn));
+  });
+
+  selCat.addEventListener("change", attachCatBG);
+
+  btnLearn.addEventListener("click", ()=> startLearn(pick(data)));
+  btnCards.addEventListener("click", ()=> startCards(pick(data)));
+  btnLast30.addEventListener("click", ()=> {
+    const last = data.slice(-30);
+    if(!last.length){ alert("Keine Vokabeln vorhanden."); return; }
+    const useCards = confirm("Mitdenker Edition?\nOK = Karteikarten • Abbrechen = Eingabe");
+    useCards ? startCards(last) : startLearn(last);
+  });
+
+  btnRight.addEventListener("click", ()=> judgeCards(true));
+  btnDecoy.addEventListener("click", ()=> {
+    if(game!=="cards") return;
+    if(trap){
+      // open input to fix
+      rowInput.style.display="flex"; inp.value=""; inp.focus();
+    }else{
+      // wrong – user dachte Täuschung, war aber korrekt
+      errors.push(round[i]);
+      flash(false);
+    }
+  });
+  btnSkip.addEventListener("click", ()=> {
+    errors.push(round[i]);
+    i++; next();
+  });
+
+  btnSubmit.addEventListener("click", submitInput);
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter") submitInput(); });
+})();
+
+function attachCatBG(){
+  const v = selCat.value;
+  if(v==="Alle"){
+    selCat.style.background="#fff"; selCat.style.color="#111";
+  }else{
+    const c = CATS[v]; selCat.style.background=c[1]; selCat.style.color=c[2];
+  }
 }
 
-/* ===== Daten laden ===== */
+/* ===== Data ===== */
 async function loadData(){
   try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    data=await r.json();
-    localStorage.setItem("vokabeln",JSON.stringify(data));
-  }catch{
-    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  }
-  // Kategorien in Select
-  for(const k of Object.keys(CATS)){
-    const o=document.createElement("option");
-    o.value=k; o.textContent=CATS[k][0];
-    el.selCat.appendChild(o);
-  }
-  paintCategorySelect();
-}
-
-/* ===== Spiel vorbereiten ===== */
-function pickRound(list){
-  const pool=byCategory(list, el.selCat.value);
-  shuffle(pool);
-  return pool.slice(0,15);
-}
-
-function startLearn(set){
-  game="learn"; currentSet=set; index=0; errors=[]; skipped=[];
-  el.rowButtons.style.display="flex";
-  el.btnRight.style.display="none"; el.btnDec.style.display="none"; el.btnSkip.style.display="inline-block";
-  el.rowInput.style.display="flex"; el.inp.value="";
-  showStage(true); setProgress(); showNext();
-}
-
-function startCards(set){
-  game="cards"; currentSet=set; index=0; errors=[]; skipped=[];
-  el.rowButtons.style.display="flex";
-  el.btnRight.style.display="inline-block"; el.btnDec.style.display="inline-block"; el.btnSkip.style.display="inline-block";
-  el.rowInput.style.display="none"; el.inp.value="";
-  showStage(true); setProgress(); showNext();
-}
-
-/* ===== Button-Handler oben ===== */
-el.btnLearn.onclick=()=>{ modeSel=el.selMode.value; startLearn(pickRound(data)); };
-el.btnCards.onclick=()=>{ modeSel=el.selMode.value; startCards(pickRound(data)); };
-el.btnLast30.onclick=()=>{
-  const last=data.slice(-30);
-  if(!last.length){ alert("Keine Daten vorhanden."); return; }
-  const isCards = confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
-  modeSel=el.selMode.value;
-  if(isCards) startCards(last); else startLearn(last);
-};
-
-/* ===== Feedback-Schalter ===== */
-el.btnFeedback.onclick=()=>{
-  feedbackOn=!feedbackOn;
-  el.btnFeedback.textContent = feedbackOn ? "AN" : "AUS";
-  el.btnFeedback.classList.toggle("off", !feedbackOn);
-};
-
-/* ===== Spiel-Loop ===== */
-function getWrong(correct){
-  const pool=data.map(v=>modeSel==="toGerman" ? v[1] : (modeSel==="toEnglish" ? v[0] : (Math.random()<.5?v[0]:v[1])));
-  let wrong=correct; let cnt=0;
-  while(wrong===correct && cnt<20){ wrong=pool[Math.floor(Math.random()*pool.length)]; cnt++; }
-  return wrong;
-}
-
-function showResult(){
-  const total = currentSet.length + errors.length;
-  const msg = errors.length
-    ? `⚠️ Runde beendet. Fehler: ${errors.length}. Wiederholungsrunde startet jetzt.`
-    : `🎉 Runde beendet – alles korrekt!`;
-  alert(msg);
-  if(errors.length){
-    currentSet=errors.map(([ask,ans,cat])=>{
-      // ask/ans war Richtung – wir müssen zurück zu v[0]/v[1] rekonstruieren
-      // Wir suchen im Datenpool die passende Paarung:
-      const found = data.find(v => (v[0]===ask && v[1]===ans) || (v[0]===ans && v[1]===ask));
-      return found || [ask,ans,"Gelb"];
-    });
-    errors=[]; index=0; showNext();
-  }else{
-    showStage(false);
+    const r = await fetch(RAW_URL,{cache:"no-store"});
+    data = await r.json();
+    localStorage.setItem("vokabeln", JSON.stringify(data));
+  }catch(e){
+    data = JSON.parse(localStorage.getItem("vokabeln")||"[]");
   }
 }
 
-function showNext(){
-  if(index >= currentSet.length){
-    if(skipped.length){
-      alert(`ℹ️ ${skipped.length} übersprungen – wir schauen sie uns jetzt an.`);
-      currentSet = skipped; skipped=[]; index=0; setProgress(); showNext(); return;
+function shuffle(a){ for(let j=a.length-1;j>0;j--){ const r=Math.floor(Math.random()*(j+1)); [a[j],a[r]]=[a[r],a[j]]; } }
+function pick(list){
+  const cat = selCat.value;
+  let l = (cat==="Alle") ? list.slice() : list.filter(v=>v[2]===cat);
+  shuffle(l);
+  return l.slice(0,15);
+}
+
+/* ===== Gameplay ===== */
+function startLearn(list){
+  game = "learn";
+  round = list.slice();
+  i=0; errors=[]; roundIndex=1; totalRounds=1;
+  btnRight.style.display="none"; btnDecoy.style.display="none"; btnSkip.style.display="inline-block";
+  rowInput.style.display="flex"; inp.value="";
+  next();
+}
+function startCards(list){
+  game = "cards";
+  round = list.slice();
+  i=0; errors=[]; roundIndex=1; totalRounds=1;
+  rowInput.style.display="none";
+  btnRight.style.display="inline-block"; btnDecoy.style.display="inline-block"; btnSkip.style.display="inline-block";
+  next();
+}
+
+function setProgress(){
+  progress.textContent = `Vokabel ${Math.min(i+1, round.length)} / ${round.length} | Fehler: ${errors.length}`;
+  roundChip.style.display = (totalRounds>1||roundIndex>1) ? "inline-flex" : "none";
+  roundChip.textContent = `♦ Runde ${roundIndex} / ${totalRounds}`;
+}
+
+function colorStage(catKey){
+  const meta = CATS[catKey] || ["","#e5e7eb","#111"];
+  chip.textContent = meta[0];
+  chip.style.background = meta[1];
+  chip.style.color = meta[2];
+  // tint card
+  stage.style.background = meta[1];
+  stage.style.color = meta[2];
+  // overlay for readability
+  stage.style.boxShadow = "inset 0 0 0 9999px rgba(255,255,255,.08)";
+}
+
+function randomizeButtons(){
+  const arr = [btnRight, btnDecoy, btnSkip];
+  const order = [0,1,2].sort(()=>Math.random()-0.5);
+  rowButtons.innerHTML = "";
+  order.forEach(ix=> rowButtons.appendChild(arr[ix]));
+}
+
+function next(){
+  if(i>=round.length){
+    if(errors.length){
+      // start errors again
+      round = errors.slice();
+      errors = [];
+      i=0; roundIndex++; totalRounds++;
+      setProgress(); next();
+      return;
+    }else{
+      stage.style.display="none";
+      alert("🎉 Runde beendet!");
+      return;
     }
-    showResult(); return;
   }
 
-  const [en,de,cat] = currentSet[index];
-  const catMeta = CATS[cat] || ["Kategorie","#64748b","#fff"];
-  const color = catMeta[1], textColor=catMeta[2];
-  el.chip.textContent = catMeta[0];
-  el.chip.style.background=color; el.chip.style.color=textColor;
-
-  // Frage/Antwort Richtung
-  let ask, answer;
-  if(modeSel==="toGerman"){ ask=en; answer=de; }
-  else if(modeSel==="toEnglish"){ ask=de; answer=en; }
-  else { if(Math.random()<.5){ ask=en; answer=de; } else { ask=de; answer=en; } }
-
-  // Wort + Fortschritt
-  el.word.style.background = color; el.word.style.color = textColor;
-  el.word.innerHTML = `<b>${ask}</b><div style="margin-top:8px;font-size:0.9rem;color:#f0f0f0">🔹 Runde ${index+1} / ${currentSet.length}</div>`;
-  el.offer.textContent="";
-  el.fb.textContent="";
+  const [en,de,catKey] = round[i];
+  colorStage(catKey);
   setProgress();
+  stage.style.display="block";
 
-  const delay = parseInt(el.selDelay.value,10);
+  const askEN = selMode.value==="toGerman" ? true : (selMode.value==="toEnglish" ? false : Math.random()<0.5);
+  const question = askEN ? en : de;
+  const answer   = askEN ? de : en;
+  correct = answer;
 
-  if(game==="learn"){
-    el.rowInput.style.display="flex";
-    el.btnRight.style.display="none"; el.btnDec.style.display="none"; el.btnSkip.style.display="inline-block";
-    el.inp.value=""; el.inp.focus();
+  q.textContent = question;
 
-    el.inp.onkeydown=(e)=>{ if(e.key==="Enter"){ doEnter(); } };
-    el.btnSub.onclick=doEnter;
-    function doEnter(){
-      const ok = el.inp.value.trim().toLowerCase()===answer.toLowerCase();
-      if(feedbackOn){
-        el.fb.textContent = ok ? "✅ Richtig!" : `❌ Falsch → ${answer}`;
-        flash(ok?"correct":"wrong");
-      }
-      if(!ok) errors.push([ask,answer,cat]);
-      index++;
-      setTimeout(showNext, delay + 800); // Fix: Feedback-Lesbarkeit
+  if(game==="cards"){
+    // 30% decoy
+    trap = Math.random()<0.30;
+    if(trap){
+      // propose wrong
+      const pool = data.map(v=> askEN ? v[1] : v[0]);
+      let wrong;
+      do { wrong = pool[Math.floor(Math.random()*pool.length)]; } while(wrong===answer);
+      offer.textContent = "💡 " + wrong;
+    }else{
+      offer.textContent = "💡 " + answer;
     }
-    el.btnSkip.onclick=()=>{ skipped.push([en,de,cat]); index++; showNext(); };
-  }else{ // cards
-    el.rowInput.style.display="none";
-    el.btnRight.style.display="inline-block"; el.btnDec.style.display="inline-block"; el.btnSkip.style.display="inline-block";
-
-    trap = Math.random() < 0.30; // 30% Täuschung
-    currentAnswer = trap ? getWrong(answer) : answer;
-    el.offer.innerHTML = `💡 <b>${currentAnswer}</b>`;
-
-    // Buttons dynamisch zuordnen: ist es Täuschung, ist "Täuschung erkannt" korrekt, sonst "Richtig"
-    const okBtn = trap ? el.btnDec : el.btnRight;
-    const failBtn = trap ? el.btnRight : el.btnDec;
-
-    okBtn.onclick = ()=>{ // richtig
-      if(trap){
-        // Eingabe zur Korrektur öffnen
-        openCorrection(answer, ask, cat);
-      }else{
-        nextCard(true, ask, answer, cat);
-      }
-    };
-    failBtn.onclick = ()=> nextCard(false, ask, answer, cat);
-    el.btnSkip.onclick=()=>{ skipped.push([en,de,cat]); index++; showNext(); };
+    rowInput.style.display = "none";
+    randomizeButtons();
+  }else{
+    // learn: no decoy, input required
+    trap = false;
+    offer.textContent = "";
+    rowInput.style.display = "flex";
+    btnRight.style.display="none"; btnDecoy.style.display="none"; btnSkip.style.display="inline-block";
+    inp.value=""; inp.focus();
   }
 }
 
-function openCorrection(correct, ask, cat){
-  el.rowInput.style.display="flex";
-  el.inp.value=""; el.inp.focus();
-  el.fb.textContent = "Gib die richtige Übersetzung ein:";
-  el.btnRight.style.display="none"; el.btnDec.style.display="none"; // nur Eingabe
+function flash(ok){
+  if(!feedbackOn){
+    i++; next(); return;
+  }
+  stage.classList.add(ok ? "flash-good" : "flash-bad");
+  const delay = parseInt(selDelay.value,10);
+  setTimeout(()=>{
+    stage.classList.remove(ok ? "flash-good" : "flash-bad");
+    i++; next();
+  }, delay);
+}
 
-  el.inp.onkeydown=(e)=>{ if(e.key==="Enter"){ finish(); } };
-  el.btnSub.onclick=finish;
-  function finish(){
-    const ok = el.inp.value.trim().toLowerCase()===correct.toLowerCase();
-    if(feedbackOn){
-      el.fb.textContent = ok ? "✅ Richtig!" : `❌ Falsch → ${correct}`;
-      flash(ok?"correct":"wrong");
-    }
-    if(!ok) errors.push([ask,correct,cat]);
-    index++;
-    setTimeout(showNext, parseInt(el.selDelay.value,10) + 800);
+function judgeCards(userSaysCorrect){
+  if(game!=="cards") return;
+  const isCorrect = userSaysCorrect && !trap;
+  if(isCorrect){ flash(true); }
+  else{
+    errors.push(round[i]);
+    flash(false);
   }
 }
 
-function nextCard(ok, ask, answer, cat){
-  if(feedbackOn){
-    el.fb.textContent = ok ? "✅ Richtig!" : "❌ Falsch!";
-    flash(ok?"correct":"wrong");
-  }
-  if(!ok) errors.push([ask,answer,cat]);
-  index++;
-  setTimeout(showNext, parseInt(el.selDelay.value,10) + 800);
+function submitInput(){
+  const val = inp.value.trim();
+  if(!val) return;
+  const ok = val.toLowerCase() === correct.toLowerCase();
+  if(!ok) errors.push(round[i]);
+  flash(ok);
 }
 
-/* ===== Events ===== */
-el.selCat.addEventListener("change", paintCategorySelect);
-window.addEventListener("load", loadData);
+/* ===== small niceties ===== */
+window.addEventListener("keydown", e=>{
+  if(e.key===" " && game==="cards"){ e.preventDefault(); btnSkip.click(); }
+});
 </script>
 </body>
 </html>
