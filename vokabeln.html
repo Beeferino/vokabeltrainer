@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>📘 Vokabelübersicht – Beeferino</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -31,9 +31,6 @@ th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
 tr:hover{background:#f8fbff}
 .category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
 
-/* 🔴 Verwechslungsgefahr – Desktop-Tabelle visuell hervorheben */
-tr.red-row{background:#fff5f5}
-
 /* --- Mobile --- */
 .mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
 .mob-title{display:flex;align-items:center;justify-content:space-between}
@@ -52,10 +49,6 @@ tr.red-row{background:#fff5f5}
   box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;
 }
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-
-/* 🔴 Verwechslungsgefahr – Mobile Karte visuell hervorheben */
-.card.red-card{border-color:#ef4444;box-shadow:0 0 0 2px rgba(239,68,68,.25)}
-
 .card-cat{
   display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px;
 }
@@ -79,14 +72,6 @@ tr.red-row{background:#fff5f5}
 .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
 .btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
 
-/* 🔴 Verwechslungsgefahr – Inline-Hinweis im Modal */
-.confuse-line{
-  display:flex;align-items:center;gap:10px;
-  background:#fff4f4;border:1px solid #f9c2c2;padding:10px;border-radius:12px
-}
-.confuse-line input{transform:scale(1.15)}
-.confuse-desc{color:#991b1b;font-size:.9rem}
-
 /* --- Banner --- */
 .banner{display:none;background:#2563eb;color:#fff;padding:8px 14px;text-align:center;font-weight:700;font-size:.9rem}
 
@@ -104,17 +89,7 @@ tr.red-row{background:#fff5f5}
 
   <!-- Desktop Toolbar -->
   <div class="toolbar">
-    <select id="filterCatDesk">
-      <option value="Alle">Alle (bunt gemischt)</option>
-      <option value="Gelb" style="background:#F4D03F;color:#000">Grundwerkzeuge Metallverarbeitung</option>
-      <option value="Pink" style="background:#E91E63;color:#fff">Werkzeugkasten Mechaniker</option>
-      <option value="Blau" style="background:#1976D2;color:#fff">Blech- / Kunststoffarbeiten</option>
-      <option value="Gruen" style="background:#1E8449;color:#fff">Drehen / Fräsen</option>
-      <option value="HellesPink" style="background:#F54927;color:#fff">Hydraulik / Pneumatik</option>
-      <option value="Orange" style="background:#E67E22;color:#fff">Elektrotechnik</option>
-      <option value="Dunkelgruen" style="background:#117A65;color:#fff">Fluggerätemechanik allgemein</option>
-      <option value="Rot" style="background:#C0392B;color:#fff">Verwechslungsgefahr</option>
-    </select>
+    <select id="filterCatDesk"></select>
     <input id="searchDesk" type="text" placeholder="Suchen…">
     <button id="resetDesk" class="btn">Reset</button>
     <button id="addDesk" class="btn">➕ Neue</button>
@@ -122,28 +97,21 @@ tr.red-row{background:#fff5f5}
     <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
     <button id="tokenBtn" class="btn">⚙️ Token</button>
     <button id="dateSort" class="btn" title="Nach Erstelldatum sortieren">🗓️</button>
+
   </div>
 
   <!-- Desktop Counter -->
-  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a">📘 0 Vokabeln gefunden</div>
+  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
 
   <!-- Desktop Tabelle -->
   <div class="table-wrap">
     <table id="tbl">
       <thead>
         <tr>
-          <th>⟲</th>
-          <th data-sort="0" title="Sortieren" style="cursor:pointer;">Englisch</th>
-          <th data-sort="1" title="Sortieren" style="cursor:pointer;">Deutsch</th>
-          <th>Kategorie</th>
-          <th style="display:none">Gruppe</th>
-          <th style="display:none">Hinweis</th>
-          <th>Aktion</th>
+          <th>⟲</th><th data-sort="0">Englisch</th><th data-sort="1">Deutsch</th><th>Kategorie</th><th style="display:none">Gruppe</th><th style="display:none">Hinweis</th><th>Aktion</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Zeilen werden dynamisch gerendert -->
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 
@@ -164,17 +132,7 @@ tr.red-row{background:#fff5f5}
   </div>
 
   <div class="mob-filters" id="mobFilters">
-    <select id="filterCatMob">
-      <option value="Alle">Alle (bunt gemischt)</option>
-      <option value="Gelb" style="background:#F4D03F;color:#000">Grundwerkzeuge Metallverarbeitung</option>
-      <option value="Pink" style="background:#E91E63;color:#fff">Werkzeugkasten Mechaniker</option>
-      <option value="Blau" style="background:#1976D2;color:#fff">Blech- / Kunststoffarbeiten</option>
-      <option value="Gruen" style="background:#1E8449;color:#fff">Drehen / Fräsen</option>
-      <option value="HellesPink" style="background:#F54927;color:#fff">Hydraulik / Pneumatik</option>
-      <option value="Orange" style="background:#E67E22;color:#fff">Elektrotechnik</option>
-      <option value="Dunkelgruen" style="background:#117A65;color:#fff">Fluggerätemechanik allgemein</option>
-      <option value="Rot" style="background:#C0392B;color:#fff">Verwechslungsgefahr</option>
-    </select>
+    <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
     <input id="searchMob" type="text" placeholder="Suchen…">
     <button id="resetMob" class="btn">Reset</button>
   </div>
@@ -182,10 +140,7 @@ tr.red-row{background:#fff5f5}
   <!-- Mobile Counter -->
   <div id="countMob" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
 
-  <!-- Mobile Liste -->
-  <div class="mob-list" id="mobList">
-    <!-- Karten werden dynamisch gerendert -->
-  </div>
+  <div class="mob-list" id="mobList"></div>
 
   <div class="fab-row">
     <div class="fabs">
@@ -208,28 +163,7 @@ tr.red-row{background:#fff5f5}
     <div class="form-grid">
       <label>Englisch<input id="mEn" type="text"></label>
       <label>Deutsch<input id="mDe" type="text"></label>
-      <label>Kategorie
-        <select id="mCat">
-          <option value="Gelb" style="background:#F4D03F;color:#000">Grundwerkzeuge Metallverarbeitung</option>
-          <option value="Pink" style="background:#E91E63;color:#fff">Werkzeugkasten Mechaniker</option>
-          <option value="Blau" style="background:#1976D2;color:#fff">Blech- / Kunststoffarbeiten</option>
-          <option value="Gruen" style="background:#1E8449;color:#fff">Drehen / Fräsen</option>
-          <option value="HellesPink" style="background:#F54927;color:#fff">Hydraulik / Pneumatik</option>
-          <option value="Orange" style="background:#E67E22;color:#fff">Elektrotechnik</option>
-          <option value="Dunkelgruen" style="background:#117A65;color:#fff">Fluggerätemechanik allgemein</option>
-          <option value="Rot" style="background:#C0392B;color:#fff">Verwechslungsgefahr</option>
-        </select>
-      </label>
-
-      <!-- 🔴 NEU: Verwechslungsgefahr (unabhängig von Kategorie) -->
-      <div class="confuse-line">
-        <input type="checkbox" id="mConfuse">
-        <div>
-          <label for="mConfuse" style="cursor:pointer;font-weight:800">Verwechslungsgefahr</label>
-          <div class="confuse-desc">Markiert diese Vokabel zusätzlich als „rot“ – unabhängig von der gewählten Kategorie.</div>
-        </div>
-      </div>
-
+      <label>Kategorie<select id="mCat"></select></label>
       <label>Erstellt<input id="mDate" type="date" readonly style="background:#f3f4f6"></label>
       <label>Gruppe / Variante<input id="mGroup" type="text"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
@@ -243,57 +177,32 @@ tr.red-row{background:#fff5f5}
 
 <script>
 (function(){
-  const CATEGORY_NAMES={
-    Gelb:"Grundwerkzeuge Metallverarbeitung",
-    Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech- / Kunststoffarbeiten",
-    Gruen:"Drehen / Fräsen",
-    HellesPink:"Hydraulik / Pneumatik",
-    Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein",
-    Rot:"Verwechslungsgefahr"
-  };
-  const COLOR_MAP={
-    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
-    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
-  };
-  const TEXT_ON={
-    Gelb:"#000", Pink:"#fff", Blau:"#fff", Gruen:"#fff",
-    HellesPink:"#fff", Orange:"#fff", Dunkelgruen:"#fff", Rot:"#fff"
-  };
+  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
+  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
+  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
 
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-  const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s)), isMobile=()=>matchMedia("(max-width:900px)").matches;
+  const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s)),isMobile=()=>matchMedia("(max-width:900px)").matches;
 
-  const tbl=$('#tbl tbody'), mobList=$('#mobList'), banner=$('#adjustBanner'), modal=$('#modal');
-  const mEn=$('#mEn'), mDe=$('#mDe'), mCat=$('#mCat'), mDate=$('#mDate'), mGroup=$('#mGroup'), mHint=$('#mHint'), mConfuse=$('#mConfuse');
-  const filterCatDesk=$('#filterCatDesk'), filterCatMob=$('#filterCatMob'), searchDesk=$('#searchDesk'), searchMob=$('#searchMob');
+  const tbl=$('#tbl tbody'),mobList=$('#mobList'),banner=$('#adjustBanner'),modal=$('#modal'),
+  mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint'),
+  filterCatDesk=$('#filterCatDesk'),filterCatMob=$('#filterCatMob'),searchDesk=$('#searchDesk'),searchMob=$('#searchMob');
 
-  let list=[], editIndex=null, adjustMode=false, selected=new Set();
+  let list=[],editIndex=null,adjustMode=false,selected=new Set();
 
-  /* 🔴 NEU: normalize mit v[6] (Verwechslungsgefahr: 0|1) */
-  const normalize=v=>[
-    v[0]||"",   // EN
-    v[1]||"",   // DE
-    v[2]||"Gelb", // Kategorie
-    v[3]||"",   // Gruppe
-    v[4]||"",   // Hinweis
-    v[5]||new Date().toISOString(), // Datum
-    v[6]||0     // Verwechslungsgefahr (0|1)
-  ];
-
-  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-  const saveLocal = (d) => localStorage.setItem("vokabeln", JSON.stringify(d));
-  const idxInList = v => list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
+  const idxInList=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
 
   function fillCategorySelect(el,withAll=false){
     el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
     Object.keys(CATEGORY_NAMES).forEach(k=>{
       const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k]; o.style.color=TEXT_ON[k];
+      o.value=k;o.textContent=CATEGORY_NAMES[k];
+      o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
       el.appendChild(o);
     });
   }
@@ -303,9 +212,7 @@ tr.red-row{background:#fff5f5}
       const r=await fetch(RAW_URL,{cache:"no-store"});
       list=(await r.json()).map(normalize);
       saveLocal(list);
-    }catch{
-      list=loadLocal();
-    }
+    }catch{list=loadLocal();}
     fillCategorySelect(filterCatDesk,true);
     fillCategorySelect(filterCatMob,true);
     fillCategorySelect(mCat,false);
@@ -317,13 +224,12 @@ tr.red-row{background:#fff5f5}
     const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
     return {cat,q};
   }
-
   function filtered(){
     const {cat,q}=currentFilter();
     return list.filter(v=>{
       const matchCat=(cat==="Alle"||v[2]===cat);
-      const matchQ=!q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
-      return matchCat && matchQ;
+      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
+      return matchCat&&matchQ;
     });
   }
 
@@ -343,14 +249,13 @@ tr.red-row{background:#fff5f5}
     const data=filtered();
     tbl.innerHTML=data.map(v=>{
       const i=idxInList(v);
-      const red = (v[6]===1 || v[6]==="1") ? ' class="red-row"' : '';
-      return `<tr${red}>
+      return `<tr>
         <td><input type="checkbox" data-idx="${i}"></td>
-        <td>${escapeHtml(v[0])}</td>
-        <td>${escapeHtml(v[1])}</td>
+        <td>${v[0]}</td>
+        <td>${v[1]}</td>
         <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-        <td style="display:none">${escapeHtml(v[3])}</td>
-        <td style="display:none">${escapeHtml(v[4])}</td>
+        <td style="display:none">${v[3]}</td>
+        <td style="display:none">${v[4]}</td>
         <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
       </tr>`;
     }).join("");
@@ -360,221 +265,172 @@ tr.red-row{background:#fff5f5}
   function renderMobile(){
     const data=filtered();
     mobList.innerHTML=data.map(v=>{
-      const i=idxInList(v);
-      const sel = selected.has(i) ? " selected" : "";
-      const red = (v[6]===1 || v[6]==="1") ? " red-card" : "";
-      return `<div class="card${sel}${red}" data-idx="${i}">
+      const i=idxInList(v),sel=selected.has(i)?" selected":"";
+      return `<div class="card${sel}" data-idx="${i}">
         <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-        <div class="card-title">${escapeHtml(v[0])}</div>
-        <div class="card-sub">DE: ${escapeHtml(v[1])}</div>
+        <div class="card-title">${v[0]}</div>
+        <div class="card-sub">DE: ${v[1]}</div>
         <div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div>
       </div>`;
     }).join("");
-
     $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
     $$('.card').forEach(c=>c.onclick=e=>{
-      if(!adjustMode || e.target.classList.contains('mobEdit')) return;
+      if(!adjustMode||e.target.classList.contains('mobEdit'))return;
       const i=+c.dataset.idx;
-      if(selected.has(i)) selected.delete(i); else selected.add(i);
+      if(selected.has(i))selected.delete(i);else selected.add(i);
       c.classList.toggle('selected');
     });
   }
 
-  function renderAll(){ renderDesktop(); renderMobile(); updateCount(); }
+  function renderAll(){renderDesktop();renderMobile();updateCount();}
 
   function openEdit(i=null){
     editIndex=i;
     if(i==null){
-      mEn.value=""; mDe.value=""; mGroup.value=""; mHint.value="";
-      mCat.value="Gelb"; mDate.value=new Date().toISOString().slice(0,10);
-      mConfuse.checked=false; // 🔴 neu
+      mEn.value=mDe.value=mGroup.value=mHint.value="";
+      mCat.value="Gelb";mDate.value=new Date().toISOString().slice(0,10);
     }else{
       const v=list[i];
-      mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
-      mGroup.value=v[3]; mHint.value=v[4];
+      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];
+      mGroup.value=v[3];mHint.value=v[4];
       mDate.value=new Date(v[5]).toISOString().slice(0,10);
-      mConfuse.checked = !!(v[6]===1 || v[6]==="1"); // 🔴 neu
     }
-    // Kategorie-Farbpreview (optisch)
     mCat.style.background=COLOR_MAP[mCat.value];
     mCat.style.color=TEXT_ON[mCat.value];
     modal.style.display="flex";
   }
-
-  function closeModal(){ modal.style.display="none"; }
+  function closeModal(){modal.style.display="none";}
   $('#mCancel').onclick=closeModal;
-
   $('#mSave').onclick=()=>{
-    const en=mEn.value.trim(), de=mDe.value.trim();
-    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim();
-    const confuse = mConfuse.checked ? 1 : 0; // 🔴 neu
-
-    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
-
-    if(editIndex==null){
-      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse]);
-    }else{
-      const old=list[editIndex];
-      list[editIndex]=[en,de,cat,grp,hint,old[5],confuse];
-    }
-    saveLocal(list);
-    closeModal();
-    renderAll();
+    const en=mEn.value.trim(),de=mDe.value.trim();
+    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim();
+    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
+    if(editIndex==null){list.push([en,de,cat,grp,hint,new Date().toISOString()]);}
+    else{const old=list[editIndex];list[editIndex]=[en,de,cat,grp,hint,old[5]];}
+    saveLocal(list);closeModal();renderAll();
   };
-
-  mCat.onchange=()=>{
-    mCat.style.background=COLOR_MAP[mCat.value];
-    mCat.style.color=TEXT_ON[mCat.value];
-  };
-  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+  mCat.onchange=()=>{mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];}
+  modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
 
   function toggleAdjust(on){
-    adjustMode=on; selected.clear(); banner.style.display=on?'block':'none';
+    adjustMode=on;selected.clear();banner.style.display=on?'block':'none';
     const bar=$('.fabs');
-    if(on){
-      bar.innerHTML=`
-        <button class="fab gray" id="fabEnd">Beenden</button>
-        <button class="fab warn" id="fabDelete">Löschen</button>
-        <button class="fab blue" id="fabNew">Neu</button>`;
+    if(on){bar.innerHTML=`<button class="fab gray" id="fabEnd">Beenden</button><button class="fab warn" id="fabDelete">Löschen</button><button class="fab blue" id="fabNew">Neu</button>`;
       $('#fabEnd').onclick=()=>toggleAdjust(false);
-      $('#fabDelete').onclick=()=>{
-        if(!selected.size){ alert("Keine Auswahl"); return; }
-        if(!confirm(\`\${selected.size} löschen?\`)) return;
-        list=list.filter((_,i)=>!selected.has(i));
-        saveLocal(list); selected.clear(); renderAll();
+      $('#fabDelete').onclick=()=>{if(!selected.size){alert("Keine Auswahl");return;}
+        if(!confirm(`${selected.size} löschen?`))return;
+        list=list.filter((_,i)=>!selected.has(i));saveLocal(list);selected.clear();renderAll();
       };
       $('#fabNew').onclick=()=>openEdit(null);
-    }else{
-      bar.innerHTML=`
-        <button class="fab gray" id="fabBack">Zurück</button>
-        <button class="fab blue" id="fabAdjust">Anpassen</button>
-        <button class="fab gray" id="fabSync">Synchronisieren</button>`;
-      attachFabListeners();
+    } else {
+      bar.innerHTML=`<button class="fab gray" id="fabBack">Zurück</button><button class="fab blue" id="fabAdjust">Anpassen</button><button class="fab gray" id="fabSync">Synchronisieren</button>`;
+      $('#fabBack').onclick=()=>location.href="index.html";
+      $('#fabAdjust').onclick=()=>toggleAdjust(true);
+      $('#fabSync').onclick=githubSync;
     }
-    renderMobile(); // Ansicht auffrischen
+    renderMobile();
   }
 
   function getToken(){
     let t=localStorage.getItem('gh_token')||"";
-    if(!t){
-      t=prompt("GitHub Token (repo-Scope):","");
-      if(t){ localStorage.setItem('gh_token',t); alert("Token gespeichert."); }
-    }
+    if(!t){t=prompt("GitHub Token (repo-Scope):","");if(t){localStorage.setItem('gh_token',t);alert("Token gespeichert.");}}
     return t;
   }
 
   async function githubSync(){
-    const token=getToken(); if(!token) return;
+    const token=getToken();if(!token)return;
     try{
       const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
       const get=await fetch(api,{headers:{Authorization:`token ${token}`}});
-      const meta=await get.json(); const sha=meta.sha;
+      const meta=await get.json();const sha=meta.sha;
       const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const res=await fetch(api,{
-        method:'PUT',
-        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
-        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
-      });
-      if(!res.ok) throw new Error(await res.text());
+      const res=await fetch(api,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})});
+      if(!res.ok)throw new Error(await res.text());
       alert("✅ Erfolgreich in Datenbank eingetragen.");
-    }catch(e){
-      alert("❌ Sync fehlgeschlagen.");
-    }
+    }catch(e){alert("❌ Sync fehlgeschlagen.");}
   }
 
-  // Desktop Buttons
   $('#addDesk').onclick=()=>openEdit(null);
   $('#delDesk').onclick=()=>{
     const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
-    if(!ids.length){ alert("Bitte Zeilen markieren."); return; }
-    if(!confirm(`${ids.length} Einträge löschen?`)) return;
-    list=list.filter((_,i)=>!ids.includes(i));
-    saveLocal(list); renderAll();
+    if(!ids.length){alert("Bitte Zeilen markieren.");return;}
+    if(!confirm(`${ids.length} Einträge löschen?`))return;
+    list=list.filter((_,i)=>!ids.includes(i));saveLocal(list);renderAll();
   };
   $('#syncDesk').onclick=githubSync;
-  $('#tokenBtn').onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
+  $('#tokenBtn').onclick=()=>{localStorage.removeItem('gh_token');getToken();};
 
-  $('#resetDesk').onclick=()=>{ filterCatDesk.value="Alle"; searchDesk.value=""; renderAll(); }
-  $('#resetMob').onclick=()=>{ filterCatMob.value="Alle"; searchMob.value=""; renderAll(); }
-  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{
-    el.addEventListener('input',renderAll);
-    el.addEventListener('change',renderAll);
-  });
+  $('#resetDesk').onclick=()=>{filterCatDesk.value="Alle";searchDesk.value="";renderAll();}
+  $('#resetMob').onclick=()=>{filterCatMob.value="Alle";searchMob.value="";renderAll();}
+  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{el.addEventListener('input',renderAll);el.addEventListener('change',renderAll);});
 
-  // Mobile Buttons (Header + FAB)
   $('#btnBack').onclick=()=>location.href="index.html";
   $('#btnSync').onclick=githubSync;
   $('#btnAdjust').onclick=()=>toggleAdjust(true);
-
-  function attachFabListeners(){
-    const back=$('#fabBack'), adj=$('#fabAdjust'), sync=$('#fabSync');
-    if(back) back.onclick=()=>location.href="index.html";
-    if(adj)  adj.onclick =()=>toggleAdjust(true);
-    if(sync) sync.onclick=githubSync;
-  }
-  attachFabListeners();
-
+  $('#fabBack').onclick=()=>location.href="index.html";
+  $('#fabAdjust').onclick=()=>toggleAdjust(true);
+  $('#fabSync').onclick=githubSync;
   // --- Desktop Sortierung (Spalte 1 & 2) ---
   let sortState = {col: null, dir: 1};
-  $$('#tbl thead th[data-sort]').forEach(th=>{
-    th.style.cursor="pointer";
-    th.title="Sortieren";
-    th.onclick=()=>{
-      const col=parseInt(th.dataset.sort);
-      if(sortState.col===col) sortState.dir *= -1;
-      else { sortState.col=col; sortState.dir=1; }
 
-      list.sort((a,b)=>{
-        const A=(a[col]||"").toLowerCase();
-        const B=(b[col]||"").toLowerCase();
-        return A.localeCompare(B)*sortState.dir;
+  $$('#tbl thead th[data-sort]').forEach(th => {
+    th.style.cursor = "pointer";
+    th.title = "Sortieren";
+    th.onclick = () => {
+      const col = parseInt(th.dataset.sort);
+      if (sortState.col === col) sortState.dir *= -1; 
+      else { sortState.col = col; sortState.dir = 1; }
+
+      list.sort((a, b) => {
+        const A = (a[col] || "").toLowerCase();
+        const B = (b[col] || "").toLowerCase();
+        return A.localeCompare(B) * sortState.dir;
       });
       saveLocal(list);
       renderAll();
 
       // visueller Hinweis
-      $$('#tbl thead th').forEach(x=>x.style.textDecoration="none");
-      th.style.textDecoration = sortState.dir===1 ? "underline" : "overline";
+      $$('#tbl thead th').forEach(x => x.style.textDecoration = "none");
+      th.style.textDecoration = sortState.dir === 1 ? "underline" : "overline";
     };
   });
 
-  // --- Farbe im Desktop-Kategorie-Filter anzeigen ---
-  const catSelectDesk = document.getElementById('filterCatDesk');
-  catSelectDesk.addEventListener('change', function(){
-    const val=this.value;
-    if(val==="Alle" || !COLOR_MAP[val]){
-      this.style.background="#fff"; this.style.color="#111";
-    }else{
-      this.style.background=COLOR_MAP[val]; this.style.color=TEXT_ON[val];
+  loadData();
+    // --- Farbe im Desktop-Kategorie-Filter anzeigen ---
+  const catSelect = document.getElementById('filterCatDesk');
+  catSelect.addEventListener('change', function () {
+    const val = this.value;
+    if (val === "Alle" || !COLOR_MAP[val]) {
+      this.style.background = "#fff";
+      this.style.color = "#111";
+    } else {
+      this.style.background = COLOR_MAP[val];
+      this.style.color = TEXT_ON[val];
     }
   });
-  // Beim Laden gleich aktualisieren
-  catSelectDesk.dispatchEvent(new Event('change'));
 
+  // Beim Laden gleich aktualisieren
+  catSelect.dispatchEvent(new Event('change'));
   // --- Sortieren nach Erstelldatum (Desktop only) ---
-  let dateSortDir=1; // 1=aufsteigend, -1=absteigend
-  const btnDateSort=document.getElementById('dateSort');
-  btnDateSort.addEventListener('click',()=>{
-    list.sort((a,b)=>{
-      const A=new Date(a[5]); const B=new Date(b[5]);
-      return (A-B)*dateSortDir;
+  let dateSortDir = 1; // 1 = aufsteigend, -1 = absteigend
+
+  const btnDateSort = document.getElementById('dateSort');
+  btnDateSort.addEventListener('click', () => {
+    list.sort((a, b) => {
+      const A = new Date(a[5]);
+      const B = new Date(b[5]);
+      return (A - B) * dateSortDir;
     });
-    dateSortDir*=-1; saveLocal(list); renderAll();
-    btnDateSort.style.transform=`rotate(${dateSortDir===1?0:180}deg)`;
-    btnDateSort.style.transition="transform 0.3s";
+    dateSortDir *= -1; // Richtung wechseln
+    saveLocal(list);
+    renderAll();
+
+    // kleiner visueller Effekt (Drehung)
+    btnDateSort.style.transform = `rotate(${dateSortDir === 1 ? 0 : 180}deg)`;
+    btnDateSort.style.transition = "transform 0.3s";
   });
 
-  // --- Escape HTML Helper für sichere Ausgabe ---
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, m => (
-      m==='&'?'&amp;':m==='<'?'&lt;':m==='>'?'&gt;':m==='"'?'&quot;':'&#39;'
-    ));
-  }
-
-  // Start
-  loadData();
 })();
 </script>
-
 </body>
 </html>
