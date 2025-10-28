@@ -31,6 +31,9 @@ th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
 tr:hover{background:#f8fbff}
 .category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
 
+/* --- Markierung für Verwechslungsgefahr --- */
+.red-flag{color:var(--bad);font-weight:700;margin-left:6px}
+
 /* --- Mobile --- */
 .mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
 .mob-title{display:flex;align-items:center;justify-content:space-between}
@@ -48,6 +51,7 @@ tr:hover{background:#f8fbff}
   background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
   box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;
 }
+.card.red-card{border-color:var(--bad);box-shadow:0 0 0 2px rgba(239,68,68,.3)}
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
 .card-cat{
   display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px;
@@ -97,7 +101,6 @@ tr:hover{background:#f8fbff}
     <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
     <button id="tokenBtn" class="btn">⚙️ Token</button>
     <button id="dateSort" class="btn" title="Nach Erstelldatum sortieren">🗓️</button>
-
   </div>
 
   <!-- Desktop Counter -->
@@ -137,7 +140,6 @@ tr:hover{background:#f8fbff}
     <button id="resetMob" class="btn">Reset</button>
   </div>
 
-  <!-- Mobile Counter -->
   <div id="countMob" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
 
   <div class="mob-list" id="mobList"></div>
@@ -164,6 +166,7 @@ tr:hover{background:#f8fbff}
       <label>Englisch<input id="mEn" type="text"></label>
       <label>Deutsch<input id="mDe" type="text"></label>
       <label>Kategorie<select id="mCat"></select></label>
+      <label><input type="checkbox" id="mConfuse"> Verwechslungsgefahr</label>
       <label>Erstellt<input id="mDate" type="date" readonly style="background:#f3f4f6"></label>
       <label>Gruppe / Variante<input id="mGroup" type="text"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
@@ -177,9 +180,9 @@ tr:hover{background:#f8fbff}
 
 <script>
 (function(){
-  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
-  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
+  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein"};
+  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65"};
+  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff"};
 
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
@@ -187,15 +190,18 @@ tr:hover{background:#f8fbff}
   const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s)),isMobile=()=>matchMedia("(max-width:900px)").matches;
 
   const tbl=$('#tbl tbody'),mobList=$('#mobList'),banner=$('#adjustBanner'),modal=$('#modal'),
-  mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint'),
+  mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mConfuse=$('#mConfuse'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint'),
   filterCatDesk=$('#filterCatDesk'),filterCatMob=$('#filterCatMob'),searchDesk=$('#searchDesk'),searchMob=$('#searchMob');
 
   let list=[],editIndex=null,adjustMode=false,selected=new Set();
 
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+  const normalize=v=>[
+    v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString(),
+    typeof v[6]==="number"?v[6]:0,v[7]||crypto.randomUUID()
+  ];
   const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
   const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
-  const idxInList=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
+  const idxInList=v=>list.findIndex(x=>x[7]===v[7]);
 
   function fillCategorySelect(el,withAll=false){
     el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
@@ -249,9 +255,10 @@ tr:hover{background:#f8fbff}
     const data=filtered();
     tbl.innerHTML=data.map(v=>{
       const i=idxInList(v);
-      return `<tr>
+      const danger=v[6]==1?'<span class="red-flag" title="Verwechslungsgefahr">🔴</span>':"";
+      return `<tr title="ID: ${v[7]}">
         <td><input type="checkbox" data-idx="${i}"></td>
-        <td>${v[0]}</td>
+        <td>${v[0]} ${danger}</td>
         <td>${v[1]}</td>
         <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
         <td style="display:none">${v[3]}</td>
@@ -265,8 +272,8 @@ tr:hover{background:#f8fbff}
   function renderMobile(){
     const data=filtered();
     mobList.innerHTML=data.map(v=>{
-      const i=idxInList(v),sel=selected.has(i)?" selected":"";
-      return `<div class="card${sel}" data-idx="${i}">
+      const i=idxInList(v),sel=selected.has(i)?" selected":"",red=v[6]==1?" red-card":"";
+      return `<div class="card${sel}${red}" data-idx="${i}">
         <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
         <div class="card-title">${v[0]}</div>
         <div class="card-sub">DE: ${v[1]}</div>
@@ -288,11 +295,11 @@ tr:hover{background:#f8fbff}
     editIndex=i;
     if(i==null){
       mEn.value=mDe.value=mGroup.value=mHint.value="";
-      mCat.value="Gelb";mDate.value=new Date().toISOString().slice(0,10);
+      mCat.value="Gelb";mConfuse.checked=false;mDate.value=new Date().toISOString().slice(0,10);
     }else{
       const v=list[i];
       mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];
-      mGroup.value=v[3];mHint.value=v[4];
+      mGroup.value=v[3];mHint.value=v[4];mConfuse.checked=v[6]==1;
       mDate.value=new Date(v[5]).toISOString().slice(0,10);
     }
     mCat.style.background=COLOR_MAP[mCat.value];
@@ -303,10 +310,14 @@ tr:hover{background:#f8fbff}
   $('#mCancel').onclick=closeModal;
   $('#mSave').onclick=()=>{
     const en=mEn.value.trim(),de=mDe.value.trim();
-    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim();
+    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim(),confuse=mConfuse.checked?1:0;
     if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
-    if(editIndex==null){list.push([en,de,cat,grp,hint,new Date().toISOString()]);}
-    else{const old=list[editIndex];list[editIndex]=[en,de,cat,grp,hint,old[5]];}
+    if(editIndex==null){
+      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);
+    } else {
+      const old=list[editIndex];
+      list[editIndex]=[en,de,cat,grp,hint,old[5],confuse,old[7]];
+    }
     saveLocal(list);closeModal();renderAll();
   };
   mCat.onchange=()=>{mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];}
@@ -315,7 +326,8 @@ tr:hover{background:#f8fbff}
   function toggleAdjust(on){
     adjustMode=on;selected.clear();banner.style.display=on?'block':'none';
     const bar=$('.fabs');
-    if(on){bar.innerHTML=`<button class="fab gray" id="fabEnd">Beenden</button><button class="fab warn" id="fabDelete">Löschen</button><button class="fab blue" id="fabNew">Neu</button>`;
+    if(on){
+      bar.innerHTML=`<button class="fab gray" id="fabEnd">Beenden</button><button class="fab warn" id="fabDelete">Löschen</button><button class="fab blue" id="fabNew">Neu</button>`;
       $('#fabEnd').onclick=()=>toggleAdjust(false);
       $('#fabDelete').onclick=()=>{if(!selected.size){alert("Keine Auswahl");return;}
         if(!confirm(`${selected.size} löschen?`))return;
@@ -370,66 +382,26 @@ tr:hover{background:#f8fbff}
   $('#fabBack').onclick=()=>location.href="index.html";
   $('#fabAdjust').onclick=()=>toggleAdjust(true);
   $('#fabSync').onclick=githubSync;
-  // --- Desktop Sortierung (Spalte 1 & 2) ---
-  let sortState = {col: null, dir: 1};
 
-  $$('#tbl thead th[data-sort]').forEach(th => {
-    th.style.cursor = "pointer";
-    th.title = "Sortieren";
-    th.onclick = () => {
-      const col = parseInt(th.dataset.sort);
-      if (sortState.col === col) sortState.dir *= -1; 
-      else { sortState.col = col; sortState.dir = 1; }
-
-      list.sort((a, b) => {
-        const A = (a[col] || "").toLowerCase();
-        const B = (b[col] || "").toLowerCase();
-        return A.localeCompare(B) * sortState.dir;
+  let sortState={col:null,dir:1};
+  $$('#tbl thead th[data-sort]').forEach(th=>{
+    th.style.cursor="pointer";
+    th.title="Sortieren";
+    th.onclick=()=>{
+      const col=parseInt(th.dataset.sort);
+      if(sortState.col===col)sortState.dir*=-1;else{sortState.col=col;sortState.dir=1;}
+      list.sort((a,b)=>{
+        const A=(a[col]||"").toLowerCase();
+        const B=(b[col]||"").toLowerCase();
+        return A.localeCompare(B)*sortState.dir;
       });
-      saveLocal(list);
-      renderAll();
-
-      // visueller Hinweis
-      $$('#tbl thead th').forEach(x => x.style.textDecoration = "none");
-      th.style.textDecoration = sortState.dir === 1 ? "underline" : "overline";
+      saveLocal(list);renderAll();
+      $$('#tbl thead th').forEach(x=>x.style.textDecoration="none");
+      th.style.textDecoration=sortState.dir===1?"underline":"overline";
     };
   });
 
   loadData();
-    // --- Farbe im Desktop-Kategorie-Filter anzeigen ---
-  const catSelect = document.getElementById('filterCatDesk');
-  catSelect.addEventListener('change', function () {
-    const val = this.value;
-    if (val === "Alle" || !COLOR_MAP[val]) {
-      this.style.background = "#fff";
-      this.style.color = "#111";
-    } else {
-      this.style.background = COLOR_MAP[val];
-      this.style.color = TEXT_ON[val];
-    }
-  });
-
-  // Beim Laden gleich aktualisieren
-  catSelect.dispatchEvent(new Event('change'));
-  // --- Sortieren nach Erstelldatum (Desktop only) ---
-  let dateSortDir = 1; // 1 = aufsteigend, -1 = absteigend
-
-  const btnDateSort = document.getElementById('dateSort');
-  btnDateSort.addEventListener('click', () => {
-    list.sort((a, b) => {
-      const A = new Date(a[5]);
-      const B = new Date(b[5]);
-      return (A - B) * dateSortDir;
-    });
-    dateSortDir *= -1; // Richtung wechseln
-    saveLocal(list);
-    renderAll();
-
-    // kleiner visueller Effekt (Drehung)
-    btnDateSort.style.transform = `rotate(${dateSortDir === 1 ? 0 : 180}deg)`;
-    btnDateSort.style.transition = "transform 0.3s";
-  });
-
 })();
 </script>
 </body>
