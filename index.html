@@ -28,7 +28,7 @@ button:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .btn{background:var(--accent);color:#fff}
 .btn.secondary{background:#475569}
 .btn.red{background:var(--bad)}
-select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1}
+select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;transition:background .3s ease,color .3s ease}
 select option{color:#fff;font-weight:600}
 select option[value="Alle"]{background:#64748b;color:#fff}
 select option[value="Gelb"]{background:#F4D03F;color:#000}
@@ -120,120 +120,17 @@ select option[value="Rot"]{background:#C0392B}
 
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
-const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
 const M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
 const TEXT={"Gelb":"#000","Pink":"#fff","Blau":"#fff","Gruen":"#fff","HellesPink":"#fff","Orange":"#fff","Dunkelgruen":"#fff","Rot":"#fff"};
-const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-const el={
-  cat:document.getElementById("category"),
-  mode:document.getElementById("mode"),
-  delay:document.getElementById("delay"),
-  fbBtn:document.getElementById("feedbackBtn"),
-  learn:document.getElementById("learnBtn"),
-  cards:document.getElementById("cardsBtn"),
-  last:document.getElementById("last30Btn"),
-  restart:document.getElementById("restartBtn"),
-  trainer:document.getElementById("trainer"),
-  word:document.getElementById("word"),
-  ans:document.getElementById("answerInput"),
-  fb:document.getElementById("feedback"),
-  right:document.getElementById("rightBtn"),
-  wrong:document.getElementById("wrongBtn"),
-  skip:document.getElementById("skipBtn"),
-  result:document.getElementById("result")
-};
-let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",trap=false,curr="",feedbackOn=true;
-
-el.fbBtn.onclick=()=>{
-  feedbackOn=!feedbackOn;
-  el.fbBtn.classList.toggle("active",feedbackOn);
-  el.fbBtn.textContent=feedbackOn?"🧩 Feedback: AN":"🧩 Feedback: AUS";
-};
-
-async function load(){
-  try{const r=await fetch(url,{cache:"no-store"});list=await r.json();}
-  catch{list=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+const cat=document.getElementById("category");
+function updateCategoryColor(){
+  const val=cat.value;
+  if(val==="Alle"){cat.style.background="#f1f5f9";cat.style.color="#000";return;}
+  cat.style.background=M[val]||"#f1f5f9";
+  cat.style.color=TEXT[val]||"#000";
 }
-function flash(c){el.trainer.classList.add(c);setTimeout(()=>el.trainer.classList.remove(c),400);}
-function start(sel,type,custom=null){
-  mode=sel;game=type;
-  let data=list;
-  if(el.cat.value!=="Alle") data=data.filter(v=>v[2]===el.cat.value);
-  if(custom) data=custom;
-  round=data.slice(0,15);
-  i=0;errors=[];skipped=[];
-  el.trainer.style.display="block";
-  el.result.style.display="none";
-  showNext();
-}
-function showNext(){
-  if(i>=round.length){
-    if(skipped.length){round=skipped;skipped=[];i=0;el.fb.textContent="📘 Übersprungene Vokabeln – weiter geht’s!";showNext();return;}
-    el.trainer.style.display="none";
-    let h="<h3>Runde beendet</h3>";
-    h+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";
-    el.result.innerHTML=h;el.result.style.display="block";return;
-  }
-  const [en,de,catg]=round[i];
-  let ask,answ;
-  if(mode==="toGerman"){ask=en;answ=de}
-  else if(mode==="toEnglish"){ask=de;answ=en}
-  else{if(Math.random()<.5){ask=en;answ=de}else{ask=de;answ=en}}
-  el.word.style.background=M[catg];
-  el.word.style.color=TEXT[catg];
-  el.word.innerHTML=`<div style='font-size:1.2rem;margin-bottom:8px'>${C[catg]}</div><b>${ask}</b>`;
-  el.fb.textContent="";
-  const delay=parseInt(el.delay.value);
-  if(game==="learn"){
-    el.ans.style.display="inline-block";
-    el.right.style.display=el.wrong.style.display="none";
-    el.skip.style.display="inline-block";
-    el.ans.value="";el.ans.focus();
-    el.ans.onkeydown=e=>{
-      if(e.key==="Enter"){
-        const ok=el.ans.value.trim().toLowerCase()===answ.toLowerCase();
-        if(feedbackOn){el.fb.textContent=ok?"✅ Richtig!":`❌ Falsch → ${answ}`;flash(ok?"correct":"wrong")}
-        if(!ok)errors.push([ask,answ]);
-        i++;setTimeout(showNext,delay);
-      }
-    };
-    el.skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();}
-  }else{
-    el.ans.style.display="none";
-    el.right.style.display=el.wrong.style.display=el.skip.style.display="inline-block";
-    trap=Math.random()<.3;curr=trap?getWrong(answ):answ;
-    el.fb.innerHTML=`💡 <b>${curr}</b>`;
-    const okBtn=trap?el.wrong:el.right;
-    okBtn.onclick=()=>{if(trap){openInput(answ,ask)}else{nextCard(true,ask,answ)}};
-    const failBtn=trap?el.right:el.wrong;
-    failBtn.onclick=()=>nextCard(false,ask,answ);
-    el.skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();}
-  }
-}
-function openInput(correct,ask){
-  el.ans.style.display="inline-block";el.ans.value="";
-  el.fb.textContent="Gib die richtige Übersetzung ein:";
-  el.right.style.display=el.wrong.style.display="none";
-  el.ans.onkeydown=e=>{
-    if(e.key==="Enter"){
-      const ok=el.ans.value.trim().toLowerCase()===correct.toLowerCase();
-      if(feedbackOn){el.fb.textContent=ok?"✅ Richtig!":`❌ Falsch → ${correct}`;flash(ok?"correct":"wrong")}
-      if(!ok)errors.push([ask,correct]);
-      i++;setTimeout(showNext,parseInt(el.delay.value));
-    }
-  };
-}
-function nextCard(ok,ask,answ){
-  if(feedbackOn){el.fb.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong")}
-  if(!ok)errors.push([ask,answ]);
-  i++;setTimeout(showNext,parseInt(el.delay.value));
-}
-function getWrong(c){let p=list.map(v=>v[1]);let w;do{w=p[Math.floor(Math.random()*p.length)]}while(w===c);return w;}
-el.learn.onclick=()=>start(el.mode.value,"learn");
-el.cards.onclick=()=>start(el.mode.value,"cards");
-el.last.onclick=()=>{const a=list;if(!a.length)return alert("Keine Vokabeln.");const l=a.slice(-30);const ch=confirm("📚 Letzte 30 Vokabeln:\nOK = Karteikarten\nAbbrechen = Eingabe");start(el.mode.value,ch?"cards":"learn",l)};
-el.restart.onclick=()=>location.reload();
-load();
+cat.addEventListener("change",updateCategoryColor);
+updateCategoryColor(); // beim Laden initialisieren
 });
 </script>
 </body>
