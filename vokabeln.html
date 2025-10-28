@@ -97,15 +97,63 @@ tr:hover{background:#f8fbff}
   font-weight: 600;
   color: #111;
 }
-.confuse-field input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
-  accent-color: var(--bad);
-  cursor: pointer;
+/* === Verwechslungsgefahr Toggle Switch === */
+.confuse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid #cfd6e4;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #111;
 }
-.confuse-field label {
+
+.confuse-toggle .switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+
+.confuse-toggle .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.confuse-toggle .slider {
+  position: absolute;
   cursor: pointer;
-  user-select: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 34px;
+}
+
+.confuse-toggle .slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.confuse-toggle input:checked + .slider {
+  background-color: var(--bad);
+  box-shadow: 0 0 5px rgba(239, 68, 68, 0.6);
+}
+
+.confuse-toggle input:checked + .slider:before {
+  transform: translateX(22px);
 }
 
 </style>
@@ -191,7 +239,14 @@ tr:hover{background:#f8fbff}
       <label>Deutsch<input id="mDe" type="text"></label>
       <label>Kategorie<select id="mCat"></select></label>
       <div class="confuse-field">
-  <input type="checkbox" id="mConfuse">
+  <div class="confuse-toggle">
+  <span>Verwechslungsgefahr</span>
+  <label class="switch">
+    <input type="checkbox" id="mConfuse">
+    <span class="slider"></span>
+  </label>
+</div>
+
   <label for="mConfuse">⚠️ Verwechslungsgefahr</label>
 </div>
 
