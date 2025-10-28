@@ -13,53 +13,75 @@
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
+a{color:#1e3a8a}
+
+/* Container */
 .app{max-width:1100px;margin:20px auto;padding:16px}
 h1{text-align:center;font-weight:800;color:#1e3a8a}
+.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
 
-/* Desktop */
+/* Desktop Toolbar & Tabelle */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.toolbar select,.toolbar input{padding:8px 12px;border:1px solid #ccc;border-radius:8px}
-.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+.toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
+.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
+.toolbar .warn{background:var(--bad)}
 .table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
 table{width:100%;border-collapse:collapse}
 th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
 tr:hover{background:#f8fbff}
 .category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
 
-/* Mobile */
-.mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
-.mob-title{display:flex;align-items:center;justify-content:space-between}
-.mob-actions{display:flex;gap:10px}
-.iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+/* === Mobile Styles === */
+.mobile-header {
+  display:none; position:sticky; top:0; background:#eef4ff;
+  padding:10px; border-bottom:1px solid #dbe3ff; z-index:10;
+}
+.mob-title{display:flex; align-items:center; justify-content:space-between}
+.mob-actions{display:flex; gap:10px}
+.iconbtn{
+  width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;
+  background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer
+}
 .mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
-.mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #ccc;border-radius:10px}
+.mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
 .mob-list{display:none;padding:10px}
-.card{background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s, border-color .2s}
+
+/* Karten */
+.card{
+  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;overflow:hidden
+}
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-.card-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.card-title{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card-cat{padding:5px 10px;border-radius:999px;color:#fff;font-weight:700;white-space:nowrap}
-.card-sub{color:var(--muted);margin-top:6px}
-.card-row{margin-top:8px}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;flex-wrap:wrap}
+.card-title{font-weight:800;font-size:1.05rem;word-break:break-word;overflow-wrap:anywhere}
+.card-cat{
+  display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;transition:all .2s ease
+}
+/* adaptive Größe */
+.card-cat[data-len="short"]{font-size:.9rem}
+.card-cat[data-len="medium"]{font-size:.8rem;transform:scale(.96)}
+.card-cat[data-len="long"]{font-size:.72rem;transform:scale(.9);padding:3px 8px}
+.card-sub{color:var(--muted);margin-top:6px;font-size:.95rem}
+.card-row{margin-top:10px}
 .card-row button{width:100%;padding:10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer}
+
+/* Bottom Action Bar */
 .fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3}
 .fabs{display:flex;gap:8px}
 .fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
-.fab.gray{background:#6b7280}
-.fab.warn{background:var(--bad)}
-.fab.blue{background:var(--blue)}
+.fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
 
 /* Modal */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:#fff;border-radius:14px;padding:18px;width:90%;max-width:500px}
+.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px}
 .form-grid{display:grid;gap:10px}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:10px}
+.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
 .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
 .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-.btn.primary{background:var(--blue);color:#fff}
-.btn.ghost{background:#eef4ff;color:#111}
+.btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
 
-/* Responsiv */
+/* Responsive Umschalter */
 @media (max-width:900px){
   .toolbar,.table-wrap{display:none}
   .mobile-header,.mob-filters,.mob-list,.fab-row{display:block}
@@ -69,11 +91,12 @@ tr:hover{background:#f8fbff}
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
+  <div class="hr"></div>
 
-  <!-- Desktop -->
+  <!-- Desktop Toolbar -->
   <div class="toolbar">
     <select id="filterCatDesk"></select>
-    <input id="searchDesk" type="text" placeholder="Suchen...">
+    <input id="searchDesk" type="text" placeholder="Suchen…">
     <button id="resetDesk" class="btn">Reset</button>
     <button id="addDesk" class="btn">➕ Neue</button>
     <button id="delDesk" class="btn warn">🗑️ Löschen</button>
@@ -81,38 +104,42 @@ tr:hover{background:#f8fbff}
     <button id="tokenBtn" class="btn">⚙️ Token</button>
   </div>
 
+  <!-- Desktop Tabelle -->
   <div class="table-wrap">
     <table id="tbl">
       <thead>
         <tr>
-          <th>&nbsp;</th><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Gruppe</th><th>Hinweis</th><th>Aktion</th>
+          <th>⟲</th><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Gruppe</th><th>Hinweis</th><th>Aktion</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </div>
 
-  <!-- Mobile -->
+  <!-- Mobile Header -->
   <div class="mobile-header">
     <div class="mob-title">
-      <h2>Vokabeln</h2>
+      <h2 style="margin:0">Vokabeln</h2>
       <div class="mob-actions">
-        <button class="iconbtn" id="btnBack">⬅️</button>
-        <button class="iconbtn" id="btnSearch">🔎</button>
-        <button class="iconbtn" id="btnFilter">🧪</button>
-        <button class="iconbtn" id="btnToken">⚙️</button>
+        <button class="iconbtn" id="btnBack" title="Zurück zum Trainer">⬅️</button>
+        <button class="iconbtn" id="btnSearch" title="Suche anzeigen">🔎</button>
+        <button class="iconbtn" id="btnFilter" title="Filter anzeigen">🧪</button>
+        <button class="iconbtn" id="btnToken" title="GitHub Token">⚙️</button>
       </div>
     </div>
   </div>
 
+  <!-- Mobile Filterleiste -->
   <div class="mob-filters" id="mobFilters">
     <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
     <input id="searchMob" type="text" placeholder="Suchen…">
     <button id="resetMob" class="btn">Reset</button>
   </div>
 
+  <!-- Mobile Liste -->
   <div class="mob-list" id="mobList"></div>
 
+  <!-- Bottom Bar -->
   <div class="fab-row">
     <div class="fabs">
       <button class="fab gray" id="fabSelect">Auswahl</button>
@@ -122,21 +149,22 @@ tr:hover{background:#f8fbff}
     </div>
   </div>
 
-  <div class="footer" style="text-align:center;margin-top:10px">
-    <a href="index.html" style="text-decoration:none;color:#1e3a8a;font-weight:700">⬅️ Zurück zum Trainer</a>
+  <div class="footer" style="text-align:center;margin-top:12px">
+    <a href="index.html" style="text-decoration:none;font-weight:700">⬅️ Zurück zum Trainer</a>
+    <div style="margin-top:6px;color:#6b7280">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Editor -->
 <div class="modal" id="modal">
   <div class="panel">
-    <h3 id="modalTitle">Vokabel</h3>
+    <h3 id="modalTitle" style="margin-top:0">Vokabel</h3>
     <div class="form-grid">
       <label>Englisch<input id="mEn" type="text" autocomplete="off"></label>
       <label>Deutsch<input id="mDe" type="text" autocomplete="off"></label>
       <label>Kategorie<select id="mCat"></select></label>
-      <label>Erstellt<input id="mDate" type="datetime-local" readonly style="background:#f3f4f6;"></label>
-      <label>Gruppe<input id="mGroup" type="text" autocomplete="off"></label>
+      <label>Erstellt<input id="mDate" type="datetime-local" readonly style="background:#f3f4f6"></label>
+      <label>Gruppe / Variante<input id="mGroup" type="text" autocomplete="off"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
     </div>
     <div class="modal-actions">
@@ -148,127 +176,135 @@ tr:hover{background:#f8fbff}
 
 <script>
 (function(){
+  /* ======== Konstanten / Kategorien ======== */
   const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
   const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
   const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
 
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  const GH_OWNER="beeferino";
-  const GH_REPO="vokabeltrainer";
-  const GH_PATH="vokabeln.json";
+  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
   const $=s=>document.querySelector(s);
   const $$=s=>Array.from(document.querySelectorAll(s));
+  const isMobile=()=>matchMedia("(max-width:900px)").matches;
 
+  /* ======== DOM Refs ======== */
   const tbl=$('#tbl tbody');
   const mobList=$('#mobList');
+  const mobFilters=$('#mobFilters');
   const modal=$('#modal');
   const mTitle=$('#modalTitle');
   const mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint');
-  const mSave=$('#mSave'),mCancel=$('#mCancel');
 
   const filterCatDesk=$('#filterCatDesk'), filterCatMob=$('#filterCatMob');
   const searchDesk=$('#searchDesk'), searchMob=$('#searchMob');
 
-  let list=[],editIndex=null,selectMode=false,selected=new Set();
+  /* ======== State ======== */
+  let list=[], editIndex=null, selectMode=false, selected=new Set();
 
-  function normalize(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];}
-  function loadLocal(){return JSON.parse(localStorage.getItem('vokabeln')||'[]').map(normalize);}
-  function saveLocal(d){localStorage.setItem('vokabeln',JSON.stringify(d));}
+  /* ======== Utils ======== */
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
+  const idxInList=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
 
-  async function loadData(){
-    try{
-      const res=await fetch(RAW_URL,{cache:"no-store"});
-      const data=await res.json();
-      list=data.map(normalize);
-      saveLocal(list);
-    }catch{list=loadLocal();}
-    initCategorySelects();
-    renderAll();
-  }
-
-  function initCategorySelects(){
-    function fill(sel){
-      sel.innerHTML='<option value="Alle">Alle (bunt gemischt)</option>';
-      Object.keys(CATEGORY_NAMES).forEach(k=>{
-        const o=document.createElement('option');
-        o.value=k;o.textContent=CATEGORY_NAMES[k];sel.appendChild(o);
-      });
-    }
-    fill(filterCatDesk); fill(filterCatMob);
-    // Modal categories
-    mCat.innerHTML="";
+  function fillCategorySelect(el,withAll=false){
+    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
     Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement('option');o.value=k;o.textContent=CATEGORY_NAMES[k];mCat.appendChild(o);
+      const o=document.createElement("option");
+      o.value=k;o.textContent=CATEGORY_NAMES[k];
+      if(withAll){ /* show color via CSS in list only */ }
+      el.appendChild(o);
     });
   }
 
-  function currentFilter(){
-    // mobile aktiv, wenn mobList sichtbar (<=900px); wir nutzen einfach beide und nehmen, was gesetzt ist
-    const cat=(filterCatMob && filterCatMob.value && window.matchMedia("(max-width:900px)").matches) ? filterCatMob.value : filterCatDesk.value || "Alle";
-    const q=(searchMob && window.matchMedia("(max-width:900px)").matches) ? (searchMob.value||"") : (searchDesk.value||"");
-    return {cat,q:q.trim().toLowerCase()};
+  async function loadData(){
+    try{
+      const r=await fetch(RAW_URL,{cache:"no-store"});
+      list=(await r.json()).map(normalize);
+      saveLocal(list);
+    }catch{
+      list=loadLocal();
+    }
+    fillCategorySelect(filterCatDesk,true);
+    fillCategorySelect(filterCatMob,true);
+    fillCategorySelect(mCat,false);
+    renderAll();
   }
 
+  function currentFilter(){
+    const cat=(isMobile()?filterCatMob.value:filterCatDesk.value)||"Alle";
+    const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
+    return {cat,q};
+  }
   function filtered(){
     const {cat,q}=currentFilter();
     return list.filter(v=>{
-      const matchCat=(cat==="Alle" || v[2]===cat);
-      const matchQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
-      return matchCat && matchQ;
+      const matchCat=(cat==="Alle"||v[2]===cat);
+      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
+      return matchCat&&matchQ;
+    });
+  }
+
+  /* ======== Render Desktop ======== */
+  function renderDesktop(){
+    const data=filtered();
+    tbl.innerHTML=data.map(v=>{
+      const i=idxInList(v);
+      return `<tr>
+        <td><input type="checkbox" data-idx="${i}"></td>
+        <td>${v[0]}</td>
+        <td>${v[1]}</td>
+        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+        <td>${v[3]||""}</td>
+        <td>${v[4]||""}</td>
+        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
+      </tr>`;
+    }).join("");
+    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
+  }
+
+  /* ======== Render Mobile ======== */
+  function renderMobile(){
+    const data=filtered();
+    mobList.innerHTML=data.map(v=>{
+      const i=idxInList(v);
+      const sel=selected.has(i)?" selected":"";
+      return `<div class="card${sel}" data-idx="${i}">
+        <div class="card-top">
+          <div class="card-title" title="${v[0]}">${v[0]}</div>
+          <div class="card-cat" data-len="" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
+            ${CATEGORY_NAMES[v[2]]}
+          </div>
+        </div>
+        <div class="card-sub">DE: ${v[1]}</div>
+        <div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div>
+      </div>`;
+    }).join("");
+
+    // adaptive Kategoriegröße
+    document.querySelectorAll('.card-cat').forEach(c=>{
+      const len=c.textContent.trim().length;
+      c.dataset.len = len<16 ? "short" : len<30 ? "medium" : "long";
+    });
+
+    $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
+    $$('.card').forEach(card=>{
+      card.onclick=e=>{
+        if(!selectMode || e.target.classList.contains('mobEdit')) return;
+        const i=+card.dataset.idx;
+        if(selected.has(i)) selected.delete(i); else selected.add(i);
+        card.classList.toggle('selected');
+      };
     });
   }
 
   function renderAll(){
-    renderDesktop();renderMobile();
+    renderDesktop();
+    renderMobile();
   }
 
-  function renderDesktop(){
-    const data=filtered();
-    tbl.innerHTML=data.map((v,i)=>`
-      <tr>
-        <td><input type="checkbox" data-idx="${indexInList(v)}"></td>
-        <td>${v[0]}</td><td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-        <td>${v[3]||''}</td><td>${v[4]||''}</td>
-        <td><button data-idx="${indexInList(v)}" class="btn">✏️</button></td>
-      </tr>`).join('');
-    $$('button[data-idx]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.idx));
-  }
-
-  function indexInList(v){
-    // find first index matching identity (en+de+cat+created)
-    return list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
-  }
-
-  function renderMobile(){
-    const data=filtered();
-    mobList.innerHTML=data.map(v=>{
-      const idx=indexInList(v);
-      const sel=selected.has(idx)?" selected":"";
-      return `<div class="card${sel}" data-idx="${idx}">
-        <div class="card-top">
-          <div class="card-title" title="${v[0]}">${v[0]}</div>
-          <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-        </div>
-        <div class="card-sub">DE: ${v[1]}</div>
-        <div class="card-row"><button class="mobEdit" data-idx="${idx}">Bearbeiten</button></div>
-      </div>`;
-    }).join('');
-    // events
-    $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.idx));
-    // selection tap on card (not button)
-    $$('.card').forEach(c=>{
-      c.addEventListener('click',e=>{
-        if(!selectMode) return;
-        if(e.target.classList.contains('mobEdit')) return; // ignore button
-        const i=+c.dataset.idx;
-        if(selected.has(i)) selected.delete(i); else selected.add(i);
-        c.classList.toggle('selected');
-      });
-    });
-  }
-
+  /* ======== Modal / CRUD ======== */
   function openEdit(i=null){
     editIndex=i;
     if(i==null){
@@ -279,124 +315,109 @@ tr:hover{background:#f8fbff}
     }else{
       const v=list[i];
       mTitle.textContent="Vokabel bearbeiten";
-      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mGroup.value=v[3];mHint.value=v[4];
-      mDate.value=v[5].slice(0,16);
+      mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
+      mGroup.value=v[3]||""; mHint.value=v[4]||"";
+      mDate.value=new Date(v[5]).toISOString().slice(0,16);
     }
-    modal.style.display='flex';
+    modal.style.display="flex";
   }
+  function closeModal(){ modal.style.display="none"; }
 
-  mCancel.onclick=()=>modal.style.display='none';
-  mSave.onclick=()=>{
-    const en=mEn.value.trim(),de=mDe.value.trim(),cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim();
-    if(!en||!de)return alert("Bitte Englisch & Deutsch ausfüllen");
-    const created=mDate.value?new Date(mDate.value).toISOString():new Date().toISOString();
-    if(editIndex==null)list.push([en,de,cat,grp,hint,created]);
-    else list[editIndex]=[en,de,cat,grp,hint,created];
+  $('#mCancel').onclick=closeModal;
+  $('#mSave').onclick=()=>{
+    const en=mEn.value.trim(), de=mDe.value.trim();
+    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim();
+    if(!en||!de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
+    if(editIndex==null){
+      list.push([en,de,cat,grp,hint,new Date().toISOString()]);
+    }else{
+      const old=list[editIndex];
+      list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];
+    }
     saveLocal(list);
-    selected.clear();
-    modal.style.display='none';
-    renderAll();
+    closeModal(); renderAll();
   };
-  modal.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
 
-  // Desktop controls
-  $('#resetDesk')?.addEventListener('click',()=>{filterCatDesk.value="Alle";searchDesk.value="";renderAll();});
-  $('#addDesk')?.addEventListener('click',()=>openEdit(null));
-  $('#delDesk')?.addEventListener('click',()=>bulkDeleteDesktop());
-  $('#syncDesk')?.addEventListener('click',()=>githubSync());
-  $('#tokenBtn')?.addEventListener('click',()=>askToken());
-  filterCatDesk?.addEventListener('change',renderAll);
-  searchDesk?.addEventListener('input',renderAll);
-
-  function bulkDeleteDesktop(){
-    const checks=$$('input[type="checkbox"][data-idx]:checked');
-    if(!checks.length) return alert("Bitte auswählen.");
-    if(!confirm(`Wirklich ${checks.length} Einträge löschen?`)) return;
-    const idxs=[...checks].map(c=>+c.dataset.idx).sort((a,b)=>b-a);
-    idxs.forEach(i=>list.splice(i,1));
-    saveLocal(list);
-    renderAll();
-  }
-
-  // Mobile top buttons
-  $('#btnBack')?.addEventListener('click',()=>{location.href='index.html';});
-  $('#btnSearch')?.addEventListener('click',()=>{
-    document.getElementById('mobFilters').style.display='grid';
-    searchMob.focus(); searchMob.scrollIntoView({behavior:'smooth',block:'center'});
-  });
-  $('#btnFilter')?.addEventListener('click',()=>{
-    const f=$('#mobFilters'); f.style.display=(f.style.display==='grid'?'none':'grid');
-  });
-  $('#btnToken')?.addEventListener('click',()=>askToken());
-
-  // Mobile filter events
-  $('#resetMob')?.addEventListener('click',()=>{filterCatMob.value="Alle";searchMob.value="";renderAll();});
-  filterCatMob?.addEventListener('change',renderAll);
-  searchMob?.addEventListener('input',renderAll);
-
-  // Mobile FABs
-  $('#fabSelect')?.addEventListener('click',()=>{
-    selectMode=!selectMode;
+  /* ======== Auswahl / Löschen ======== */
+  function startSelectMode(on){
+    selectMode=on;
     selected.clear();
-    alert(selectMode?'Auswahlmodus aktiv: Tippe Karten zum Markieren.':'Auswahlmodus beendet.');
     renderMobile();
-  });
-  $('#fabDelete')?.addEventListener('click',()=>{
-    if(!selected.size) return alert("Keine Auswahl.");
-    if(!confirm(`Wirklich ${selected.size} Einträge löschen?`)) return;
-    const idxs=[...selected].sort((a,b)=>b-a);
-    idxs.forEach(i=>list.splice(i,1));
-    selected.clear(); selectMode=false;
-    saveLocal(list); renderAll();
-  });
-  $('#fabAdd')?.addEventListener('click',()=>openEdit(null));
-  $('#fabSync')?.addEventListener('click',()=>githubSync());
-
-  function askToken(){
-    const cur=localStorage.getItem('gh_token')||"";
-    const t=prompt("GitHub Token (repo-Berechtigung):",cur);
-    if(t!==null){localStorage.setItem('gh_token',t.trim()); alert("Token gespeichert.");}
   }
+  $('#fabSelect').onclick=()=>startSelectMode(!selectMode);
+  $('#fabDelete').onclick=()=>{
+    if(!selected.size){ alert("Keine Elemente ausgewählt."); return; }
+    if(!confirm(`${selected.size} Einträge löschen?`)) return;
+    list=list.filter((v,i)=>!selected.has(i));
+    selected.clear(); saveLocal(list); renderAll();
+  };
+  $('#delDesk').onclick=()=>{
+    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
+    if(!ids.length){ alert("Bitte mindestens eine Zeile markieren."); return; }
+    if(!confirm(`${ids.length} Einträge löschen?`)) return;
+    list=list.filter((v,i)=>!ids.includes(i));
+    saveLocal(list); renderAll();
+  };
+
+  /* ======== Buttons: Add / Sync / Token ======== */
+  $('#addDesk').onclick=()=>openEdit(null);
+  $('#fabAdd').onclick=()=>openEdit(null);
+
+  function getToken(){
+    let t=localStorage.getItem('gh_token')||"";
+    if(!t){
+      t=prompt("GitHub Token (repo-Scope):","");
+      if(t){ localStorage.setItem('gh_token',t); alert("Token gespeichert."); }
+    }
+    return t;
+  }
+  $('#tokenBtn').onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
+  $('#btnToken').onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
 
   async function githubSync(){
+    const token=getToken(); if(!token) return;
     try{
-      const token=localStorage.getItem('gh_token');
-      if(!token){askToken(); if(!localStorage.getItem('gh_token')) return;}
-      const apiBase=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-      // aktuelle SHA holen
-      const getRes=await fetch(apiBase,{headers:{Authorization:`Bearer ${localStorage.getItem('gh_token')}`,Accept:'application/vnd.github+json'}});
-      if(!getRes.ok) throw new Error('SHA holen fehlgeschlagen');
-      const meta=await getRes.json();
-      const sha=meta.sha;
-
-      // Inhalt vorbereiten (lokale Liste ist Quelle der Wahrheit – inkl. neuer/edits)
+      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      const get=await fetch(api,{headers:{Authorization:`token ${token}`}}); 
+      const meta=await get.json(); const sha=meta.sha;
       const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const body={
-        message:`Update ${GH_PATH} via UI`,
-        content,
-        sha
-      };
-      const putRes=await fetch(apiBase,{
+      const res=await fetch(api,{
         method:'PUT',
-        headers:{Authorization:`Bearer ${localStorage.getItem('gh_token')}`,Accept:'application/vnd.github+json'},
-        body:JSON.stringify(body)
+        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
       });
-      if(!putRes.ok) throw new Error('Commit fehlgeschlagen');
-      alert('✅ In Datenbank eingetragen.');
-    }catch(e){
-      console.error(e);
-      alert('❌ Sync fehlgeschlagen. Details in der Konsole.');
-    }
+      if(!res.ok) throw new Error(await res.text());
+      alert("✅ Erfolgreich in Datenbank eingetragen.");
+    }catch(e){ console.error(e); alert("❌ Sync fehlgeschlagen."); }
   }
+  $('#syncDesk').onclick=githubSync;
+  $('#fabSync').onclick=githubSync;
 
-  // init
+  /* ======== Filter / Suche ======== */
+  function resetFilters(){
+    (isMobile()?filterCatMob:filterCatDesk).value="Alle";
+    (isMobile()?searchMob:searchDesk).value="";
+    renderAll();
+  }
+  $('#resetDesk').onclick=resetFilters;
+  $('#resetMob').onclick=resetFilters;
+  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{
+    el.addEventListener('input',renderAll);
+    el.addEventListener('change',renderAll);
+  });
+
+  /* ======== Mobile Header Aktionen ======== */
+  $('#btnBack').onclick=()=>location.href="index.html";
+  $('#btnSearch').onclick=()=>{ mobFilters.style.display = mobFilters.style.display==='grid'?'none':'grid'; };
+  $('#btnFilter').onclick=()=>{ mobFilters.style.display = mobFilters.style.display==='grid'?'none':'grid'; };
+  // initial Mobil-Layout
+  mobFilters.style.display='none';
+  mobFilters.style.display='grid'; // zeigt Suchleiste nach Tap wieder an, CSS grid
+  mobFilters.style.display='none';
+
+  /* ======== Init ======== */
   loadData();
-
-  // make mobile list visible on phones
-  if(window.matchMedia("(max-width:900px)").matches){
-    document.getElementById('mobList').style.display='block';
-    document.getElementById('mobFilters').style.display='grid';
-  }
 })();
 </script>
 </body>
