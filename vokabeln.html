@@ -207,124 +207,16 @@ tr:hover{background:#f8fbff}
 
   <script>
 (function(){
-  // ===== Kategorien & Farben =====
-  const CATEGORY_NAMES={
-    Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",
-    Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"
-  };
-  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",
-    Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
+  // ===== Utils & State =====
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const isMobile = () => matchMedia("(max-width:900px)").matches;
 
-  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
+  let editIndex = null, editModeActive = false;
+  const modal = $("#modal"), mTitle = $("#modalTitle"),
+        mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"),
+        mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
 
-  const $=s=>document.querySelector(s);const $$=s=>Array.from(document.querySelectorAll(s));
-  const isMobile=()=>matchMedia("(max-width:900px)").matches;
-  const toast=(m="Gespeichert")=>{const t=$("#toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500)};
-  const dateOnly=iso=>{try{return new Date(iso).toISOString().slice(0,10)}catch{return""}};
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-
-  let list=[],sortCol=0,sortAsc=true,editIndex=null,selectMode=false,selected=new Set(),editModeActive=false;
-
-  const tbl=$("#tbl tbody"),countInfo=$("#countInfo"),countInfoMob=$("#countInfoMob"),
-        sourceInfo=$("#sourceInfo"),sourceInfoFoot=$("#sourceInfoFoot"),
-        filterCatDesk=$("#filterCatDesk"),searchDesk=$("#searchDesk"),
-        filterCatMob=$("#filterCatMob"),searchMob=$("#searchMob"),
-        modal=$("#modal"),mTitle=$("#modalTitle"),
-        mEn=$("#mEn"),mDe=$("#mDe"),mCat=$("#mCat"),mDate=$("#mDate"),mGroup=$("#mGroup"),mHint=$("#mHint"),
-        mobList=$("#mobList"),slideFilter=$("#slideFilter");
-
-  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
-
-  function getToken(){
-    let t=localStorage.getItem("gh_token")||"";
-    if(!t){t=prompt("GitHub Token (repo-Scope):","");if(t){localStorage.setItem("gh_token",t);toast("Token gespeichert");}}
-    return t;
-  }
-  function clearToken(){localStorage.removeItem("gh_token");toast("Token gelöscht – neu setzen!");}
-
-  async function loadData(){
-    try{
-      const r=await fetch(RAW_URL,{cache:"no-store"});
-      const d=await r.json();list=d.map(normalize);saveLocal(list);
-      sourceInfo.textContent="Datenquelle: GitHub (Online)";
-      sourceInfoFoot.textContent="Datenquelle: GitHub (Online)";
-    }catch{list=loadLocal();sourceInfo.textContent="Datenquelle: Lokaler Speicher";sourceInfoFoot.textContent="Datenquelle: Lokaler Speicher";}
-    fillCategorySelect(filterCatDesk,true);fillCategorySelect(filterCatMob,true);fillCategorySelect(mCat,false);
-    ensureFilterDefaults();renderAll();
-  }
-
-  function fillCategorySelect(el,withAll=false){
-    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];el.appendChild(o);
-    });
-  }
-  function ensureFilterDefaults(){if(!filterCatDesk.value)filterCatDesk.value="Alle";if(!filterCatMob.value)filterCatMob.value="Alle";}
-
-  function currentFilter(){const cat=isMobile()?(filterCatMob.value||"Alle"):(filterCatDesk.value||"Alle");const q=(isMobile()?searchMob:searchDesk).value.trim().toLowerCase();return{cat,q};}
-  function filtered(){
-    const{cat,q}=currentFilter();
-    let data=list.filter(v=>{
-      const okC=(cat==="Alle"||v[2]===cat);
-      const okQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
-      return okC&&okQ;
-    });
-    data.sort((a,b)=>{
-      const A=(a[sortCol]||"").toLowerCase(),B=(b[sortCol]||"").toLowerCase();
-      if(A<B)return sortAsc?-1:1;if(A>B)return sortAsc?1:-1;return 0;
-    });
-    return data;
-  }
-
-  function renderDesktop(){
-    const data=filtered();
-    tbl.innerHTML=data.map(v=>{
-      const i=indexOf(v),c=v[2];
-      return `<tr>
-        <td><input type="checkbox" data-idx="${i}"></td>
-        <td>${escapeHtml(v[0])}</td><td>${escapeHtml(v[1])}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[c]};color:${TEXT_ON[c]}">${CATEGORY_NAMES[c]}</span></td>
-        <td style="display:none">${escapeHtml(v[3]||"")}</td><td style="display:none">${escapeHtml(v[4]||"")}</td>
-        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td></tr>`;
-    }).join("");
-    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-    countInfo.textContent=`Gefunden ${data.length} von ${list.length}`;
-  }
-
-  function renderMobile(){
-    const data=filtered();
-    mobList.innerHTML=data.map(v=>{
-      const i=indexOf(v),cat=v[2],sel=selected.has(i)?" selected":"";
-      return `<div class="card${sel}" data-idx="${i}">
-        <div class="card-top">
-          <div class="card-cat" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</div>
-          <div class="card-title">${escapeHtml(v[0])}</div>
-        </div>
-        <div class="card-sub">DE: ${escapeHtml(v[1])}</div>
-        <div class="card-row"><button class="btn mobEdit" data-edit="${i}" style="padding:6px 10px;font-size:.85rem">Ansehen</button></div>
-      </div>`;
-    }).join("");
-    $$('.mobEdit').forEach(b=>b.onclick=(e)=>{e.stopPropagation();openEdit(+b.dataset.edit);});
-    $$('.card').forEach(c=>{
-      c.onclick=e=>{
-        const i=+c.dataset.idx;
-        if(selectMode){selected.has(i)?selected.delete(i):selected.add(i);c.classList.toggle("selected");}
-      };
-    });
-    countInfoMob.textContent=`Gefunden ${data.length} von ${list.length}`;
-  }
-
-  function renderAll(){renderDesktop();renderMobile();}
-
-  const escapeHtml=s=>(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
-  const indexOf=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&(x[5]||"")===(v[5]||""));
-
-  // ===== Editor mit Bearbeiten-Button =====
   function setEditable(on){
     [mEn,mDe,mCat,mGroup,mHint].forEach(inp=>{
       inp.readOnly=!on;
@@ -336,82 +228,84 @@ tr:hover{background:#f8fbff}
   function openEdit(i=null){
     editIndex=i;
     editModeActive=false;
+
     if(i==null){
       mTitle.textContent="Neue Vokabel";
-      mEn.value="";mDe.value="";mCat.value="Gelb";mGroup.value="";mHint.value="";
-      mDate.value=dateOnly(new Date().toISOString());
+      mEn.value=""; mDe.value=""; mCat.value="Gelb";
+      mGroup.value=""; mHint.value="";
+      mDate.value=new Date().toISOString().slice(0,16);
       setEditable(true);
-    }else{
-      const v=list[i];
+    } else {
+      const v = list[i];
       mTitle.textContent="Vokabel anzeigen";
-      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];
-      mGroup.value=v[3]||"";mHint.value=v[4]||"";mDate.value=dateOnly(v[5]);
-      setEditable(false);
+      mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
+      mGroup.value=v[3]||""; mHint.value=v[4]||"";
+      mDate.value=new Date(v[5]).toISOString().slice(0,16);
+      if (isMobile()) setEditable(false); else setEditable(true);
     }
-    // Füge Edit-Toggle ein, wenn nicht vorhanden
-    if(!$("#mEditToggle")){
-      const btn=document.createElement("button");
-      btn.id="mEditToggle";
-      btn.className="btn ghost";
-      btn.textContent="Bearbeiten aktivieren ✏️";
-      btn.style.marginTop="10px";
-      btn.onclick=()=>{
-        editModeActive=true;
+
+    // ✏️ Bearbeiten aktivieren nur für Mobile
+    const oldBtn = $("#mEditToggle");
+    if (oldBtn) oldBtn.remove();
+
+    if (isMobile()) {
+      const btn = document.createElement("button");
+      btn.id = "mEditToggle";
+      btn.className = "btn ghost";
+      btn.textContent = "Bearbeiten aktivieren ✏️";
+      btn.style.marginTop = "10px";
+      btn.onclick = () => {
+        editModeActive = true;
         setEditable(true);
-        btn.disabled=true;
-        btn.textContent="Bearbeitung aktiv";
+        btn.disabled = true;
+        btn.textContent = "Bearbeitung aktiv";
       };
       $(".modal-actions").prepend(btn);
-    }else{
-      const b=$("#mEditToggle");
-      b.disabled=false;b.textContent="Bearbeiten aktivieren ✏️";
     }
-    modal.style.display="flex";
+
+    modal.style.display = "flex";
   }
-  function closeModal(){modal.style.display="none";}
-  $("#mCancel").onclick=closeModal;
-  modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
 
-  $("#mSave").onclick=()=>{
-    const en=mEn.value.trim(),de=mDe.value.trim();
-    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
-    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim();
-    if(editIndex==null){list.push([en,de,cat,grp,hint,new Date().toISOString()]);}
-    else{const old=list[editIndex];list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];}
-    saveLocal(list);toast("Gespeichert");closeModal();renderAll();
-  };
-  $("#mDelete").onclick=()=>{
-    if(editIndex==null){closeModal();return;}
-    if(!confirm("Eintrag wirklich löschen?"))return;
-    list.splice(editIndex,1);saveLocal(list);toast("Gelöscht");closeModal();renderAll();
-  };
+  function closeModal(){ modal.style.display="none"; }
+  $("#mCancel").onclick = closeModal;
+  modal.addEventListener("click", e=>{ if(e.target===modal) closeModal(); });
 
-  // ===== Desktop + Mobile Basisfunktionen bleiben =====
-  $("#addDesk").onclick=()=>openEdit(null);
-  $("#delDesk").onclick=()=>{const ids=$$('input[data-idx]:checked').map(x=>+x.dataset.idx);if(!ids.length)return alert("Bitte markieren.");if(!confirm(`${ids.length} löschen?`))return;list=list.filter((_,i)=>!ids.includes(i));saveLocal(list);toast("Gelöscht");renderAll();};
-  $$('th.sortable').forEach(th=>th.onclick=()=>{const c=+th.dataset.col;if(sortCol===c)sortAsc=!sortAsc;else{sortCol=c;sortAsc=true;}renderAll();});
-  $("#fabAdd").onclick=()=>openEdit(null);
-  $("#fabSelect").onclick=()=>{selectMode=!selectMode;selected.clear();renderMobile();toast(selectMode?"Auswahl aktiv":"Auswahl aus");};
-  $("#fabDelete").onclick=()=>{if(!selected.size)return alert("Keine Auswahl.");if(!confirm(`${selected.size} löschen?`))return;list=list.filter((_,i)=>!selected.has(i));selected.clear();saveLocal(list);toast("Gelöscht");renderAll();};
-  $("#dialBack").onclick=()=>location.href="index.html";
-  $("#dialFind").onclick=()=>{slideFilter.classList.toggle("show");if(slideFilter.classList.contains("show"))setTimeout(()=>$("#searchMob").focus(),50);};
-  $("#dialGear").onclick=()=>{clearToken();getToken();};
-  function resetFilters(){(isMobile()?filterCatMob:filterCatDesk).value="Alle";(isMobile()?searchMob:searchDesk).value="";renderAll();}
-  $("#resetDesk").onclick=resetFilters;$("#resetMob").onclick=resetFilters;
-  [filterCatDesk,searchDesk,filterCatMob,searchMob].forEach(e=>{e.oninput=renderAll;e.onchange=renderAll;});
-  async function githubSync(){
-    const t=getToken();if(!t)return;
-    try{
-      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-      const meta=await fetch(api,{headers:{Authorization:`token ${t}`}}).then(r=>r.json());
-      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      await fetch(api,{method:"PUT",headers:{Authorization:`token ${t}`,"Content-Type":"application/json"},
-        body:JSON.stringify({message:"Update via Vokabel-UI",content,sha:meta.sha})});
-      toast("In Datenbank eingetragen");
-    }catch(e){console.error(e);alert("❌ Sync fehlgeschlagen");}
-  }
-  $("#syncDesk").onclick=githubSync;$("#fabSync").onclick=githubSync;$("#tokenBtn").onclick=()=>{clearToken();getToken();};
+  // ===== Entferne Dial-Icons am Desktop =====
+  const dials = ["#dialBack", "#dialFind", "#dialGear"];
+  if (!isMobile()) dials.forEach(sel=>{
+    const el=document.querySelector(sel); if(el) el.remove();
+  });
 
-  loadData();
+  // ===== Extra CSS (nur Mobile) =====
+  const style = document.createElement("style");
+  style.textContent = `
+    @media (max-width:900px) {
+      /* mehr Luft zwischen Buttons */
+      .modal-actions { gap: 16px; flex-wrap: wrap; justify-content: center; }
+      .modal-actions .btn { flex: 1; min-width: 120px; }
+
+      /* sanfter Kartenlook für Pop-up */
+      .panel {
+        box-shadow: 0 10px 28px rgba(0,0,0,.2);
+        border: 1px solid #e0e7ff;
+        background: linear-gradient(180deg, #ffffff, #f9fbff);
+        border-radius: 20px;
+        transform: scale(0.98);
+        animation: popIn .25s ease forwards;
+      }
+      @keyframes popIn {
+        from {opacity:0; transform: scale(0.94);}
+        to {opacity:1; transform: scale(1);}
+      }
+      .form-grid input, .form-grid select, .form-grid textarea {
+        border-radius: 12px;
+        border: 1px solid #d1d5db;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  // ===== Reattach deine bestehenden globalen Funktionen =====
+  window.openEdit = openEdit;
 })();
 </script>
