@@ -9,13 +9,12 @@
 :root{
   --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
   --blue:#2563eb;--blue2:#1d4ed8;--ok:#16a34a;--bad:#ef4444;
-  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.08);
+  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1)
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
 a{color:#1e3a8a;text-decoration:none}
 
-/* Container */
 .app{max-width:1100px;margin:20px auto;padding:16px}
 h1{text-align:center;font-weight:800;color:#1e3a8a;margin:0}
 .hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
@@ -23,89 +22,83 @@ h1{text-align:center;font-weight:800;color:#1e3a8a;margin:0}
 /* Desktop Toolbar & Tabelle */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
 .toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
-.btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
-.btn:hover{background:var(--blue2)}
-.warn{background:var(--bad)}
+.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
+.toolbar .warn{background:var(--bad)}
 .table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
 table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-th[data-sort]{cursor:pointer;user-select:none}
-th[data-sort]::after{content:" ⟲";opacity:.35;font-weight:400}
+th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
 tr:hover{background:#f8fbff}
-.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem;white-space:nowrap}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:after{content:" ⟲";color:#9aa3b2;font-weight:400}
+.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem;display:inline-block}
 
-/* Footer info */
-.footer-info{margin:12px 0;color:#6b7280;text-align:center}
+/* Desktop Count Footer */
+.desk-info{margin:10px 0;text-align:right;color:#6b7280;font-size:.95rem}
 
-/* === Mobile Styles === */
-.mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
-.mob-title{display:flex;align-items:center;justify-content:space-between}
-.mob-actions{display:flex;gap:10px}
-.iconbtn{
-  width:42px;height:42px;border-radius:12px;border:1px solid #cfd6e4;
-  background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px
+/* ===== Mobile ===== */
+.mobile-only{display:none}
+.mobile-header{
+  position:sticky;top:0;background:#eef4ff;border-bottom:1px solid #dbe3ff;
+  padding:10px;z-index:12
 }
+.mob-title{display:flex;align-items:center;justify-content:space-between}
+.mob-title h2{margin:0;font-size:1.1rem;font-weight:800;color:#1e3a8a}
+.mob-actions{display:flex;gap:8px}
+.iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+
 .mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
 .mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.mob-list{display:none;padding:10px}
 
-/* Karten */
+.mob-list{padding:10px}
 .card{
-  background:#fff;border:1px solid #e5ebf3;border-radius:16px;padding:14px;margin-bottom:12px;
+  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
   box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;overflow:hidden
 }
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
-.card-cat{
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.badge{
   display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  padding:5px 12px;border-radius:999px;color:#fff;font-weight:800;transition:all .2s ease
+  padding:6px 12px;border-radius:999px;color:#fff;font-weight:800;font-size:.82rem
 }
-.card-cat[data-len="short"]{font-size:.9rem}
-.card-cat[data-len="medium"]{font-size:.82rem}
-.card-cat[data-len="long"]{font-size:.74rem;padding:4px 10px}
-.card-en{margin-top:8px;font-weight:800;font-size:1.06rem;word-break:break-word;overflow-wrap:anywhere}
-.card-de{margin-top:6px;color:#111827;font-size:1rem;word-break:break-word;overflow-wrap:anywhere}
-.card-row{margin-top:10px;display:flex;justify-content:flex-end}
-.card-row .mini{border:none;border-radius:10px;padding:8px 12px;background:#eaf0ff;color:#1f2937;font-weight:700}
+.card-title{margin-top:6px;font-weight:800;font-size:1.05rem;word-break:break-word;overflow-wrap:anywhere}
+.card-sub{margin-top:6px;color:#111827;font-size:1rem;word-break:break-word;overflow-wrap:anywhere}
+.card-actions{display:flex;justify-content:flex-end;margin-top:10px}
+.small-btn{border:none;background:#eaf0ff;border:1px solid #dbe3ff;color:#1f2937;padding:8px 10px;border-radius:10px;font-weight:700}
 
-/* Bottom Action Bar */
-.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.96);padding:10px;border-top:1px solid #e5ebf3}
-.fabs{display:flex;gap:10px}
-.fab{flex:1;padding:12px;border:none;border-radius:12px;font-weight:800;cursor:pointer;color:#fff}
-.fab.gray{background:#6b7280}
-.fab.blue{background:var(--blue)}
-.fab.warn{background:var(--bad)}
-.fab-row .hint{margin-top:6px;font-size:.9rem;color:#6b7280;text-align:center}
+/* Floating Add (nur im Anpassen-Modus) */
+.fab-add{
+  position:fixed;right:16px;bottom:84px;width:52px;height:52px;border-radius:50%;
+  background:var(--blue);color:#fff;border:none;font-weight:900;font-size:24px;display:none;align-items:center;justify-content:center;z-index:20;
+  box-shadow:0 8px 20px rgba(37,99,235,.35)
+}
 
-/* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50;padding:14px}
-.panel{background:#fff;border-radius:16px;padding:18px;width:92%;max-width:560px;box-shadow:var(--shadow)}
-.panel h3{margin:0 0 10px}
-.form-grid{display:grid;gap:10px;grid-template-columns:1fr 1fr}
-.form-grid label{display:flex;flex-direction:column;gap:6px;font-weight:700}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px;font-weight:600}
-.form-grid textarea{resize:vertical}
-.badge-preview{display:inline-block;margin-left:8px;padding:4px 10px;border-radius:999px;color:#fff;font-weight:800}
-.modal-actions{display:flex;gap:12px;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
-.modal-actions .left{display:flex;gap:12px}
-.modal-actions .right{display:flex;gap:12px}
+/* Bottom 3-Buttons */
+.bottom-bar{
+  position:sticky;bottom:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);
+  border-top:1px solid #e5ebf3;padding:10px;z-index:15
+}
+.bottom-grid{display:flex;gap:10px}
+.bottom-grid .bbtn{flex:1;border:none;border-radius:12px;padding:12px;font-weight:800;color:#fff;cursor:pointer}
+.bbtn.gray{background:#6b7280}.bbtn.blue{background:var(--blue)}.bbtn.warn{background:var(--bad)}
+
+/* Modal Editor */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:12px}
+.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px;box-shadow:var(--shadow)}
+.panel h3{margin:0 0 10px 0;font-weight:800}
+.form-grid{display:grid;gap:10px}
+.form-grid label{font-size:.92rem;font-weight:700;color:#374151;display:flex;flex-direction:column;gap:6px}
+.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px;font:inherit}
+.modal-actions{display:flex;gap:12px;justify-content:space-between;margin-top:16px}
+.btn{border:none;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff}
 .btn.ghost{background:#eef4ff;color:#111}
-.btn.danger{background:#ef4444;color:#fff}
-.readonly{background:#f3f4f6}
+.btn.danger{background:var(--bad);color:#fff}
 
 /* Responsive Umschalter */
 @media (max-width:900px){
-  .toolbar,.table-wrap{display:none}
-  .mobile-header,.mob-filters,.mob-list,.fab-row{display:block}
-  .form-grid{grid-template-columns:1fr}
-  .modal-actions{justify-content:space-between}
+  .desktop-only{display:none}
+  .mobile-only{display:block}
 }
-
-/* Desktop-only elements visible, mobile hidden */
-@media (min-width:901px){
-  .mobile-header,.mob-filters,.mob-list,.fab-row{display:none !important}
-}
-.footer{margin-top:14px;text-align:center;color:#6b7280}
 </style>
 </head>
 <body>
@@ -113,69 +106,69 @@ tr:hover{background:#f8fbff}
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <!-- Desktop Toolbar -->
-  <div class="toolbar">
-    <select id="filterCatDesk"></select>
-    <input id="searchDesk" type="text" placeholder="Suchen… EN/DE">
-    <button id="resetDesk" class="btn">Reset</button>
-    <button id="addDesk" class="btn">➕ Neue</button>
-    <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-    <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
-    <button id="tokenBtn" class="btn">⚙️ Token</button>
-    <a href="index.html" class="btn" style="background:#eaf0ff;color:#1f2937;border:1px solid #dbe3ff">⬅️ Zurück zum Trainer</a>
+  <!-- DESKTOP -->
+  <div class="desktop-only">
+    <div class="toolbar">
+      <select id="filterCatDesk"></select>
+      <input id="searchDesk" type="text" placeholder="Suchen…">
+      <button id="resetDesk" class="btn">Reset</button>
+      <button id="addDesk" class="btn">➕ Neue</button>
+      <button id="delDesk" class="btn warn">🗑️ Löschen</button>
+      <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
+      <button id="tokenBtn" class="btn">⚙️ Token</button>
+      <a href="index.html" class="btn" style="background:#eaf0ff;color:#1f2937;border:1px solid #dbe3ff">⬅️ Zurück</a>
+    </div>
+
+    <div class="table-wrap">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th style="width:44px">✓</th>
+            <th class="sortable" data-col="0">Englisch</th>
+            <th class="sortable" data-col="1">Deutsch</th>
+            <th>Kategorie</th>
+            <th style="width:120px">Aktion</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="desk-info" id="deskInfo">–</div>
   </div>
 
-  <!-- Desktop Tabelle -->
-  <div class="table-wrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th style="width:42px">✓</th>
-          <th data-sort="0">Englisch</th>
-          <th data-sort="1">Deutsch</th>
-          <th>Kategorie</th>
-          <!-- Gruppe/Hint absichtlich entfernt -->
-          <th style="width:120px">Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+  <!-- MOBILE -->
+  <div class="mobile-only">
+    <div class="mobile-header">
+      <div class="mob-title">
+        <h2>Vokabeln</h2>
+        <div class="mob-actions">
+          <button class="iconbtn" id="btnMobBack" title="Zurück">⬅️</button>
+          <button class="iconbtn" id="btnMobSearch" title="Suche">🔎</button>
+          <button class="iconbtn" id="btnMobFilter" title="Filter">🧪</button>
+        </div>
+      </div>
+    </div>
 
-  <!-- Mobile Header -->
-  <div class="mobile-header">
-    <div class="mob-title">
-      <h2 style="margin:0">Vokabeln</h2>
-      <div class="mob-actions">
-        <button class="iconbtn" id="btnBack" title="Zurück zum Trainer">⬅️</button>
-        <button class="iconbtn" id="btnFilter" title="Filter/Suche">🧪</button>
-        <button class="iconbtn" id="btnToken" title="GitHub-Token">⚙️</button>
+    <div class="mob-filters" id="mobFilters">
+      <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
+      <input id="searchMob" type="text" placeholder="Suchen…">
+      <button id="resetMob" class="btn">Reset</button>
+    </div>
+
+    <div class="mob-list" id="mobList"></div>
+
+    <button class="fab-add" id="fabAdd" title="Neue Vokabel">+</button>
+
+    <div class="bottom-bar">
+      <div class="bottom-grid">
+        <button class="bbtn gray" id="bbBack">Zurück</button>
+        <button class="bbtn blue" id="bbAdjust">Anpassen</button>
+        <button class="bbtn gray" id="bbSync">In DB</button>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Filterleiste -->
-  <div class="mob-filters" id="mobFilters">
-    <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
-    <input id="searchMob" type="text" placeholder="Suchen… EN/DE">
-    <button id="resetMob" class="btn">Reset</button>
-  </div>
-
-  <!-- Mobile Liste -->
-  <div class="mob-list" id="mobList"></div>
-
-  <!-- Bottom Action Bar (Mobile) -->
-  <div class="fab-row">
-    <div class="fabs">
-      <button class="fab gray" id="fabBack">Zurück</button>
-      <button class="fab blue" id="fabAdjust">Anpassen</button>
-      <button class="fab gray" id="fabSync">In DB</button>
-    </div>
-    <div class="hint" id="selectHint" style="display:none">Tippe Karten an, um sie auszuwählen. Dann „Löschen“ in der Karte verwenden.</div>
-  </div>
-
-  <div class="footer-info" id="countInfo">–</div>
-  <div class="footer">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
+  <div style="text-align:center;margin-top:10px;color:#6b7280">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
 </div>
 
 <!-- Modal Editor -->
@@ -183,31 +176,30 @@ tr:hover{background:#f8fbff}
   <div class="panel">
     <h3 id="modalTitle">Vokabel</h3>
     <div class="form-grid">
-      <label>Englisch<input id="mEn" type="text" autocomplete="off"></label>
-      <label>Deutsch<input id="mDe" type="text" autocomplete="off"></label>
+      <label>Englisch
+        <input id="mEn" type="text" autocomplete="off">
+      </label>
+      <label>Deutsch
+        <input id="mDe" type="text" autocomplete="off">
+      </label>
       <label>Kategorie
-        <span>
-          <select id="mCat"></select>
-          <span id="catBadge" class="badge-preview">Kategorie</span>
-        </span>
+        <select id="mCat"></select>
       </label>
       <label>Erstellt (nur Datum)
-        <input id="mDate" type="text" class="readonly" readonly>
+        <input id="mDate" type="date" readonly style="background:#f3f4f6">
       </label>
       <label>Gruppe / Variante
-        <input id="mGroup" type="text" autocomplete="off" placeholder="optional">
+        <input id="mGroup" type="text" autocomplete="off">
       </label>
       <label>Hinweis
-        <textarea id="mHint" rows="2" placeholder="optional"></textarea>
+        <textarea id="mHint" rows="2"></textarea>
       </label>
     </div>
     <div class="modal-actions">
-      <div class="left">
-        <button class="btn danger" id="mDelete" title="Vokabel löschen">🗑️ Löschen</button>
-      </div>
-      <div class="right">
-        <button class="btn ghost" id="mCancel">Abbrechen</button>
-        <button class="btn" id="mSave">Speichern</button>
+      <button class="btn ghost" id="mCancel" style="flex:1">Abbrechen</button>
+      <div style="flex:1;display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn danger" id="mDelete" title="Löschen">Löschen</button>
+        <button class="btn primary" id="mSave">Speichern</button>
       </div>
     </div>
   </div>
@@ -215,7 +207,6 @@ tr:hover{background:#f8fbff}
 
 <script>
 (function(){
-  /* Kategorien */
   const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
   const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
   const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
@@ -223,58 +214,54 @@ tr:hover{background:#f8fbff}
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-  /* Helpers */
   const $=s=>document.querySelector(s);
   const $$=s=>Array.from(document.querySelectorAll(s));
   const isMobile=()=>matchMedia("(max-width:900px)").matches;
-  const fmtDate=(iso)=>{try{return (iso||"").slice(0,10)}catch{ return "" }};
 
-  const filterCatDesk=$('#filterCatDesk'), filterCatMob=$('#filterCatMob');
-  const searchDesk=$('#searchDesk'), searchMob=$('#searchMob');
-  const tblBody=$('#tbl tbody'), mobList=$('#mobList'), countInfo=$('#countInfo');
+  const tblBody=$("#tbl tbody");
+  const deskInfo=$("#deskInfo");
+  const filterCatDesk=$("#filterCatDesk"), filterCatMob=$("#filterCatMob");
+  const searchDesk=$("#searchDesk"), searchMob=$("#searchMob");
 
-  const modal=$('#modal'), mTitle=$('#modalTitle');
-  const mEn=$('#mEn'), mDe=$('#mDe'), mCat=$('#mCat'), mDate=$('#mDate'), mGroup=$('#mGroup'), mHint=$('#mHint');
-  const catBadge=$('#catBadge');
+  const modal=$("#modal"), mTitle=$("#modalTitle");
+  const mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"), mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
+  const mDelete=$("#mDelete"), mSave=$("#mSave"), mCancel=$("#mCancel");
 
-  let list=[], sortCol=0, sortDir=1, editIndex=null;
-  let selectMode=false, selected=new Set();
+  const mobList=$("#mobList"), mobFilters=$("#mobFilters");
+  const fabAdd=$("#fabAdd"), bbBack=$("#bbBack"), bbAdjust=$("#bbAdjust"), bbSync=$("#bbSync");
+  const btnMobBack=$("#btnMobBack"), btnMobSearch=$("#btnMobSearch"), btnMobFilter=$("#btnMobFilter");
 
-  /* Local storage normalize */
+  let list=[], sortCol=0, sortDir=1, editIndex=null, mobileAdjust=false;
+
   const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
   const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
   const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
-  const idxInList=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
+  const fmtDate=(iso)=>{ try{ return new Date(iso).toISOString().slice(0,10);}catch{return ""; } };
+  const idxOf=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
 
-  function fillCatSelect(el, withAll=false){
-    el.innerHTML= withAll ? '<option value="Alle">Alle (bunt gemischt)</option>' : '';
+  function fillCats(select, withAll){
+    select.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
     Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement('option');
+      const o=document.createElement("option");
       o.value=k; o.textContent=CATEGORY_NAMES[k];
-      if(!withAll){ o.style.backgroundColor=COLOR_MAP[k]; o.style.color=TEXT_ON[k]; }
-      el.appendChild(o);
+      // farbig im Dropdown (Desktop / Mobile Filter nur Text, im Editor egal)
+      if(select===mCat){ o.style.background=COLOR_MAP[k]; o.style.color=TEXT_ON[k]; }
+      select.appendChild(o);
     });
-  }
-  function updateCatBadge(){
-    const k=mCat.value||"Gelb";
-    catBadge.textContent=CATEGORY_NAMES[k]||"Kategorie";
-    catBadge.style.background=COLOR_MAP[k]||"#ccc";
-    catBadge.style.color=TEXT_ON[k]||"#000";
   }
 
   async function loadData(){
     try{
       const r=await fetch(RAW_URL,{cache:"no-store"});
-      list=(await r.json()).map(normalize);
+      const d=await r.json();
+      list=d.map(normalize);
       saveLocal(list);
-      $('.footer').textContent="© 2025 Beeferino • Datenquelle: GitHub (Online)";
-    }catch(e){
+    }catch{
       list=loadLocal();
-      $('.footer').textContent="© 2025 Beeferino • Datenquelle: Lokaler Speicher";
     }
-    fillCatSelect(filterCatDesk,true);
-    fillCatSelect(filterCatMob,true);
-    fillCatSelect(mCat,false);
+    fillCats(filterCatDesk,true);
+    fillCats(filterCatMob,true);
+    fillCats(mCat,false);
     renderAll();
   }
 
@@ -285,173 +272,163 @@ tr:hover{background:#f8fbff}
   }
   function filtered(){
     const {cat,q}=currentFilter();
-    let data=list.filter(v=>{
-      const okCat=(cat==="Alle"||v[2]===cat);
-      const okQ= !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
-      return okCat && okQ;
+    let res=list.filter(v=>{
+      const mc=(cat==="Alle"||v[2]===cat);
+      const mq=!q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
+      return mc && mq;
     });
-    // desktop sort by col 0/1
-    if(!isMobile()){
-      data = data.slice().sort((a,b)=> a[sortCol].localeCompare(b[sortCol]) * sortDir);
-    }
-    return data;
+    res=res.slice().sort((a,b)=>a[sortCol].localeCompare(b[sortCol])*(sortDir));
+    return res;
   }
 
-  function renderCounts(){
-    const total=list.length, shown=filtered().length;
-    countInfo.textContent = `📚 Gesamt: ${total} • 🔎 Gefiltert: ${shown}`;
-  }
-
-  /* Desktop render */
   function renderDesktop(){
     const data=filtered();
     tblBody.innerHTML=data.map(v=>{
-      const i=idxInList(v);
-      const cat=v[2]; const bg=COLOR_MAP[cat]||"#ccc", fg=TEXT_ON[cat]||"#000";
+      const i=idxOf(v);
       return `<tr>
         <td><input type="checkbox" data-idx="${i}"></td>
         <td>${escapeHtml(v[0])}</td>
         <td>${escapeHtml(v[1])}</td>
-        <td><span class="category-chip" style="background:${bg};color:${fg}">${escapeHtml(CATEGORY_NAMES[cat]||cat)}</span></td>
-        <td style="text-align:right">
-          <button class="btn" data-edit="${i}">✏️ Bearbeiten</button>
-        </td>
+        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+        <td><button class="btn" data-edit="${i}" style="padding:6px 10px">Bearbeiten</button></td>
       </tr>`;
-    }).join('');
+    }).join("");
     $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-    renderCounts();
+    const total=list.length, shown=data.length;
+    deskInfo.textContent=`📚 Gesamt: ${total} • 🔎 Gefiltert: ${shown}`;
   }
 
-  /* Mobile render */
   function renderMobile(){
     const data=filtered();
     mobList.innerHTML=data.map(v=>{
-      const i=idxInList(v);
-      const cat=v[2]; const bg=COLOR_MAP[cat]||"#ccc", fg=TEXT_ON[cat]||"#000";
-      const len=(CATEGORY_NAMES[cat]||"").length;
-      const lenKey = len<16 ? "short" : len<30 ? "medium" : "long";
-      const sel = selected.has(i) ? " selected" : "";
-      return `<div class="card${sel}" data-idx="${i}">
+      const i=idxOf(v), cat=v[2];
+      const bg=COLOR_MAP[cat], fg=TEXT_ON[cat], catName=CATEGORY_NAMES[cat];
+      return `<div class="card" data-idx="${i}">
         <div class="card-top">
-          <div class="card-cat" data-len="${lenKey}" style="background:${bg};color:${fg}">${escapeHtml(CATEGORY_NAMES[cat]||cat)}</div>
+          <span class="badge" style="background:${bg};color:${fg}">${catName}</span>
+          <button class="small-btn mob-edit" data-edit="${i}">Bearbeiten</button>
         </div>
-        <div class="card-en">${escapeHtml(v[0])}</div>
-        <div class="card-de">${escapeHtml(v[1])}</div>
-        <div class="card-row">
-          <button class="mini" data-edit="${i}">Bearbeiten</button>
-        </div>
+        <div class="card-title">${escapeHtml(v[0])}</div>
+        <div class="card-sub" style="margin-top:6px">${escapeHtml(v[1])}</div>
       </div>`;
-    }).join('');
+    }).join("");
 
-    // attach
-    $$('.card .mini').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
+    $$('.mob-edit').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
+
     $$('.card').forEach(card=>{
       card.onclick=()=>{
-        if(!selectMode) return;
+        if(!mobileAdjust) return;
         const i=+card.dataset.idx;
-        if(selected.has(i)) selected.delete(i); else selected.add(i);
-        card.classList.toggle('selected');
-      };
+        if(confirm("Diesen Eintrag löschen?")){
+          list=list.filter((_,ix)=>ix!==i);
+          saveLocal(list);
+          renderAll();
+        }
+      }
     });
-    renderCounts();
+
+    // Anzeigen der Add-FAB im Anpassen-Modus
+    fabAdd.style.display=mobileAdjust?'flex':'none';
   }
 
   function renderAll(){
-    if(isMobile()){ renderMobile(); }
-    else { renderDesktop(); }
+    renderDesktop();
+    renderMobile();
   }
 
-  /* Sorting desktop (Englisch/Deutsch) */
-  $$('th[data-sort]').forEach(th=>{
-    th.addEventListener('click',()=>{
-      const c=+th.dataset.sort;
-      sortDir = (sortCol===c) ? -sortDir : 1;
-      sortCol=c;
-      renderDesktop();
-    });
-  });
-
-  /* Modal CRUD */
   function openEdit(i=null){
     editIndex=i;
     if(i==null){
       mTitle.textContent="Neue Vokabel";
-      mEn.value=mDe.value=mGroup.value=mHint.value="";
-      mCat.value="Gelb";
+      mEn.value=""; mDe.value=""; mCat.value="Gelb";
+      mGroup.value=""; mHint.value="";
       mDate.value=fmtDate(new Date().toISOString());
+      mDelete.style.display="none";
     }else{
       const v=list[i];
       mTitle.textContent="Vokabel bearbeiten";
       mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
       mGroup.value=v[3]||""; mHint.value=v[4]||"";
-      mDate.value=fmtDate(v[5]||new Date().toISOString());
+      mDate.value=fmtDate(v[5]);
+      mDelete.style.display="inline-block";
     }
-    updateCatBadge();
     modal.style.display="flex";
   }
   function closeModal(){ modal.style.display="none"; }
 
-  $('#mCancel').onclick=closeModal;
-  $('#mSave').onclick=()=>{
+  mCancel.onclick=closeModal;
+  mSave.onclick=()=>{
     const en=mEn.value.trim(), de=mDe.value.trim();
     const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim();
-    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
+    if(!en||!de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
     if(editIndex==null){
       list.push([en,de,cat,grp,hint,new Date().toISOString()]);
     }else{
       const old=list[editIndex];
-      list[editIndex]=[en,de,cat,grp,hint, old[5]||new Date().toISOString()];
+      list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];
     }
     saveLocal(list);
-    closeModal();
-    renderAll();
+    closeModal(); renderAll();
   };
-  $('#mDelete').onclick=()=>{
-    if(editIndex==null){ closeModal(); return; }
-    if(!confirm("Eintrag löschen?")) return;
+  mDelete.onclick=()=>{
+    if(editIndex==null) return;
+    if(!confirm("Diesen Eintrag löschen?")) return;
     list.splice(editIndex,1);
     saveLocal(list);
-    closeModal();
-    renderAll();
+    closeModal(); renderAll();
   };
   modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
-  mCat.addEventListener('change',updateCatBadge);
 
-  /* Desktop Buttons */
-  $('#addDesk').onclick=()=>openEdit(null);
-  $('#delDesk').onclick=()=>{
-    const ids = $$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
-    if(!ids.length){ alert("Bitte mindestens eine Zeile markieren."); return; }
-    if(!confirm(`${ids.length} Einträge löschen?`)) return;
-    list=list.filter((v,i)=>!ids.includes(i));
-    saveLocal(list);
+  function resetFilters(){
+    if(isMobile()){ filterCatMob.value="Alle"; searchMob.value=""; }
+    else { filterCatDesk.value="Alle"; searchDesk.value=""; }
     renderAll();
-  };
-  $('#resetDesk').onclick=()=>{ filterCatDesk.value="Alle"; searchDesk.value=""; renderAll(); };
+  }
 
-  /* Mobile buttons */
-  $('#btnBack').onclick=()=>location.href="index.html";
-  $('#fabBack').onclick=()=>location.href="index.html";
-  $('#btnFilter').onclick=()=>{ const mf=$('#mobFilters'); mf.style.display = (mf.style.display==='grid'?'none':'grid'); if(mf.style.display==='grid'){ mf.style.display='grid'; } };
-  $('#resetMob').onclick=()=>{ filterCatMob.value="Alle"; searchMob.value=""; renderAll(); };
-  $('#fabAdjust').onclick=()=>{
-    selectMode=!selectMode;
-    selected.clear();
-    $('#selectHint').style.display = selectMode?'block':'none';
-    renderMobile();
-    if(selectMode){
-      // In Auswahlmodus: Lösch-Buttons in Karten ersetzen? (Wir lassen Löschaktion im Editor – einfacher)
-      // Optional: sofort Info anzeigen
-    }
-  };
-
-  /* Filters bind */
+  $("#resetDesk").onclick=resetFilters;
+  $("#resetMob").onclick=resetFilters;
   [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{
+    if(!el) return;
     el.addEventListener('input',renderAll);
     el.addEventListener('change',renderAll);
   });
 
-  /* Token + Sync */
+  $("#addDesk").onclick=()=>openEdit(null);
+  fabAdd.onclick=()=>openEdit(null);
+
+  $("#delDesk").onclick=()=>{
+    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
+    if(!ids.length) return alert("Bitte mindestens eine Zeile markieren.");
+    if(!confirm(`${ids.length} Einträge löschen?`)) return;
+    list=list.filter((_,i)=>!ids.includes(i));
+    saveLocal(list); renderAll();
+  };
+
+  $("#tokenBtn").onclick=()=>{ localStorage.removeItem('gh_token'); setTimeout(()=>getToken(),50); };
+
+  async function githubSync(){
+    const token=getToken(); if(!token) return;
+    try{
+      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      const get=await fetch(api,{headers:{Authorization:`token ${token}`}});
+      const meta=await get.json();
+      const sha=meta && meta.sha ? meta.sha : undefined;
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      const res=await fetch(api,{
+        method:"PUT",
+        headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
+        body:JSON.stringify({message:"Update via Vokabel-UI",content,sha})
+      });
+      if(!res.ok) throw new Error(await res.text());
+      alert("✅ Erfolgreich in Datenbank eingetragen.");
+    }catch(e){
+      console.error(e);
+      alert("❌ Sync fehlgeschlagen.");
+    }
+  }
+  $("#syncDesk").onclick=githubSync;
+  $("#bbSync").onclick=githubSync;
+
   function getToken(){
     let t=localStorage.getItem('gh_token')||"";
     if(!t){
@@ -460,31 +437,33 @@ tr:hover{background:#f8fbff}
     }
     return t;
   }
-  async function githubSync(){
-    const token=getToken(); if(!token) return;
-    try{
-      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-      const meta=await fetch(api,{headers:{Authorization:`token ${token}`}}).then(r=>r.json());
-      const sha=meta.sha;
-      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const res=await fetch(api,{
-        method:'PUT',
-        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
-        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
-      });
-      if(!res.ok) throw new Error(await res.text());
-      alert("✅ Erfolgreich in Datenbank eingetragen.");
-    }catch(e){ console.error(e); alert("❌ Sync fehlgeschlagen."); }
-  }
-  $('#syncDesk').onclick=githubSync;
-  $('#fabSync').onclick=githubSync;
-  $('#tokenBtn').onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
-  $('#btnToken').onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
 
-  /* Utilities */
-  function escapeHtml(s){return (s||"").replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  // Desktop Sortierung (Spalten 0 / 1)
+  $$('th.sortable').forEach(th=>{
+    th.onclick=()=>{
+      const c=+th.dataset.col;
+      if(sortCol===c) sortDir*=-1; else { sortCol=c; sortDir=1; }
+      renderAll();
+    };
+  });
 
-  /* Init */
+  // Mobile Header Buttons
+  btnMobBack.onclick=()=>location.href="index.html";
+  bbBack.onclick=()=>location.href="index.html";
+  btnMobSearch.onclick=()=>{ mobFilters.style.display = mobFilters.style.display==='grid' ? 'none' : 'grid'; };
+  btnMobFilter.onclick=()=>{ mobFilters.style.display = mobFilters.style.display==='grid' ? 'none' : 'grid'; };
+
+  // Anpassen-Modus toggeln
+  bbAdjust.onclick=()=>{
+    mobileAdjust=!mobileAdjust;
+    bbAdjust.textContent = mobileAdjust ? "Fertig" : "Anpassen";
+    renderMobile(); // zeigt/hide FAB + setzt Tap-to-delete
+  };
+
+  // Hilfsfunktionen
+  function escapeHtml(s){return (s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));}
+
+  // Init
   loadData();
 })();
 </script>
