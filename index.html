@@ -286,7 +286,7 @@ details.recent-section summary:hover{color:#2563eb}
 
   <div id="progress" class="progress">Bereit • klicke auf „Vokabel-Abfrage starten“</div>
 
-  <!-- Stage initial unsichtbar; Inhalte werden per JS gesetzt -->
+  <!-- Stage initial unsichtbar -->
   <section id="stage" class="">
     <div id="chip" class="chip">–</div>
     <div id="q" class="word">Bereit?</div>
@@ -385,14 +385,6 @@ async function loadData(){
 
 /* --- Utils & Spielmechanik --- */
 function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function pick(list){
-  let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);
-  shuffle(l);
-  return l.slice(0,15);
-}
-function showStage(show){stage.style.display=show?"block":"none";}
-
-/* robustere Eingabeprüfung */
 function normalize(s){
   return s
     .trim()
@@ -407,21 +399,67 @@ function isCorrectInput(input, solution){
   return options.includes(a);
 }
 
-/* Fehlerliste ohne Duplikate */
-let errorsList=[];
-function addErrorOnce(item){
-  if(!errorsList.includes(item)) errorsList.push(item);
+/* Fehlerverwaltung */
+let errorsList=[]; // Zählung/Wiederholungen (UI)
+function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
+
+/* --- Endlos-Abfrage-Setup (nur learn) --- */
+let modeEndless=false;        // aktiv nur für Abfrage/learn
+let source=[];                // aktueller Pool (Kategorie-Filter oder letzte 30)
+let sourceIdx=0;
+let curr=null;                // aktuell abgefragtes [en,de,cat]
+let currAskedEN=true;         // welche Richtung wurde gefragt
+let correct="";               // erwartete Lösung
+
+let totalAsked=0;             // total beantwortete Fragen in dieser Session
+let sinceCheckpoint=0;        // seit letztem 15er-Checkpoint
+
+// Fehlerübersicht für Rundenende (Frage -> Lösung), key: en|de|askedEN
+const errorMap = new Map();
+
+function resetEndless(pool){
+  source = pool.slice();
+  shuffle(source);
+  sourceIdx = 0;
+  curr = null;
+  correct = "";
+  sinceCheckpoint = 0;
+  totalAsked = 0;
+  errorsList = [];
+  errorMap.clear();
 }
 
-let round=[], i=0, game="learn", delay=3000, trap=false, correct="";
+function getNextItem(){
+  if(source.length===0) return null;
+  const item = source[sourceIdx];
+  sourceIdx = (sourceIdx + 1) % source.length;
+  if(sourceIdx===0) shuffle(source); // bei Umlauf neu mischen
+  return item;
+}
+
+function recordErrorForSummary(item, askedEN){
+  const [en,de,cat] = item;
+  const question = askedEN ? en : de;
+  const answer   = askedEN ? de : en;
+  const key = `${en}|${de}|${askedEN ? 1 : 0}`;
+  if(!errorMap.has(key)){
+    errorMap.set(key, { q: question, correct: answer, cat });
+  }
+}
+
+/* --- Klassischer (finite) Modus Variablen (Karten etc.) --- */
+let round=[], i=0, game="learn", delay=3000, trap=false;
+
+/* UI Helpers */
 function setProg(){
-  progress.textContent=`Vokabel ${Math.min(i+1, round.length)}/${round.length || 0} | Wiederholungen: ${errorsList.length}`;
+  // Endlos: Frage X | Fehler: n  • Checkpoint bei 15
+  if(modeEndless && game==="learn"){
+    progress.textContent = `Frage ${totalAsked + 1} | Fehler: ${errorsList.length} (Checkpoint alle 15)`;
+  }else{
+    progress.textContent = `Vokabel ${Math.min(i+1, round.length)}/${round.length || 0} | Wiederholungen: ${errorsList.length}`;
+  }
 }
-function flash(ok){
-  if(!chkFeedback.checked){ i++; return next(); }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); i++; next(); }, delay);
-}
+function showStage(show){ stage.style.display=show?"block":"none"; }
 function randomizeButtons(){
   const buttons=[btnRight,btnDec,btnSkip];
   const order=[0,1,2].sort(()=>Math.random()-0.5);
@@ -429,7 +467,88 @@ function randomizeButtons(){
   order.forEach(idx=>rowButtons.appendChild(buttons[idx]));
 }
 
+/* Feedback-Flash + Fortschritt */
+function afterAdvance(){
+  if(modeEndless && game==="learn"){
+    sinceCheckpoint++;
+    totalAsked++;
+    // 15er-Checkpoint?
+    if(sinceCheckpoint>=15){
+      sinceCheckpoint = 0;
+      const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+      if(endNow){ return endRound(); }
+    }
+    next(); // weiter im Endlos-Modus
+  }else{
+    i++;
+    next();
+  }
+}
+
+function flash(ok){
+  if(!chkFeedback.checked){
+    return afterAdvance();
+  }
+  stage.classList.add(ok?"flash-correct":"flash-wrong");
+  setTimeout(()=>{
+    stage.classList.remove(ok?"flash-correct":"flash-wrong");
+    afterAdvance();
+  }, delay);
+}
+
+/* Runde beenden (nur Endlos-Abfrage) */
+function endRound(){
+  showStage(false);
+  if(errorMap.size===0){
+    alert("🎉 Runde beendet – keine Fehler!");
+  }else{
+    const lines = Array.from(errorMap.values()).map(v=>{
+      const catMeta = CATS[v.cat] || ["Kategorie","#ddd","#000"];
+      return `• ${v.q} → ${v.correct}  [${catMeta[0]}]`;
+    });
+    alert("❗ Fehlerübersicht:\n\n" + lines.join("\n"));
+  }
+  progress.textContent = "Runde beendet. Starte eine neue Runde oder spiele weiter.";
+  // Reset, aber Pool bleibt bestehen – bei erneutem Start wird resetEndless() aufgerufen
+}
+
+/* Nächste Frage */
 function next(){
+  delay = parseInt(selDelay.value,10);
+
+  /* ---- Endlos-Abfrage ---- */
+  if(modeEndless && game==="learn"){
+    // falls gerade beendet wurde, nicht weiter rendern
+    if(source.length===0) { alert("Keine Vokabeln vorhanden"); return; }
+
+    const item = getNextItem();
+    curr = item; trap=false; offer.textContent="";
+    const [en,de,cat] = item;
+    const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
+    chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
+
+    // Richtung bestimmen
+    currAskedEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
+    const question = currAskedEN ? en : de;
+    const answer   = currAskedEN ? de : en;
+    correct = answer;
+
+    q.textContent = question;
+
+    // Eingabe-Modus
+    btnRight.style.display="none";
+    btnDec.style.display="none";
+    btnSkip.style.display="inline-block";
+    rowButtons.style.display="flex";
+    rowInput.style.display="flex";
+    inp.value="";
+    inp.focus(); inp.select?.();
+
+    setProg(); showStage(true);
+    return;
+  }
+
+  /* ---- Klassische Modi (Karten/Last30 Karten) ---- */
   if(i>=round.length){
     if(errorsList.length>0){
       alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
@@ -446,7 +565,7 @@ function next(){
       return;
     }
   }
-  delay=parseInt(selDelay.value,10);
+
   const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
   chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
@@ -461,7 +580,7 @@ function next(){
   if(game==="cards"){
     trap=false;
 
-    // Buttons sichtbar machen (Fix)
+    // Buttons sichtbar (Karten)
     btnRight.style.display="inline-block";
     btnDec.style.display="inline-block";
     btnSkip.style.display="inline-block";
@@ -493,10 +612,20 @@ function next(){
 }
 
 /* --- Button-Handler --- */
-btnRight.onclick=()=>{ const ok=!trap; if(!ok) addErrorOnce(round[i]); flash(ok); };
+btnRight.onclick=()=>{
+  const itemRef = (modeEndless && game==="learn") ? curr : round[i];
+  const ok = !trap;
+  if(!ok){
+    addErrorOnce(itemRef);
+    if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef, currAskedEN); }
+  }
+  flash(ok);
+};
 
 btnDec.onclick=()=>{
-  if(game!=="cards") return;
+  if(game!=="cards") return; // nur Kartenmodus
+
+  const itemRef = round[i];
 
   if(trap){
     rowInput.style.display="flex";
@@ -509,33 +638,84 @@ btnDec.onclick=()=>{
         flash(true);
       }else{
         offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-        addErrorOnce(round[i]);
+        addErrorOnce(itemRef);
         setTimeout(()=>flash(false), parseInt(selDelay.value,10));
       }
     };
   }else{
-    addErrorOnce(round[i]);
+    addErrorOnce(itemRef);
     flash(false);
   }
 };
 
-btnSkip.onclick=()=>{ addErrorOnce(round[i]); i++; next(); };
+btnSkip.onclick=()=>{
+  const itemRef = (modeEndless && game==="learn") ? curr : round[i];
+  addErrorOnce(itemRef);
+  if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef, currAskedEN); }
+  // im Endlosmodus nicht i++ (wird in afterAdvance gemacht); hier direkt weiter:
+  if(modeEndless && game==="learn"){ return afterAdvance(); }
+  i++; next();
+};
 
 btnSub.onclick=()=>{
+  const itemRef = (modeEndless && game==="learn") ? curr : round[i];
   const ok=isCorrectInput(inp.value, correct);
-  if(!ok) addErrorOnce(round[i]);
+  if(!ok){
+    addErrorOnce(itemRef);
+    if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef, currAskedEN); }
+  }
   flash(ok);
 };
 
 inp.addEventListener("keydown",e=>{ if(e.key==="Enter") btnSub.click(); });
 
-btnLearn.onclick=()=>{ game="learn"; i=0; errorsList=[]; round=pick(data); btnSkip.style.display="inline-block"; next(); };
-btnCards.onclick=()=>{ game="cards"; i=0; errorsList=[]; round=pick(data); btnSkip.style.display="inline-block"; next(); };
+/* --- Start-Buttons --- */
+function filterByCategory(list){
+  return selCat.value==="Alle" ? list.slice() : list.filter(v=>v[2]===selCat.value);
+}
+
+btnLearn.onclick=()=>{
+  game="learn";
+  modeEndless=true;                      // Endlos aktiv
+  const pool = filterByCategory(data);
+  if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
+  resetEndless(pool);
+  next();
+};
+
+btnCards.onclick=()=>{
+  game="cards";
+  modeEndless=false;                     // Karten bleiben endlich
+  i=0; errorsList=[];
+  const pool = filterByCategory(data);
+  shuffle(pool);
+  round = pool.slice(0,15);
+  btnSkip.style.display="inline-block";
+  next();
+};
+
 btnLast30.onclick=()=>{
-  const l=data.slice(-30);
-  if(!l.length) return alert("Keine Vokabeln vorhanden");
-  game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
-  round=l; i=0; errorsList=[]; btnSkip.style.display="inline-block"; next();
+  const last30 = data.slice(-30);
+  if(!last30.length) return alert("Keine Vokabeln vorhanden");
+
+  const useCards = confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
+  if(useCards){
+    // Kartenmodus mit letzten 30
+    game="cards"; modeEndless=false;
+    i=0; errorsList=[];
+    const pool = filterByCategory(last30);
+    shuffle(pool);
+    round = pool.slice(0,15);
+    btnSkip.style.display="inline-block";
+    next();
+  }else{
+    // Abfrage-Endlosmodus mit letzten 30
+    game="learn"; modeEndless=true;
+    const pool = filterByCategory(last30);
+    if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
+    resetEndless(pool);
+    next();
+  }
 };
 
 function renderRecent(){
