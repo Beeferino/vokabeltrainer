@@ -19,13 +19,12 @@ a{color:#1e3a8a;text-decoration:none}
 h1{text-align:center;font-weight:800;color:#1e3a8a;margin:8px 0 4px}
 .hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
 
-/* Desktop Toolbar & Tabelle */
+/* ======== DESKTOP: fixiert, nie anrühren ======== */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
 .toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
 .toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
 .toolbar .warn{background:var(--bad)}
 .toolbar .ghost{background:#eef4ff;color:#111}
-
 .table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
 table{width:100%;border-collapse:collapse}
 th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
@@ -33,16 +32,12 @@ th.sortable{cursor:pointer;user-select:none}
 th.sortable:hover{background:#f3f6ff}
 tr:hover{background:#f8fbff}
 .category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-
-/* Statusleiste */
 .status-line{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:10px 2px;color:#6b7280;font-size:.95rem}
-
-/* Toast */
 .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
   background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9999}
 .toast.show{opacity:1}
 
-/* Modal */
+/* ======== MODAL (Editor) ======== */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
 .panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px;box-shadow:var(--shadow)}
 .panel h3{margin:0 0 10px 0}
@@ -54,58 +49,57 @@ tr:hover{background:#f8fbff}
 .btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
 .btn.warn{background:var(--bad);color:#fff}
 
-/* Mobile Layout */
+/* ======== MOBILE VIEW ======== */
 .mobile-only{display:none}
-.mob-header{position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:5}
-.mob-title{display:flex;align-items:center;justify-content:center;font-weight:800}
+.mob-header{position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:5;text-align:center;font-weight:800}
 .mob-list{padding:12px}
 .card{
-  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
+  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:16px;
   box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;overflow:hidden
 }
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;flex-wrap:wrap}
 .card-cat{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  padding:4px 10px;border-radius:999px;color:#fff;font-weight:700}
-.card-title{font-weight:800;font-size:1.05rem;word-break:break-word;overflow-wrap:anywhere}
-.card-sub{color:var(--muted);margin-top:6px}
-.card-row{margin-top:10px}
-.card-row .btn{width:100%;background:var(--blue);color:#fff}
+  padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px}
+.card-title{font-weight:800;font-size:1.05rem;word-break:break-word;overflow-wrap:anywhere;margin-bottom:6px}
+.card-sub{color:var(--muted);margin-bottom:10px}
+.card-row{text-align:right}
+.card-row .btn{background:var(--blue);color:#fff;font-size:.85rem;padding:6px 10px;border-radius:8px}
 
-/* Bottom bar (Mobile) */
+/* ======== Floating Bottom Buttons ======== */
 .fab-row{position:sticky;bottom:0;background:rgba(255,255,255,.95);
   padding:10px;border-top:1px solid #e5ebf3;display:none}
 .fabs{display:flex;gap:8px}
 .fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
 .fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
 
-/* Speed dial right side (Google+ style) */
-.dial{position:fixed;right:14px;bottom:50%;transform:translateY(50%);display:none;z-index:15}
+/* ======== Floating Speed Dial (unten rechts) ======== */
+.dial{position:fixed;right:14px;bottom:20px;display:none;z-index:20;display:flex;flex-direction:column;align-items:flex-end}
 .dial button{
-  width:48px;height:48px;border-radius:50%;border:none;margin:8px 0;box-shadow:0 8px 20px rgba(0,0,0,.15);
-  background:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px
+  width:48px;height:48px;border-radius:50%;border:none;margin-top:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:transform .2s,box-shadow .2s
 }
-.dial button:hover{transform:translateY(-1px)}
-.dial .back{background:#1f2937;color:#fff}   /* zurück */
-.dial .find{background:#2563eb;color:#fff}   /* suche/filter */
-.dial .gear{background:#10b981;color:#fff}   /* token/sync menu */
+.dial button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.dial .back{background:#1f2937;color:#fff}
+.dial .find{background:#2563eb;color:#fff}
+.dial .gear{background:#10b981;color:#fff}
 
-/* Slide-in panel (mobile filter/search) */
-.slide{position:fixed;left:0;right:0;top:0;background:#fff;border-bottom:1px solid #e5ebf3;transform:translateY(-110%);
-  transition:transform .25s ease;z-index:20;padding:12px}
+/* ======== Slide-in Filter ======== */
+.slide{position:fixed;left:0;right:0;top:0;background:#fff;border-bottom:1px solid #e5ebf3;
+  transform:translateY(-110%);transition:transform .25s ease;z-index:25;padding:12px}
 .slide.show{transform:translateY(0)}
 .slide .row{display:flex;gap:8px}
 .slide select,.slide input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
 .slide .btn{white-space:nowrap}
 
-/* Footer */
+/* ======== Footer ======== */
 .footer{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 
-/* Responsive Umschalter */
+/* ======== Responsive Umschalter ======== */
 @media (max-width:900px){
   .desktop-only{display:none}
   .mobile-only{display:block}
-  .dial{display:block}
+  .dial{display:flex}
   .fab-row{display:block}
 }
 </style>
@@ -115,7 +109,7 @@ tr:hover{background:#f8fbff}
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <!-- DESKTOP: Toolbar -->
+  <!-- DESKTOP (gesperrt, bleibt unverändert) -->
   <div class="toolbar desktop-only">
     <select id="filterCatDesk"></select>
     <input id="searchDesk" type="text" placeholder="Suchen…">
@@ -125,8 +119,6 @@ tr:hover{background:#f8fbff}
     <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
     <button id="tokenBtn" class="btn">⚙️ Token</button>
   </div>
-
-  <!-- DESKTOP: Tabelle -->
   <div class="table-wrap desktop-only">
     <table id="tbl">
       <thead>
@@ -143,19 +135,15 @@ tr:hover{background:#f8fbff}
       <tbody></tbody>
     </table>
   </div>
-
-  <!-- DESKTOP: Status -->
   <div class="status-line desktop-only">
     <div id="sourceInfo">Datenquelle: –</div>
     <div id="countInfo">Gefunden 0 von 0</div>
   </div>
 
-  <!-- MOBILE: Header / Titel -->
-  <div class="mob-header mobile-only">
-    <div class="mob-title">Vokabeln</div>
-  </div>
+  <!-- MOBILE HEADER -->
+  <div class="mob-header mobile-only">Vokabeln</div>
 
-  <!-- MOBILE: Slide-in Suche/Filter -->
+  <!-- MOBILE SLIDE FILTER -->
   <div class="slide mobile-only" id="slideFilter">
     <div class="row" style="margin-bottom:8px">
       <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
@@ -164,10 +152,10 @@ tr:hover{background:#f8fbff}
     </div>
   </div>
 
-  <!-- MOBILE: Kartenliste -->
+  <!-- MOBILE LIST -->
   <div class="mob-list mobile-only" id="mobList"></div>
 
-  <!-- MOBILE: Bottom bar -->
+  <!-- MOBILE BOTTOM BAR -->
   <div class="fab-row mobile-only">
     <div class="fabs">
       <button class="fab gray" id="fabSelect">Auswahl</button>
@@ -180,49 +168,30 @@ tr:hover{background:#f8fbff}
     </div>
   </div>
 
-  <!-- MOBILE: Side Speed Dial -->
+  <!-- MOBILE FLOATING DIAL -->
   <div class="dial mobile-only">
     <button class="back" id="dialBack" title="Zurück zum Trainer">⟵</button>
     <button class="find" id="dialFind" title="Suche / Filter">🔎</button>
     <button class="gear" id="dialGear" title="Token / Sync">⚙️</button>
   </div>
 
-  <!-- FOOTER -->
   <div class="footer desktop-only">
     <a href="index.html">⬅️ Zurück zum Trainer</a>
     <div style="margin-top:6px">© 2025 Beeferino • <span id="sourceInfoFoot">Datenquelle: –</span></div>
   </div>
 </div>
 
-<!-- MODAL: Editor -->
+<!-- MODAL -->
 <div class="modal" id="modal">
   <div class="panel">
     <h3 id="modalTitle">Vokabel</h3>
     <div class="form-grid">
-      <div>
-        <label>Englisch</label>
-        <input id="mEn" type="text" autocomplete="off">
-      </div>
-      <div>
-        <label>Deutsch</label>
-        <input id="mDe" type="text" autocomplete="off">
-      </div>
-      <div>
-        <label>Kategorie</label>
-        <select id="mCat"></select>
-      </div>
-      <div>
-        <label>Erstellt</label>
-        <input id="mDate" type="datetime-local" readonly style="background:#f3f4f6">
-      </div>
-      <div>
-        <label>Gruppe / Variante</label>
-        <input id="mGroup" type="text" autocomplete="off">
-      </div>
-      <div>
-        <label>Hinweis</label>
-        <textarea id="mHint" rows="2"></textarea>
-      </div>
+      <div><label>Englisch</label><input id="mEn" type="text"></div>
+      <div><label>Deutsch</label><input id="mDe" type="text"></div>
+      <div><label>Kategorie</label><select id="mCat"></select></div>
+      <div><label>Erstellt</label><input id="mDate" type="date" readonly style="background:#f3f4f6"></div>
+      <div><label>Gruppe / Variante</label><input id="mGroup" type="text"></div>
+      <div><label>Hinweis</label><textarea id="mHint" rows="2"></textarea></div>
     </div>
     <div class="modal-actions">
       <button class="btn warn" id="mDelete">Löschen</button>
@@ -235,65 +204,84 @@ tr:hover{background:#f8fbff}
 </div>
 
 <div id="toast" class="toast">Gespeichert</div>
-
 <script>
 (function(){
-  /* Kategorien */
-  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
-  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
+  // ===== Kategorien & Farben =====
+  const CATEGORY_NAMES={
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein",
+    Rot:"Verwechslungsgefahr"
+  };
+  const COLOR_MAP={
+    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
+    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
+  };
+  const TEXT_ON={
+    Gelb:"#000", Pink:"#fff", Blau:"#fff", Gruen:"#fff",
+    HellesPink:"#fff", Orange:"#fff", Dunkelgruen:"#fff", Rot:"#fff"
+  };
 
-  /* GitHub Pfade */
+  // ===== GitHub Ziel =====
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-  /* Helpers */
-  const $=s=>document.querySelector(s);
-  const $$=s=>Array.from(document.querySelectorAll(s));
-  const isMobile=()=>matchMedia("(max-width:900px)").matches;
-  const toast=(msg)=>{const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500);};
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
-  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  // ===== Helpers =====
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const isMobile = () => matchMedia("(max-width:900px)").matches;
+  const toast = (msg="Gespeichert")=>{
+    const t=$("#toast"); t.textContent=msg; t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"),1400);
+  };
+  const dateOnly = iso => {
+    try{ return new Date(iso).toISOString().slice(0,10); }catch{ return ""; }
+  };
+  const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
 
-  /* DOM Refs Desktop */
-  const filterCatDesk=$("#filterCatDesk"), searchDesk=$("#searchDesk"), resetDesk=$("#resetDesk");
-  const tblBody=$("#tbl tbody"), countInfo=$("#countInfo");
-  const tokenBtn=$("#tokenBtn"), addDesk=$("#addDesk"), delDesk=$("#delDesk"), syncDesk=$("#syncDesk");
-  const sourceInfo=$("#sourceInfo"), sourceInfoFoot=$("#sourceInfoFoot");
+  // ===== State =====
+  let list=[], sortCol=0, sortAsc=true, editIndex=null;
+  let selectMode=false, selected=new Set();
 
-  /* DOM Refs Mobile */
-  const filterCatMob=$("#filterCatMob"), searchMob=$("#searchMob"), resetMob=$("#resetMob");
-  const mobList=$("#mobList"), countInfoMob=$("#countInfoMob");
-  const slideFilter=$("#slideFilter");
-  const fabSelect=$("#fabSelect"), fabDelete=$("#fabDelete"), fabAdd=$("#fabAdd"), fabSync=$("#fabSync");
-  const dialBack=$("#dialBack"), dialFind=$("#dialFind"), dialGear=$("#dialGear");
+  // ===== DOM Refs =====
+  const tblBody = $("#tbl tbody");
+  const countInfo = $("#countInfo");
+  const countInfoMob = $("#countInfoMob");
+  const sourceInfo = $("#sourceInfo");
+  const sourceInfoFoot = $("#sourceInfoFoot");
 
-  /* Modal */
+  const filterCatDesk=$("#filterCatDesk"), searchDesk=$("#searchDesk");
+  const filterCatMob=$("#filterCatMob"),  searchMob=$("#searchMob");
+
   const modal=$("#modal");
   const mTitle=$("#modalTitle");
   const mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"), mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
-  const mSave=$("#mSave"), mCancel=$("#mCancel"), mDelete=$("#mDelete");
+  const mobList=$("#mobList");
+  const slideFilter=$("#slideFilter");
 
-  /* State */
-  let list=[], sortCol=0, sortDir=1, editIndex=null, selectMode=false, selected=new Set();
+  // ===== LocalStore =====
+  const loadLocal = ()=> JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal = d => localStorage.setItem("vokabeln", JSON.stringify(d));
 
-  /* Init category selects */
-  function fillCategorySelect(el,withAll){
-    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k]; o.style.color=TEXT_ON[k];
-      el.appendChild(o);
-    });
+  // ===== Token =====
+  function getToken(){
+    let t=localStorage.getItem("gh_token")||"";
+    if(!t){
+      t=prompt("GitHub Token (repo-Scope):","");
+      if(t){ localStorage.setItem("gh_token",t); toast("Token gespeichert"); }
+    }
+    return t;
   }
+  function clearToken(){ localStorage.removeItem("gh_token"); toast("Token gelöscht – neu setzen!"); }
 
-  /* Load data */
+  // ===== Daten laden =====
   async function loadData(){
     try{
       const r=await fetch(RAW_URL,{cache:"no-store"});
-      if(!r.ok) throw new Error("HTTP "+r.status);
       const d=await r.json();
       list=d.map(normalize);
       saveLocal(list);
@@ -304,85 +292,106 @@ tr:hover{background:#f8fbff}
       sourceInfo.textContent="Datenquelle: Lokaler Speicher";
       sourceInfoFoot.textContent="Datenquelle: Lokaler Speicher";
     }
+    fillCategorySelect(filterCatDesk,true);
+    fillCategorySelect(filterCatMob,true);
+    fillCategorySelect(mCat,false);
+    ensureFilterDefaults();
     renderAll();
   }
 
+  // ===== Kategorien-Selects =====
+  function fillCategorySelect(el,withAll=false){
+    el.innerHTML = withAll ? '<option value="Alle">Alle (bunt gemischt)</option>' : "";
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k; o.textContent=CATEGORY_NAMES[k];
+      // Farbe (nur visuell, Value bleibt key)
+      o.style.background=COLOR_MAP[k]; o.style.color=TEXT_ON[k];
+      el.appendChild(o);
+    });
+  }
+  function ensureFilterDefaults(){
+    if(!filterCatDesk.value) filterCatDesk.value="Alle";
+    if(!filterCatMob.value)  filterCatMob.value="Alle";
+  }
+
+  // ===== Filter/Sort =====
   function currentFilter(){
-    const cat=(isMobile()?filterCatMob.value:filterCatDesk.value)||"Alle";
-    const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
+    const cat = isMobile() ? (filterCatMob.value||"Alle") : (filterCatDesk.value||"Alle");
+    const q   = (isMobile()?searchMob:searchDesk).value.trim().toLowerCase();
     return {cat,q};
   }
-
-  function getFiltered(){
+  function filtered(){
     const {cat,q}=currentFilter();
-    let rows=list.slice();
-    // sort (desktop header; mobile – keep same order)
-    rows.sort((a,b)=>{
-      const idx=sortCol; // 0 EN, 1 DE
-      const s=(a[idx]||"").localeCompare(b[idx]||"");
-      return s*sortDir;
+    let data = list.filter(v=>{
+      const okCat = (cat==="Alle" || v[2]===cat);
+      const okQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
+      return okCat && okQ;
     });
-    rows=rows.filter(v=>{
-      const matchCat=(cat==="Alle"||v[2]===cat);
-      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
-      return matchCat&&matchQ;
+    // Desktop-sortierung über Spalten 0/1
+    data.sort((a,b)=>{
+      const A = (a[sortCol]||"").toString().toLowerCase();
+      const B = (b[sortCol]||"").toString().toLowerCase();
+      if(A<B) return sortAsc?-1:1;
+      if(A>B) return sortAsc?1:-1;
+      return 0;
     });
-    return rows;
+    return data;
   }
 
-  function idxOf(v){
-    return list.findIndex(x=>x[0]===v[0] && x[1]===v[1] && x[2]===v[2] && x[5]===v[5]);
-  }
-
-  /* Render Desktop table */
+  // ===== Desktop Render =====
   function renderDesktop(){
-    const rows=getFiltered();
-    tblBody.innerHTML=rows.map(v=>{
-      const i=idxOf(v);
+    const data=filtered();
+    tblBody.innerHTML = data.map(v=>{
+      const idx = indexOf(v);
       const cat=v[2];
       return `<tr>
-        <td><input type="checkbox" data-idx="${i}"></td>
+        <td><input type="checkbox" data-idx="${idx}"></td>
         <td>${escapeHtml(v[0])}</td>
         <td>${escapeHtml(v[1])}</td>
         <td><span class="category-chip" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</span></td>
         <td style="display:none">${escapeHtml(v[3]||"")}</td>
         <td style="display:none">${escapeHtml(v[4]||"")}</td>
-        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
+        <td><button class="btn" data-edit="${idx}">✏️ Bearbeiten</button></td>
       </tr>`;
     }).join("");
     $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-    const total=list.length, shown=rows.length;
-    countInfo.textContent=`Gefunden ${shown} von ${total}`;
+    // Zähler
+    countInfo.textContent = `Gefunden ${data.length} von ${list.length}`;
   }
 
-  /* Render Mobile cards */
+  // ===== Mobile Render =====
   function renderMobile(){
-    const rows=getFiltered();
-    mobList.innerHTML=rows.map(v=>{
-      const i=idxOf(v);
+    const data=filtered();
+    mobList.innerHTML = data.map(v=>{
+      const idx=indexOf(v);
       const cat=v[2];
-      const sel=selected.has(i)?" selected":"";
-      return `<div class="card${sel}" data-idx="${i}">
+      const selClass = selected.has(idx) ? " selected" : "";
+      return `<div class="card${selClass}" data-idx="${idx}">
         <div class="card-top">
-          <span class="card-cat" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</span>
-          <span></span>
+          <div class="card-cat" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</div>
+          <div class="card-title">${escapeHtml(v[0])}</div>
         </div>
-        <div class="card-title">${escapeHtml(v[0])}</div>
         <div class="card-sub">DE: ${escapeHtml(v[1])}</div>
-        <div class="card-row"><button class="btn" data-edit="${i}">Bearbeiten</button></div>
+        <div class="card-row"><button class="btn mobEdit" data-edit="${idx}" style="padding:6px 10px;font-size:.85rem">Bearbeiten</button></div>
       </div>`;
     }).join("");
-    // events
-    $$('.card .btn[data-edit]').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
+
+    // Interaktionen
+    $$('.mobEdit').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
     $$('.card').forEach(card=>{
-      card.onclick=()=>{
-        if(!selectMode) { openEdit(+card.dataset.idx); return; }
-        const i=+card.dataset.idx;
-        if(selected.has(i)) selected.delete(i); else selected.add(i);
-        card.classList.toggle('selected');
+      card.onclick = (e)=>{
+        const idx=+card.dataset.idx;
+        if(selectMode){
+          if(selected.has(idx)) selected.delete(idx); else selected.add(idx);
+          card.classList.toggle("selected");
+        }else{
+          openEdit(idx);
+        }
       };
     });
-    countInfoMob.textContent=`Gefunden ${rows.length} von ${list.length}`;
+    // Zähler
+    countInfoMob.textContent = `Gefunden ${data.length} von ${list.length}`;
   }
 
   function renderAll(){
@@ -390,42 +399,36 @@ tr:hover{background:#f8fbff}
     renderMobile();
   }
 
-  /* Sorting header (Desktop) */
-  $$('#tbl thead th.sortable').forEach(th=>{
-    th.addEventListener('click',()=>{
-      const col=parseInt(th.dataset.col,10);
-      if(sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
-      renderAll();
-    });
-  });
+  // ===== Utilities =====
+  function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
+  function indexOf(v){
+    // identifiziere via tuple (en,de,cat,created)
+    return list.findIndex(x=>x[0]===v[0] && x[1]===v[1] && x[2]===v[2] && (x[5]||"")==(v[5]||""));
+  }
 
-  /* Modal CRUD */
+  // ===== Editor =====
   function openEdit(i=null){
-    editIndex=i;
+    editIndex = i;
     if(i==null){
       mTitle.textContent="Neue Vokabel";
-      mEn.value=""; mDe.value=""; mCat.value="Gelb";
-      mGroup.value=""; mHint.value="";
-      mDate.value=new Date().toISOString().slice(0,16);
-      mDelete.style.display="none";
+      mEn.value=""; mDe.value=""; mCat.value="Gelb"; mGroup.value=""; mHint.value="";
+      mDate.value = dateOnly(new Date().toISOString()); // nur Datum
     }else{
       const v=list[i];
       mTitle.textContent="Vokabel bearbeiten";
       mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
       mGroup.value=v[3]||""; mHint.value=v[4]||"";
-      mDate.value=new Date(v[5]).toISOString().slice(0,16);
-      mDelete.style.display="inline-block";
+      mDate.value=dateOnly(v[5]);
     }
     modal.style.display="flex";
   }
   function closeModal(){ modal.style.display="none"; }
+  $("#mCancel").onclick=closeModal;
+  modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
 
-  mCancel.onclick=closeModal;
-  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
-
-  mSave.onclick=()=>{
+  $("#mSave").onclick=()=>{
     const en=mEn.value.trim(), de=mDe.value.trim();
-    if(!en||!de){ toast("Bitte Englisch & Deutsch ausfüllen"); return; }
+    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
     const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim();
     if(editIndex==null){
       list.push([en,de,cat,grp,hint,new Date().toISOString()]);
@@ -434,105 +437,108 @@ tr:hover{background:#f8fbff}
       list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];
     }
     saveLocal(list);
-    closeModal(); renderAll(); toast("Gespeichert");
+    toast("Gespeichert");
+    closeModal();
+    renderAll();
   };
 
-  mDelete.onclick=()=>{
-    if(editIndex==null) return;
-    if(!confirm("Diesen Eintrag löschen?")) return;
+  $("#mDelete").onclick=()=>{
+    if(editIndex==null){ closeModal(); return; }
+    if(!confirm("Eintrag wirklich löschen?")) return;
     list.splice(editIndex,1);
     saveLocal(list);
-    closeModal(); renderAll(); toast("Gelöscht");
+    toast("Gelöscht");
+    closeModal();
+    renderAll();
   };
 
-  /* Desktop actions */
-  addDesk.onclick=()=>openEdit(null);
-  delDesk.onclick=()=>{
+  // ===== Desktop Buttons =====
+  $("#addDesk").onclick=()=>openEdit(null);
+  $("#delDesk").onclick=()=>{
     const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
-    if(!ids.length){ toast("Keine Auswahl"); return; }
+    if(!ids.length){ alert("Bitte mindestens eine Zeile markieren."); return; }
     if(!confirm(`${ids.length} Einträge löschen?`)) return;
-    list=list.filter((v,i)=>!ids.includes(i));
+    list=list.filter((_,i)=>!ids.includes(i));
     saveLocal(list); renderAll(); toast("Gelöscht");
   };
 
-  /* Filters */
+  // Sort Header (Spalte 0/1)
+  $$('th.sortable').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col=+th.dataset.col;
+      if(sortCol===col){ sortAsc=!sortAsc; } else { sortCol=col; sortAsc=true; }
+      renderAll();
+    });
+  });
+
+  // ===== Mobile Bottom Bar =====
+  $("#fabAdd").onclick=()=>openEdit(null);
+  $("#fabSelect").onclick=()=>{
+    selectMode=!selectMode;
+    selected.clear();
+    renderMobile();
+    toast(selectMode?"Auswahl aktiv":"Auswahl aus");
+  };
+  $("#fabDelete").onclick=()=>{
+    if(!selected.size){ alert("Keine Elemente ausgewählt."); return; }
+    if(!confirm(`${selected.size} Einträge löschen?`)) return;
+    list=list.filter((_,i)=>!selected.has(i));
+    selected.clear(); selectMode=false;
+    saveLocal(list); renderAll(); toast("Gelöscht");
+  };
+
+  // ===== Dial Buttons (mobil) =====
+  $("#dialBack").onclick=()=>location.href="index.html";
+  $("#dialFind").onclick=()=>{
+    slideFilter.classList.toggle("show");
+    // Focus in Suchfeld beim Öffnen
+    if(slideFilter.classList.contains("show")) setTimeout(()=>$("#searchMob").focus(),50);
+  };
+  $("#dialGear").onclick=()=>{ // Token schnell setzen/ändern
+    clearToken(); getToken();
+  };
+
+  // ===== Filter/Suche/Reset =====
   function resetFilters(){
     (isMobile()?filterCatMob:filterCatDesk).value="Alle";
     (isMobile()?searchMob:searchDesk).value="";
     renderAll();
   }
-  resetDesk.onclick=resetFilters; resetMob.onclick=resetFilters;
-  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{
-    el.addEventListener('input',renderAll);
-    el.addEventListener('change',renderAll);
+  $("#resetDesk").onclick=resetFilters;
+  $("#resetMob").onclick=resetFilters;
+  [filterCatDesk,searchDesk,filterCatMob,searchMob].forEach(el=>{
+    el.addEventListener("input",renderAll);
+    el.addEventListener("change",renderAll);
   });
 
-  /* Mobile bottom */
-  fabAdd.onclick=()=>openEdit(null);
-  fabSelect.onclick=()=>{
-    selectMode=!selectMode;
-    if(selectMode){ selected.clear(); toast("Auswahl aktiv: tippe Karten zum Markieren"); }
-    renderMobile();
-  };
-  fabDelete.onclick=()=>{
-    if(!selected.size){ toast("Keine Auswahl"); return; }
-    if(!confirm(`${selected.size} Einträge löschen?`)) return;
-    list=list.filter((v,i)=>!selected.has(i));
-    selected.clear(); selectMode=false;
-    saveLocal(list); renderAll(); toast("Gelöscht");
-  };
-
-  /* Speed dial */
-  dialBack.onclick=()=>location.href="index.html";
-  const slideToggle=()=>{ slideFilter.classList.toggle('show'); };
-  dialFind.onclick=slideToggle;
-
-  /* Token & Sync */
-  function getToken(){
-    let t=localStorage.getItem('gh_token')||"";
-    if(!t){
-      t=prompt("GitHub Token (repo-Scope):","");
-      if(t){ localStorage.setItem('gh_token',t); toast("Token gespeichert"); }
-    }
-    return t;
-  }
-  tokenBtn.onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
-  dialGear.onclick=async ()=>{
-    const choice=prompt("Aktion:\n1 = Token neu setzen\n2 = In DB eintragen","");
-    if(choice==="1"){ localStorage.removeItem('gh_token'); getToken(); }
-    else if(choice==="2"){ await githubSync(); }
-  };
-  fabSync.onclick=()=>githubSync();
-  syncDesk.onclick=()=>githubSync();
-
+  // ===== GitHub Sync (Desktop & Mobile) =====
   async function githubSync(){
-    const token=getToken(); if(!token){ toast("Kein Token"); return; }
+    const token=getToken(); if(!token) return;
     try{
       const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
       const metaRes=await fetch(api,{headers:{Authorization:`token ${token}`}});
       if(!metaRes.ok) throw new Error(await metaRes.text());
       const meta=await metaRes.json();
       const sha=meta.sha;
-      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const put=await fetch(api,{
-        method:'PUT',
-        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
-        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
+
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      const putRes=await fetch(api,{
+        method:"PUT",
+        headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
+        body:JSON.stringify({message:"Update via Vokabel-UI", content, sha})
       });
-      if(!put.ok) throw new Error(await put.text());
-      toast("Erfolgreich eingetragen");
+      if(!putRes.ok) throw new Error(await putRes.text());
+      toast("In Datenbank eingetragen");
     }catch(e){
-      console.error(e); toast("Sync fehlgeschlagen");
+      console.error(e);
+      alert("❌ Sync fehlgeschlagen");
     }
   }
+  $("#syncDesk").onclick=githubSync;
+  $("#fabSync").onclick=githubSync;
+  $("#tokenBtn").onclick=()=>{ clearToken(); getToken(); };
 
-  /* Utility */
-  function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
-
-  /* Init */
-  fillCategorySelect(filterCatDesk,true);
-  fillCategorySelect(filterCatMob,true);
-  fillCategorySelect(mCat,false);
+  // ===== Init =====
   loadData();
 })();
 </script>
