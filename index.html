@@ -29,16 +29,21 @@ button:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .btn.secondary{background:#475569}
 .btn.red{background:var(--bad)}
 select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;transition:background .3s ease,color .3s ease}
-select option{color:#fff;font-weight:600}
-select option[value="Alle"]{background:#64748b;color:#fff}
-select option[value="Gelb"]{background:#F4D03F;color:#000}
-select option[value="Pink"]{background:#E91E63}
-select option[value="Blau"]{background:#1976D2}
-select option[value="Gruen"]{background:#1E8449}
-select option[value="HellesPink"]{background:#F54927}
-select option[value="Orange"]{background:#E67E22}
-select option[value="Dunkelgruen"]{background:#117A65}
-select option[value="Rot"]{background:#C0392B}
+/* ✅ Nur das Kategorie-Dropdown (#category) einfärben */
+#category option{color:#fff;font-weight:700}
+#category option[value="Alle"]{background:#64748b;color:#fff}
+#category option[value="Gelb"]{background:#F4D03F;color:#000}
+#category option[value="Pink"]{background:#E91E63}
+#category option[value="Blau"]{background:#1976D2}
+#category option[value="Gruen"]{background:#1E8449}
+#category option[value="HellesPink"]{background:#F54927}
+#category option[value="Orange"]{background:#E67E22}
+#category option[value="Dunkelgruen"]{background:#117A65}
+#category option[value="Rot"]{background:#C0392B}
+
+/* ✅ Modus & Delay normal lesbar lassen */
+#mode option, #delay option { color:#111; background:#fff; font-weight:600; }
+
 .game-area{display:none;background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:24px;text-align:center;animation:fadeIn .5s ease}
 .card{font-size:1.8rem;font-weight:800;margin:20px 0;border-radius:16px;padding:24px;color:#fff;transition:background .6s ease,color .6s ease}
 .feedback{font-size:1.1rem;margin-top:10px;color:var(--muted)}
