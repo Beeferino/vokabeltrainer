@@ -93,8 +93,8 @@ select{
 /* Feedback-Flash */
 .flash-correct{animation:good .4s}
 .flash-wrong{animation:bad .4s}
-@keyframes good{from{filter:brightness(1.08)}to{filter:brightness(1)}}
-@keyframes bad{from{outline:3px solid rgba(239,68,68,.4)}to{outline:0}}
+@keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
+@keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
 
 /* Footer-Aktionen */
 .footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
@@ -111,7 +111,7 @@ select{
   box-shadow:0 5px 12px rgba(37,99,235,0.15)
 }
 
-/* Feedback-Toggle hübsch */
+/* Feedback-Toggle */
 .feedback-toggle{
   display:flex;align-items:center;justify-content:center;
   gap:10px;padding:12px 18px;border-radius:16px;
@@ -126,7 +126,7 @@ select{
 #chkFeedback:checked{background:#2563eb}
 #chkFeedback:checked::before{left:23px}
 
-/* Trenner & Recent fancy glass */
+/* Trenner & Recent fancy */
 .trenner{
   height:3px;width:60%;margin:50px auto 20px;
   background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
@@ -168,11 +168,7 @@ details.recent-section summary:hover{color:#2563eb}
 .recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px;opacity:.85}
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 
-/* Mitdenker Hinweis */
-.mitdenker{display:none;margin-top:8px;font-style:italic;font-weight:700;color:#1e3a8a;opacity:.95;text-align:center}
-.mitdenker.on{display:block}
-
-/* Mobile Tweaks */
+/* Mobile */
 @media (max-width:560px){
   .inprow input{width:100%}
 }
@@ -232,8 +228,6 @@ details.recent-section summary:hover{color:#2563eb}
       <input id="inp" type="text" placeholder="Übersetzung eingeben …">
       <button id="btnSub">Eingabe</button>
     </div>
-
-    <div id="mitdenkerNote" class="mitdenker">Mitdenker Edition</div>
   </section>
 
   <div class="footer-actions">
@@ -253,7 +247,6 @@ details.recent-section summary:hover{color:#2563eb}
 
 <script>
 (function(){
-/* Kategorien */
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
@@ -265,289 +258,132 @@ const CATS={
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
 
-/* El-Refs */
 const $=id=>document.getElementById(id);
 const selCat=$("selCat"), selMode=$("selMode"), selDelay=$("selDelay"), chkFeedback=$("chkFeedback");
 const btnLearn=$("btnLearn"), btnCards=$("btnCards"), btnLast30=$("btnLast30"), btnRestart=$("btnRestart");
 const stage=$("stage"), chip=$("chip"), q=$("q"), offer=$("offer"), progress=$("progress");
-const rowButtons=$("rowButtons"), btnRight=$("btnRight"), btnWrong=$("btnWrong"), btnDec=$("btnDec"), btnNext=$("btnNext");
-const rowInput=$("rowInput"), inp=$("inp"), btnSub=$("btnSub"), recent=$("recent"), mitdenkerNote=$("mitdenkerNote");
+const btnRight=$("btnRight"), btnWrong=$("btnWrong"), btnDec=$("btnDec"), btnNext=$("btnNext");
+const rowInput=$("rowInput"), inp=$("inp"), btnSub=$("btnSub"), recent=$("recent");
 
-/* State */
-let data=[], round=[], i=0, game="learn", delay=3000, trap=false, correct="";
-let errors=[], repeating=false;
+let data=[], round=[], i=0, game="learn", trap=false, correct="", delay=3000, errors=[], repeating=false;
 
-/* Helpers */
-function colorizeSelect(){
-  const v=selCat.value;
-  if(v!=="Alle" && CATS[v]){
-    selCat.style.background=CATS[v][1];
-    selCat.style.color=CATS[v][2];
-  }else{
-    selCat.style.background="#fff";
-    selCat.style.color="#000";
-  }
+/* Setup */
+for(const k in CATS){
+  const o=document.createElement("option");
+  o.value=k;o.textContent=CATS[k][0];
+  o.style.background=CATS[k][1];o.style.color=CATS[k][2];
+  selCat.appendChild(o);
 }
-function setStageTheme(catKey){
-  const meta=CATS[catKey]||["","#ffffff","#000"];
-  // ganze Karte in Kat-Farbe (leicht), Text bleibt gut lesbar
-  stage.style.background = `linear-gradient(180deg, ${meta[1]}33, ${meta[1]}22)`;
-  stage.style.color = "#0f172a";
-  chip.style.background = "rgba(255,255,255,.25)";
-  chip.style.color = meta[2];
-}
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function randomizeButtons(){
-  // In Kartenmodus: Richtig, Falsch, Täuschung erkannt, Weiter -> Reihenfolge mischen
-  if(game==="cards"){
-    const btns=[btnRight,btnWrong,btnDec,btnNext];
-    const order=[0,1,2,3].sort(()=>Math.random()-0.5);
-    rowButtons.innerHTML="";
-    order.forEach(ix=>rowButtons.appendChild(btns[ix]));
-  }else{
-    // In Learn: nur Weiter sichtbar; Reihenfolge egal
-    rowButtons.innerHTML="";
-    rowButtons.appendChild(btnNext);
-  }
-}
-function setProg(){
-  progress.textContent = `Vokabel ${Math.min(i+1, round.length)}/${round.length} | Fehler: ${errors.length}`;
-}
-function showStage(show){ stage.style.display = show ? "block" : "none"; }
-function flash(ok){
-  if(!chkFeedback.checked){
-    i++; next();
-    return;
-  }
-  stage.classList.remove("flash-correct","flash-wrong");
-  stage.offsetWidth; // reflow
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{ i++; next(); }, delay);
+selCat.onchange=()=>{const v=selCat.value;if(v!=="Alle"&&CATS[v]){selCat.style.background=CATS[v][1];selCat.style.color=CATS[v][2];}else{selCat.style.background="#fff";selCat.style.color="#000";}};
+
+function setStageTheme(cat){
+  const c=CATS[cat]||["","#fff","#000"];
+  stage.style.background=`linear-gradient(180deg,${c[1]}33,${c[1]}22)`;
+  chip.style.color=c[2];
+  chip.style.background="rgba(255,255,255,.25)";
 }
 
-/* Daten laden */
-async function fetchRemote(){
+/* Fetch */
+async function fetchData(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    if(!r.ok) throw new Error("fetch failed");
-    const j=await r.json();
+    if(!r.ok)throw 0;const j=await r.json();
     localStorage.setItem("vokabeln",JSON.stringify(j));
-    localStorage.setItem("vokabeln_updated", new Date().toISOString());
     return j;
-  }catch(e){
-    return JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  }
+  }catch{return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
 }
 function renderRecent(){
-  const last = data.slice(-5).reverse();
-  if(!last.length){recent.textContent="–";return;}
-  recent.innerHTML = last.map(v=>{
+  const last=data.slice(-5).reverse();
+  recent.innerHTML=last.map(v=>{
     const c=CATS[v[2]]||["","#ccc","#000"];
     return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
       <b>${v[0]}</b> – ${v[1]}<small>${c[0]}</small></div>`;
   }).join("");
 }
-function initCats(){
-  for(const k in CATS){
-    const o=document.createElement("option");
-    o.value=k; o.textContent=CATS[k][0];
-    o.style.background=CATS[k][1]; o.style.color=CATS[k][2];
-    selCat.appendChild(o);
+
+/* Helpers */
+function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
+function setProg(){progress.textContent=`Vokabel ${Math.min(i+1,round.length)}/${round.length} | Fehler: ${errors.length}`;}
+function flash(ok){
+  if(chkFeedback.checked){
+    stage.classList.remove("flash-correct","flash-wrong");
+    stage.offsetWidth;
+    stage.classList.add(ok?"flash-correct":"flash-wrong");
   }
-  colorizeSelect();
 }
 
-/* Rundenlogik */
-function pickBase(arr){
-  if(selCat.value==="Alle"){ const c=[...arr]; shuffle(c); return c; }
-  const f=arr.filter(v=>v[2]===selCat.value); shuffle(f); return f;
-}
-function startRound(type, customList=null){
-  game = type;
-  delay = parseInt(selDelay.value,10);
-  errors = [];
-  repeating=false;
-
-  let base = customList ? [...customList] : pickBase(data);
-  // Learn: 15 Items, Cards: 15 Items; bei Last30 (customList) alle durchlaufen
-  if(!customList) base = base.slice(0,15);
-  round = base;
-  i=0;
-
-  // UI
-  if(game==="cards"){
-    rowInput.style.display="none";
-    btnRight.style.display="inline-block";
-    btnWrong.style.display="inline-block";
-    btnDec.style.display="inline-block";
-    btnNext.style.display="inline-block";
-  }else{ // learn
-    rowInput.style.display="flex";
-    btnRight.style.display="none";
-    btnWrong.style.display="none";
-    btnDec.style.display="none";
-    btnNext.style.display="inline-block";
-  }
-  randomizeButtons();
-  next();
-}
-
+/* Round control */
 function next(){
-  // Ende-Logik
   if(i>=round.length){
-    if(errors.length && !repeating){
-      // Wiederholungsrunde nur mit Fehlern, ohne "Weiter"
-      alert(`❗ ${errors.length} Fehler – Wiederholungsrunde startet.`);
-      round = errors.map(v=>v);
-      errors = [];
-      i=0; repeating=true;
-
-      // In Wiederholung weiterhin Modus-spezifisch, aber "Weiter" deaktivieren
-      btnNext.style.display="none";
-      randomizeButtons();
-      setProg();
-      showStage(true);
+    if(errors.length&&!repeating){
+      alert(`❗ ${errors.length} Fehler – Wiederholungsrunde.`);
+      round=errors;errors=[];i=0;repeating=true;
     }else{
-      // Abschluss
-      showStage(false);
-      if(errors.length){
-        const list=errors.map(v=>`${v[0]} → ${v[1]}`).join("\n");
-        alert(`Runde beendet.\nFehler übrig: ${errors.length}\n\n${list}`);
-      }else{
-        alert("🎉 Runde beendet – alles korrekt!");
-      }
-      return;
+      alert(errors.length?`Runde beendet. Fehler: ${errors.length}`:"🎉 Runde beendet!");
+      stage.style.display="none";return;
     }
   }
-
-  delay = parseInt(selDelay.value,10);
-  setProg();
-
-  const [en,de,cat] = round[i];
-  const meta = CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent = meta[0];
-  chip.style.color = meta[2];
+  const [en,de,cat]=round[i];
   setStageTheme(cat);
-
-  const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
-  const question = askEN ? en : de;
-  const answer   = askEN ? de : en;
-  correct = answer;
-
-  q.textContent = question;
-  offer.textContent = "";
-
+  chip.textContent=CATS[cat]?CATS[cat][0]:cat;
+  const askEN=selMode.value==="toGerman"?true:selMode.value==="toEnglish"?false:Math.random()<0.5;
+  const qText=askEN?en:de;const aText=askEN?de:en;correct=aText;
+  q.textContent=qText;
+  delay=parseInt(selDelay.value,10);
+  offer.textContent="";
+  setProg();
   if(game==="cards"){
-    // potentielle Täuschung mit 30% Wahrscheinlichkeit
-    trap = Math.random()<0.3;
+    trap=Math.random()<0.3;
     if(trap){
-      const pool = data.map(v=> askEN ? v[1] : v[0]); // falsches Gegenstück aus passender Sprache
-      let wrong; do{ wrong = pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
-      offer.textContent = "💡 " + wrong;
-    }else{
-      offer.textContent = "💡 " + answer;
-    }
+      const pool=data.map(v=>askEN?v[1]:v[0]);
+      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===aText);
+      offer.textContent="💡 "+wrong;
+    }else offer.textContent="💡 "+aText;
     rowInput.style.display="none";
-    randomizeButtons();
-    // Mitdenker-Hinweis nur in Kartenmodus & Feedback an
-    mitdenkerNote.classList.toggle("on", chkFeedback.checked);
   }else{
-    // Learn: keine Täuschung, Eingabe
-    trap=false;
-    rowInput.style.display="flex";
-    inp.value=""; inp.focus();
-    offer.textContent = "";
-    // Hinweis aus
-    mitdenkerNote.classList.remove("on");
-    // Buttons (nur Weiter), schon gesetzt
+    rowInput.style.display="flex";inp.value="";inp.focus();
   }
-
-  showStage(true);
+  stage.style.display="block";
 }
 
-/* Button-Aktionen */
-btnRight.onclick = ()=>{
-  if(game!=="cards"){ return; }
-  const ok = !trap;
-  if(!ok) errors.push(round[i]);
-  flash(ok);
-};
-btnWrong.onclick = ()=>{
-  if(game!=="cards"){ return; }
-  const ok = trap; // „Falsch“ gewählt, wenn tatsächlich Täuschung vorliegt, ist es falsch – aber Logik: Wrong = falsche Karte -> soll Fehler sein
-  // Hier ist die Semantik: „Falsch“ meint: das angebotene Paar ist falsch.
-  // Wenn trap=true, ist das Paar tatsächlich falsch -> Nutzer hätte „Täuschung erkannt“ drücken sollen.
-  // Also werten wir „Falsch“-Button als *Nutzer meint die angebotene Lösung ist falsch und will einfach weiter*, wir werten das als Fehler.
-  errors.push(round[i]);
-  flash(false);
-};
-btnDec.onclick = ()=>{
-  if(game!=="cards"){ return; }
-  if(trap){
-    // Eingabefeld öffnen und prüfen
-    rowInput.style.display="flex";
-    inp.value=""; inp.focus();
-    btnSub.onclick = ()=>{
-      const ok = inp.value.trim().toLowerCase() === correct.toLowerCase();
-      if(ok){
-        flash(true);
-      }else{
-        // Lösung zeigen, als Fehler werten
-        offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-        errors.push(round[i]);
-        setTimeout(()=>flash(false), parseInt(selDelay.value,10));
-      }
+/* Buttons */
+btnRight.onclick=()=>{if(game!=="cards")return;const ok=!trap;if(!ok)errors.push(round[i]);flash(ok);setTimeout(()=>{i++;next();},delay);}
+btnWrong.onclick=()=>{if(game!=="cards")return;errors.push(round[i]);flash(false);setTimeout(()=>{i++;next();},delay);}
+btnDec.onclick=()=>{if(game!=="cards")return;
+  if(trap){rowInput.style.display="flex";inp.value="";inp.focus();
+    btnSub.onclick=()=>{
+      const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();
+      if(!ok){errors.push(round[i]);offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;}
+      flash(ok);setTimeout(()=>{i++;next();},delay);
     };
-  }else{
-    // Keine Täuschung – Fehler
-    errors.push(round[i]);
-    flash(false);
-  }
+  }else{errors.push(round[i]);flash(false);setTimeout(()=>{i++;next();},delay);}
 };
-btnNext.onclick = ()=>{
-  // „Weiter“ zählt als Fehler, aber stoppt bei Ende (kein 15x sinnfrei)
-  errors.push(round[i]);
-  i++;
-  next();
+btnNext.onclick=()=>{errors.push(round[i]);i++;next();};
+btnSub.onclick=()=>{if(game!=="learn")return;
+  const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();
+  if(!ok){errors.push(round[i]);offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;}
+  flash(ok);setTimeout(()=>{i++;next();},delay);
 };
+inp.onkeydown=e=>{if(e.key==="Enter")btnSub.click();};
 
-btnSub.onclick = ()=>{
-  // Learn-Modus Eingabe
-  if(game!=="learn") return;
-  const ok = inp.value.trim().toLowerCase() === correct.toLowerCase();
-  if(!ok){
-    // bei Feedback richtige Lösung zeigen
-    if(chkFeedback.checked){
-      offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    }
-    errors.push(round[i]);
-  }
-  flash(ok);
+/* Start */
+function start(mode,list=null){
+  game=mode;i=0;errors=[];repeating=false;
+  const base=list||((selCat.value==="Alle"?data:data.filter(v=>v[2]===selCat.value)).slice(0,15));
+  shuffle(base);round=base;next();
+}
+btnLearn.onclick=()=>start("learn");
+btnCards.onclick=()=>start("cards");
+btnLast30.onclick=()=>{
+  const l=data.slice(-30);
+  if(!l.length)return alert("Keine Vokabeln");
+  const cards=confirm("Mitdenker Edition aktivieren?");
+  start(cards?"cards":"learn",l);
 };
-inp.addEventListener("keydown",e=>{ if(e.key==="Enter") btnSub.click(); });
-
-/* Kachel-Events */
-btnLearn.addEventListener("click", ()=> startRound("learn"));
-btnCards.addEventListener("click", ()=> startRound("cards"));
-btnLast30.addEventListener("click", ()=>{
-  if(!data.length){ alert("Keine Vokabeln vorhanden."); return; }
-  const last = data.slice(-30);
-  const useCards = confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
-  startRound(useCards?"cards":"learn", last);
-});
-btnRestart.addEventListener("click", ()=> location.reload());
-
-/* Select-Events */
-selCat.addEventListener("change", colorizeSelect);
+btnRestart.onclick=()=>location.reload();
 
 /* Init */
-(async ()=>{
-  initCats();
-  // Daten laden
-  data = await fetchRemote();
-  renderRecent();
-  colorizeSelect();
-})();
+(async()=>{data=await fetchData();renderRecent();})();
 })();
 </script>
 </body>
