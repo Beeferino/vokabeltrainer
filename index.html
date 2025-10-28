@@ -800,6 +800,24 @@ if('serviceWorker' in navigator){
     startNote.style.display = "none";
   });
 });
+  // --- Fix: Mobile FAB-Leiste beim Laden verbinden ---
+function attachFabListeners() {
+  const back = document.getElementById('fabBack');
+  const adj  = document.getElementById('fabAdjust');
+  const sync = document.getElementById('fabSync');
+  if(back) back.onclick = () => location.href = "index.html";
+  if(adj)  adj.onclick  = () => toggleAdjust(true);
+  if(sync) sync.onclick = githubSync;
+}};
+
+// Beim Start und nach jedem Umschalten wieder verbinden
+attachFabListeners();
+const origToggle = toggleAdjust;
+toggleAdjust = function(on){
+  origToggle(on);
+  attachFabListeners();
+};
+
 </script>
 </body>
 </html>
