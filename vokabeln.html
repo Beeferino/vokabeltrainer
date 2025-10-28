@@ -96,6 +96,8 @@ tr:hover{background:#f8fbff}
     <button id="delDesk" class="btn warn">🗑️ Löschen</button>
     <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
     <button id="tokenBtn" class="btn">⚙️ Token</button>
+    <button id="dateSort" class="btn" title="Nach Erstelldatum sortieren">🗓️</button>
+
   </div>
 
   <!-- Desktop Counter -->
@@ -409,6 +411,24 @@ tr:hover{background:#f8fbff}
 
   // Beim Laden gleich aktualisieren
   catSelect.dispatchEvent(new Event('change'));
+  // --- Sortieren nach Erstelldatum (Desktop only) ---
+  let dateSortDir = 1; // 1 = aufsteigend, -1 = absteigend
+
+  const btnDateSort = document.getElementById('dateSort');
+  btnDateSort.addEventListener('click', () => {
+    list.sort((a, b) => {
+      const A = new Date(a[5]);
+      const B = new Date(b[5]);
+      return (A - B) * dateSortDir;
+    });
+    dateSortDir *= -1; // Richtung wechseln
+    saveLocal(list);
+    renderAll();
+
+    // kleiner visueller Effekt (Drehung)
+    btnDateSort.style.transform = `rotate(${dateSortDir === 1 ? 0 : 180}deg)`;
+    btnDateSort.style.transition = "transform 0.3s";
+  });
 
 })();
 </script>
