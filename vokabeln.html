@@ -31,23 +31,21 @@ tr:hover{background:#f8fbff}
 .mob-title{display:flex;align-items:center;justify-content:space-between}
 .mob-actions{display:flex;gap:10px}
 .iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.az{display:flex;overflow-x:auto;gap:6px;padding:10px}
-.az button{border:1px solid #ccc;border-radius:999px;padding:6px 10px;background:#fff;font-weight:700;cursor:pointer}
-.az button.active{background:var(--blue);color:#fff}
 .mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
 .mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #ccc;border-radius:10px}
 .mob-list{display:none;padding:10px}
-.card{background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 4px 10px rgba(0,0,0,.06)}
-.card-top{display:flex;justify-content:space-between;align-items:center}
-.card-title{font-weight:800}
-.card-cat{padding:5px 10px;border-radius:999px;color:#fff;font-weight:700}
+.card{background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:12px;margin-bottom:10px;box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s, border-color .2s}
+.card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.card-top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.card-title{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-cat{padding:5px 10px;border-radius:999px;color:#fff;font-weight:700;white-space:nowrap}
 .card-sub{color:var(--muted);margin-top:6px}
 .card-row{margin-top:8px}
 .card-row button{width:100%;padding:10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer}
-.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px}
+.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3}
 .fabs{display:flex;gap:8px}
 .fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
-.fab.gray{background:#e5e7eb;color:#111}
+.fab.gray{background:#6b7280}
 .fab.warn{background:var(--bad)}
 .fab.blue{background:var(--blue)}
 
@@ -105,7 +103,6 @@ tr:hover{background:#f8fbff}
         <button class="iconbtn" id="btnToken">⚙️</button>
       </div>
     </div>
-    <div id="azMobile" class="az"></div>
   </div>
 
   <div class="mob-filters" id="mobFilters">
@@ -135,11 +132,11 @@ tr:hover{background:#f8fbff}
   <div class="panel">
     <h3 id="modalTitle">Vokabel</h3>
     <div class="form-grid">
-      <label>Englisch<input id="mEn" type="text"></label>
-      <label>Deutsch<input id="mDe" type="text"></label>
+      <label>Englisch<input id="mEn" type="text" autocomplete="off"></label>
+      <label>Deutsch<input id="mDe" type="text" autocomplete="off"></label>
       <label>Kategorie<select id="mCat"></select></label>
       <label>Erstellt<input id="mDate" type="datetime-local" readonly style="background:#f3f4f6;"></label>
-      <label>Gruppe<input id="mGroup" type="text"></label>
+      <label>Gruppe<input id="mGroup" type="text" autocomplete="off"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
     </div>
     <div class="modal-actions">
@@ -156,6 +153,9 @@ tr:hover{background:#f8fbff}
   const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
 
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const GH_OWNER="beeferino";
+  const GH_REPO="vokabeltrainer";
+  const GH_PATH="vokabeln.json";
 
   const $=s=>document.querySelector(s);
   const $$=s=>Array.from(document.querySelectorAll(s));
@@ -167,7 +167,10 @@ tr:hover{background:#f8fbff}
   const mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint');
   const mSave=$('#mSave'),mCancel=$('#mCancel');
 
-  let list=[],editIndex=null;
+  const filterCatDesk=$('#filterCatDesk'), filterCatMob=$('#filterCatMob');
+  const searchDesk=$('#searchDesk'), searchMob=$('#searchMob');
+
+  let list=[],editIndex=null,selectMode=false,selected=new Set();
 
   function normalize(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];}
   function loadLocal(){return JSON.parse(localStorage.getItem('vokabeln')||'[]').map(normalize);}
@@ -175,12 +178,45 @@ tr:hover{background:#f8fbff}
 
   async function loadData(){
     try{
-      const res=await fetch(RAW_URL);
+      const res=await fetch(RAW_URL,{cache:"no-store"});
       const data=await res.json();
       list=data.map(normalize);
       saveLocal(list);
     }catch{list=loadLocal();}
+    initCategorySelects();
     renderAll();
+  }
+
+  function initCategorySelects(){
+    function fill(sel){
+      sel.innerHTML='<option value="Alle">Alle (bunt gemischt)</option>';
+      Object.keys(CATEGORY_NAMES).forEach(k=>{
+        const o=document.createElement('option');
+        o.value=k;o.textContent=CATEGORY_NAMES[k];sel.appendChild(o);
+      });
+    }
+    fill(filterCatDesk); fill(filterCatMob);
+    // Modal categories
+    mCat.innerHTML="";
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement('option');o.value=k;o.textContent=CATEGORY_NAMES[k];mCat.appendChild(o);
+    });
+  }
+
+  function currentFilter(){
+    // mobile aktiv, wenn mobList sichtbar (<=900px); wir nutzen einfach beide und nehmen, was gesetzt ist
+    const cat=(filterCatMob && filterCatMob.value && window.matchMedia("(max-width:900px)").matches) ? filterCatMob.value : filterCatDesk.value || "Alle";
+    const q=(searchMob && window.matchMedia("(max-width:900px)").matches) ? (searchMob.value||"") : (searchDesk.value||"");
+    return {cat,q:q.trim().toLowerCase()};
+  }
+
+  function filtered(){
+    const {cat,q}=currentFilter();
+    return list.filter(v=>{
+      const matchCat=(cat==="Alle" || v[2]===cat);
+      const matchQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
   }
 
   function renderAll(){
@@ -188,26 +224,49 @@ tr:hover{background:#f8fbff}
   }
 
   function renderDesktop(){
-    tbl.innerHTML=list.map((v,i)=>`
+    const data=filtered();
+    tbl.innerHTML=data.map((v,i)=>`
       <tr>
-        <td><input type="checkbox" data-i="${i}"></td>
+        <td><input type="checkbox" data-idx="${indexInList(v)}"></td>
         <td>${v[0]}</td><td>${v[1]}</td>
         <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
         <td>${v[3]||''}</td><td>${v[4]||''}</td>
-        <td><button data-i="${i}" class="btn">✏️</button></td>
+        <td><button data-idx="${indexInList(v)}" class="btn">✏️</button></td>
       </tr>`).join('');
-    $$('button[data-i]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.i));
+    $$('button[data-idx]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.idx));
+  }
+
+  function indexInList(v){
+    // find first index matching identity (en+de+cat+created)
+    return list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
   }
 
   function renderMobile(){
-    mobList.innerHTML=list.map((v,i)=>`
-      <div class="card">
-        <div class="card-top"><div class="card-title">${v[0]}</div>
-        <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div></div>
+    const data=filtered();
+    mobList.innerHTML=data.map(v=>{
+      const idx=indexInList(v);
+      const sel=selected.has(idx)?" selected":"";
+      return `<div class="card${sel}" data-idx="${idx}">
+        <div class="card-top">
+          <div class="card-title" title="${v[0]}">${v[0]}</div>
+          <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
+        </div>
         <div class="card-sub">DE: ${v[1]}</div>
-        <div class="card-row"><button data-i="${i}" class="mobEdit">Bearbeiten</button></div>
-      </div>`).join('');
-    $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.i));
+        <div class="card-row"><button class="mobEdit" data-idx="${idx}">Bearbeiten</button></div>
+      </div>`;
+    }).join('');
+    // events
+    $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.idx));
+    // selection tap on card (not button)
+    $$('.card').forEach(c=>{
+      c.addEventListener('click',e=>{
+        if(!selectMode) return;
+        if(e.target.classList.contains('mobEdit')) return; // ignore button
+        const i=+c.dataset.idx;
+        if(selected.has(i)) selected.delete(i); else selected.add(i);
+        c.classList.toggle('selected');
+      });
+    });
   }
 
   function openEdit(i=null){
@@ -234,17 +293,110 @@ tr:hover{background:#f8fbff}
     if(editIndex==null)list.push([en,de,cat,grp,hint,created]);
     else list[editIndex]=[en,de,cat,grp,hint,created];
     saveLocal(list);
-    renderAll();
+    selected.clear();
     modal.style.display='none';
-  }
-
+    renderAll();
+  };
   modal.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});
 
-  Object.keys(CATEGORY_NAMES).forEach(k=>{
-    const o=document.createElement('option');o.value=k;o.textContent=CATEGORY_NAMES[k];mCat.appendChild(o);
-  });
+  // Desktop controls
+  $('#resetDesk')?.addEventListener('click',()=>{filterCatDesk.value="Alle";searchDesk.value="";renderAll();});
+  $('#addDesk')?.addEventListener('click',()=>openEdit(null));
+  $('#delDesk')?.addEventListener('click',()=>bulkDeleteDesktop());
+  $('#syncDesk')?.addEventListener('click',()=>githubSync());
+  $('#tokenBtn')?.addEventListener('click',()=>askToken());
+  filterCatDesk?.addEventListener('change',renderAll);
+  searchDesk?.addEventListener('input',renderAll);
 
+  function bulkDeleteDesktop(){
+    const checks=$$('input[type="checkbox"][data-idx]:checked');
+    if(!checks.length) return alert("Bitte auswählen.");
+    if(!confirm(`Wirklich ${checks.length} Einträge löschen?`)) return;
+    const idxs=[...checks].map(c=>+c.dataset.idx).sort((a,b)=>b-a);
+    idxs.forEach(i=>list.splice(i,1));
+    saveLocal(list);
+    renderAll();
+  }
+
+  // Mobile top buttons
+  $('#btnBack')?.addEventListener('click',()=>{location.href='index.html';});
+  $('#btnSearch')?.addEventListener('click',()=>{
+    document.getElementById('mobFilters').style.display='grid';
+    searchMob.focus(); searchMob.scrollIntoView({behavior:'smooth',block:'center'});
+  });
+  $('#btnFilter')?.addEventListener('click',()=>{
+    const f=$('#mobFilters'); f.style.display=(f.style.display==='grid'?'none':'grid');
+  });
+  $('#btnToken')?.addEventListener('click',()=>askToken());
+
+  // Mobile filter events
+  $('#resetMob')?.addEventListener('click',()=>{filterCatMob.value="Alle";searchMob.value="";renderAll();});
+  filterCatMob?.addEventListener('change',renderAll);
+  searchMob?.addEventListener('input',renderAll);
+
+  // Mobile FABs
+  $('#fabSelect')?.addEventListener('click',()=>{
+    selectMode=!selectMode;
+    selected.clear();
+    alert(selectMode?'Auswahlmodus aktiv: Tippe Karten zum Markieren.':'Auswahlmodus beendet.');
+    renderMobile();
+  });
+  $('#fabDelete')?.addEventListener('click',()=>{
+    if(!selected.size) return alert("Keine Auswahl.");
+    if(!confirm(`Wirklich ${selected.size} Einträge löschen?`)) return;
+    const idxs=[...selected].sort((a,b)=>b-a);
+    idxs.forEach(i=>list.splice(i,1));
+    selected.clear(); selectMode=false;
+    saveLocal(list); renderAll();
+  });
+  $('#fabAdd')?.addEventListener('click',()=>openEdit(null));
+  $('#fabSync')?.addEventListener('click',()=>githubSync());
+
+  function askToken(){
+    const cur=localStorage.getItem('gh_token')||"";
+    const t=prompt("GitHub Token (repo-Berechtigung):",cur);
+    if(t!==null){localStorage.setItem('gh_token',t.trim()); alert("Token gespeichert.");}
+  }
+
+  async function githubSync(){
+    try{
+      const token=localStorage.getItem('gh_token');
+      if(!token){askToken(); if(!localStorage.getItem('gh_token')) return;}
+      const apiBase=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      // aktuelle SHA holen
+      const getRes=await fetch(apiBase,{headers:{Authorization:`Bearer ${localStorage.getItem('gh_token')}`,Accept:'application/vnd.github+json'}});
+      if(!getRes.ok) throw new Error('SHA holen fehlgeschlagen');
+      const meta=await getRes.json();
+      const sha=meta.sha;
+
+      // Inhalt vorbereiten (lokale Liste ist Quelle der Wahrheit – inkl. neuer/edits)
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      const body={
+        message:`Update ${GH_PATH} via UI`,
+        content,
+        sha
+      };
+      const putRes=await fetch(apiBase,{
+        method:'PUT',
+        headers:{Authorization:`Bearer ${localStorage.getItem('gh_token')}`,Accept:'application/vnd.github+json'},
+        body:JSON.stringify(body)
+      });
+      if(!putRes.ok) throw new Error('Commit fehlgeschlagen');
+      alert('✅ In Datenbank eingetragen.');
+    }catch(e){
+      console.error(e);
+      alert('❌ Sync fehlgeschlagen. Details in der Konsole.');
+    }
+  }
+
+  // init
   loadData();
+
+  // make mobile list visible on phones
+  if(window.matchMedia("(max-width:900px)").matches){
+    document.getElementById('mobList').style.display='block';
+    document.getElementById('mobFilters').style.display='grid';
+  }
 })();
 </script>
 </body>
