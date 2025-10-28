@@ -208,339 +208,209 @@ tr:hover{background:#f8fbff}
 (function(){
   // ===== Kategorien & Farben =====
   const CATEGORY_NAMES={
-    Gelb:"Grundwerkzeuge Metallverarbeitung",
-    Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech- / Kunststoffarbeiten",
-    Gruen:"Drehen / Fräsen",
-    HellesPink:"Hydraulik / Pneumatik",
-    Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein",
-    Rot:"Verwechslungsgefahr"
+    Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"
   };
-  const COLOR_MAP={
-    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
-    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
-  };
-  const TEXT_ON={
-    Gelb:"#000", Pink:"#fff", Blau:"#fff", Gruen:"#fff",
-    HellesPink:"#fff", Orange:"#fff", Dunkelgruen:"#fff", Rot:"#fff"
-  };
+  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",
+    Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
+  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
 
-  // ===== GitHub Ziel =====
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-  // ===== Helpers =====
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const isMobile = () => matchMedia("(max-width:900px)").matches;
-  const toast = (msg="Gespeichert")=>{
-    const t=$("#toast"); t.textContent=msg; t.classList.add("show");
-    setTimeout(()=>t.classList.remove("show"),1400);
-  };
-  const dateOnly = iso => {
-    try{ return new Date(iso).toISOString().slice(0,10); }catch{ return ""; }
-  };
-  const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
+  const $=s=>document.querySelector(s);const $$=s=>Array.from(document.querySelectorAll(s));
+  const isMobile=()=>matchMedia("(max-width:900px)").matches;
+  const toast=(m="Gespeichert")=>{const t=$("#toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500)};
+  const dateOnly=iso=>{try{return new Date(iso).toISOString().slice(0,10)}catch{return""}};
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
 
-  // ===== State =====
-  let list=[], sortCol=0, sortAsc=true, editIndex=null;
-  let selectMode=false, selected=new Set();
+  let list=[],sortCol=0,sortAsc=true,editIndex=null,selectMode=false,selected=new Set(),editModeActive=false;
 
-  // ===== DOM Refs =====
-  const tblBody = $("#tbl tbody");
-  const countInfo = $("#countInfo");
-  const countInfoMob = $("#countInfoMob");
-  const sourceInfo = $("#sourceInfo");
-  const sourceInfoFoot = $("#sourceInfoFoot");
+  const tbl=$("#tbl tbody"),countInfo=$("#countInfo"),countInfoMob=$("#countInfoMob"),
+        sourceInfo=$("#sourceInfo"),sourceInfoFoot=$("#sourceInfoFoot"),
+        filterCatDesk=$("#filterCatDesk"),searchDesk=$("#searchDesk"),
+        filterCatMob=$("#filterCatMob"),searchMob=$("#searchMob"),
+        modal=$("#modal"),mTitle=$("#modalTitle"),
+        mEn=$("#mEn"),mDe=$("#mDe"),mCat=$("#mCat"),mDate=$("#mDate"),mGroup=$("#mGroup"),mHint=$("#mHint"),
+        mobList=$("#mobList"),slideFilter=$("#slideFilter");
 
-  const filterCatDesk=$("#filterCatDesk"), searchDesk=$("#searchDesk");
-  const filterCatMob=$("#filterCatMob"),  searchMob=$("#searchMob");
+  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
 
-  const modal=$("#modal");
-  const mTitle=$("#modalTitle");
-  const mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"), mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
-  const mobList=$("#mobList");
-  const slideFilter=$("#slideFilter");
-
-  // ===== LocalStore =====
-  const loadLocal = ()=> JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-  const saveLocal = d => localStorage.setItem("vokabeln", JSON.stringify(d));
-
-  // ===== Token =====
   function getToken(){
     let t=localStorage.getItem("gh_token")||"";
-    if(!t){
-      t=prompt("GitHub Token (repo-Scope):","");
-      if(t){ localStorage.setItem("gh_token",t); toast("Token gespeichert"); }
-    }
+    if(!t){t=prompt("GitHub Token (repo-Scope):","");if(t){localStorage.setItem("gh_token",t);toast("Token gespeichert");}}
     return t;
   }
-  function clearToken(){ localStorage.removeItem("gh_token"); toast("Token gelöscht – neu setzen!"); }
+  function clearToken(){localStorage.removeItem("gh_token");toast("Token gelöscht – neu setzen!");}
 
-  // ===== Daten laden =====
   async function loadData(){
     try{
       const r=await fetch(RAW_URL,{cache:"no-store"});
-      const d=await r.json();
-      list=d.map(normalize);
-      saveLocal(list);
+      const d=await r.json();list=d.map(normalize);saveLocal(list);
       sourceInfo.textContent="Datenquelle: GitHub (Online)";
       sourceInfoFoot.textContent="Datenquelle: GitHub (Online)";
-    }catch{
-      list=loadLocal();
-      sourceInfo.textContent="Datenquelle: Lokaler Speicher";
-      sourceInfoFoot.textContent="Datenquelle: Lokaler Speicher";
-    }
-    fillCategorySelect(filterCatDesk,true);
-    fillCategorySelect(filterCatMob,true);
-    fillCategorySelect(mCat,false);
-    ensureFilterDefaults();
-    renderAll();
+    }catch{list=loadLocal();sourceInfo.textContent="Datenquelle: Lokaler Speicher";sourceInfoFoot.textContent="Datenquelle: Lokaler Speicher";}
+    fillCategorySelect(filterCatDesk,true);fillCategorySelect(filterCatMob,true);fillCategorySelect(mCat,false);
+    ensureFilterDefaults();renderAll();
   }
 
-  // ===== Kategorien-Selects =====
   function fillCategorySelect(el,withAll=false){
-    el.innerHTML = withAll ? '<option value="Alle">Alle (bunt gemischt)</option>' : "";
+    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
     Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
-      // Farbe (nur visuell, Value bleibt key)
-      o.style.background=COLOR_MAP[k]; o.style.color=TEXT_ON[k];
-      el.appendChild(o);
+      const o=document.createElement("option");o.value=k;o.textContent=CATEGORY_NAMES[k];
+      o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];el.appendChild(o);
     });
   }
-  function ensureFilterDefaults(){
-    if(!filterCatDesk.value) filterCatDesk.value="Alle";
-    if(!filterCatMob.value)  filterCatMob.value="Alle";
-  }
+  function ensureFilterDefaults(){if(!filterCatDesk.value)filterCatDesk.value="Alle";if(!filterCatMob.value)filterCatMob.value="Alle";}
 
-  // ===== Filter/Sort =====
-  function currentFilter(){
-    const cat = isMobile() ? (filterCatMob.value||"Alle") : (filterCatDesk.value||"Alle");
-    const q   = (isMobile()?searchMob:searchDesk).value.trim().toLowerCase();
-    return {cat,q};
-  }
+  function currentFilter(){const cat=isMobile()?(filterCatMob.value||"Alle"):(filterCatDesk.value||"Alle");const q=(isMobile()?searchMob:searchDesk).value.trim().toLowerCase();return{cat,q};}
   function filtered(){
-    const {cat,q}=currentFilter();
-    let data = list.filter(v=>{
-      const okCat = (cat==="Alle" || v[2]===cat);
-      const okQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
-      return okCat && okQ;
+    const{cat,q}=currentFilter();
+    let data=list.filter(v=>{
+      const okC=(cat==="Alle"||v[2]===cat);
+      const okQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
+      return okC&&okQ;
     });
-    // Desktop-sortierung über Spalten 0/1
     data.sort((a,b)=>{
-      const A = (a[sortCol]||"").toString().toLowerCase();
-      const B = (b[sortCol]||"").toString().toLowerCase();
-      if(A<B) return sortAsc?-1:1;
-      if(A>B) return sortAsc?1:-1;
-      return 0;
+      const A=(a[sortCol]||"").toLowerCase(),B=(b[sortCol]||"").toLowerCase();
+      if(A<B)return sortAsc?-1:1;if(A>B)return sortAsc?1:-1;return 0;
     });
     return data;
   }
 
-  // ===== Desktop Render =====
   function renderDesktop(){
     const data=filtered();
-    tblBody.innerHTML = data.map(v=>{
-      const idx = indexOf(v);
-      const cat=v[2];
+    tbl.innerHTML=data.map(v=>{
+      const i=indexOf(v),c=v[2];
       return `<tr>
-        <td><input type="checkbox" data-idx="${idx}"></td>
-        <td>${escapeHtml(v[0])}</td>
-        <td>${escapeHtml(v[1])}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</span></td>
-        <td style="display:none">${escapeHtml(v[3]||"")}</td>
-        <td style="display:none">${escapeHtml(v[4]||"")}</td>
-        <td><button class="btn" data-edit="${idx}">✏️ Bearbeiten</button></td>
-      </tr>`;
+        <td><input type="checkbox" data-idx="${i}"></td>
+        <td>${escapeHtml(v[0])}</td><td>${escapeHtml(v[1])}</td>
+        <td><span class="category-chip" style="background:${COLOR_MAP[c]};color:${TEXT_ON[c]}">${CATEGORY_NAMES[c]}</span></td>
+        <td style="display:none">${escapeHtml(v[3]||"")}</td><td style="display:none">${escapeHtml(v[4]||"")}</td>
+        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td></tr>`;
     }).join("");
     $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-    // Zähler
-    countInfo.textContent = `Gefunden ${data.length} von ${list.length}`;
+    countInfo.textContent=`Gefunden ${data.length} von ${list.length}`;
   }
 
-  // ===== Mobile Render =====
   function renderMobile(){
     const data=filtered();
-    mobList.innerHTML = data.map(v=>{
-      const idx=indexOf(v);
-      const cat=v[2];
-      const selClass = selected.has(idx) ? " selected" : "";
-      return `<div class="card${selClass}" data-idx="${idx}">
+    mobList.innerHTML=data.map(v=>{
+      const i=indexOf(v),cat=v[2],sel=selected.has(i)?" selected":"";
+      return `<div class="card${sel}" data-idx="${i}">
         <div class="card-top">
           <div class="card-cat" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</div>
           <div class="card-title">${escapeHtml(v[0])}</div>
         </div>
         <div class="card-sub">DE: ${escapeHtml(v[1])}</div>
-        <div class="card-row"><button class="btn mobEdit" data-edit="${idx}" style="padding:6px 10px;font-size:.85rem">Bearbeiten</button></div>
+        <div class="card-row"><button class="btn mobEdit" data-edit="${i}" style="padding:6px 10px;font-size:.85rem">Ansehen</button></div>
       </div>`;
     }).join("");
-
-    // Interaktionen
-    $$('.mobEdit').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
-    $$('.card').forEach(card=>{
-      card.onclick = (e)=>{
-        const idx=+card.dataset.idx;
-        if(selectMode){
-          if(selected.has(idx)) selected.delete(idx); else selected.add(idx);
-          card.classList.toggle("selected");
-        }else{
-          openEdit(idx);
-        }
+    $$('.mobEdit').forEach(b=>b.onclick=(e)=>{e.stopPropagation();openEdit(+b.dataset.edit);});
+    $$('.card').forEach(c=>{
+      c.onclick=e=>{
+        const i=+c.dataset.idx;
+        if(selectMode){selected.has(i)?selected.delete(i):selected.add(i);c.classList.toggle("selected");}
       };
     });
-    // Zähler
-    countInfoMob.textContent = `Gefunden ${data.length} von ${list.length}`;
+    countInfoMob.textContent=`Gefunden ${data.length} von ${list.length}`;
   }
 
-  function renderAll(){
-    renderDesktop();
-    renderMobile();
+  function renderAll(){renderDesktop();renderMobile();}
+
+  const escapeHtml=s=>(s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m]));
+  const indexOf=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&(x[5]||"")===(v[5]||""));
+
+  // ===== Editor mit Bearbeiten-Button =====
+  function setEditable(on){
+    [mEn,mDe,mCat,mGroup,mHint].forEach(inp=>{
+      inp.readOnly=!on;
+      inp.style.background=on?"#fff":"#f3f4f6";
+    });
+    mCat.disabled=!on;
   }
 
-  // ===== Utilities =====
-  function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[m])); }
-  function indexOf(v){
-    // identifiziere via tuple (en,de,cat,created)
-    return list.findIndex(x=>x[0]===v[0] && x[1]===v[1] && x[2]===v[2] && (x[5]||"")==(v[5]||""));
-  }
-
-  // ===== Editor =====
   function openEdit(i=null){
-    editIndex = i;
+    editIndex=i;
+    editModeActive=false;
     if(i==null){
       mTitle.textContent="Neue Vokabel";
-      mEn.value=""; mDe.value=""; mCat.value="Gelb"; mGroup.value=""; mHint.value="";
-      mDate.value = dateOnly(new Date().toISOString()); // nur Datum
+      mEn.value="";mDe.value="";mCat.value="Gelb";mGroup.value="";mHint.value="";
+      mDate.value=dateOnly(new Date().toISOString());
+      setEditable(true);
     }else{
       const v=list[i];
-      mTitle.textContent="Vokabel bearbeiten";
-      mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
-      mGroup.value=v[3]||""; mHint.value=v[4]||"";
-      mDate.value=dateOnly(v[5]);
+      mTitle.textContent="Vokabel anzeigen";
+      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];
+      mGroup.value=v[3]||"";mHint.value=v[4]||"";mDate.value=dateOnly(v[5]);
+      setEditable(false);
+    }
+    // Füge Edit-Toggle ein, wenn nicht vorhanden
+    if(!$("#mEditToggle")){
+      const btn=document.createElement("button");
+      btn.id="mEditToggle";
+      btn.className="btn ghost";
+      btn.textContent="Bearbeiten aktivieren ✏️";
+      btn.style.marginTop="10px";
+      btn.onclick=()=>{
+        editModeActive=true;
+        setEditable(true);
+        btn.disabled=true;
+        btn.textContent="Bearbeitung aktiv";
+      };
+      $(".modal-actions").prepend(btn);
+    }else{
+      const b=$("#mEditToggle");
+      b.disabled=false;b.textContent="Bearbeiten aktivieren ✏️";
     }
     modal.style.display="flex";
   }
-  function closeModal(){ modal.style.display="none"; }
+  function closeModal(){modal.style.display="none";}
   $("#mCancel").onclick=closeModal;
-  modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
+  modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
 
   $("#mSave").onclick=()=>{
-    const en=mEn.value.trim(), de=mDe.value.trim();
-    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
-    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim();
-    if(editIndex==null){
-      list.push([en,de,cat,grp,hint,new Date().toISOString()]);
-    }else{
-      const old=list[editIndex];
-      list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];
-    }
-    saveLocal(list);
-    toast("Gespeichert");
-    closeModal();
-    renderAll();
+    const en=mEn.value.trim(),de=mDe.value.trim();
+    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
+    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim();
+    if(editIndex==null){list.push([en,de,cat,grp,hint,new Date().toISOString()]);}
+    else{const old=list[editIndex];list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];}
+    saveLocal(list);toast("Gespeichert");closeModal();renderAll();
   };
-
   $("#mDelete").onclick=()=>{
-    if(editIndex==null){ closeModal(); return; }
-    if(!confirm("Eintrag wirklich löschen?")) return;
-    list.splice(editIndex,1);
-    saveLocal(list);
-    toast("Gelöscht");
-    closeModal();
-    renderAll();
+    if(editIndex==null){closeModal();return;}
+    if(!confirm("Eintrag wirklich löschen?"))return;
+    list.splice(editIndex,1);saveLocal(list);toast("Gelöscht");closeModal();renderAll();
   };
 
-  // ===== Desktop Buttons =====
+  // ===== Desktop + Mobile Basisfunktionen bleiben =====
   $("#addDesk").onclick=()=>openEdit(null);
-  $("#delDesk").onclick=()=>{
-    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
-    if(!ids.length){ alert("Bitte mindestens eine Zeile markieren."); return; }
-    if(!confirm(`${ids.length} Einträge löschen?`)) return;
-    list=list.filter((_,i)=>!ids.includes(i));
-    saveLocal(list); renderAll(); toast("Gelöscht");
-  };
-
-  // Sort Header (Spalte 0/1)
-  $$('th.sortable').forEach(th=>{
-    th.addEventListener('click',()=>{
-      const col=+th.dataset.col;
-      if(sortCol===col){ sortAsc=!sortAsc; } else { sortCol=col; sortAsc=true; }
-      renderAll();
-    });
-  });
-
-  // ===== Mobile Bottom Bar =====
+  $("#delDesk").onclick=()=>{const ids=$$('input[data-idx]:checked').map(x=>+x.dataset.idx);if(!ids.length)return alert("Bitte markieren.");if(!confirm(`${ids.length} löschen?`))return;list=list.filter((_,i)=>!ids.includes(i));saveLocal(list);toast("Gelöscht");renderAll();};
+  $$('th.sortable').forEach(th=>th.onclick=()=>{const c=+th.dataset.col;if(sortCol===c)sortAsc=!sortAsc;else{sortCol=c;sortAsc=true;}renderAll();});
   $("#fabAdd").onclick=()=>openEdit(null);
-  $("#fabSelect").onclick=()=>{
-    selectMode=!selectMode;
-    selected.clear();
-    renderMobile();
-    toast(selectMode?"Auswahl aktiv":"Auswahl aus");
-  };
-  $("#fabDelete").onclick=()=>{
-    if(!selected.size){ alert("Keine Elemente ausgewählt."); return; }
-    if(!confirm(`${selected.size} Einträge löschen?`)) return;
-    list=list.filter((_,i)=>!selected.has(i));
-    selected.clear(); selectMode=false;
-    saveLocal(list); renderAll(); toast("Gelöscht");
-  };
-
-  // ===== Dial Buttons (mobil) =====
+  $("#fabSelect").onclick=()=>{selectMode=!selectMode;selected.clear();renderMobile();toast(selectMode?"Auswahl aktiv":"Auswahl aus");};
+  $("#fabDelete").onclick=()=>{if(!selected.size)return alert("Keine Auswahl.");if(!confirm(`${selected.size} löschen?`))return;list=list.filter((_,i)=>!selected.has(i));selected.clear();saveLocal(list);toast("Gelöscht");renderAll();};
   $("#dialBack").onclick=()=>location.href="index.html";
-  $("#dialFind").onclick=()=>{
-    slideFilter.classList.toggle("show");
-    // Focus in Suchfeld beim Öffnen
-    if(slideFilter.classList.contains("show")) setTimeout(()=>$("#searchMob").focus(),50);
-  };
-  $("#dialGear").onclick=()=>{ // Token schnell setzen/ändern
-    clearToken(); getToken();
-  };
-
-  // ===== Filter/Suche/Reset =====
-  function resetFilters(){
-    (isMobile()?filterCatMob:filterCatDesk).value="Alle";
-    (isMobile()?searchMob:searchDesk).value="";
-    renderAll();
-  }
-  $("#resetDesk").onclick=resetFilters;
-  $("#resetMob").onclick=resetFilters;
-  [filterCatDesk,searchDesk,filterCatMob,searchMob].forEach(el=>{
-    el.addEventListener("input",renderAll);
-    el.addEventListener("change",renderAll);
-  });
-
-  // ===== GitHub Sync (Desktop & Mobile) =====
+  $("#dialFind").onclick=()=>{slideFilter.classList.toggle("show");if(slideFilter.classList.contains("show"))setTimeout(()=>$("#searchMob").focus(),50);};
+  $("#dialGear").onclick=()=>{clearToken();getToken();};
+  function resetFilters(){(isMobile()?filterCatMob:filterCatDesk).value="Alle";(isMobile()?searchMob:searchDesk).value="";renderAll();}
+  $("#resetDesk").onclick=resetFilters;$("#resetMob").onclick=resetFilters;
+  [filterCatDesk,searchDesk,filterCatMob,searchMob].forEach(e=>{e.oninput=renderAll;e.onchange=renderAll;});
   async function githubSync(){
-    const token=getToken(); if(!token) return;
+    const t=getToken();if(!t)return;
     try{
       const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-      const metaRes=await fetch(api,{headers:{Authorization:`token ${token}`}});
-      if(!metaRes.ok) throw new Error(await metaRes.text());
-      const meta=await metaRes.json();
-      const sha=meta.sha;
-
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const putRes=await fetch(api,{
-        method:"PUT",
-        headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
-        body:JSON.stringify({message:"Update via Vokabel-UI", content, sha})
-      });
-      if(!putRes.ok) throw new Error(await putRes.text());
+      const meta=await fetch(api,{headers:{Authorization:`token ${t}`}}).then(r=>r.json());
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      await fetch(api,{method:"PUT",headers:{Authorization:`token ${t}`,"Content-Type":"application/json"},
+        body:JSON.stringify({message:"Update via Vokabel-UI",content,sha:meta.sha})});
       toast("In Datenbank eingetragen");
-    }catch(e){
-      console.error(e);
-      alert("❌ Sync fehlgeschlagen");
-    }
+    }catch(e){console.error(e);alert("❌ Sync fehlgeschlagen");}
   }
-  $("#syncDesk").onclick=githubSync;
-  $("#fabSync").onclick=githubSync;
-  $("#tokenBtn").onclick=()=>{ clearToken(); getToken(); };
+  $("#syncDesk").onclick=githubSync;$("#fabSync").onclick=githubSync;$("#tokenBtn").onclick=()=>{clearToken();getToken();};
 
-  // ===== Init =====
   loadData();
 })();
 </script>
-</body>
-</html>
