@@ -7,139 +7,533 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--blue:#2563eb;--ok:#16a34a;--bad:#ef4444;
+  --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
+  --blue:#2563eb;--blue2:#1d4ed8;--ok:#16a34a;--bad:#ef4444;
   --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1)
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
+a{color:#1e3a8a;text-decoration:none}
+
 .app{max-width:1100px;margin:20px auto;padding:16px}
-h1{text-align:center;font-weight:800;color:#1e3a8a;margin:0}
+h1{text-align:center;font-weight:800;color:#1e3a8a;margin:8px 0 4px}
 .hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;position:relative;margin:10px 0}
+
+/* Desktop Toolbar & Tabelle */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
 .toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
 .toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
 .toolbar .warn{background:var(--bad)}
-.counter{position:absolute;right:10px;top:10px;font-weight:700;color:#1e3a8a}
+.toolbar .ghost{background:#eef4ff;color:#111}
+
 .table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
 table{width:100%;border-collapse:collapse}
 th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{background:#f3f6ff}
 tr:hover{background:#f8fbff}
 .category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-/* === Mobile === */
-.mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
-.mob-title{display:flex;align-items:center;justify-content:space-between}
-.mob-actions{display:flex;gap:10px}
-.iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
-.mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.mob-list{display:none;padding:10px}
-.card{background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s}
+
+/* Statusleiste */
+.status-line{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:10px 2px;color:#6b7280;font-size:.95rem}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9999}
+.toast.show{opacity:1}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
+.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px;box-shadow:var(--shadow)}
+.panel h3{margin:0 0 10px 0}
+.form-grid{display:grid;gap:10px}
+.form-grid label{font-weight:700;font-size:.95rem}
+.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
+.modal-actions{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
+.btn.warn{background:var(--bad);color:#fff}
+
+/* Mobile Layout */
+.mobile-only{display:none}
+.mob-header{position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:5}
+.mob-title{display:flex;align-items:center;justify-content:center;font-weight:800}
+.mob-list{padding:12px}
+.card{
+  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;overflow:hidden
+}
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;flex-wrap:wrap}
-.card-title{font-weight:800;font-size:1.05rem}
-.card-cat{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700}
-.card-sub{color:var(--muted);margin-top:6px;font-size:.95rem}
+.card-cat{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  padding:4px 10px;border-radius:999px;color:#fff;font-weight:700}
+.card-title{font-weight:800;font-size:1.05rem;word-break:break-word;overflow-wrap:anywhere}
+.card-sub{color:var(--muted);margin-top:6px}
 .card-row{margin-top:10px}
-.card-row button{width:100%;padding:10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer}
-.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3}
+.card-row .btn{width:100%;background:var(--blue);color:#fff}
+
+/* Bottom bar (Mobile) */
+.fab-row{position:sticky;bottom:0;background:rgba(255,255,255,.95);
+  padding:10px;border-top:1px solid #e5ebf3;display:none}
 .fabs{display:flex;gap:8px}
 .fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
 .fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
-.mob-counter{position:fixed;right:16px;bottom:70px;background:#2563eb;color:#fff;padding:6px 10px;border-radius:999px;font-weight:700;box-shadow:0 3px 10px rgba(0,0,0,.2);z-index:60}
-/* Modal */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px}
-.form-grid{display:grid;gap:10px}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
-.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-.btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
-@media (max-width:900px){.toolbar,.table-wrap{display:none}.mobile-header,.mob-filters,.mob-list,.fab-row{display:block}}
+
+/* Speed dial right side (Google+ style) */
+.dial{position:fixed;right:14px;bottom:50%;transform:translateY(50%);display:none;z-index:15}
+.dial button{
+  width:48px;height:48px;border-radius:50%;border:none;margin:8px 0;box-shadow:0 8px 20px rgba(0,0,0,.15);
+  background:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px
+}
+.dial button:hover{transform:translateY(-1px)}
+.dial .back{background:#1f2937;color:#fff}   /* zurück */
+.dial .find{background:#2563eb;color:#fff}   /* suche/filter */
+.dial .gear{background:#10b981;color:#fff}   /* token/sync menu */
+
+/* Slide-in panel (mobile filter/search) */
+.slide{position:fixed;left:0;right:0;top:0;background:#fff;border-bottom:1px solid #e5ebf3;transform:translateY(-110%);
+  transition:transform .25s ease;z-index:20;padding:12px}
+.slide.show{transform:translateY(0)}
+.slide .row{display:flex;gap:8px}
+.slide select,.slide input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
+.slide .btn{white-space:nowrap}
+
+/* Footer */
+.footer{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
+
+/* Responsive Umschalter */
+@media (max-width:900px){
+  .desktop-only{display:none}
+  .mobile-only{display:block}
+  .dial{display:block}
+  .fab-row{display:block}
+}
 </style>
 </head>
 <body>
 <div class="app">
-<h1>📘 Vokabelübersicht</h1><div class="hr"></div>
+  <h1>📘 Vokabelübersicht</h1>
+  <div class="hr"></div>
 
-<div class="toolbar">
-  <select id="filterCatDesk"></select>
-  <input id="searchDesk" placeholder="Suchen…">
-  <button id="resetDesk" class="btn">Reset</button>
-  <button id="addDesk" class="btn">➕ Neue</button>
-  <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-  <button id="syncDesk" class="btn">📤 In Datenbank</button>
-  <button id="tokenBtn" class="btn">⚙️ Token</button>
-  <span id="deskCounter" class="counter">0 / 0</span>
+  <!-- DESKTOP: Toolbar -->
+  <div class="toolbar desktop-only">
+    <select id="filterCatDesk"></select>
+    <input id="searchDesk" type="text" placeholder="Suchen…">
+    <button id="resetDesk" class="btn ghost">Reset</button>
+    <button id="addDesk" class="btn">➕ Neue</button>
+    <button id="delDesk" class="btn warn">🗑️ Löschen</button>
+    <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
+    <button id="tokenBtn" class="btn">⚙️ Token</button>
+  </div>
+
+  <!-- DESKTOP: Tabelle -->
+  <div class="table-wrap desktop-only">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th style="width:44px">⟲</th>
+          <th class="sortable" data-col="0">Englisch</th>
+          <th class="sortable" data-col="1">Deutsch</th>
+          <th>Kategorie</th>
+          <th style="display:none">Gruppe</th>
+          <th style="display:none">Hinweis</th>
+          <th>Aktion</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- DESKTOP: Status -->
+  <div class="status-line desktop-only">
+    <div id="sourceInfo">Datenquelle: –</div>
+    <div id="countInfo">Gefunden 0 von 0</div>
+  </div>
+
+  <!-- MOBILE: Header / Titel -->
+  <div class="mob-header mobile-only">
+    <div class="mob-title">Vokabeln</div>
+  </div>
+
+  <!-- MOBILE: Slide-in Suche/Filter -->
+  <div class="slide mobile-only" id="slideFilter">
+    <div class="row" style="margin-bottom:8px">
+      <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
+      <input id="searchMob" type="text" placeholder="Suchen…">
+      <button id="resetMob" class="btn ghost">Reset</button>
+    </div>
+  </div>
+
+  <!-- MOBILE: Kartenliste -->
+  <div class="mob-list mobile-only" id="mobList"></div>
+
+  <!-- MOBILE: Bottom bar -->
+  <div class="fab-row mobile-only">
+    <div class="fabs">
+      <button class="fab gray" id="fabSelect">Auswahl</button>
+      <button class="fab warn" id="fabDelete">Löschen</button>
+      <button class="fab blue" id="fabAdd">Hinzufügen</button>
+      <button class="fab gray" id="fabSync">In DB</button>
+    </div>
+    <div class="status-line" style="margin:6px 2px 0">
+      <div id="countInfoMob">Gefunden 0 von 0</div>
+    </div>
+  </div>
+
+  <!-- MOBILE: Side Speed Dial -->
+  <div class="dial mobile-only">
+    <button class="back" id="dialBack" title="Zurück zum Trainer">⟵</button>
+    <button class="find" id="dialFind" title="Suche / Filter">🔎</button>
+    <button class="gear" id="dialGear" title="Token / Sync">⚙️</button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer desktop-only">
+    <a href="index.html">⬅️ Zurück zum Trainer</a>
+    <div style="margin-top:6px">© 2025 Beeferino • <span id="sourceInfoFoot">Datenquelle: –</span></div>
+  </div>
 </div>
 
-<div class="table-wrap"><table id="tbl"><thead><tr><th>⟲</th><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Gruppe</th><th>Hinweis</th><th>Aktion</th></tr></thead><tbody></tbody></table></div>
-
-<div class="mobile-header"><div class="mob-title"><h2 style="margin:0">Vokabeln</h2><div class="mob-actions"><button class="iconbtn" id="btnBack">⬅️</button><button class="iconbtn" id="btnSearch">🔎</button><button class="iconbtn" id="btnFilter">🧪</button><button class="iconbtn" id="btnToken">⚙️</button></div></div></div>
-<div class="mob-filters" id="mobFilters"><select id="filterCatMob"><option value="Alle">Alle</option></select><input id="searchMob" placeholder="Suchen…"><button id="resetMob" class="btn">Reset</button></div>
-<div class="mob-list" id="mobList"></div>
-<div class="mob-counter" id="mobCounter">0 / 0</div>
-
-<div class="fab-row"><div class="fabs"><button class="fab gray" id="fabSelect">Auswahl</button><button class="fab warn" id="fabDelete">Löschen</button><button class="fab blue" id="fabAdd">Hinzufügen</button><button class="fab gray" id="fabSync">In DB</button></div></div>
+<!-- MODAL: Editor -->
+<div class="modal" id="modal">
+  <div class="panel">
+    <h3 id="modalTitle">Vokabel</h3>
+    <div class="form-grid">
+      <div>
+        <label>Englisch</label>
+        <input id="mEn" type="text" autocomplete="off">
+      </div>
+      <div>
+        <label>Deutsch</label>
+        <input id="mDe" type="text" autocomplete="off">
+      </div>
+      <div>
+        <label>Kategorie</label>
+        <select id="mCat"></select>
+      </div>
+      <div>
+        <label>Erstellt</label>
+        <input id="mDate" type="datetime-local" readonly style="background:#f3f4f6">
+      </div>
+      <div>
+        <label>Gruppe / Variante</label>
+        <input id="mGroup" type="text" autocomplete="off">
+      </div>
+      <div>
+        <label>Hinweis</label>
+        <textarea id="mHint" rows="2"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn warn" id="mDelete">Löschen</button>
+      <div>
+        <button class="btn ghost" id="mCancel">Abbrechen</button>
+        <button class="btn primary" id="mSave">Speichern</button>
+      </div>
+    </div>
+  </div>
 </div>
 
-<div class="modal" id="modal"><div class="panel"><h3 id="modalTitle">Vokabel</h3><div class="form-grid"><label>Englisch<input id="mEn"></label><label>Deutsch<input id="mDe"></label><label>Kategorie<select id="mCat"></select></label><label>Gruppe<input id="mGroup"></label><label>Hinweis<textarea id="mHint"></textarea></label></div><div class="modal-actions"><button class="btn ghost" id="mCancel">Abbrechen</button><button class="btn primary" id="mSave">Speichern</button></div></div></div>
+<div id="toast" class="toast">Gespeichert</div>
 
 <script>
-(()=>{
-const CATS={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
-const COLORS={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-const TEXT=c=>["Gelb"].includes(c)?"#000":"#fff";
-const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-let list=[],selected=new Set(),selectMode=false,editIndex=null;
-const tbl=$('#tbl tbody'),mobList=$('#mobList'),deskCounter=$('#deskCounter'),mobCounter=$('#mobCounter');
-const filterDesk=$('#filterCatDesk'),filterMob=$('#filterCatMob'),searchDesk=$('#searchDesk'),searchMob=$('#searchMob');
-const modal=$('#modal'),mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mGroup=$('#mGroup'),mHint=$('#mHint');
+(function(){
+  /* Kategorien */
+  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
+  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
+  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
 
-function normalize(v){return [v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];}
-const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
-const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  /* GitHub Pfade */
+  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-function fill(sel){sel.innerHTML="";Object.keys(CATS).forEach(k=>{const o=document.createElement("option");o.value=k;o.textContent=CATS[k];sel.appendChild(o);});}
-fill(filterDesk);fill(filterMob);fill(mCat);
+  /* Helpers */
+  const $=s=>document.querySelector(s);
+  const $$=s=>Array.from(document.querySelectorAll(s));
+  const isMobile=()=>matchMedia("(max-width:900px)").matches;
+  const toast=(msg)=>{const t=$("#toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1500);};
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
+  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
 
-async function load(){
- try{const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});list=(await r.json()).map(normalize);saveLocal(list);}
- catch{list=loadLocal();}
- render();
-}
-function filtered(){
- const cat=(matchMedia("(max-width:900px)").matches?filterMob.value:filterDesk.value)||"Alle";
- const q=(matchMedia("(max-width:900px)").matches?searchMob.value:searchDesk.value).toLowerCase();
- return list.filter(v=>(cat==="Alle"||v[2]===cat)&&(!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q)));
-}
-function updateCounter(){const t=list.length,v=filtered().length;deskCounter.textContent=`${v} / ${t}`;mobCounter.textContent=`${v} / ${t}`;}
-function render(){
- const arr=filtered();
- tbl.innerHTML=arr.map((v,i)=>`<tr><td><input type="checkbox" data-i="${i}"></td><td>${v[0]}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${COLORS[v[2]]};color:${TEXT(v[2])}">${CATS[v[2]]}</span></td><td>${v[3]||""}</td><td>${v[4]||""}</td><td><button class="btn" data-edit="${i}">Bearbeiten</button></td></tr>`).join("");
- $$("button[data-edit]").forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
- mobList.innerHTML=arr.map((v,i)=>`<div class="card ${selected.has(i)?"selected":""}" data-i="${i}"><div class="card-top"><div class="card-title">${v[0]}</div><div class="card-cat" style="background:${COLORS[v[2]]};color:${TEXT(v[2])}">${CATS[v[2]]}</div></div><div class="card-sub">DE: ${v[1]}</div><div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div></div>`).join("");
- $$(".mobEdit").forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
- $$(".card").forEach(c=>c.onclick=e=>{if(!selectMode||e.target.classList.contains('mobEdit'))return;const i=+c.dataset.i;if(selected.has(i))selected.delete(i);else selected.add(i);c.classList.toggle('selected');});
- updateCounter();
-}
-function openEdit(i=null){
- editIndex=i;if(i==null){mEn.value=mDe.value=mGroup.value=mHint.value="";mCat.value="Gelb";}
- else{const v=list[i];mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mGroup.value=v[3];mHint.value=v[4];}
- modal.style.display="flex";
-}
-$('#mCancel').onclick=()=>modal.style.display="none";
-$('#mSave').onclick=()=>{const en=mEn.value.trim(),de=mDe.value.trim();if(!en||!de)return alert("Fehlende Eingaben.");const v=[en,de,mCat.value,mGroup.value,mHint.value,new Date().toISOString()];if(editIndex==null)list.push(v);else list[editIndex]=v;saveLocal(list);modal.style.display="none";render();};
+  /* DOM Refs Desktop */
+  const filterCatDesk=$("#filterCatDesk"), searchDesk=$("#searchDesk"), resetDesk=$("#resetDesk");
+  const tblBody=$("#tbl tbody"), countInfo=$("#countInfo");
+  const tokenBtn=$("#tokenBtn"), addDesk=$("#addDesk"), delDesk=$("#delDesk"), syncDesk=$("#syncDesk");
+  const sourceInfo=$("#sourceInfo"), sourceInfoFoot=$("#sourceInfoFoot");
 
-$('#fabAdd').onclick=$('#addDesk').onclick=()=>openEdit(null);
-$('#fabSelect').onclick=()=>{selectMode=!selectMode;selected.clear();render();};
-$('#fabDelete').onclick=()=>{if(!selected.size)return alert("Keine Auswahl.");if(!confirm(`${selected.size} löschen?`))return;list=list.filter((v,i)=>!selected.has(i));selected.clear();saveLocal(list);render();};
-$('#delDesk').onclick=()=>{const ids=$$('input[type="checkbox"][data-i]:checked').map(x=>+x.dataset.i);if(!ids.length)return alert("Keine Auswahl.");if(!confirm(`${ids.length} löschen?`))return;list=list.filter((v,i)=>!ids.includes(i));saveLocal(list);render();};
+  /* DOM Refs Mobile */
+  const filterCatMob=$("#filterCatMob"), searchMob=$("#searchMob"), resetMob=$("#resetMob");
+  const mobList=$("#mobList"), countInfoMob=$("#countInfoMob");
+  const slideFilter=$("#slideFilter");
+  const fabSelect=$("#fabSelect"), fabDelete=$("#fabDelete"), fabAdd=$("#fabAdd"), fabSync=$("#fabSync");
+  const dialBack=$("#dialBack"), dialFind=$("#dialFind"), dialGear=$("#dialGear");
 
-$('#resetDesk').onclick=$('#resetMob').onclick=()=>{filterDesk.value=filterMob.value="Alle";searchDesk.value=searchMob.value="";render();};
-filterDesk.onchange=filterMob.onchange=searchDesk.oninput=searchMob.oninput=render;
-$('#btnBack').onclick=()=>location.href="index.html";
+  /* Modal */
+  const modal=$("#modal");
+  const mTitle=$("#modalTitle");
+  const mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"), mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
+  const mSave=$("#mSave"), mCancel=$("#mCancel"), mDelete=$("#mDelete");
 
-load();
+  /* State */
+  let list=[], sortCol=0, sortDir=1, editIndex=null, selectMode=false, selected=new Set();
+
+  /* Init category selects */
+  function fillCategorySelect(el,withAll){
+    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k; o.textContent=CATEGORY_NAMES[k];
+      o.style.background=COLOR_MAP[k]; o.style.color=TEXT_ON[k];
+      el.appendChild(o);
+    });
+  }
+
+  /* Load data */
+  async function loadData(){
+    try{
+      const r=await fetch(RAW_URL,{cache:"no-store"});
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      const d=await r.json();
+      list=d.map(normalize);
+      saveLocal(list);
+      sourceInfo.textContent="Datenquelle: GitHub (Online)";
+      sourceInfoFoot.textContent="Datenquelle: GitHub (Online)";
+    }catch{
+      list=loadLocal();
+      sourceInfo.textContent="Datenquelle: Lokaler Speicher";
+      sourceInfoFoot.textContent="Datenquelle: Lokaler Speicher";
+    }
+    renderAll();
+  }
+
+  function currentFilter(){
+    const cat=(isMobile()?filterCatMob.value:filterCatDesk.value)||"Alle";
+    const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
+    return {cat,q};
+  }
+
+  function getFiltered(){
+    const {cat,q}=currentFilter();
+    let rows=list.slice();
+    // sort (desktop header; mobile – keep same order)
+    rows.sort((a,b)=>{
+      const idx=sortCol; // 0 EN, 1 DE
+      const s=(a[idx]||"").localeCompare(b[idx]||"");
+      return s*sortDir;
+    });
+    rows=rows.filter(v=>{
+      const matchCat=(cat==="Alle"||v[2]===cat);
+      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
+      return matchCat&&matchQ;
+    });
+    return rows;
+  }
+
+  function idxOf(v){
+    return list.findIndex(x=>x[0]===v[0] && x[1]===v[1] && x[2]===v[2] && x[5]===v[5]);
+  }
+
+  /* Render Desktop table */
+  function renderDesktop(){
+    const rows=getFiltered();
+    tblBody.innerHTML=rows.map(v=>{
+      const i=idxOf(v);
+      const cat=v[2];
+      return `<tr>
+        <td><input type="checkbox" data-idx="${i}"></td>
+        <td>${escapeHtml(v[0])}</td>
+        <td>${escapeHtml(v[1])}</td>
+        <td><span class="category-chip" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</span></td>
+        <td style="display:none">${escapeHtml(v[3]||"")}</td>
+        <td style="display:none">${escapeHtml(v[4]||"")}</td>
+        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
+      </tr>`;
+    }).join("");
+    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
+    const total=list.length, shown=rows.length;
+    countInfo.textContent=`Gefunden ${shown} von ${total}`;
+  }
+
+  /* Render Mobile cards */
+  function renderMobile(){
+    const rows=getFiltered();
+    mobList.innerHTML=rows.map(v=>{
+      const i=idxOf(v);
+      const cat=v[2];
+      const sel=selected.has(i)?" selected":"";
+      return `<div class="card${sel}" data-idx="${i}">
+        <div class="card-top">
+          <span class="card-cat" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</span>
+          <span></span>
+        </div>
+        <div class="card-title">${escapeHtml(v[0])}</div>
+        <div class="card-sub">DE: ${escapeHtml(v[1])}</div>
+        <div class="card-row"><button class="btn" data-edit="${i}">Bearbeiten</button></div>
+      </div>`;
+    }).join("");
+    // events
+    $$('.card .btn[data-edit]').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
+    $$('.card').forEach(card=>{
+      card.onclick=()=>{
+        if(!selectMode) { openEdit(+card.dataset.idx); return; }
+        const i=+card.dataset.idx;
+        if(selected.has(i)) selected.delete(i); else selected.add(i);
+        card.classList.toggle('selected');
+      };
+    });
+    countInfoMob.textContent=`Gefunden ${rows.length} von ${list.length}`;
+  }
+
+  function renderAll(){
+    renderDesktop();
+    renderMobile();
+  }
+
+  /* Sorting header (Desktop) */
+  $$('#tbl thead th.sortable').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col=parseInt(th.dataset.col,10);
+      if(sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=1; }
+      renderAll();
+    });
+  });
+
+  /* Modal CRUD */
+  function openEdit(i=null){
+    editIndex=i;
+    if(i==null){
+      mTitle.textContent="Neue Vokabel";
+      mEn.value=""; mDe.value=""; mCat.value="Gelb";
+      mGroup.value=""; mHint.value="";
+      mDate.value=new Date().toISOString().slice(0,16);
+      mDelete.style.display="none";
+    }else{
+      const v=list[i];
+      mTitle.textContent="Vokabel bearbeiten";
+      mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
+      mGroup.value=v[3]||""; mHint.value=v[4]||"";
+      mDate.value=new Date(v[5]).toISOString().slice(0,16);
+      mDelete.style.display="inline-block";
+    }
+    modal.style.display="flex";
+  }
+  function closeModal(){ modal.style.display="none"; }
+
+  mCancel.onclick=closeModal;
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+
+  mSave.onclick=()=>{
+    const en=mEn.value.trim(), de=mDe.value.trim();
+    if(!en||!de){ toast("Bitte Englisch & Deutsch ausfüllen"); return; }
+    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim();
+    if(editIndex==null){
+      list.push([en,de,cat,grp,hint,new Date().toISOString()]);
+    }else{
+      const old=list[editIndex];
+      list[editIndex]=[en,de,cat,grp,hint,old[5]||new Date().toISOString()];
+    }
+    saveLocal(list);
+    closeModal(); renderAll(); toast("Gespeichert");
+  };
+
+  mDelete.onclick=()=>{
+    if(editIndex==null) return;
+    if(!confirm("Diesen Eintrag löschen?")) return;
+    list.splice(editIndex,1);
+    saveLocal(list);
+    closeModal(); renderAll(); toast("Gelöscht");
+  };
+
+  /* Desktop actions */
+  addDesk.onclick=()=>openEdit(null);
+  delDesk.onclick=()=>{
+    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
+    if(!ids.length){ toast("Keine Auswahl"); return; }
+    if(!confirm(`${ids.length} Einträge löschen?`)) return;
+    list=list.filter((v,i)=>!ids.includes(i));
+    saveLocal(list); renderAll(); toast("Gelöscht");
+  };
+
+  /* Filters */
+  function resetFilters(){
+    (isMobile()?filterCatMob:filterCatDesk).value="Alle";
+    (isMobile()?searchMob:searchDesk).value="";
+    renderAll();
+  }
+  resetDesk.onclick=resetFilters; resetMob.onclick=resetFilters;
+  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{
+    el.addEventListener('input',renderAll);
+    el.addEventListener('change',renderAll);
+  });
+
+  /* Mobile bottom */
+  fabAdd.onclick=()=>openEdit(null);
+  fabSelect.onclick=()=>{
+    selectMode=!selectMode;
+    if(selectMode){ selected.clear(); toast("Auswahl aktiv: tippe Karten zum Markieren"); }
+    renderMobile();
+  };
+  fabDelete.onclick=()=>{
+    if(!selected.size){ toast("Keine Auswahl"); return; }
+    if(!confirm(`${selected.size} Einträge löschen?`)) return;
+    list=list.filter((v,i)=>!selected.has(i));
+    selected.clear(); selectMode=false;
+    saveLocal(list); renderAll(); toast("Gelöscht");
+  };
+
+  /* Speed dial */
+  dialBack.onclick=()=>location.href="index.html";
+  const slideToggle=()=>{ slideFilter.classList.toggle('show'); };
+  dialFind.onclick=slideToggle;
+
+  /* Token & Sync */
+  function getToken(){
+    let t=localStorage.getItem('gh_token')||"";
+    if(!t){
+      t=prompt("GitHub Token (repo-Scope):","");
+      if(t){ localStorage.setItem('gh_token',t); toast("Token gespeichert"); }
+    }
+    return t;
+  }
+  tokenBtn.onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
+  dialGear.onclick=async ()=>{
+    const choice=prompt("Aktion:\n1 = Token neu setzen\n2 = In DB eintragen","");
+    if(choice==="1"){ localStorage.removeItem('gh_token'); getToken(); }
+    else if(choice==="2"){ await githubSync(); }
+  };
+  fabSync.onclick=()=>githubSync();
+  syncDesk.onclick=()=>githubSync();
+
+  async function githubSync(){
+    const token=getToken(); if(!token){ toast("Kein Token"); return; }
+    try{
+      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      const metaRes=await fetch(api,{headers:{Authorization:`token ${token}`}});
+      if(!metaRes.ok) throw new Error(await metaRes.text());
+      const meta=await metaRes.json();
+      const sha=meta.sha;
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      const put=await fetch(api,{
+        method:'PUT',
+        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
+      });
+      if(!put.ok) throw new Error(await put.text());
+      toast("Erfolgreich eingetragen");
+    }catch(e){
+      console.error(e); toast("Sync fehlgeschlagen");
+    }
+  }
+
+  /* Utility */
+  function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+
+  /* Init */
+  fillCategorySelect(filterCatDesk,true);
+  fillCategorySelect(filterCatMob,true);
+  fillCategorySelect(mCat,false);
+  loadData();
 })();
 </script>
 </body>
