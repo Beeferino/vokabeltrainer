@@ -29,20 +29,30 @@ button:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
 .btn.secondary{background:#475569}
 .btn.red{background:var(--bad)}
 select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1}
+select option{color:#fff;font-weight:600}
+select option[value="Alle"]{background:#64748b;color:#fff}
+select option[value="Gelb"]{background:#F4D03F;color:#000}
+select option[value="Pink"]{background:#E91E63}
+select option[value="Blau"]{background:#1976D2}
+select option[value="Gruen"]{background:#1E8449}
+select option[value="HellesPink"]{background:#F54927}
+select option[value="Orange"]{background:#E67E22}
+select option[value="Dunkelgruen"]{background:#117A65}
+select option[value="Rot"]{background:#C0392B}
 .game-area{display:none;background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:24px;text-align:center;animation:fadeIn .5s ease}
 .card{font-size:1.8rem;font-weight:800;margin:20px 0;border-radius:16px;padding:24px;color:#fff;transition:background .6s ease,color .6s ease}
 .feedback{font-size:1.1rem;margin-top:10px;color:var(--muted)}
 .footer{text-align:center;margin-top:20px;color:var(--muted);font-size:.9rem}
 .category-select{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;position:relative}
-.feedback-toggle{position:absolute;right:0;top:0}
-.toggle-btn{background:#94a3b8;color:#fff;border-radius:999px;padding:6px 14px;font-weight:700;font-size:.9rem;transition:all .2s}
-.toggle-btn.active{background:var(--accent)}
+.feedback-toggle{position:absolute;right:-10px;top:-10px}
+.feedback-btn{display:flex;align-items:center;gap:6px;border-radius:999px;padding:6px 14px;font-weight:700;font-size:.9rem;background:#94a3b8;color:#fff;transition:all .25s ease;border:none;cursor:pointer}
+.feedback-btn:hover{filter:brightness(1.1)}
+.feedback-btn.active{background:var(--accent)}
 .correct{animation:flashGreen .3s}
 .wrong{animation:flashRed .3s}
 @keyframes flashGreen{0%{background:#bbf7d0}100%{background:transparent}}
 @keyframes flashRed{0%{background:#fecaca}100%{background:transparent}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-/* --- Mobile Anpassung --- */
 @media(max-width:900px){
   .feedback-toggle{position:static;text-align:center;margin-top:10px}
 }
@@ -76,10 +86,9 @@ select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid
       <option value="3000" selected>3 Sekunden</option>
       <option value="5000">5 Sekunden</option>
     </select>
-  </div>
-  <!-- Feedback Button unter Auswahl (Mobile sichtbar, Desktop bleibt oben) -->
-  <div class="feedback-toggle">
-    <button id="feedbackBtn" class="toggle-btn active">Feedback: AN</button>
+    <div class="feedback-toggle">
+      <button id="feedbackBtn" class="feedback-btn active">🧩 Feedback: AN</button>
+    </div>
   </div>
   <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:16px">
     <button id="learnBtn" class="btn">✍️ Vokabel-Abfrage starten</button>
@@ -138,7 +147,7 @@ let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",trap=fal
 el.fbBtn.onclick=()=>{
   feedbackOn=!feedbackOn;
   el.fbBtn.classList.toggle("active",feedbackOn);
-  el.fbBtn.textContent=feedbackOn?"Feedback: AN":"Feedback: AUS";
+  el.fbBtn.textContent=feedbackOn?"🧩 Feedback: AN":"🧩 Feedback: AUS";
 };
 
 async function load(){
@@ -170,7 +179,6 @@ function showNext(){
   if(mode==="toGerman"){ask=en;answ=de}
   else if(mode==="toEnglish"){ask=de;answ=en}
   else{if(Math.random()<.5){ask=en;answ=de}else{ask=de;answ=en}}
-  // Karteikarte farbig + Textfarbe
   el.word.style.background=M[catg];
   el.word.style.color=TEXT[catg];
   el.word.innerHTML=`<div style='font-size:1.2rem;margin-bottom:8px'>${C[catg]}</div><b>${ask}</b>`;
