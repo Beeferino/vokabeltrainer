@@ -84,6 +84,30 @@ tr:hover{background:#f8fbff}
   .toolbar,.table-wrap{display:none}
   .mobile-header,.mob-filters,.mob-list,.fab-row{display:block}
 }
+
+  .confuse-field {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 0;
+  border: 1px solid #cfd6e4;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #111;
+}
+.confuse-field input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--bad);
+  cursor: pointer;
+}
+.confuse-field label {
+  cursor: pointer;
+  user-select: none;
+}
+
 </style>
 </head>
 <body>
@@ -166,7 +190,11 @@ tr:hover{background:#f8fbff}
       <label>Englisch<input id="mEn" type="text"></label>
       <label>Deutsch<input id="mDe" type="text"></label>
       <label>Kategorie<select id="mCat"></select></label>
-      <label><input type="checkbox" id="mConfuse"> Verwechslungsgefahr</label>
+      <div class="confuse-field">
+  <input type="checkbox" id="mConfuse">
+  <label for="mConfuse">⚠️ Verwechslungsgefahr</label>
+</div>
+
       <label>Erstellt<input id="mDate" type="date" readonly style="background:#f3f4f6"></label>
       <label>Gruppe / Variante<input id="mGroup" type="text"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
