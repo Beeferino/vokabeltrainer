@@ -1,436 +1,217 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>📘 Vokabelübersicht – Beeferino</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📘 Beeferino Vokabeltrainer</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
-  --blue:#2563eb;--ok:#16a34a;--bad:#ef4444;
-  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1)
+:root {
+  --bg: linear-gradient(145deg,#eef4ff,#dbeafe);
+  --card: rgba(255,255,255,0.85);
+  --border:#e2e8f0;
+  --accent:#2563eb;
+  --text:#1e293b;
+  --muted:#64748b;
+  --ok:#16a34a;
+  --bad:#ef4444;
+  --shadow:0 8px 26px rgba(0,0,0,.1);
 }
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
-a{color:#1e3a8a;text-decoration:none}
-
-/* --- Container --- */
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text)}
 .app{max-width:1100px;margin:20px auto;padding:16px}
 h1{text-align:center;font-weight:800;color:#1e3a8a}
-.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
-
-/* --- Desktop Toolbar & Tabelle --- */
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
-.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
-.toolbar .warn{background:var(--bad)}
-.table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-tr:hover{background:#f8fbff}
-.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-
-/* --- Mobile --- */
-.mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
-.mob-title{display:flex;align-items:center;justify-content:space-between}
-.mob-actions{display:flex;gap:10px}
-.iconbtn{
-  width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;
-  background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer
-}
-.mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
-.mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.mob-list{display:none;padding:10px}
-
-/* --- Karten --- */
-.card{
-  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;
-}
-.card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-.card-cat{
-  display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px;
-}
-.card-title{font-weight:800;font-size:1.05rem;margin-bottom:6px}
-.card-sub{color:var(--muted);font-size:.95rem;margin-bottom:8px}
-.card-row{text-align:right}
-.card-row button{padding:6px 10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer;font-size:.9rem}
-
-/* --- Action Bar --- */
-.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3}
-.fabs{display:flex;gap:8px}
-.fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
-.fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
-
-/* --- Modal --- */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px}
-.form-grid{display:grid;gap:10px}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.modal-actions{display:flex;gap:16px;justify-content:flex-end;margin-top:18px}
-.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-.btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
-
-/* --- Banner --- */
-.banner{display:none;background:#2563eb;color:#fff;padding:8px 14px;text-align:center;font-weight:700;font-size:.9rem}
-
-/* --- Responsive --- */
-@media (max-width:900px){
-  .toolbar,.table-wrap{display:none}
-  .mobile-header,.mob-filters,.mob-list,.fab-row{display:block}
-}
+.hr{width:160px;height:4px;background:var(--accent);border-radius:4px;margin:10px auto 20px}
+.section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:20px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+button,select,input{font-family:inherit}
+button{cursor:pointer;border:none;border-radius:10px;padding:10px 16px;font-weight:700;transition:all .2s ease}
+button:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.btn{background:var(--accent);color:#fff}
+.btn.secondary{background:#475569}
+.btn.red{background:var(--bad)}
+select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1}
+.game-area{display:none;background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:24px;text-align:center;animation:fadeIn .5s ease}
+.card{font-size:1.8rem;font-weight:800;margin:20px 0}
+.feedback{font-size:1.1rem;margin-top:10px;color:var(--muted)}
+.footer{text-align:center;margin-top:20px;color:var(--muted);font-size:.9rem}
+.category-select{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;position:relative}
+.feedback-toggle{position:absolute;right:0;top:0}
+.toggle-btn{background:#94a3b8;color:#fff;border-radius:999px;padding:6px 14px;font-weight:700;font-size:.9rem;transition:all .2s}
+.toggle-btn.active{background:var(--accent)}
+.correct{animation:flashGreen .3s}
+.wrong{animation:flashRed .3s}
+@keyframes flashGreen{0%{background:#bbf7d0}100%{background:transparent}}
+@keyframes flashRed{0%{background:#fecaca}100%{background:transparent}}
 </style>
 </head>
 <body>
 <div class="app">
-  <h1>📘 Vokabelübersicht</h1>
-  <div class="hr"></div>
+<h1>🎯 Beeferino Vokabeltrainer</h1>
+<div class="hr"></div>
 
-  <!-- Desktop Toolbar -->
-  <div class="toolbar">
-    <select id="filterCatDesk"></select>
-    <input id="searchDesk" type="text" placeholder="Suchen…">
-    <button id="resetDesk" class="btn">Reset</button>
-    <button id="addDesk" class="btn">➕ Neue</button>
-    <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-    <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
-    <button id="tokenBtn" class="btn">⚙️ Token</button>
-    <button id="dateSort" class="btn" title="Nach Erstelldatum sortieren">🗓️</button>
-
-  </div>
-
-  <!-- Desktop Counter -->
-  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
-
-  <!-- Desktop Tabelle -->
-  <div class="table-wrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th>⟲</th><th data-sort="0">Englisch</th><th data-sort="1">Deutsch</th><th>Kategorie</th><th style="display:none">Gruppe</th><th style="display:none">Hinweis</th><th>Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
-
-  <!-- Mobile Header -->
-  <div class="mobile-header">
-    <div class="mob-title">
-      <h2 style="margin:0">Vokabeln</h2>
-      <div class="mob-actions">
-        <button class="iconbtn" id="btnBack" title="Zurück zum Trainer">⬅️</button>
-        <button class="iconbtn" id="btnAdjust" title="Anpassen">⚙️</button>
-        <button class="iconbtn" id="btnSync" title="Synchronisieren">🔄</button>
-      </div>
+<div class="section">
+  <div class="category-select">
+    <select id="category">
+      <option value="Alle">Alle (bunt gemischt)</option>
+      <option value="Gelb">Grundwerkzeuge Metallverarbeitung</option>
+      <option value="Pink">Werkzeugkasten Mechaniker</option>
+      <option value="Blau">Blech- / Kunststoffarbeiten</option>
+      <option value="Gruen">Drehen / Fräsen</option>
+      <option value="HellesPink">Hydraulik / Pneumatik</option>
+      <option value="Orange">Elektrotechnik</option>
+      <option value="Dunkelgruen">Fluggerätemechanik allgemein</option>
+      <option value="Rot">⚠️ Verwechslungsgefahr</option>
+    </select>
+    <select id="mode">
+      <option value="toGerman">Englisch → Deutsch</option>
+      <option value="toEnglish">Deutsch → Englisch</option>
+      <option value="mixed">Gemischt</option>
+    </select>
+    <select id="delay">
+      <option value="1000">1 Sekunde</option>
+      <option value="3000" selected>3 Sekunden</option>
+      <option value="5000">5 Sekunden</option>
+    </select>
+    <div class="feedback-toggle">
+      <button id="feedbackBtn" class="toggle-btn active">Feedback: AN</button>
     </div>
   </div>
-
-  <div class="banner" id="adjustBanner">
-    🔧 Anpassen aktiv – tippe Vokabeln an zum Auswählen oder Hinzufügen
-  </div>
-
-  <div class="mob-filters" id="mobFilters">
-    <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
-    <input id="searchMob" type="text" placeholder="Suchen…">
-    <button id="resetMob" class="btn">Reset</button>
-  </div>
-
-  <!-- Mobile Counter -->
-  <div id="countMob" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
-
-  <div class="mob-list" id="mobList"></div>
-
-  <div class="fab-row">
-    <div class="fabs">
-      <button class="fab gray" id="fabBack">Zurück</button>
-      <button class="fab blue" id="fabAdjust">Anpassen</button>
-      <button class="fab gray" id="fabSync">Synchronisieren</button>
-    </div>
-  </div>
-
-  <div class="footer" style="text-align:center;margin-top:20px">
-    <a href="index.html" style="font-weight:700">⬅️ Zurück zum Trainer</a>
-    <div style="margin-top:6px;color:#6b7280">© 2025 Beeferino • Datenquelle: GitHub (Online)</div>
+  <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:16px">
+    <button id="learnBtn" class="btn">✍️ Vokabel-Abfrage starten</button>
+    <button id="cardsBtn" class="btn secondary">🧠 Karteikarten (Mitdenker)</button>
+    <button id="last30Btn" class="btn red">📚 Letzte 30 Vokabeln</button>
   </div>
 </div>
 
-<!-- Modal -->
-<div class="modal" id="modal">
-  <div class="panel">
-    <h3 id="modalTitle" style="margin-top:0">Vokabel</h3>
-    <div class="form-grid">
-      <label>Englisch<input id="mEn" type="text"></label>
-      <label>Deutsch<input id="mDe" type="text"></label>
-      <label>Kategorie<select id="mCat"></select></label>
-      <label>Erstellt<input id="mDate" type="date" readonly style="background:#f3f4f6"></label>
-      <label>Gruppe / Variante<input id="mGroup" type="text"></label>
-      <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
-    </div>
-    <div class="modal-actions">
-      <button class="btn ghost" id="mCancel">Abbrechen</button>
-      <button class="btn primary" id="mSave">Speichern</button>
-    </div>
+<div class="game-area" id="trainer">
+  <div class="card" id="word"></div>
+  <input id="answerInput" type="text" placeholder="Übersetzung eingeben …" style="display:none;padding:10px;border-radius:10px;border:1px solid #ccc;width:60%;font-size:1rem">
+  <div id="feedback" class="feedback"></div>
+  <div style="margin-top:14px">
+    <button id="rightBtn" style="display:none" class="btn">Richtig</button>
+    <button id="wrongBtn" style="display:none" class="btn red">Täuschung erkannt</button>
+    <button id="skipBtn" style="display:none" class="btn secondary">Weiter</button>
   </div>
+  <div style="margin-top:18px"><button id="restartBtn" class="btn secondary">🔄 Neustart</button></div>
+</div>
+
+<div id="result" style="display:none" class="section"></div>
+
+<div class="footer">
+  <hr style="width:60%;opacity:.2;margin:20px auto">
+  <a href="vokabeln.html" style="font-weight:700;color:#2563eb;text-decoration:none;">📘 Vokabelliste öffnen</a><br>
+  <p>© 2025 Beeferino • Online-Datenquelle: GitHub</p>
+</div>
 </div>
 
 <script>
-(function(){
-  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"Verwechslungsgefahr"};
-  const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
-  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
+document.addEventListener("DOMContentLoaded",()=>{
+const C={"Gelb":"Grundwerkzeuge Metallverarbeitung","Pink":"Werkzeugkasten Mechaniker","Blau":"Blech- / Kunststoffarbeiten","Gruen":"Drehen / Fräsen","HellesPink":"Hydraulik / Pneumatik","Orange":"Elektrotechnik","Dunkelgruen":"Fluggerätemechanik allgemein","Rot":"Verwechslungsgefahr"};
+const M={"Gelb":"#F4D03F","Pink":"#E91E63","Blau":"#1976D2","Gruen":"#1E8449","HellesPink":"#F54927","Orange":"#E67E22","Dunkelgruen":"#117A65","Rot":"#C0392B"};
+const statusUrl="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+const cat=document.getElementById("category"),modeSel=document.getElementById("mode"),
+fbBtn=document.getElementById("feedbackBtn"),delaySel=document.getElementById("delay"),
+learn=document.getElementById("learnBtn"),cards=document.getElementById("cardsBtn"),
+last30=document.getElementById("last30Btn"),restart=document.getElementById("restartBtn"),
+word=document.getElementById("word"),feedback=document.getElementById("feedback"),
+ans=document.getElementById("answerInput"),right=document.getElementById("rightBtn"),
+wrong=document.getElementById("wrongBtn"),skip=document.getElementById("skipBtn"),
+trainer=document.getElementById("trainer"),result=document.getElementById("result");
 
-  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
+let list=[],round=[],i=0,errors=[],skipped=[],mode="mixed",game="learn",trap=false,curr="",feedbackOn=true;
 
-  const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s)),isMobile=()=>matchMedia("(max-width:900px)").matches;
+fbBtn.onclick=()=>{
+  feedbackOn=!feedbackOn;
+  fbBtn.classList.toggle("active",feedbackOn);
+  fbBtn.textContent=feedbackOn?"Feedback: AN":"Feedback: AUS";
+};
 
-  const tbl=$('#tbl tbody'),mobList=$('#mobList'),banner=$('#adjustBanner'),modal=$('#modal'),
-  mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint'),
-  filterCatDesk=$('#filterCatDesk'),filterCatMob=$('#filterCatMob'),searchDesk=$('#searchDesk'),searchMob=$('#searchMob');
-
-  let list=[],editIndex=null,adjustMode=false,selected=new Set();
-
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
-  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
-  const idxInList=v=>list.findIndex(x=>x[0]===v[0]&&x[1]===v[1]&&x[2]===v[2]&&x[5]===v[5]);
-
-  function fillCategorySelect(el,withAll=false){
-    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k;o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
-      el.appendChild(o);
-    });
+async function loadList(){
+  try{
+    const r=await fetch(statusUrl,{cache:"no-store"});
+    list=await r.json();
+  }catch(e){list=JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+}
+function flash(c){trainer.classList.add(c);setTimeout(()=>trainer.classList.remove(c),400);}
+function start(sel,type,custom=null){
+  mode=sel;game=type;
+  let data=list;
+  if(cat.value!=="Alle") data=data.filter(v=>v[2]===cat.value);
+  if(custom) data=custom;
+  round=data.slice(0,15);
+  i=0;errors=[];skipped=[];
+  trainer.style.display="block";
+  result.style.display="none";
+  showNext();
+}
+function showNext(){
+  if(i>=round.length){
+    if(skipped.length){round=skipped;skipped=[];i=0;feedback.textContent="📘 Übersprungene Vokabeln – weiter geht’s!";showNext();return;}
+    trainer.style.display="none";
+    let h="<h3>Runde beendet</h3>";
+    h+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";
+    result.innerHTML=h;result.style.display="block";return;
   }
-
-  async function loadData(){
-    try{
-      const r=await fetch(RAW_URL,{cache:"no-store"});
-      list=(await r.json()).map(normalize);
-      saveLocal(list);
-    }catch{list=loadLocal();}
-    fillCategorySelect(filterCatDesk,true);
-    fillCategorySelect(filterCatMob,true);
-    fillCategorySelect(mCat,false);
-    renderAll();
-  }
-
-  function currentFilter(){
-    const cat=(isMobile()?filterCatMob.value:filterCatDesk.value)||"Alle";
-    const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
-    return {cat,q};
-  }
-  function filtered(){
-    const {cat,q}=currentFilter();
-    return list.filter(v=>{
-      const matchCat=(cat==="Alle"||v[2]===cat);
-      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
-      return matchCat&&matchQ;
-    });
-  }
-
-  function updateCount(){
-    const data=filtered();
-    const txt=`📘 ${data.length} Vokabel${data.length!==1?"n":""} gefunden`;
-    if(isMobile()){
-      $('#countMob').textContent=txt;
-      $('#countDesk').textContent="";
-    }else{
-      $('#countDesk').textContent=txt;
-      $('#countMob').textContent="";
-    }
-  }
-
-  function renderDesktop(){
-    const data=filtered();
-    tbl.innerHTML=data.map(v=>{
-      const i=idxInList(v);
-      return `<tr>
-        <td><input type="checkbox" data-idx="${i}"></td>
-        <td>${v[0]}</td>
-        <td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-        <td style="display:none">${v[3]}</td>
-        <td style="display:none">${v[4]}</td>
-        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
-      </tr>`;
-    }).join("");
-    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-  }
-
-  function renderMobile(){
-    const data=filtered();
-    mobList.innerHTML=data.map(v=>{
-      const i=idxInList(v),sel=selected.has(i)?" selected":"";
-      return `<div class="card${sel}" data-idx="${i}">
-        <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-        <div class="card-title">${v[0]}</div>
-        <div class="card-sub">DE: ${v[1]}</div>
-        <div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div>
-      </div>`;
-    }).join("");
-    $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-    $$('.card').forEach(c=>c.onclick=e=>{
-      if(!adjustMode||e.target.classList.contains('mobEdit'))return;
-      const i=+c.dataset.idx;
-      if(selected.has(i))selected.delete(i);else selected.add(i);
-      c.classList.toggle('selected');
-    });
-  }
-
-  function renderAll(){renderDesktop();renderMobile();updateCount();}
-
-  function openEdit(i=null){
-    editIndex=i;
-    if(i==null){
-      mEn.value=mDe.value=mGroup.value=mHint.value="";
-      mCat.value="Gelb";mDate.value=new Date().toISOString().slice(0,10);
-    }else{
-      const v=list[i];
-      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];
-      mGroup.value=v[3];mHint.value=v[4];
-      mDate.value=new Date(v[5]).toISOString().slice(0,10);
-    }
-    mCat.style.background=COLOR_MAP[mCat.value];
-    mCat.style.color=TEXT_ON[mCat.value];
-    modal.style.display="flex";
-  }
-  function closeModal(){modal.style.display="none";}
-  $('#mCancel').onclick=closeModal;
-  $('#mSave').onclick=()=>{
-    const en=mEn.value.trim(),de=mDe.value.trim();
-    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim();
-    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
-    if(editIndex==null){list.push([en,de,cat,grp,hint,new Date().toISOString()]);}
-    else{const old=list[editIndex];list[editIndex]=[en,de,cat,grp,hint,old[5]];}
-    saveLocal(list);closeModal();renderAll();
-  };
-  mCat.onchange=()=>{mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];}
-  modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
-
-  function toggleAdjust(on){
-    adjustMode=on;selected.clear();banner.style.display=on?'block':'none';
-    const bar=$('.fabs');
-    if(on){bar.innerHTML=`<button class="fab gray" id="fabEnd">Beenden</button><button class="fab warn" id="fabDelete">Löschen</button><button class="fab blue" id="fabNew">Neu</button>`;
-      $('#fabEnd').onclick=()=>toggleAdjust(false);
-      $('#fabDelete').onclick=()=>{if(!selected.size){alert("Keine Auswahl");return;}
-        if(!confirm(`${selected.size} löschen?`))return;
-        list=list.filter((_,i)=>!selected.has(i));saveLocal(list);selected.clear();renderAll();
-      };
-      $('#fabNew').onclick=()=>openEdit(null);
-    } else {
-      bar.innerHTML=`<button class="fab gray" id="fabBack">Zurück</button><button class="fab blue" id="fabAdjust">Anpassen</button><button class="fab gray" id="fabSync">Synchronisieren</button>`;
-      $('#fabBack').onclick=()=>location.href="index.html";
-      $('#fabAdjust').onclick=()=>toggleAdjust(true);
-      $('#fabSync').onclick=githubSync;
-    }
-    renderMobile();
-  }
-
-  function getToken(){
-    let t=localStorage.getItem('gh_token')||"";
-    if(!t){t=prompt("GitHub Token (repo-Scope):","");if(t){localStorage.setItem('gh_token',t);alert("Token gespeichert.");}}
-    return t;
-  }
-
-  async function githubSync(){
-    const token=getToken();if(!token)return;
-    try{
-      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-      const get=await fetch(api,{headers:{Authorization:`token ${token}`}});
-      const meta=await get.json();const sha=meta.sha;
-      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const res=await fetch(api,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})});
-      if(!res.ok)throw new Error(await res.text());
-      alert("✅ Erfolgreich in Datenbank eingetragen.");
-    }catch(e){alert("❌ Sync fehlgeschlagen.");}
-  }
-
-  $('#addDesk').onclick=()=>openEdit(null);
-  $('#delDesk').onclick=()=>{
-    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
-    if(!ids.length){alert("Bitte Zeilen markieren.");return;}
-    if(!confirm(`${ids.length} Einträge löschen?`))return;
-    list=list.filter((_,i)=>!ids.includes(i));saveLocal(list);renderAll();
-  };
-  $('#syncDesk').onclick=githubSync;
-  $('#tokenBtn').onclick=()=>{localStorage.removeItem('gh_token');getToken();};
-
-  $('#resetDesk').onclick=()=>{filterCatDesk.value="Alle";searchDesk.value="";renderAll();}
-  $('#resetMob').onclick=()=>{filterCatMob.value="Alle";searchMob.value="";renderAll();}
-  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{el.addEventListener('input',renderAll);el.addEventListener('change',renderAll);});
-
-  $('#btnBack').onclick=()=>location.href="index.html";
-  $('#btnSync').onclick=githubSync;
-  $('#btnAdjust').onclick=()=>toggleAdjust(true);
-  $('#fabBack').onclick=()=>location.href="index.html";
-  $('#fabAdjust').onclick=()=>toggleAdjust(true);
-  $('#fabSync').onclick=githubSync;
-  // --- Desktop Sortierung (Spalte 1 & 2) ---
-  let sortState = {col: null, dir: 1};
-
-  $$('#tbl thead th[data-sort]').forEach(th => {
-    th.style.cursor = "pointer";
-    th.title = "Sortieren";
-    th.onclick = () => {
-      const col = parseInt(th.dataset.sort);
-      if (sortState.col === col) sortState.dir *= -1; 
-      else { sortState.col = col; sortState.dir = 1; }
-
-      list.sort((a, b) => {
-        const A = (a[col] || "").toLowerCase();
-        const B = (b[col] || "").toLowerCase();
-        return A.localeCompare(B) * sortState.dir;
-      });
-      saveLocal(list);
-      renderAll();
-
-      // visueller Hinweis
-      $$('#tbl thead th').forEach(x => x.style.textDecoration = "none");
-      th.style.textDecoration = sortState.dir === 1 ? "underline" : "overline";
+  const [en,de,catg]=round[i];
+  let ask,answ;
+  if(mode==="toGerman"){ask=en;answ=de}
+  else if(mode==="toEnglish"){ask=de;answ=en}
+  else{if(Math.random()<.5){ask=en;answ=de}else{ask=de;answ=en}}
+  word.innerHTML=`<div style='display:inline-block;padding:6px 12px;border-radius:12px;background:${M[catg]};color:#fff;'>${C[catg]}</div><br><br><b>${ask}</b>`;
+  feedback.textContent="";
+  const delay=parseInt(delaySel.value);
+  if(game==="learn"){
+    ans.style.display="inline-block";
+    right.style.display=wrong.style.display="none";
+    skip.style.display="inline-block";
+    ans.value="";ans.focus();
+    ans.onkeydown=e=>{
+      if(e.key==="Enter"){
+        const ok=ans.value.trim().toLowerCase()===answ.toLowerCase();
+        if(feedbackOn){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch → ${answ}`;flash(ok?"correct":"wrong")}
+        if(!ok)errors.push([ask,answ]);
+        i++;setTimeout(showNext,delay);
+      }
     };
-  });
-
-  loadData();
-    // --- Farbe im Desktop-Kategorie-Filter anzeigen ---
-  const catSelect = document.getElementById('filterCatDesk');
-  catSelect.addEventListener('change', function () {
-    const val = this.value;
-    if (val === "Alle" || !COLOR_MAP[val]) {
-      this.style.background = "#fff";
-      this.style.color = "#111";
-    } else {
-      this.style.background = COLOR_MAP[val];
-      this.style.color = TEXT_ON[val];
+    skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();}
+  }else{
+    ans.style.display="none";
+    right.style.display=wrong.style.display=skip.style.display="inline-block";
+    trap=Math.random()<.3;curr=trap?getWrong(answ):answ;
+    feedback.innerHTML=`💡 <b>${curr}</b>`;
+    const okBtn=trap?wrong:right;
+    okBtn.onclick=()=>{if(trap){openInput(answ,ask)}else{nextCard(true,ask,answ)}};
+    const failBtn=trap?right:wrong;
+    failBtn.onclick=()=>nextCard(false,ask,answ);
+    skip.onclick=()=>{skipped.push([en,de,catg]);i++;showNext();}
+  }
+}
+function openInput(correct,ask){
+  ans.style.display="inline-block";ans.value="";feedback.textContent="Gib die richtige Übersetzung ein:";right.style.display=wrong.style.display="none";
+  ans.onkeydown=e=>{
+    if(e.key==="Enter"){
+      const ok=ans.value.trim().toLowerCase()===correct.toLowerCase();
+      if(feedbackOn){feedback.textContent=ok?"✅ Richtig!":`❌ Falsch → ${correct}`;flash(ok?"correct":"wrong")}
+      if(!ok)errors.push([ask,correct]);
+      i++;setTimeout(showNext,parseInt(delaySel.value));
     }
-  });
-
-  // Beim Laden gleich aktualisieren
-  catSelect.dispatchEvent(new Event('change'));
-  // --- Sortieren nach Erstelldatum (Desktop only) ---
-  let dateSortDir = 1; // 1 = aufsteigend, -1 = absteigend
-
-  const btnDateSort = document.getElementById('dateSort');
-  btnDateSort.addEventListener('click', () => {
-    list.sort((a, b) => {
-      const A = new Date(a[5]);
-      const B = new Date(b[5]);
-      return (A - B) * dateSortDir;
-    });
-    dateSortDir *= -1; // Richtung wechseln
-    saveLocal(list);
-    renderAll();
-
-    // kleiner visueller Effekt (Drehung)
-    btnDateSort.style.transform = `rotate(${dateSortDir === 1 ? 0 : 180}deg)`;
-    btnDateSort.style.transition = "transform 0.3s";
-  });
-
-})();
+  };
+}
+function nextCard(ok,ask,answ){
+  if(feedbackOn){feedback.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong")}
+  if(!ok)errors.push([ask,answ]);
+  i++;setTimeout(showNext,parseInt(delaySel.value));
+}
+function getWrong(c){
+  let p=list.map(v=>v[1]);
+  let w;do{w=p[Math.floor(Math.random()*p.length)]}while(w===c);
+  return w;
+}
+learn.onclick=()=>start(modeSel.value,"learn");
+cards.onclick=()=>start(modeSel.value,"cards");
+last30.onclick=()=>{const a=list;if(!a.length)return alert("Keine Vokabeln.");const l=a.slice(-30);const ch=confirm("📚 Letzte 30 Vokabeln:\nOK = Karteikarten\nAbbrechen = Eingabe");start(modeSel.value,ch?"cards":"learn",l)};
+restart.onclick=()=>location.reload();
+loadList();
+});
 </script>
 </body>
 </html>
