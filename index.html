@@ -711,19 +711,15 @@ document.addEventListener('keydown',e=>{
 */
 function filterByCategory(list){
   const cat = selCat.value;
-  const onlyConfuse = document.getElementById("chkConfuseOnly").checked;
+  if(cat==="Alle") return list.slice();
+  if(cat==="confuse"){ // Sonder-Filter: nur Vokabeln mit Verwechslungsgefahr
+    return list.filter(v => !!v[6]);
+  }
+  return list.filter(v => v[2]===cat);
+  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
 
-  let res;
-  if(cat === "Alle"){
-    res = list.slice();
-  }else{
-    res = list.filter(v => v[2] === cat);
-  }
-  if(onlyConfuse){
-    res = res.filter(v => v[2] === "Rot");
-  }
-  return res;
 }
+
 
 btnLearn.onclick=()=>{
   game="learn"; modeEndless=true;
