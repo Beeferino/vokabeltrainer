@@ -394,6 +394,22 @@ tr:hover{background:#f8fbff}
   });
 
   loadData();
+    // --- Farbe im Desktop-Kategorie-Filter anzeigen ---
+  const catSelect = document.getElementById('filterCatDesk');
+  catSelect.addEventListener('change', function () {
+    const val = this.value;
+    if (val === "Alle" || !COLOR_MAP[val]) {
+      this.style.background = "#fff";
+      this.style.color = "#111";
+    } else {
+      this.style.background = COLOR_MAP[val];
+      this.style.color = TEXT_ON[val];
+    }
+  });
+
+  // Beim Laden gleich aktualisieren
+  catSelect.dispatchEvent(new Event('change'));
+
 })();
 </script>
 </body>
