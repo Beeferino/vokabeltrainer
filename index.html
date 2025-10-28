@@ -265,7 +265,7 @@ const CATS={
   HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
   Orange:["Elektrotechnik","#E67E22","#fff"],
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+  
 };
 
 const el=id=>document.getElementById(id);
@@ -281,14 +281,7 @@ const startNote=el("startNote"), goalFill=el("goalFill"), goalText=el("goalText"
 const chkDark=el("chkDark"), chkSound=el("chkSound");
 
 /* Build categories into select */
-(function buildCatOptions(){
-  while (selCat.options.length > 1) selCat.remove(1);
-  for(const k in CATS){
-    const [label,bg,fg] = CATS[k];
-    const o=document.createElement("option");
-    o.value=k; o.textContent=label; o.style.background=bg; o.style.color=fg;
-    selCat.appendChild(o);
-  }
+buildCatOptions()
 })();
 
 /* Mini beep via WebAudio */
