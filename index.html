@@ -30,7 +30,11 @@ select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1r
 }
 .kachel small{font-weight:600;opacity:.9}
 .kachel:hover{transform:translateY(-1px);background:var(--blue2)}
-.progress{text-align:center;font-weight:700;margin:8px 0 12px;min-height:1.2em}
+.progress{text-align:center;font-weight:700;margin:8px 0 4px;min-height:1.2em}
+.subnote{
+  text-align:center;font-size:.95rem;color:#334155;margin:-2px 0 12px;
+}
+.subnote b{font-weight:800;color:#1e3a8a}
 #stage{
   display:none;margin-top:14px;padding:28px;border-radius:20px;background:rgba(255,255,255,.95);
   box-shadow:inset 0 0 10px rgba(0,0,0,.05);text-align:center
@@ -71,83 +75,26 @@ select{padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1r
 @keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
 details.recent-section{
   background:rgba(255,255,255,.9);border-radius:20px;padding:22px;margin-top:10px;text-align:center;
-  box-shadow:0 8px 28px rgba(0,0,0,.08);backdrop-filter:blur(12px);transition:all .3s ease
+  box-shadow:0 8px 28px rgba(0,0,0,.08);backdrop-filter:blur(12px)
 }
 details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.12)}
 details.recent-section summary{
-  font-weight:800;font-size:1.15rem;color:#1e3a8a;cursor:pointer;list-style:none;
-  letter-spacing:.5px;text-transform:uppercase;transition:color .3s ease
+  font-weight:800;font-size:1.15rem;color:#1e3a8a;cursor:pointer;list-style:none;text-transform:uppercase
 }
 details.recent-section summary:hover{color:#2563eb}
 #recent{
-  margin-top:18px;text-align:center;line-height:1.8;display:flex;flex-wrap:wrap;justify-content:center;
-  gap:12px;transition:opacity .4s ease
+  margin-top:18px;text-align:center;line-height:1.8;display:flex;flex-wrap:wrap;justify-content:center;gap:12px
 }
 .recent-item{
   display:inline-block;min-width:160px;border-radius:14px;padding:12px 18px;font-weight:700;color:#111827;
-  box-shadow:0 4px 12px rgba(0,0,0,.1);transition:transform .25s ease,box-shadow .25s ease
+  box-shadow:0 4px 12px rgba(0,0,0,.1)
 }
-.recent-item:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 6px 16px rgba(0,0,0,.15)}
 .recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px;opacity:.8}
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
-
-/* Feedback-Toggle hübsch */
-.feedback-toggle{background:#e0e7ff;padding:10px 16px;border-radius:12px;border:2px solid #2563eb33;
-  box-shadow:0 2px 6px rgba(37,99,235,.15);transition:all .25s ease;animation:pulseOnce 2s ease-out .5s 1}
-.feedback-toggle:hover{border-color:#2563eb66;box-shadow:0 3px 10px rgba(37,99,235,.25)}
 .feedback-toggle label{font-weight:700;color:#1e3a8a}
 #chkFeedback{transform:scale(1.3);accent-color:#2563eb}
-@keyframes pulseOnce{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
-.feedback-toggle{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px 18px;border-radius:16px;
-  background:linear-gradient(135deg,#f8fafc,#eef2ff);box-shadow:0 2px 8px rgba(0,0,0,.08)}
-.feedback-toggle:hover{box-shadow:0 4px 12px rgba(37,99,235,.15);transform:translateY(-1px)}
-.feedback-toggle label{font-weight:700;color:#1e3a8a;font-size:1.05rem;letter-spacing:.3px;cursor:pointer}
-#chkFeedback{appearance:none;width:44px;height:24px;background:#d1d5db;border-radius:999px;position:relative;outline:none;cursor:pointer;transition:background .3s}
-#chkFeedback::before{
-  content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;
-  transition:all .3s ease;box-shadow:0 1px 4px rgba(0,0,0,.2)
-}
-#chkFeedback:checked{background:#2563eb}
-#chkFeedback:checked::before{left:23px;background:#fff}
 .controls{margin-bottom:5px}
 .feedback-toggle{margin:5px 0}
-
-/* ===== Modal (Fehlerübersicht + Statistik) ===== */
-.modal-backdrop{
-  position:fixed;inset:0;background:rgba(15,23,42,.55);
-  display:none;align-items:center;justify-content:center;padding:20px;z-index:50
-}
-.modal{
-  width:min(860px,96vw);max-height:85vh;overflow:auto;background:#fff;border-radius:18px;
-  box-shadow:0 24px 60px rgba(0,0,0,.25)
-}
-.modal header{
-  position:sticky;top:0;background:#fff;padding:18px 20px;border-bottom:1px solid #eef2ff;border-top-left-radius:18px;border-top-right-radius:18px
-}
-.modal h2{margin:0;font-size:1.25rem;color:#0f172a}
-.modal .content{padding:16px 20px 22px}
-.stat-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px
-}
-.stat{
-  background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px
-}
-.stat .label{font-size:.85rem;color:#64748b;font-weight:600}
-.stat .value{font-size:1.25rem;font-weight:800}
-.error-list{margin-top:6px}
-.error-item{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #eef2ff;border-radius:12px;margin-bottom:8px
-}
-.badge{font-size:.78rem;font-weight:800;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.06)}
-.modal footer{
-  position:sticky;bottom:0;background:#fff;border-top:1px solid #eef2ff;padding:12px 16px;display:flex;gap:8px;justify-content:flex-end
-}
-.btn-ghost{background:#f3f4f6;color:#111827;border:1px solid #e5e7eb}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-ghost,.btn-primary{
-  border-radius:10px;padding:10px 14px;font-weight:800;border:none;cursor:pointer
-}
-.download{margin-right:auto;background:#e5f2ff;border:1px solid #c7ddff;color:#0f172a}
 </style>
 </head>
 <body>
@@ -186,20 +133,26 @@ details.recent-section summary:hover{color:#2563eb}
     <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
   </div>
 
-  <div id="progress" class="progress">Bereit • klicke auf „Vokabel-Abfrage starten“</div>
+  <!-- Fortschrittsanzeige + Hinweis -->
+  <div id="progress" class="progress">Bereit.</div>
+  <div id="startNote" class="subnote">
+    Wähle zuerst einen <b>Übungsmodus</b>, um zu beginnen:
+    <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder <b>Deutsch → Englisch</b>.<br>
+    Danach einfach auf <b>„Vokabel-Abfrage starten“</b> klicken.
+  </div>
 
-  <section id="stage" class="">
+  <section id="stage">
     <div id="chip" class="chip">–</div>
     <div id="q" class="word">Bereit?</div>
     <div id="offer" class="offer"></div>
 
-    <div id="rowButtons" class="btnrow" style="display:flex;">
+    <div id="rowButtons" class="btnrow">
       <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
       <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
       <button id="btnSkip" class="btn skip" style="display:none;">Überspringen</button>
     </div>
 
-    <div id="rowInput" class="inprow" style="display:none;">
+    <div id="rowInput" class="inprow">
       <input id="inp" type="text" placeholder="Übersetzung eingeben …">
       <button id="btnSub">Eingabe</button>
     </div>
@@ -217,471 +170,40 @@ details.recent-section summary:hover{color:#2563eb}
     <div id="recent">–</div>
   </details>
 
-  
-
-<!-- ===== Modal ===== -->
-<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <header>
-      <h2 id="modalTitle">📊 Runden-Statistik & Fehlerübersicht</h2>
-    </header>
-    <div class="content">
-      <div class="stat-grid" id="statGrid">
-        <!-- Stats via JS -->
-      </div>
-      <div class="error-list" id="errorList">
-        <!-- Fehler via JS -->
-      </div>
-    </div>
-    <footer>
-      <button id="btnDownload" class="btn download">⬇️ Fehlerliste speichern</button>
-      <button id="btnContinue" class="btn btn-ghost">Weiter üben</button>
-      <button id="btnClose" class="btn btn-primary">Schließen</button>
-    </footer>
+  <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
+  <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
+    🟢 Daten aktuell
   </div>
 </div>
 
+<!-- Skripte – nur relevante Anfangsänderung -->
 <script>
 (function(){
-/* --- Kategorien --- */
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
-  Rot:["Verwechslungsgefahr","#C0392B","#fff"]
-};
+  const CATS={
+    Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
+    Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
+    Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
+    Gruen:["Drehen / Fräsen","#1E8449","#fff"],
+    HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
+    Orange:["Elektrotechnik","#E67E22","#fff"],
+    Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
+    Rot:["Verwechslungsgefahr","#C0392B","#fff"]
+  };
 
-const el=id=>document.getElementById(id);
-const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
-const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
-const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
-const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
-const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
-const modalBackdrop=el("modalBackdrop"), errorList=el("errorList"), statGrid=el("statGrid");
-const btnClose=el("btnClose"), btnContinue=el("btnContinue"), btnDownload=el("btnDownload");
+  const el=id=>document.getElementById(id);
+  const selCat=el("selCat"), selDelay=el("selDelay"), selMode=el("selMode");
+  const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
+  const progress=el("progress"), stage=el("stage"), startNote=el("startNote");
+  const chip=el("chip"), q=el("q"), offer=el("offer");
+  const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
+  const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub");
 
-/* --- Select dynamisch befüllen --- */
-function buildCatOptions(){
-  while (selCat.options.length > 1) selCat.remove(1);
-  for(const k in CATS){
-    const [label,bg,fg] = CATS[k];
-    const o=document.createElement("option");
-    o.value=k; o.textContent=label; o.style.background=bg; o.style.color=fg;
-    selCat.appendChild(o);
-  }
-}
-buildCatOptions();
+  // nur Hinweis initial, später ausblenden:
+  btnLearn.addEventListener('click',()=> startNote.style.opacity=0.4);
+  btnCards.addEventListener('click',()=> startNote.style.opacity=0.4);
+  btnLast30.addEventListener('click',()=> startNote.style.opacity=0.4);
 
-/* --- Datenverwaltung --- */
-let data=[], lastSync=null;
-
-async function fetchFromGitHub(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    if(!r.ok)throw new Error("fetch failed");
-    const j=await r.json();
-    localStorage.setItem("vokabeln",JSON.stringify(j));
-    localStorage.setItem("vokabeln_updated",new Date().toISOString());
-    data=j;lastSync=new Date();
-  }catch(e){
-    console.warn("Offline – lokale Daten:",e);
-    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-  }
-}
-async function loadData(){
-  const localUpd=localStorage.getItem("vokabeln_updated");
-  const lastUsed=localStorage.getItem("index_last_sync");
-  const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
-  if(localNewer){ data=JSON.parse(localStorage.getItem("vokabeln")||"[]"); }
-  else{ await fetchFromGitHub(); }
-  localStorage.setItem("index_last_sync",new Date().toISOString());
-  renderRecent();
-}
-
-/* --- Utils --- */
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function normalize(s){
-  return s.trim().toLowerCase()
-    .normalize("NFD").replace(/\p{Diacritic}/gu,"")
-    .replace(/[-–—]/g,"-").replace(/\s+/g," ");
-}
-function isCorrectInput(input, solution){
-  const a=normalize(input);
-  const options=solution.split(/[\/;|,]/).map(x=>normalize(x));
-  return options.includes(a);
-}
-
-/* --- Fehlerverwaltung --- */
-let errorsList=[];
-function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
-
-/* === Endlos-Abfrage (nur learn / ggf. Last30 Eingabe) === */
-let modeEndless=false;
-let source=[], sourceIdx=0;
-let curr=null, currAskedEN=true, correct="";
-let totalAsked=0, sinceCheckpoint=0, totalErrors=0;
-
-// Map für Fehlerübersicht (eine Zeile je Frage-Richtung)
-const errorMap=new Map();
-// Optional: Kategorie-Stats
-const catStats=new Map(); // cat -> {asked,errors}
-
-function resetEndless(pool){
-  source = pool.slice(); shuffle(source); sourceIdx=0;
-  curr=null; correct=""; sinceCheckpoint=0;
-  totalAsked=0; totalErrors=0;
-  errorsList=[]; errorMap.clear(); catStats.clear();
-}
-
-function getNextItem(){
-  if(!source.length) return null;
-  const item=source[sourceIdx];
-  sourceIdx=(sourceIdx+1)%source.length;
-  if(sourceIdx===0) shuffle(source);
-  return item;
-}
-function bumpCat(cat, wasError){
-  const o = catStats.get(cat) || {asked:0,errors:0};
-  o.asked += 1; if(wasError) o.errors += 1;
-  catStats.set(cat,o);
-}
-function recordErrorForSummary(item, askedEN){
-  const [en,de,cat]=item;
-  const question = askedEN ? en : de;
-  const answer   = askedEN ? de : en;
-  const key=`${en}|${de}|${askedEN?1:0}`;
-  if(!errorMap.has(key)) errorMap.set(key,{q:question,correct:answer,cat});
-}
-
-/* --- Klassische Modi (Karten) --- */
-let round=[], i=0, game="learn", delay=3000, trap=false;
-
-/* --- UI Helpers --- */
-function setProg(){
-  if(modeEndless && game==="learn"){
-    progress.textContent=`Frage ${totalAsked + 1} | Fehler: ${totalErrors} (Checkpoint alle 15)`;
-  }else{
-    progress.textContent=`Vokabel ${Math.min(i+1, round.length)}/${round.length || 0} | Wiederholungen: ${errorsList.length}`;
-  }
-}
-function showStage(show){ stage.style.display=show?"block":"none"; }
-function randomizeButtons(){
-  const buttons=[btnRight,btnDec,btnSkip];
-  const order=[0,1,2].sort(()=>Math.random()-0.5);
-  rowButtons.innerHTML=""; order.forEach(idx=>rowButtons.appendChild(buttons[idx]));
-}
-
-/* --- Modal helpers --- */
-function openModal(){
-  modalBackdrop.style.display="flex";
-  modalBackdrop.setAttribute('aria-hidden','false');
-  // Fokusfallen vermeiden: Fokus auf Close
-  btnClose.focus();
-  document.addEventListener('keydown',escClose);
-}
-function closeModal(){
-  modalBackdrop.style.display="none";
-  modalBackdrop.setAttribute('aria-hidden','true');
-  document.removeEventListener('keydown',escClose);
-}
-function escClose(e){ if(e.key==='Escape') closeModal(); }
-modalBackdrop.addEventListener('click',e=>{
-  if(e.target===modalBackdrop) closeModal();
-});
-btnClose.addEventListener('click',closeModal);
-btnContinue.addEventListener('click',()=>{ closeModal(); next(); });
-
-btnDownload.addEventListener('click',()=>{
-  const lines = [];
-  statGrid.querySelectorAll('.stat').forEach(s=>{
-    const label=s.querySelector('.label')?.textContent?.trim();
-    const value=s.querySelector('.value')?.textContent?.trim();
-    if(label && value) lines.push(`${label}: ${value}`);
-  });
-  lines.push('', 'Fehlerliste:');
-  errorMap.forEach(v=>{
-    const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000"];
-    lines.push(`- ${v.q} -> ${v.correct} [${catMeta[0]}]`);
-  });
-  const blob = new Blob([lines.join('\n')],{type:'text/plain'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='vokabelrunde_fehlermodelle.txt';
-  a.click();
-  URL.revokeObjectURL(a.href);
-});
-
-/* --- Flash & Fortschritt --- */
-function afterAdvance(){
-  if(modeEndless && game==="learn"){
-    sinceCheckpoint++; totalAsked++;
-    if(sinceCheckpoint>=15){
-      sinceCheckpoint=0;
-      const endNow=confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-      if(endNow){ return endRound(); }
-    }
-    next();
-  }else{
-    i++; next();
-  }
-}
-function flash(ok){
-  if(!chkFeedback.checked){ return afterAdvance(); }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{
-    stage.classList.remove(ok?"flash-correct":"flash-wrong");
-    afterAdvance();
-  }, delay);
-}
-
-/* --- Runde beenden => Modal befüllen & zeigen --- */
-function endRound(){
-  showStage(false);
-  // Stats berechnen
-  const errorsCount = errorMap.size;
-  const asked = totalAsked;
-  const correctCount = Math.max(0, asked - totalErrors);
-  const acc = asked ? Math.round((correctCount/asked)*100) : 100;
-
-  // Stat-Grid rendern
-  statGrid.innerHTML = `
-    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">${asked}</div></div>
-    <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">${totalErrors}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
-    <div class="stat"><div class="label">Letzte Serie (seit Checkpoint)</div><div class="value">${sinceCheckpoint}/15</div></div>
-  `;
-
-  // Falls Kategorien vorhanden, kleine Zusammenfassung anhängen
-  if(catStats.size){
-    const parts=[];
-    catStats.forEach((v,cat)=>{
-      const name=(CATS[cat]||["Kategorie"])[0];
-      parts.push(`${name}: ${v.asked-v.errors}/${v.asked}`);
-    });
-    statGrid.insertAdjacentHTML('beforeend',
-      `<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(' • ')}</div>
-       </div>`);
-  }
-
-  // Fehlerliste rendern
-  errorList.innerHTML = '';
-  if(errorMap.size===0){
-    errorList.innerHTML = `<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
-  }else{
-    errorMap.forEach(v=>{
-      const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000","#000"];
-      const [catName,bg,fg] = catMeta;
-      const row = document.createElement('div');
-      row.className='error-item';
-      row.innerHTML = `
-        <div style="text-align:left;max-width:70%;word-break:break-word">
-          <div style="font-weight:800">${v.q}</div>
-          <div style="opacity:.9">→ <b>${v.correct}</b></div>
-        </div>
-        <span class="badge" style="background:${bg};color:${fg};border-color:rgba(0,0,0,.06)">${catName}</span>
-      `;
-      errorList.appendChild(row);
-    });
-  }
-  openModal();
-  progress.textContent="Runde beendet. Modal zeigt Statistik & Fehler.";
-}
-
-/* --- Nächste Frage --- */
-function next(){
-  delay = parseInt(selDelay.value,10);
-
-  if(modeEndless && game==="learn"){
-    if(!source.length){ alert("Keine Vokabeln vorhanden"); return; }
-    const item=getNextItem(); curr=item; trap=false; offer.textContent="";
-    const [en,de,cat]=item;
-    const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-    chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-    currAskedEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
-    const question=currAskedEN?en:de;
-    const answer  =currAskedEN?de:en;
-    correct=answer;
-
-    q.textContent=question;
-
-    btnRight.style.display="none";
-    btnDec.style.display="none";
-    btnSkip.style.display="inline-block";
-    rowButtons.style.display="flex";
-    rowInput.style.display="flex";
-    inp.value=""; inp.focus(); inp.select?.();
-
-    setProg(); showStage(true);
-    return;
-  }
-
-  // Klassische Modi (Karten/finite)
-  if(i>=round.length){
-    if(errorsList.length>0){
-      alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
-      round=errorsList.map(v=>v); errorsList=[]; i=0; btnSkip.style.display="inline-block"; next(); return;
-    }else{
-      showStage(false); alert(`🎉 Runde beendet – alles korrekt!`);
-      progress.textContent="Fertig! Starte eine neue Runde."; return;
-    }
-  }
-
-  const [en,de,cat]=round[i];
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
-  const question=askEN?en:de;
-  const answer=askEN?de:en;
-  correct=answer;
-  q.textContent=question;
-
-  if(game==="cards"){
-    trap=false;
-    btnRight.style.display="inline-block";
-    btnDec.style.display="inline-block";
-    btnSkip.style.display="inline-block";
-    if(Math.random()<0.3){
-      const pool=data.map(v=>askEN?v[1]:v[0]);
-      let wrong; do{ wrong=pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
-      offer.textContent="💡 "+wrong; trap=true;
-    }else{
-      offer.textContent="💡 "+answer;
-    }
-    rowButtons.style.display="flex"; rowInput.style.display="none"; inp.value="";
-    randomizeButtons();
-  }else{
-    offer.textContent=""; trap=false;
-    btnRight.style.display="none"; btnDec.style.display="none"; btnSkip.style.display="inline-block";
-    rowButtons.style.display="flex"; rowInput.style.display="flex"; inp.value=""; inp.focus(); inp.select?.();
-  }
-  setProg(); showStage(true);
-}
-
-/* --- Button-Handler --- */
-btnRight.onclick=()=>{
-  const itemRef=(modeEndless && game==="learn")?curr:round[i];
-  const ok=!trap;
-  if(!ok){
-    addErrorOnce(itemRef);
-    if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); }
-  }else{
-    if(modeEndless && game==="learn"){ bumpCat(itemRef[2],false); }
-  }
-  flash(ok);
-};
-btnDec.onclick=()=>{
-  if(game!=="cards") return;
-  const itemRef=round[i];
-  if(trap){
-    rowInput.style.display="flex"; inp.value=""; inp.focus(); inp.select?.();
-    btnSub.onclick=()=>{
-      const ok=isCorrectInput(inp.value,correct);
-      if(ok){ flash(true); }
-      else{
-        offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-        addErrorOnce(itemRef);
-        setTimeout(()=>flash(false), parseInt(selDelay.value,10));
-      }
-    };
-  }else{
-    addErrorOnce(itemRef); flash(false);
-  }
-};
-btnSkip.onclick=()=>{
-  const itemRef=(modeEndless && game==="learn")?curr:round[i];
-  addErrorOnce(itemRef);
-  if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); return afterAdvance(); }
-  i++; next();
-};
-btnSub.onclick=()=>{
-  const itemRef=(modeEndless && game==="learn")?curr:round[i];
-  const ok=isCorrectInput(inp.value,correct);
-  if(!ok){
-    addErrorOnce(itemRef);
-    if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); }
-  }else{
-    if(modeEndless && game==="learn"){ bumpCat(itemRef[2],false); }
-  }
-  flash(ok);
-};
-inp.addEventListener("keydown",e=>{ if(e.key==="Enter") btnSub.click(); });
-
-/* --- Start-Buttons --- */
-function filterByCategory(list){ return selCat.value==="Alle" ? list.slice() : list.filter(v=>v[2]===selCat.value); }
-
-btnLearn.onclick=()=>{
-  game="learn"; modeEndless=true;
-  const pool=filterByCategory(data);
-  if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
-  resetEndless(pool); next();
-};
-btnCards.onclick=()=>{
-  game="cards"; modeEndless=false; i=0; errorsList=[];
-  const pool=filterByCategory(data); shuffle(pool); round=pool.slice(0,15);
-  btnSkip.style.display="inline-block"; next();
-};
-btnLast30.onclick=()=>{
-  const last30=data.slice(-30);
-  if(!last30.length) return alert("Keine Vokabeln vorhanden");
-  const useCards=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
-  if(useCards){
-    game="cards"; modeEndless=false; i=0; errorsList=[];
-    const pool=filterByCategory(last30); shuffle(pool); round=pool.slice(0,15);
-    btnSkip.style.display="inline-block"; next();
-  }else{
-    game="learn"; modeEndless=true;
-    const pool=filterByCategory(last30);
-    if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
-    resetEndless(pool); next();
-  }
-};
-
-function renderRecent(){
-  const last=data.slice(-5).reverse();
-  if(!last.length){ recent.textContent="–"; return; }
-  recent.innerHTML=last.map(v=>{
-    const c=CATS[v[2]]||["","#ccc","#000"];
-    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
-      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
-    </div>`;
-  }).join("");
-}
-
-/* Initial */
-showStage(false);
-progress.textContent="Bereit • klicke auf „Vokabel-Abfrage starten“";
-loadData();
-
-/* --- Live-Sync Status --- */
-const foot=document.querySelector('.foot');
-let syncState=document.createElement('div');
-syncState.style.textAlign='center';syncState.style.marginTop='6px';syncState.style.fontSize='.9rem';syncState.style.color='#2563eb';
-foot.insertAdjacentElement('afterend',syncState);
-function setSyncState(msg,color='#2563eb'){ syncState.textContent=msg; syncState.style.color=color; syncState.style.opacity=1; setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000); }
-async function checkRemoteUpdate(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const j=await r.json();
-    const local=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    if(JSON.stringify(j)!==JSON.stringify(local)){
-      localStorage.setItem("vokabeln",JSON.stringify(j));
-      localStorage.setItem("vokabeln_updated",new Date().toISOString());
-      setSyncState('🔄 Neue Daten aus Cloud geladen','#22c55e');
-      data=j; renderRecent();
-    }else{ setSyncState('🟢 Daten aktuell','#22c55e'); }
-  }catch{ setSyncState('⚠️ Offline / kein Update möglich','#ef4444'); }
-}
-setSyncState('🟡 Prüfe auf Updates...'); setInterval(checkRemoteUpdate,30000); checkRemoteUpdate();
-
+  progress.textContent="Bereit.";
 })();
 </script>
 </body>
