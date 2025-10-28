@@ -98,6 +98,9 @@ tr:hover{background:#f8fbff}
     <button id="tokenBtn" class="btn">⚙️ Token</button>
   </div>
 
+  <!-- Desktop Counter -->
+  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
+
   <!-- Desktop Tabelle -->
   <div class="table-wrap">
     <table id="tbl">
@@ -131,6 +134,9 @@ tr:hover{background:#f8fbff}
     <input id="searchMob" type="text" placeholder="Suchen…">
     <button id="resetMob" class="btn">Reset</button>
   </div>
+
+  <!-- Mobile Counter -->
+  <div id="countMob" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
 
   <div class="mob-list" id="mobList"></div>
 
@@ -225,6 +231,18 @@ tr:hover{background:#f8fbff}
     });
   }
 
+  function updateCount(){
+    const data=filtered();
+    const txt=`📘 ${data.length} Vokabel${data.length!==1?"n":""} gefunden`;
+    if(isMobile()){
+      $('#countMob').textContent=txt;
+      $('#countDesk').textContent="";
+    }else{
+      $('#countDesk').textContent=txt;
+      $('#countMob').textContent="";
+    }
+  }
+
   function renderDesktop(){
     const data=filtered();
     tbl.innerHTML=data.map(v=>{
@@ -262,7 +280,7 @@ tr:hover{background:#f8fbff}
     });
   }
 
-  function renderAll(){renderDesktop();renderMobile();}
+  function renderAll(){renderDesktop();renderMobile();updateCount();}
 
   function openEdit(i=null){
     editIndex=i;
