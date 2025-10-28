@@ -1,106 +1,149 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>📘 Vokabelübersicht – Beeferino</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
-  --blue:#2563eb;--blue2:#1d4ed8;--ok:#16a34a;--bad:#ef4444;
-  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1)
+  --ink:#0f172a; --muted:#6b7280; --bg1:#eef4ff; --bg2:#dbeafe;
+  --card:#ffffff; --blue:#2563eb; --blue2:#1d4ed8; --bad:#ef4444; --ok:#16a34a;
+  --border:#e5ebf3; --shadow:0 10px 28px rgba(0,0,0,.10)
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
-a{color:#1e3a8a;text-decoration:none}
+html,body{height:100%}
+body{
+  margin:0; font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,var(--bg1),var(--bg2));
+  color:var(--ink)
+}
+a{color:#1e3a8a; text-decoration:none}
 
-.app{max-width:1100px;margin:20px auto;padding:16px}
-h1{text-align:center;font-weight:800;color:#1e3a8a;margin:8px 0 4px}
-.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
+.app{max-width:1100px; margin:20px auto; padding:16px}
+h1{text-align:center; font-weight:800; color:#1e3a8a; margin:0}
+.hr{width:160px; height:4px; background:#2563eb; border-radius:4px; margin:10px auto 18px}
 
-/* ======== DESKTOP: fixiert, nie anrühren ======== */
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
-.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
-.toolbar .warn{background:var(--bad)}
-.toolbar .ghost{background:#eef4ff;color:#111}
-.table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-th.sortable{cursor:pointer;user-select:none}
-th.sortable:hover{background:#f3f6ff}
+/* DESKTOP: Toolbar + Tabelle */
+.toolbar{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:10px 0}
+.toolbar input,.toolbar select{
+  padding:8px 12px; border:1px solid #cfd6e4; border-radius:10px; background:#fff
+}
+.btn{background:var(--blue); color:#fff; border:none; border-radius:10px; padding:8px 14px; font-weight:800; cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.btn.warn{background:var(--bad)}
+.btn.ghost{background:#eef4ff; color:#111}
+.table-wrap{background:#fff; border-radius:16px; box-shadow:var(--shadow); overflow:hidden}
+table{width:100%; border-collapse:collapse}
+th,td{padding:10px 12px; border-bottom:1px solid var(--border); text-align:left}
+th{background:#f5f7ff; user-select:none}
+th.sortable{cursor:pointer}
 tr:hover{background:#f8fbff}
-.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-.status-line{display:flex;justify-content:space-between;gap:10px;align-items:center;margin:10px 2px;color:#6b7280;font-size:.95rem}
-.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-  background:#111827;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9999}
-.toast.show{opacity:1}
+.category-chip{padding:4px 10px; border-radius:999px; color:#fff; font-weight:800; font-size:.9rem; display:inline-block}
 
-/* ======== MODAL (Editor) ======== */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px;box-shadow:var(--shadow)}
-.panel h3{margin:0 0 10px 0}
-.form-grid{display:grid;gap:10px}
-.form-grid label{font-weight:700;font-size:.95rem}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.modal-actions{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
-.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-.btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
-.btn.warn{background:var(--bad);color:#fff}
+/* Fuß/Meta + "Zuletzt" (Desktop & Mobile) */
+.meta-foot{margin:12px 0 0; text-align:center; color:#6b7280; font-size:.92rem}
+details.recent{
+  margin:18px auto 6px; padding:0; max-width:960px;
+  background:rgba(255,255,255,.92); border:1px solid #e5ebf3;
+  border-radius:16px; box-shadow:0 8px 24px rgba(0,0,0,.08); overflow:hidden
+}
+details.recent summary{
+  list-style:none; padding:14px 16px; font-weight:800; color:#1e3a8a; cursor:pointer;
+  display:flex; align-items:center; justify-content:space-between
+}
+details.recent[open] summary{background:#f7faff}
+.recent-grid{display:flex; flex-wrap:wrap; gap:12px; padding:12px 16px 18px; justify-content:center}
+.recent-item{
+  display:inline-block; min-width:160px; border-radius:14px; padding:10px 14px;
+  font-weight:700; color:#111827; box-shadow:0 4px 12px rgba(0,0,0,.1)
+}
+.recent-item small{display:block; font-weight:500; font-size:.85rem; opacity:.9; margin-top:4px}
 
-/* ======== MOBILE VIEW ======== */
-.mobile-only{display:none}
-.mob-header{position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:5;text-align:center;font-weight:800}
-.mob-list{padding:12px}
+/* MOBILE: Header + Filter + Karten + FAB */
+.mobile-header{display:none; position:sticky; top:0; background:#eef4ff; padding:12px; border-bottom:1px solid #dbe3ff; z-index:20}
+.mob-title{display:flex; align-items:center; justify-content:space-between}
+.mob-title h2{margin:0; font-size:1.1rem; font-weight:800; color:#1e3a8a}
+.mob-list{display:none; padding:12px}
+.mob-filters{display:none; gap:8px; padding:10px; background:#f9fbff; border-bottom:1px solid #e5ebf3}
+.mob-filters input,.mob-filters select,.mob-filters button{
+  padding:10px; border:1px solid #cfd6e4; border-radius:10px; font-weight:600; background:#fff
+}
 .card{
-  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:16px;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;overflow:hidden
+  background:#fff; border:1px solid #e5ebf3; border-radius:14px; padding:14px; margin-bottom:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08)
 }
-.card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;flex-wrap:wrap}
-.card-cat{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px}
-.card-title{font-weight:800;font-size:1.05rem;word-break:break-word;overflow-wrap:anywhere;margin-bottom:6px}
-.card-sub{color:var(--muted);margin-bottom:10px}
-.card-row{text-align:right}
-.card-row .btn{background:var(--blue);color:#fff;font-size:.85rem;padding:6px 10px;border-radius:8px}
-
-/* ======== Floating Bottom Buttons ======== */
-.fab-row{position:sticky;bottom:0;background:rgba(255,255,255,.95);
-  padding:10px;border-top:1px solid #e5ebf3;display:none}
-.fabs{display:flex;gap:8px}
-.fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
-.fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
-
-/* ======== Floating Speed Dial (unten rechts) ======== */
-.dial{position:fixed;right:14px;bottom:20px;display:none;z-index:20;display:flex;flex-direction:column;align-items:flex-end}
-.dial button{
-  width:48px;height:48px;border-radius:50%;border:none;margin-top:8px;box-shadow:0 8px 20px rgba(0,0,0,.15);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:transform .2s,box-shadow .2s
+.card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap}
+.card-title{font-weight:800; font-size:1.02rem; word-break:break-word; overflow-wrap:anywhere}
+.card-cat{
+  display:inline-block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  padding:4px 10px; border-radius:999px; color:#fff; font-weight:800; transition:.2s
 }
-.dial button:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.2)}
-.dial .back{background:#1f2937;color:#fff}
-.dial .find{background:#2563eb;color:#fff}
-.dial .gear{background:#10b981;color:#fff}
+.card-cat[data-len="medium"]{font-size:.86rem; transform:scale(.96)}
+.card-cat[data-len="long"]{font-size:.76rem; transform:scale(.92); padding:3px 8px}
+.card-sub{color:#374151; margin-top:6px; font-weight:600}
+.card-actions{margin-top:10px; display:flex; gap:8px}
+.card-actions .mini{
+  border:none; border-radius:10px; padding:8px 10px; font-weight:800; cursor:pointer; background:var(--blue); color:#fff
+}
+.card.selected{border-color:#60a5fa; box-shadow:0 0 0 3px rgba(37,99,235,.18)}
+.select-hint{display:none; position:sticky; bottom:68px; margin:0 12px 6px; background:#ecf3ff; color:#1e3a8a; border:1px solid #cfe0ff; border-radius:12px; padding:8px 10px; font-weight:700}
 
-/* ======== Slide-in Filter ======== */
-.slide{position:fixed;left:0;right:0;top:0;background:#fff;border-bottom:1px solid #e5ebf3;
-  transform:translateY(-110%);transition:transform .25s ease;z-index:25;padding:12px}
-.slide.show{transform:translateY(0)}
-.slide .row{display:flex;gap:8px}
-.slide select,.slide input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.slide .btn{white-space:nowrap}
+/* Mobile FAB: Speed Dial (unten rechts) */
+.fab-root{display:none}
+.fab-root{
+  position:fixed; right:14px; bottom:14px; z-index:30;
+  display:flex; flex-direction:column; align-items:flex-end; gap:10px
+}
+.fab{
+  width:56px; height:56px; border-radius:50%; border:none; cursor:pointer;
+  background:#2563eb; color:#fff; font-size:22px;
+  box-shadow:0 12px 24px rgba(37,99,235,.35)
+}
+.fab.sub{width:46px; height:46px; background:#fff; color:#1f2937; border:1px solid #e5ebf3}
+.fab-label{background:#111827; color:#fff; padding:6px 8px; border-radius:8px; font-size:.85rem; margin-right:6px}
 
-/* ======== Footer ======== */
-.footer{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
+/* Mobile Bottom Bar */
+.bottom-bar{display:none}
+.bottom-bar{
+  position:sticky; bottom:0; background:rgba(255,255,255,.96); border-top:1px solid #e5ebf3; padding:10px; z-index:10
+}
+.bb-row{display:flex; gap:8px}
+.bb-row .bb{flex:1; border:none; border-radius:10px; padding:11px; font-weight:800; color:#fff; cursor:pointer}
+.bb.gray{background:#6b7280}.bb.warn{background:var(--bad)}.bb.blue{background:var(--blue)}
 
-/* ======== Responsive Umschalter ======== */
+/* Modal / Editor */
+.modal{position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:50; backdrop-filter:blur(3px)}
+.panel{
+  background:#fff; border-radius:16px; padding:18px; width:92%; max-width:560px;
+  box-shadow:0 16px 48px rgba(0,0,0,.2)
+}
+.panel h3{margin:0 0 10px; color:#111827; font-weight:800}
+.form-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.form-grid label{font-weight:700; font-size:.9rem; color:#111}
+.form-grid input,.form-grid select,.form-grid textarea{
+  width:100%; padding:10px; border:1px solid #cfd6e4; border-radius:10px; font-size:1rem; font-weight:600; background:#fff
+}
+.form-grid textarea{grid-column:span 2}
+.form-grid .full{grid-column:span 2}
+.modal-actions{display:flex; gap:10px; justify-content:space-between; margin-top:14px; flex-wrap:wrap}
+.left-actions{display:flex; gap:8px}
+.btn.danger{background:var(--bad); color:#fff}
+.readonly{background:#f3f4f6}
+
+/* Mobile-only Feinheiten */
 @media (max-width:900px){
-  .desktop-only{display:none}
-  .mobile-only{display:block}
-  .dial{display:flex}
-  .fab-row{display:block}
+  .toolbar,.table-wrap{display:none}
+  .mobile-header,.mob-list,.fab-root,.bottom-bar{display:block}
+  .mob-filters{display:grid; grid-template-columns:1fr 1fr auto; align-items:center}
+  .panel{max-width:520px}
+  .modal-actions{gap:12px}
+  .modal-actions .btn{flex:1}
+}
+
+/* Desktop-only */
+@media (min-width:901px){
+  .mobile-header,.mob-filters,.mob-list,.fab-root,.bottom-bar{display:none}
 }
 </style>
 </head>
@@ -109,17 +152,22 @@ tr:hover{background:#f8fbff}
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <!-- DESKTOP (gesperrt, bleibt unverändert) -->
-  <div class="toolbar desktop-only">
-    <select id="filterCatDesk"></select>
-    <input id="searchDesk" type="text" placeholder="Suchen…">
-    <button id="resetDesk" class="btn ghost">Reset</button>
+  <!-- DESKTOP: Toolbar -->
+  <div class="toolbar" id="deskToolbar">
+    <select id="filterCatDesk">
+      <option value="Alle">Alle (bunt gemischt)</option>
+    </select>
+    <input id="searchDesk" type="text" placeholder="Suchen… (EN/DE)">
+    <button id="resetDesk" class="btn">Reset</button>
     <button id="addDesk" class="btn">➕ Neue</button>
     <button id="delDesk" class="btn warn">🗑️ Löschen</button>
     <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
-    <button id="tokenBtn" class="btn">⚙️ Token</button>
+    <button id="tokenBtn" class="btn ghost">⚙️ Token</button>
+    <a href="index.html" class="btn ghost">⬅️ Zurück zum Trainer</a>
   </div>
-  <div class="table-wrap desktop-only">
+
+  <!-- DESKTOP: Tabelle -->
+  <div class="table-wrap" id="deskTableWrap">
     <table id="tbl">
       <thead>
         <tr>
@@ -127,185 +175,520 @@ tr:hover{background:#f8fbff}
           <th class="sortable" data-col="0">Englisch</th>
           <th class="sortable" data-col="1">Deutsch</th>
           <th>Kategorie</th>
-          <th style="display:none">Gruppe</th>
-          <th style="display:none">Hinweis</th>
-          <th>Aktion</th>
+          <th style="width:110px">Aktion</th>
         </tr>
       </thead>
       <tbody></tbody>
     </table>
   </div>
-  <div class="status-line desktop-only">
-    <div id="sourceInfo">Datenquelle: –</div>
-    <div id="countInfo">Gefunden 0 von 0</div>
-  </div>
 
-  <!-- MOBILE HEADER -->
-  <div class="mob-header mobile-only">Vokabeln</div>
-
-  <!-- MOBILE SLIDE FILTER -->
-  <div class="slide mobile-only" id="slideFilter">
-    <div class="row" style="margin-bottom:8px">
-      <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
-      <input id="searchMob" type="text" placeholder="Suchen…">
-      <button id="resetMob" class="btn ghost">Reset</button>
+  <!-- MOBILE: Header -->
+  <div class="mobile-header">
+    <div class="mob-title">
+      <h2>Vokabeln</h2>
+      <div style="font-weight:700;color:#1e3a8a">Gesamt: <span id="mobCount">–</span></div>
     </div>
   </div>
 
-  <!-- MOBILE LIST -->
-  <div class="mob-list mobile-only" id="mobList"></div>
+  <!-- MOBILE: Filterzeile -->
+  <div class="mob-filters" id="mobFilters">
+    <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
+    <input id="searchMob" type="text" placeholder="Suchen… (EN/DE)">
+    <button id="resetMob" class="btn">Reset</button>
+  </div>
 
-  <!-- MOBILE BOTTOM BAR -->
-  <div class="fab-row mobile-only">
-    <div class="fabs">
-      <button class="fab gray" id="fabSelect">Auswahl</button>
-      <button class="fab warn" id="fabDelete">Löschen</button>
-      <button class="fab blue" id="fabAdd">Hinzufügen</button>
-      <button class="fab gray" id="fabSync">In DB</button>
+  <!-- MOBILE: Auswahlhinweis -->
+  <div class="select-hint" id="selectHint">Auswahlmodus aktiv – tippe Karten zum Markieren. „Löschen“ entfernt markierte Einträge.</div>
+
+  <!-- MOBILE: Liste -->
+  <div class="mob-list" id="mobList"></div>
+
+  <!-- MOBILE: Speed Dial (rechts unten) -->
+  <div class="fab-root" id="fabRoot">
+    <div style="display:flex; align-items:center; gap:8px">
+      <div class="fab-label">Zurück</div>
+      <button id="fabBack" class="fab sub">⬅️</button>
     </div>
-    <div class="status-line" style="margin:6px 2px 0">
-      <div id="countInfoMob">Gefunden 0 von 0</div>
+    <div style="display:flex; align-items:center; gap:8px">
+      <div class="fab-label">Suche</div>
+      <button id="fabSearch" class="fab sub">🔎</button>
+    </div>
+    <div style="display:flex; align-items:center; gap:8px">
+      <div class="fab-label">Filter</div>
+      <button id="fabFilter" class="fab sub">🧪</button>
+    </div>
+    <button id="fabMain" class="fab">⋮</button>
+  </div>
+
+  <!-- MOBILE: Bottom Bar -->
+  <div class="bottom-bar" id="bottomBar">
+    <div class="bb-row">
+      <button id="bbSelect" class="bb gray">Auswahl</button>
+      <button id="bbDelete" class="bb warn">Löschen</button>
+      <button id="bbAdd" class="bb blue">Hinzufügen</button>
+      <button id="bbSync" class="bb gray">In DB</button>
     </div>
   </div>
 
-  <!-- MOBILE FLOATING DIAL -->
-  <div class="dial mobile-only">
-    <button class="back" id="dialBack" title="Zurück zum Trainer">⟵</button>
-    <button class="find" id="dialFind" title="Suche / Filter">🔎</button>
-    <button class="gear" id="dialGear" title="Token / Sync">⚙️</button>
-  </div>
+  <!-- Zuletzt hinzugefügt -->
+  <details class="recent" id="recentPanel">
+    <summary>🧾 Zuletzt hinzugefügt <span style="font-weight:600;color:#6b7280">(eingeklappt)</span></summary>
+    <div class="recent-grid" id="recentGrid"></div>
+  </details>
 
-  <div class="footer desktop-only">
-    <a href="index.html">⬅️ Zurück zum Trainer</a>
-    <div style="margin-top:6px">© 2025 Beeferino • <span id="sourceInfoFoot">Datenquelle: –</span></div>
-  </div>
+  <div class="meta-foot">© 2025 Beeferino • Datenquelle: <span id="sourceTag">–</span></div>
 </div>
 
-<!-- MODAL -->
+<!-- EDITOR MODAL -->
 <div class="modal" id="modal">
   <div class="panel">
     <h3 id="modalTitle">Vokabel</h3>
     <div class="form-grid">
-      <div><label>Englisch</label><input id="mEn" type="text"></div>
-      <div><label>Deutsch</label><input id="mDe" type="text"></div>
-      <div><label>Kategorie</label><select id="mCat"></select></div>
-      <div><label>Erstellt</label><input id="mDate" type="date" readonly style="background:#f3f4f6"></div>
-      <div><label>Gruppe / Variante</label><input id="mGroup" type="text"></div>
-      <div><label>Hinweis</label><textarea id="mHint" rows="2"></textarea></div>
+      <div class="full">
+        <label>Englisch
+          <input id="mEn" type="text" autocomplete="off">
+        </label>
+      </div>
+      <div class="full">
+        <label>Deutsch
+          <input id="mDe" type="text" autocomplete="off">
+        </label>
+      </div>
+
+      <label>Kategorie
+        <select id="mCat"></select>
+      </label>
+      <label>Erstellt
+        <input id="mDate" type="datetime-local" class="readonly" readonly>
+      </label>
+
+      <div class="full">
+        <label>Gruppe / Variante (optional)
+          <input id="mGroup" type="text" autocomplete="off" placeholder="">
+        </label>
+      </div>
+      <div class="full">
+        <label>Hinweis (optional)
+          <textarea id="mHint" rows="2" placeholder=""></textarea>
+        </label>
+      </div>
     </div>
+
     <div class="modal-actions">
-      <button class="btn warn" id="mDelete">Löschen</button>
-      <div>
-        <button class="btn ghost" id="mCancel">Abbrechen</button>
-        <button class="btn primary" id="mSave">Speichern</button>
+      <div class="left-actions">
+        <button id="mCancel" class="btn ghost">Abbrechen</button>
+      </div>
+      <div style="display:flex; gap:8px">
+        <button id="mDelete" class="btn danger" style="display:none">Löschen</button>
+        <button id="mSave" class="btn">Speichern</button>
       </div>
     </div>
   </div>
 </div>
 
-<div id="toast" class="toast">Gespeichert</div>
-
-  <script>
+<script>
 (function(){
-  // ===== Utils & State =====
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const isMobile = () => matchMedia("(max-width:900px)").matches;
+  /* ====== Kategorien ====== */
+  const CATEGORY_NAMES={
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein",
+    Rot:"Verwechslungsgefahr"
+  };
+  const COLOR_MAP={
+    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
+    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
+  };
+  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
 
-  let editIndex = null, editModeActive = false;
-  const modal = $("#modal"), mTitle = $("#modalTitle"),
-        mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"),
-        mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
+  /* ====== Quellen ====== */
+  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-  function setEditable(on){
-    [mEn,mDe,mCat,mGroup,mHint].forEach(inp=>{
-      inp.readOnly=!on;
-      inp.style.background=on?"#fff":"#f3f4f6";
-    });
-    mCat.disabled=!on;
+  /* ====== Helpers ====== */
+  const $=s=>document.querySelector(s);
+  const $$=s=>Array.from(document.querySelectorAll(s));
+  const isMobile=()=>matchMedia("(max-width:900px)").matches;
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString()];
+  const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
+  const byKey=(en,de,cat,created)=>list.findIndex(x=>x[0]===en&&x[1]===de&&x[2]===cat&&(x[5]===created));
+  const fmtDate = iso => {
+    if(!iso) return "";
+    try{
+      const d=new Date(iso);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth()+1).padStart(2,'0');
+      const dd = String(d.getDate()).padStart(2,'0');
+      const hh = String(d.getHours()).padStart(2,'0');
+      const mi = String(d.getMinutes()).padStart(2,'0');
+      return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+    }catch{ return ""; }
+  };
+
+  /* ====== DOM ====== */
+  const sourceTag=$("#sourceTag");
+  const recentGrid=$("#recentGrid");
+  const mobCount=$("#mobCount");
+
+  // Desktop
+  const filterCatDesk=$("#filterCatDesk");
+  const searchDesk=$("#searchDesk");
+  const resetDesk=$("#resetDesk");
+  const addDesk=$("#addDesk");
+  const delDesk=$("#delDesk");
+  const syncDesk=$("#syncDesk");
+  const tokenBtn=$("#tokenBtn");
+  const tblBody=$("#tbl tbody");
+
+  // Mobile
+  const filterCatMob=$("#filterCatMob");
+  const searchMob=$("#searchMob");
+  const resetMob=$("#resetMob");
+  const mobFilters=$("#mobFilters");
+  const mobList=$("#mobList");
+  const bottomBar=$("#bottomBar");
+  const selectHint=$("#selectHint");
+  const fabRoot=$("#fabRoot");
+  const fabMain=$("#fabMain");
+  const fabBack=$("#fabBack");
+  const fabSearch=$("#fabSearch");
+  const fabFilter=$("#fabFilter");
+
+  const recentPanel=$("#recentPanel");
+
+  // Modal
+  const modal=$("#modal");
+  const mTitle=$("#modalTitle");
+  const mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"), mDate=$("#mDate");
+  const mGroup=$("#mGroup"), mHint=$("#mHint");
+  const mCancel=$("#mCancel"), mSave=$("#mSave"), mDelete=$("#mDelete");
+
+  /* ====== State ====== */
+  let list=[];           // Hauptliste
+  let sortCol=0, sortDir=1; // Desktop Sortierung
+  let editIndex=null;
+  let selectMode=false;  // Mobile Auswahl
+  let selected=new Set();// Mobile Auswahl-IDs
+
+  /* ====== Init Kategorien Selects ====== */
+  function fillCatSelect(el, withAll=false){
+    el.innerHTML = withAll ? '<option value="Alle">Alle (bunt gemischt)</option>' : '';
+    for(const k of Object.keys(CATEGORY_NAMES)){
+      const o=document.createElement('option');
+      o.value=k; o.textContent=CATEGORY_NAMES[k];
+      // Farbiges Dropdown ist in Browsern inkonsistent; wir zeigen Farbe in Badges.
+      el.appendChild(o);
+    }
+  }
+  fillCatSelect(filterCatDesk,true);
+  fillCatSelect(filterCatMob,true);
+  fillCatSelect(mCat,false);
+
+  /* ====== Daten laden ====== */
+  async function loadData(){
+    try{
+      const r=await fetch(RAW_URL,{cache:"no-store"});
+      if(!r.ok) throw new Error(r.status);
+      list=(await r.json()).map(normalize);
+      saveLocal(list);
+      sourceTag.textContent="GitHub (Online)";
+    }catch(e){
+      list=loadLocal();
+      sourceTag.textContent="Lokaler Speicher";
+    }
+    renderAll();
   }
 
+  /* ====== Zuletzt hinzugefügt ====== */
+  function renderRecent(){
+    const last=list.slice(-5).reverse();
+    if(!last.length){ recentGrid.innerHTML='<div style="color:#6b7280">–</div>'; return; }
+    recentGrid.innerHTML = last.map(v=>{
+      const c=COLOR_MAP[v[2]]||"#ddd";
+      const tc=TEXT_ON[v[2]]||"#111";
+      return `<div class="recent-item" style="background:${c}; color:${tc}">
+        <b>${escapeHtml(v[0])}</b> – ${escapeHtml(v[1])}<br>
+        <small>${escapeHtml(CATEGORY_NAMES[v[2]]||v[2])}</small>
+      </div>`;
+    }).join("");
+  }
+
+  /* ====== Filter/Suche ====== */
+  function currentFilter(){
+    const cat = isMobile() ? (filterCatMob.value || "Alle") : (filterCatDesk.value || "Alle");
+    const q = (isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
+    return {cat, q};
+  }
+  function applyFilter(arr){
+    const {cat,q}=currentFilter();
+    return arr.filter(v=>{
+      const mc = (cat==="Alle" || v[2]===cat);
+      const mq = (!q) || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
+      return mc && mq;
+    });
+  }
+
+  /* ====== Desktop Render ====== */
+  function renderDesktop(){
+    const data = applyFilter([...list]);
+    // Sortierung (Spalten 0 & 1)
+    data.sort((a,b)=>a[sortCol].localeCompare(b[sortCol], 'de', {sensitivity:'base'})*sortDir);
+
+    tblBody.innerHTML = data.map(row=>{
+      const idx = byKey(row[0],row[1],row[2],row[5]);
+      const cat=row[2];
+      const bg=COLOR_MAP[cat]||"#ddd";
+      const fg=TEXT_ON[cat]||"#111";
+      return `<tr>
+        <td><input type="checkbox" data-idx="${idx}"></td>
+        <td>${escapeHtml(row[0])}</td>
+        <td>${escapeHtml(row[1])}</td>
+        <td><span class="category-chip" style="background:${bg};color:${fg}">${escapeHtml(CATEGORY_NAMES[cat]||cat)}</span></td>
+        <td><button class="btn ghost" data-edit="${idx}" title="Bearbeiten">✏️</button></td>
+      </tr>`;
+    }).join("");
+
+    // Kopfzeilen-Sortierer
+    $$('#tbl thead th.sortable').forEach(th=>{
+      th.onclick=()=>{
+        const c=+th.dataset.col;
+        sortDir = (sortCol===c) ? -sortDir : 1;
+        sortCol = c;
+        renderDesktop();
+      };
+    });
+
+    // Edit-Buttons
+    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
+
+    // Count im Mobile-Header (auch am Desktop setzen, wird mobil angezeigt)
+    mobCount.textContent = String(list.length);
+  }
+
+  /* ====== Mobile Render ====== */
+  function renderMobile(){
+    const data = applyFilter([...list]);
+    mobCount.textContent = String(list.length);
+
+    mobList.innerHTML = data.map(row=>{
+      const idx = byKey(row[0],row[1],row[2],row[5]);
+      const bg=COLOR_MAP[row[2]]||"#ddd";
+      const fg=TEXT_ON[row[2]]||"#111";
+      const catText=CATEGORY_NAMES[row[2]]||row[2];
+      const sel = selected.has(idx) ? " selected" : "";
+      return `<div class="card${sel}" data-idx="${idx}">
+        <div class="card-top">
+          <div class="card-title">${escapeHtml(row[0])}</div>
+          <div class="card-cat" style="background:${bg};color:${fg}">${escapeHtml(catText)}</div>
+        </div>
+        <div class="card-sub">DE: ${escapeHtml(row[1])}</div>
+        <div class="card-actions">
+          <button class="mini" data-edit="${idx}">Bearbeiten</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    // Adaptive Badge-Größe
+    $$('.card-cat').forEach(el=>{
+      const len = el.textContent.trim().length;
+      el.dataset.len = len<16 ? "" : len<30 ? "medium" : "long";
+    });
+
+    // Edit
+    $$('.card .mini').forEach(b=>b.onclick=(e)=>{ e.stopPropagation(); openEdit(+b.dataset.edit); });
+
+    // Auswahlmodus
+    $$('.card').forEach(c=>{
+      c.onclick=()=>{
+        if(!selectMode) return;
+        const i=+c.dataset.idx;
+        if(selected.has(i)) selected.delete(i); else selected.add(i);
+        c.classList.toggle('selected');
+      };
+    });
+
+    // Auswahlhinweis
+    selectHint.style.display = selectMode ? 'block' : 'none';
+  }
+
+  function renderAll(){
+    renderDesktop();
+    renderMobile();
+    renderRecent();
+  }
+
+  /* ====== Reset ====== */
+  function resetFilters(){
+    (isMobile()?filterCatMob:filterCatDesk).value = "Alle";
+    (isMobile()?searchMob:searchDesk).value = "";
+    renderAll();
+  }
+
+  /* ====== Modal ====== */
   function openEdit(i=null){
     editIndex=i;
-    editModeActive=false;
-
+    const mobile=isMobile();
     if(i==null){
       mTitle.textContent="Neue Vokabel";
-      mEn.value=""; mDe.value=""; mCat.value="Gelb";
+      mEn.value=""; mDe.value="";
+      mCat.value="Gelb";
+      mDate.value = fmtDate(new Date().toISOString());
       mGroup.value=""; mHint.value="";
-      mDate.value=new Date().toISOString().slice(0,16);
-      setEditable(true);
-    } else {
-      const v = list[i];
-      mTitle.textContent="Vokabel anzeigen";
+      mDelete.style.display = "none";
+    }else{
+      const v=list[i];
+      mTitle.textContent="Vokabel bearbeiten";
       mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
+      mDate.value=fmtDate(v[5]);
       mGroup.value=v[3]||""; mHint.value=v[4]||"";
-      mDate.value=new Date(v[5]).toISOString().slice(0,16);
-      if (isMobile()) setEditable(false); else setEditable(true);
+      // Löschbutton nur mobil (dein Wunsch)
+      mDelete.style.display = mobile ? "inline-block" : "none";
     }
-
-    // ✏️ Bearbeiten aktivieren nur für Mobile
-    const oldBtn = $("#mEditToggle");
-    if (oldBtn) oldBtn.remove();
-
-    if (isMobile()) {
-      const btn = document.createElement("button");
-      btn.id = "mEditToggle";
-      btn.className = "btn ghost";
-      btn.textContent = "Bearbeiten aktivieren ✏️";
-      btn.style.marginTop = "10px";
-      btn.onclick = () => {
-        editModeActive = true;
-        setEditable(true);
-        btn.disabled = true;
-        btn.textContent = "Bearbeitung aktiv";
-      };
-      $(".modal-actions").prepend(btn);
-    }
-
-    modal.style.display = "flex";
+    modal.style.display="flex";
   }
-
   function closeModal(){ modal.style.display="none"; }
-  $("#mCancel").onclick = closeModal;
-  modal.addEventListener("click", e=>{ if(e.target===modal) closeModal(); });
 
-  // ===== Entferne Dial-Icons am Desktop =====
-  const dials = ["#dialBack", "#dialFind", "#dialGear"];
-  if (!isMobile()) dials.forEach(sel=>{
-    const el=document.querySelector(sel); if(el) el.remove();
+  mCancel.onclick=closeModal;
+
+  mSave.onclick=()=>{
+    const en=mEn.value.trim(), de=mDe.value.trim(), cat=mCat.value;
+    const grp=mGroup.value.trim(), hint=mHint.value.trim();
+    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
+
+    if(editIndex==null){
+      list.push([en,de,cat,grp,hint,new Date().toISOString()]);
+    }else{
+      const old=list[editIndex];
+      list[editIndex]=[en,de,cat,grp,hint, old[5] || new Date().toISOString()];
+    }
+    saveLocal(list);
+    closeModal(); renderAll();
+  };
+
+  mDelete.onclick=()=>{
+    if(editIndex==null) return;
+    if(!confirm("Diesen Eintrag löschen?")) return;
+    list.splice(editIndex,1);
+    saveLocal(list);
+    closeModal(); renderAll();
+  };
+
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+
+  /* ====== Desktop Aktionen ====== */
+  resetDesk.onclick=resetFilters;
+  addDesk.onclick=()=>openEdit(null);
+
+  delDesk.onclick=()=>{
+    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
+    if(!ids.length){ alert("Bitte mindestens eine Zeile markieren."); return; }
+    if(!confirm(`${ids.length} Einträge löschen?`)) return;
+    list=list.filter((v,i)=>!ids.includes(i));
+    saveLocal(list);
+    renderAll();
+  };
+
+  tokenBtn.onclick=()=>{
+    const t=prompt("GitHub Token (repo-Scope):", localStorage.getItem('gh_token')||"");
+    if(t!==null){
+      if(t.trim()) localStorage.setItem('gh_token',t.trim());
+      else localStorage.removeItem('gh_token');
+      alert("Token aktualisiert.");
+    }
+  };
+
+  syncDesk.onclick=githubSync;
+
+  /* ====== Mobile Aktionen ====== */
+  resetMob.onclick=resetFilters;
+
+  // Bottom Bar
+  $("#bbAdd").onclick=()=>openEdit(null);
+  $("#bbSelect").onclick=()=>{
+    selectMode=!selectMode;
+    if(!selectMode) selected.clear();
+    renderMobile();
+  };
+  $("#bbDelete").onclick=()=>{
+    if(!selected.size){ alert("Keine Elemente ausgewählt."); return; }
+    if(!confirm(`${selected.size} Einträge löschen?`)) return;
+    list=list.filter((v,i)=>!selected.has(i));
+    selected.clear();
+    saveLocal(list);
+    renderAll();
+  };
+  $("#bbSync").onclick=githubSync;
+
+  // Speed Dial
+  let dialOpen=false;
+  function setDial(open){
+    dialOpen=open;
+    fabBack.parentElement.style.display=open?'flex':'none';
+    fabSearch.parentElement.style.display=open?'flex':'none';
+    fabFilter.parentElement.style.display=open?'flex':'none';
+  }
+  setDial(false);
+  fabMain.onclick=()=>setDial(!dialOpen);
+  fabBack.onclick=()=>{ location.href="index.html"; };
+  fabSearch.onclick=()=>{
+    mobFilters.style.display='grid';
+    searchMob.focus();
+  };
+  fabFilter.onclick=()=>{
+    mobFilters.style.display = (mobFilters.style.display==='grid')?'none':'grid';
+  };
+
+  // Live-Filter
+  [filterCatDesk,searchDesk,filterCatMob,searchMob].forEach(el=>{
+    el.addEventListener('input',renderAll);
+    el.addEventListener('change',renderAll);
   });
 
-  // ===== Extra CSS (nur Mobile) =====
-  const style = document.createElement("style");
-  style.textContent = `
-    @media (max-width:900px) {
-      /* mehr Luft zwischen Buttons */
-      .modal-actions { gap: 16px; flex-wrap: wrap; justify-content: center; }
-      .modal-actions .btn { flex: 1; min-width: 120px; }
+  /* ====== GitHub Sync ====== */
+  async function githubSync(){
+    const token = localStorage.getItem('gh_token')||"";
+    if(!token){ alert("Kein GitHub-Token gesetzt (⚙️ Token)."); return; }
+    try{
+      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      // Read current SHA
+      const metaResp = await fetch(api,{headers:{Authorization:`token ${token}`}});
+      const meta = await metaResp.json();
+      const sha = meta && meta.sha ? meta.sha : undefined;
 
-      /* sanfter Kartenlook für Pop-up */
-      .panel {
-        box-shadow: 0 10px 28px rgba(0,0,0,.2);
-        border: 1px solid #e0e7ff;
-        background: linear-gradient(180deg, #ffffff, #f9fbff);
-        border-radius: 20px;
-        transform: scale(0.98);
-        animation: popIn .25s ease forwards;
-      }
-      @keyframes popIn {
-        from {opacity:0; transform: scale(0.94);}
-        to {opacity:1; transform: scale(1);}
-      }
-      .form-grid input, .form-grid select, .form-grid textarea {
-        border-radius: 12px;
-        border: 1px solid #d1d5db;
-      }
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      const res=await fetch(api,{
+        method:'PUT',
+        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
+      });
+      if(!res.ok) throw new Error(await res.text());
+      alert("✅ Erfolgreich in Datenbank eingetragen.");
+      sourceTag.textContent="GitHub (Online)";
+    }catch(e){
+      console.error(e);
+      alert("❌ Sync fehlgeschlagen.");
     }
-  `;
-  document.head.appendChild(style);
+  }
 
-  // ===== Reattach deine bestehenden globalen Funktionen =====
-  window.openEdit = openEdit;
+  /* ====== Escapes ====== */
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll('&','&amp;')
+      .replaceAll('<','&lt;')
+      .replaceAll('>','&gt;')
+      .replaceAll('"','&quot;')
+      .replaceAll("'","&#039;");
+  }
+
+  /* ====== Start ====== */
+  loadData();
+
 })();
 </script>
+</body>
+</html>
