@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vokabeltrainer</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>Vokabeltrainer – Beeferino</title>
 <style>
 :root{
   --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
@@ -39,35 +38,28 @@ h1{
 .controls label{display:flex;align-items:center;gap:6px}
 select{
   padding:8px 12px;border:1px solid #d1d5db;
-  border-radius:10px;font-size:1rem;min-width:180px
+  border-radius:10px;font-size:1rem
 }
-
-/* Kacheln */
 .kachel{
   flex:1 1 240px;text-align:center;
   background:var(--blue);color:#fff;
-  padding:18px;border-radius:14px;
+  padding:14px 18px;border-radius:14px;
   font-weight:700;cursor:pointer;
   box-shadow:0 6px 16px rgba(37,99,235,.25);
-  transition:transform .15s,background .15s, box-shadow .2s
+  transition:transform .15s,background .15s
 }
-.kachel small{display:block;margin-top:6px;font-weight:600;opacity:.9}
-.kachel:hover{transform:translateY(-1px);background:var(--blue2);box-shadow:0 8px 20px rgba(37,99,235,.35)}
-
-/* Progress */
+.kachel small{font-weight:600;opacity:.9}
+.kachel:hover{transform:translateY(-1px);background:var(--blue2)}
 .progress{text-align:center;font-weight:700;margin:8px 0 12px;min-height:1.2em}
-
-/* Stage / Spielkarte */
 #stage{
   display:none;margin-top:14px;padding:28px;border-radius:20px;
-  box-shadow:inset 0 0 10px rgba(0,0,0,.10);
-  text-align:center; transition:background .25s ease, color .25s ease
+  background:rgba(255,255,255,.95);
+  box-shadow:inset 0 0 10px rgba(0,0,0,.05);
+  text-align:center
 }
-.chip{display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:10px;background:rgba(255,255,255,.25)}
+.chip{display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:10px}
 .word{font-size:1.9rem;font-weight:800;margin:8px 0 6px}
-.offer{font-size:1.12rem;color:#0f172a;margin:10px 0 14px;min-height:1.4em;font-weight:700}
-
-/* Buttonzeile */
+.offer{font-size:1.1rem;color:#1f2937;margin:6px 0 12px;min-height:1.3em}
 .btnrow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 .btn{
   border:none;border-radius:12px;padding:10px 20px;
@@ -76,8 +68,6 @@ select{
 .ok{background:var(--ok);color:#fff}
 .bad{background:var(--bad);color:#fff}
 .skip{background:var(--muted);color:#fff}
-
-/* Eingabereihe */
 .inprow{
   display:none;gap:8px;justify-content:center;margin-top:12px
 }
@@ -89,89 +79,190 @@ select{
   background:var(--blue);color:#fff;border:none;
   border-radius:12px;padding:10px 16px;font-weight:700
 }
-
-/* Feedback-Flash */
 .flash-correct{animation:good .4s}
 .flash-wrong{animation:bad .4s}
 @keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
 @keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
-
-/* Footer-Aktionen */
-.footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
-.footer-actions a,.footer-actions button{
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;
-  background:linear-gradient(135deg,#eaf0ff,#f8faff);
-  border:1px solid #dbe3ff;color:#1f2937;padding:10px 16px;border-radius:12px;
-  font-weight:700;cursor:pointer;text-decoration:none;font-size:1rem;
-  box-shadow:0 3px 8px rgba(0,0,0,0.05);transition:all .25s ease
-}
-.footer-actions a:hover,.footer-actions button:hover{
-  background:linear-gradient(135deg,#e0e7ff,#f1f5ff);
-  transform:translateY(-1px);
-  box-shadow:0 5px 12px rgba(37,99,235,0.15)
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
 }
 
-/* Feedback-Toggle */
+/* Beide gleich aussehen lassen */
+.footer-actions a,
+.footer-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #eaf0ff, #f8faff);
+  border: 1px solid #dbe3ff;
+  color: #1f2937;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 1rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  transition: all 0.25s ease;
+}
+
+.footer-actions a:hover,
+.footer-actions button:hover {
+  background: linear-gradient(135deg, #e0e7ff, #f1f5ff);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(37,99,235,0.15);
+}
+
 .feedback-toggle{
   display:flex;align-items:center;justify-content:center;
-  gap:10px;padding:12px 18px;border-radius:16px;
-  background:linear-gradient(135deg,#f8fafc,#eef2ff);
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-  transition:all .25s ease;margin:6px 0 8px
+  gap:6px;margin-bottom:10px
 }
-.feedback-toggle:hover{box-shadow:0 4px 12px rgba(37,99,235,.15);transform:translateY(-1px)}
-.feedback-toggle label{font-weight:700;color:#1e3a8a;font-size:1.05rem;letter-spacing:.3px;cursor:pointer}
-#chkFeedback{appearance:none;width:44px;height:24px;background:#d1d5db;border-radius:999px;position:relative;outline:none;cursor:pointer;transition:background .3s ease}
-#chkFeedback::before{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:all .3s ease;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-#chkFeedback:checked{background:#2563eb}
-#chkFeedback:checked::before{left:23px}
-
-/* Trenner & Recent fancy */
 .trenner{
   height:3px;width:60%;margin:50px auto 20px;
   background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);
   border-radius:2px;animation:shine 5s linear infinite
 }
 @keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
-
 details.recent-section{
-  border-radius:20px;padding:22px;margin-top:10px;text-align:center;
-  backdrop-filter:blur(10px);
-  background:rgba(255,255,255,0.7);
+  background:rgba(255,255,255,.9);
+  border-radius:20px;padding:22px;
+  margin-top:10px;text-align:center;
   box-shadow:0 8px 28px rgba(0,0,0,.08);
+  backdrop-filter:blur(12px);
   transition:all .3s ease;
 }
-details.recent-section[open]{background:rgba(255,255,255,0.9);box-shadow:0 10px 32px rgba(0,0,0,.15)}
+details.recent-section[open]{background:rgba(255,255,255,1);box-shadow:0 10px 32px rgba(0,0,0,.12)}
 details.recent-section summary{
-  font-weight:800;font-size:1.15rem;color:#1e3a8a;cursor:pointer;list-style:none;
-  letter-spacing:.5px;text-transform:uppercase;transition:color .3s ease;
+  font-weight:800;font-size:1.15rem;color:#1e3a8a;
+  cursor:pointer;list-style:none;
+  letter-spacing:.5px;text-transform:uppercase;
+  transition:color .3s ease;
 }
 details.recent-section summary:hover{color:#2563eb}
 #recent{
-  margin-top:18px;text-align:center;display:flex;flex-wrap:wrap;justify-content:center;
-  gap:18px;transition:opacity .4s ease;
+  margin-top:18px;text-align:center;line-height:1.8;
+  display:flex;flex-wrap:wrap;justify-content:center;
+  gap:12px;transition:opacity .4s ease;
 }
 .recent-item{
-  display:inline-block;min-width:160px;border-radius:18px;padding:14px 20px;
+  display:inline-block;min-width:160px;
+  border-radius:14px;padding:12px 18px;
   font-weight:700;color:#111827;
-  background:rgba(255,255,255,0.75);
-  box-shadow:0 6px 18px rgba(0,0,0,.1);
-  backdrop-filter:blur(8px);
-  transition:all .25s ease;
-  transform:translateY(0);
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  transition:transform .25s ease,box-shadow .25s ease;
 }
 .recent-item:hover{
-  transform:translateY(-5px) scale(1.04);
-  box-shadow:0 10px 25px rgba(0,0,0,.15);
-  filter:brightness(1.05);
+  transform:translateY(-3px) scale(1.02);
+  box-shadow:0 6px 16px rgba(0,0,0,.15);
 }
-.recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px;opacity:.85}
+.recent-item small{
+  display:block;font-weight:500;font-size:.85rem;
+  margin-top:4px;opacity:.8
+}
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
-
-/* Mobile */
-@media (max-width:560px){
-  .inprow input{width:100%}
+/* Feedback-Button hervorheben */
+.feedback-toggle {
+  background: #e0e7ff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 2px solid #2563eb33;
+  box-shadow: 0 2px 6px rgba(37,99,235,.15);
+  transition: all .25s ease;
+  animation: pulseOnce 2s ease-out 0.5s 1;
 }
+.feedback-toggle:hover {
+  border-color: #2563eb66;
+  box-shadow: 0 3px 10px rgba(37,99,235,.25);
+}
+.feedback-toggle label {
+  font-weight: 700;
+  color: #1e3a8a;
+}
+#chkFeedback {
+  transform: scale(1.3);
+  accent-color: #2563eb;
+}
+
+/* sanfter Puls-Effekt beim Seitenstart */
+@keyframes pulseOnce {
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(37,99,235,0); }
+  40% { transform: scale(1.05); box-shadow: 0 0 12px rgba(37,99,235,.4); }
+  100% { transform: scale(1); box-shadow: 0 0 0 rgba(37,99,235,0); }
+}
+/* Moderner Toggle für "Feedback anzeigen" */
+.feedback-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #f8fafc, #eef2ff);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  transition: all .25s ease;
+}
+
+.feedback-toggle:hover {
+  box-shadow: 0 4px 12px rgba(37,99,235,.15);
+  transform: translateY(-1px);
+}
+
+.feedback-toggle label {
+  font-weight: 700;
+  color: #1e3a8a;
+  font-size: 1.05rem;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+}
+
+/* --- Stylischer Schalter --- */
+#chkFeedback {
+  appearance: none;
+  width: 44px;
+  height: 24px;
+  background: #d1d5db;
+  border-radius: 999px;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+  transition: background .3s ease;
+}
+
+#chkFeedback::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  transition: all .3s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+
+#chkFeedback:checked {
+  background: #2563eb;
+}
+
+#chkFeedback:checked::before {
+  left: 23px;
+  background: #fff;
+}
+/* Abstand zwischen Navigation (controls) und Feedback-Toggle */
+.controls {
+  margin-bottom: 5px;
+}
+
+.feedback-toggle {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 </style>
 </head>
 <body>
@@ -206,7 +297,7 @@ details.recent-section summary:hover{color:#2563eb}
 
   <div class="functions">
     <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
-    <div id="btnLast30" class="kachel">📗 Letzte gelernte Vokabeln</div>
+    <div id="btnLast30" class="kachel">📗 Letzte eingebene Vokabeln</div>
     <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
   </div>
 
@@ -219,9 +310,8 @@ details.recent-section summary:hover{color:#2563eb}
 
     <div id="rowButtons" class="btnrow">
       <button id="btnRight" class="btn ok">Richtig</button>
-      <button id="btnWrong" class="btn bad">Falsch</button>
       <button id="btnDec" class="btn bad">Täuschung erkannt</button>
-      <button id="btnNext" class="btn skip">Weiter</button>
+      <button id="btnSkip" class="btn skip">Überspringen</button>
     </div>
 
     <div id="rowInput" class="inprow">
@@ -232,13 +322,13 @@ details.recent-section summary:hover{color:#2563eb}
 
   <div class="footer-actions">
     <a href="vokabeln.html">📂 Vokabeln</a>
-    <button id="btnRestart">🔄 Neustart</button>
+    <button onclick="location.reload()">🔄 Neustart</button>
   </div>
 
   <div class="trenner"></div>
 
-  <details class="recent-section" open>
-    <summary>✨ Zuletzt hinzugefügt</summary>
+  <details class="recent-section">
+    <summary>Zuletzt hinzugefügt</summary>
     <div id="recent">–</div>
   </details>
 
@@ -257,133 +347,176 @@ const CATS={
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
+const el=id=>document.getElementById(id);
+const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
+const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
+const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
+const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
+const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
 
-const $=id=>document.getElementById(id);
-const selCat=$("selCat"), selMode=$("selMode"), selDelay=$("selDelay"), chkFeedback=$("chkFeedback");
-const btnLearn=$("btnLearn"), btnCards=$("btnCards"), btnLast30=$("btnLast30"), btnRestart=$("btnRestart");
-const stage=$("stage"), chip=$("chip"), q=$("q"), offer=$("offer"), progress=$("progress");
-const btnRight=$("btnRight"), btnWrong=$("btnWrong"), btnDec=$("btnDec"), btnNext=$("btnNext");
-const rowInput=$("rowInput"), inp=$("inp"), btnSub=$("btnSub"), recent=$("recent");
+/* --- Synchronisierte Datenverwaltung --- */
+let data=[], lastSync=null;
 
-let data=[], round=[], i=0, game="learn", trap=false, correct="", delay=3000, errors=[], repeating=false;
-
-/* Setup */
-for(const k in CATS){
-  const o=document.createElement("option");
-  o.value=k;o.textContent=CATS[k][0];
-  o.style.background=CATS[k][1];o.style.color=CATS[k][2];
-  selCat.appendChild(o);
-}
-selCat.onchange=()=>{const v=selCat.value;if(v!=="Alle"&&CATS[v]){selCat.style.background=CATS[v][1];selCat.style.color=CATS[v][2];}else{selCat.style.background="#fff";selCat.style.color="#000";}};
-
-function setStageTheme(cat){
-  const c=CATS[cat]||["","#fff","#000"];
-  stage.style.background=`linear-gradient(180deg,${c[1]}33,${c[1]}22)`;
-  chip.style.color=c[2];
-  chip.style.background="rgba(255,255,255,.25)";
-}
-
-/* Fetch */
-async function fetchData(){
+async function fetchFromGitHub(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    if(!r.ok)throw 0;const j=await r.json();
+    if(!r.ok)throw new Error("fetch failed");
+    const j=await r.json();
     localStorage.setItem("vokabeln",JSON.stringify(j));
-    return j;
-  }catch{return JSON.parse(localStorage.getItem("vokabeln")||"[]");}
+    localStorage.setItem("vokabeln_updated",new Date().toISOString());
+    data=j;lastSync=new Date();
+  }catch(e){
+    console.warn("Offline – lokale Daten:",e);
+    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  }
 }
+
+async function loadData(){
+  const localUpd=localStorage.getItem("vokabeln_updated");
+  const lastUsed=localStorage.getItem("index_last_sync");
+  const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
+  if(localNewer){
+    console.log("Lokale Daten neuer → direkt geladen");
+    data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  }else{
+    console.log("GitHub prüfen …");
+    await fetchFromGitHub();
+  }
+  localStorage.setItem("index_last_sync",new Date().toISOString());
+  renderRecent();
+}
+
+/* --- UI & Spielmechanik --- */
+for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];selCat.appendChild(o);}
+
+let round=[], i=0, game="learn", delay=3000, trap=false, correct="";
+let errorsList=[];
+
+function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
+function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
+function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
+function showStage(show){stage.style.display=show?"block":"none";}
+function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
+function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
+
+function next(){
+  if(i>=round.length){
+    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
+    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
+  }
+  delay=parseInt(selDelay.value,10);
+  const [en,de,cat]=round[i];
+  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
+  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
+  const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
+  const question=askEN?en:de;
+  const answer=askEN?de:en;
+  correct=answer;
+  q.textContent=question;
+  if(game==="cards"){
+    trap=false;
+    if(Math.random()<0.3){
+      const pool=data.map(v=>askEN?v[1]:v[0]);
+      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
+      offer.textContent="💡 "+wrong;trap=true;
+    }else offer.textContent="💡 "+answer;
+    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
+  }else{
+    offer.textContent="";trap=false;
+    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
+    rowInput.style.display="flex";inp.value="";inp.focus();
+  }
+  setProg();showStage(true);
+}
+
+btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
+btnDec.onclick=()=>{
+  if(game!=="cards") return;
+
+  // Täuschung korrekt erkannt → Eingabefeld anzeigen
+  if(trap){
+    rowInput.style.display="flex";
+    inp.value="";
+    inp.focus();
+
+    // Nach Eingabe prüfen
+    btnSub.onclick=()=>{
+      const ok = inp.value.trim().toLowerCase() === correct.toLowerCase();
+      if(ok){
+        flash(true);
+      } else {
+        // Nur bei falscher Eingabe Lösung zeigen
+        offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+        errorsList.push(round[i]);
+        setTimeout(()=>flash(false), parseInt(selDelay.value,10));
+      }
+    };
+
+  } else {
+    // Täuschung nicht erkannt → Fehler
+    errorsList.push(round[i]);
+    flash(false);
+  }
+};
+
+btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
+btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
+inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
+
+btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
+btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
+btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
+
 function renderRecent(){
   const last=data.slice(-5).reverse();
+  if(!last.length){recent.textContent="–";return;}
   recent.innerHTML=last.map(v=>{
     const c=CATS[v[2]]||["","#ccc","#000"];
     return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
-      <b>${v[0]}</b> – ${v[1]}<small>${c[0]}</small></div>`;
+      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
+    </div>`;
   }).join("");
 }
 
-/* Helpers */
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function setProg(){progress.textContent=`Vokabel ${Math.min(i+1,round.length)}/${round.length} | Fehler: ${errors.length}`;}
-function flash(ok){
-  if(chkFeedback.checked){
-    stage.classList.remove("flash-correct","flash-wrong");
-    stage.offsetWidth;
-    stage.classList.add(ok?"flash-correct":"flash-wrong");
-  }
+loadData();
+  /* --- Automatischer Live-Sync & Statusanzeige --- */
+const foot = document.querySelector('.foot');
+let syncState = document.createElement('div');
+syncState.style.textAlign = 'center';
+syncState.style.marginTop = '6px';
+syncState.style.fontSize = '.9rem';
+syncState.style.color = '#2563eb';
+foot.insertAdjacentElement('afterend', syncState);
+
+function setSyncState(msg, color='#2563eb'){
+  syncState.textContent = msg;
+  syncState.style.color = color;
+  syncState.style.opacity = 1;
+  setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
 }
 
-/* Round control */
-function next(){
-  if(i>=round.length){
-    if(errors.length&&!repeating){
-      alert(`❗ ${errors.length} Fehler – Wiederholungsrunde.`);
-      round=errors;errors=[];i=0;repeating=true;
-    }else{
-      alert(errors.length?`Runde beendet. Fehler: ${errors.length}`:"🎉 Runde beendet!");
-      stage.style.display="none";return;
+async function checkRemoteUpdate(){
+  try{
+    const r = await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+    const j = await r.json();
+    const local = JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    if(JSON.stringify(j)!==JSON.stringify(local)){
+      localStorage.setItem("vokabeln",JSON.stringify(j));
+      localStorage.setItem("vokabeln_updated",new Date().toISOString());
+      setSyncState('🔄 Neue Daten aus Cloud geladen', '#22c55e');
+      data = j;
+      renderRecent();
+    } else {
+      setSyncState('🟢 Daten aktuell', '#22c55e');
     }
+  }catch{
+    setSyncState('⚠️ Offline / kein Update möglich', '#ef4444');
   }
-  const [en,de,cat]=round[i];
-  setStageTheme(cat);
-  chip.textContent=CATS[cat]?CATS[cat][0]:cat;
-  const askEN=selMode.value==="toGerman"?true:selMode.value==="toEnglish"?false:Math.random()<0.5;
-  const qText=askEN?en:de;const aText=askEN?de:en;correct=aText;
-  q.textContent=qText;
-  delay=parseInt(selDelay.value,10);
-  offer.textContent="";
-  setProg();
-  if(game==="cards"){
-    trap=Math.random()<0.3;
-    if(trap){
-      const pool=data.map(v=>askEN?v[1]:v[0]);
-      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===aText);
-      offer.textContent="💡 "+wrong;
-    }else offer.textContent="💡 "+aText;
-    rowInput.style.display="none";
-  }else{
-    rowInput.style.display="flex";inp.value="";inp.focus();
-  }
-  stage.style.display="block";
 }
+setSyncState('🟡 Prüfe auf Updates...');
+setInterval(checkRemoteUpdate,30000);
+checkRemoteUpdate();
 
-/* Buttons */
-btnRight.onclick=()=>{if(game!=="cards")return;const ok=!trap;if(!ok)errors.push(round[i]);flash(ok);setTimeout(()=>{i++;next();},delay);}
-btnWrong.onclick=()=>{if(game!=="cards")return;errors.push(round[i]);flash(false);setTimeout(()=>{i++;next();},delay);}
-btnDec.onclick=()=>{if(game!=="cards")return;
-  if(trap){rowInput.style.display="flex";inp.value="";inp.focus();
-    btnSub.onclick=()=>{
-      const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();
-      if(!ok){errors.push(round[i]);offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;}
-      flash(ok);setTimeout(()=>{i++;next();},delay);
-    };
-  }else{errors.push(round[i]);flash(false);setTimeout(()=>{i++;next();},delay);}
-};
-btnNext.onclick=()=>{errors.push(round[i]);i++;next();};
-btnSub.onclick=()=>{if(game!=="learn")return;
-  const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();
-  if(!ok){errors.push(round[i]);offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;}
-  flash(ok);setTimeout(()=>{i++;next();},delay);
-};
-inp.onkeydown=e=>{if(e.key==="Enter")btnSub.click();};
-
-/* Start */
-function start(mode,list=null){
-  game=mode;i=0;errors=[];repeating=false;
-  const base=list||((selCat.value==="Alle"?data:data.filter(v=>v[2]===selCat.value)).slice(0,15));
-  shuffle(base);round=base;next();
-}
-btnLearn.onclick=()=>start("learn");
-btnCards.onclick=()=>start("cards");
-btnLast30.onclick=()=>{
-  const l=data.slice(-30);
-  if(!l.length)return alert("Keine Vokabeln");
-  const cards=confirm("Mitdenker Edition aktivieren?");
-  start(cards?"cards":"learn",l);
-};
-btnRestart.onclick=()=>location.reload();
-
-/* Init */
-(async()=>{data=await fetchData();renderRecent();})();
 })();
 </script>
 </body>
