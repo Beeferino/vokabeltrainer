@@ -1,221 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📘 Beeferino Vokabeltrainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:linear-gradient(145deg,#eef4ff,#dbeafe);
+  --card:rgba(255,255,255,0.85);
+  --border:#e2e8f0;
+  --accent:#2563eb;
+  --text:#1e293b;
+  --muted:#64748b;
+  --ok:#16a34a;
+  --bad:#ef4444;
+  --shadow:0 8px 26px rgba(0,0,0,.1);
+}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:1100px;margin:20px auto;padding:16px}
+h1{text-align:center;font-weight:800;color:#1e3a8a}
+.hr{width:160px;height:4px;background:var(--accent);border-radius:4px;margin:10px auto 20px}
+.section{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:20px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
+button,select,input{font-family:inherit}
+button{cursor:pointer;border:none;border-radius:10px;padding:10px 16px;font-weight:700;transition:all .2s ease}
+button:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.btn{background:var(--accent);color:#fff}
+.btn.secondary{background:#475569}
+.btn.red{background:var(--bad)}
+select,input[type="number"]{padding:8px 12px;border-radius:10px;border:1px solid #cbd5e1;transition:background .3s ease,color .3s ease}
+#category option{color:#fff;font-weight:700}
+#category option[value="Alle"]{background:#64748b;color:#fff}
+#category option[value="Gelb"]{background:#F4D03F;color:#000}
+#category option[value="Pink"]{background:#E91E63}
+#category option[value="Blau"]{background:#1976D2}
+#category option[value="Gruen"]{background:#1E8449}
+#category option[value="HellesPink"]{background:#F54927}
+#category option[value="Orange"]{background:#E67E22}
+#category option[value="Dunkelgruen"]{background:#117A65}
+#category option[value="Rot"]{background:#C0392B}
+#mode option,#delay option{color:#111;background:#fff;font-weight:600}
+.game-area{display:none;background:var(--card);border-radius:20px;box-shadow:var(--shadow);padding:24px;text-align:center;animation:fadeIn .5s ease}
+.card{font-size:1.8rem;font-weight:800;margin:20px 0;border-radius:16px;padding:24px;color:#fff;transition:background .6s ease,color .6s ease}
+.feedback{font-size:1.1rem;margin-top:10px;color:var(--muted)}
+.footer{text-align:center;margin-top:20px;color:var(--muted);font-size:.9rem}
+.category-select{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;position:relative}
+.feedback-toggle{position:absolute;right:-10px;top:-10px}
+.feedback-btn{display:flex;align-items:center;gap:6px;border-radius:999px;padding:6px 14px;font-weight:700;font-size:.9rem;background:#94a3b8;color:#fff;transition:all .25s ease;border:none;cursor:pointer}
+.feedback-btn.active{background:var(--accent)}
+.correct{animation:flashGreen .3s}
+.wrong{animation:flashRed .3s}
+@keyframes flashGreen{0%{background:#bbf7d0}100%{background:transparent}}
+@keyframes flashRed{0%{background:#fecaca}100%{background:transparent}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@media(max-width:900px){
+  .feedback-toggle{position:static;text-align:center;margin-top:10px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🎯 Beeferino Vokabeltrainer</h1>
+<div class="hr"></div>
+
+<div class="section">
+  <div class="category-select">
+    <select id="category">
+      <option value="Alle">Alle (bunt gemischt)</option>
+      <option value="Gelb">Grundwerkzeuge Metallverarbeitung</option>
+      <option value="Pink">Werkzeugkasten Mechaniker</option>
+      <option value="Blau">Blech- / Kunststoffarbeiten</option>
+      <option value="Gruen">Drehen / Fräsen</option>
+      <option value="HellesPink">Hydraulik / Pneumatik</option>
+      <option value="Orange">Elektrotechnik</option>
+      <option value="Dunkelgruen">Fluggerätemechanik allgemein</option>
+      <option value="Rot">⚠️ Verwechslungsgefahr</option>
+    </select>
+    <select id="mode">
+      <option value="toGerman">Englisch → Deutsch</option>
+      <option value="toEnglish">Deutsch → Englisch</option>
+      <option value="mixed">Gemischt</option>
+    </select>
+    <select id="delay">
+      <option value="1000">1 Sekunde</option>
+      <option value="3000" selected>3 Sekunden</option>
+      <option value="5000">5 Sekunden</option>
+    </select>
+    <div class="feedback-toggle">
+      <button id="feedbackBtn" class="feedback-btn active">🧩 Feedback: AN</button>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:16px">
+    <button id="learnBtn" class="btn">✍️ Vokabel-Abfrage starten</button>
+    <button id="cardsBtn" class="btn secondary">🧠 Karteikarten (Mitdenker)</button>
+    <button id="last30Btn" class="btn red">📚 Letzte 30 Vokabeln</button>
+  </div>
+</div>
+
+<div class="game-area" id="trainer">
+  <div class="card" id="word"></div>
+  <input id="answerInput" type="text" placeholder="Übersetzung eingeben …" style="display:none;padding:10px;border-radius:10px;border:1px solid #ccc;width:60%;font-size:1rem">
+  <div id="feedback" class="feedback"></div>
+  <div style="margin-top:14px">
+    <button id="rightBtn" style="display:none" class="btn">Richtig</button>
+    <button id="wrongBtn" style="display:none" class="btn red">Täuschung erkannt</button>
+    <button id="skipBtn" style="display:none" class="btn secondary">Weiter</button>
+  </div>
+  <div style="margin-top:18px"><button id="restartBtn" class="btn secondary">🔄 Neustart</button></div>
+</div>
+
+<div id="result" style="display:none" class="section"></div>
+
+<div class="footer">
+  <hr style="width:60%;opacity:.2;margin:20px auto">
+  <a href="vokabeln.html" style="font-weight:700;color:#2563eb;text-decoration:none;">📘 Vokabelliste öffnen</a><br>
+  <p>© 2025 Beeferino • Online-Datenquelle: GitHub</p>
+</div>
+</div>
+
 <script>
 document.addEventListener("DOMContentLoaded",()=>{
-  /* ======== Farbdefinitionen ======== */
-  const CAT_COLORS = {
-    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449",
-    HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B"
-  };
-  const TEXT_ON = {
-    Gelb:"#000", Pink:"#fff", Blau:"#fff", Gruen:"#fff",
-    HellesPink:"#fff", Orange:"#fff", Dunkelgruen:"#fff", Rot:"#fff"
-  };
-
-  const CATEGORIES = {
-    Gelb:"Grundwerkzeuge Metallverarbeitung",
-    Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech- / Kunststoffarbeiten",
-    Gruen:"Drehen / Fräsen",
-    HellesPink:"Hydraulik / Pneumatik",
-    Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein",
-    Rot:"⚠️ Verwechslungsgefahr"
-  };
-
-  const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-
-  /* ======== DOM Elemente ======== */
-  const el = {
-    cat: document.getElementById("category"),
-    mode: document.getElementById("mode"),
-    delay: document.getElementById("delay"),
-    fbBtn: document.getElementById("feedbackBtn"),
-    learn: document.getElementById("learnBtn"),
-    cards: document.getElementById("cardsBtn"),
-    last: document.getElementById("last30Btn"),
-    trainer: document.getElementById("trainer"),
-    word: document.getElementById("word"),
-    ans: document.getElementById("answerInput"),
-    fb: document.getElementById("feedback"),
-    right: document.getElementById("rightBtn"),
-    wrong: document.getElementById("wrongBtn"),
-    skip: document.getElementById("skipBtn"),
-    restart: document.getElementById("restartBtn"),
-    result: document.getElementById("result")
-  };
-
-  /* ======== State ======== */
-  let list=[], currentSet=[], index=0, errors=[], skipped=[], mode="mixed", gameType="learn";
-  let feedbackOn=true, trap=false, currentAnswer="";
-
-  /* ======== Feedback Toggle ======== */
-  el.fbBtn.onclick=()=>{
-    feedbackOn=!feedbackOn;
-    el.fbBtn.classList.toggle("active",feedbackOn);
-    el.fbBtn.textContent = feedbackOn ? "🧩 Feedback: AN" : "🧩 Feedback: AUS";
-  };
-
-  /* ======== Kategorie-Farbe beibehalten ======== */
-  function updateCategoryColor(){
-    const val = el.cat.value;
-    if(val==="Alle"){el.cat.style.background="#f1f5f9";el.cat.style.color="#000";return;}
-    el.cat.style.background = CAT_COLORS[val];
-    el.cat.style.color = TEXT_ON[val];
-  }
-  el.cat.addEventListener("change",updateCategoryColor);
-  updateCategoryColor();
-
-  /* ======== Laden der Daten ======== */
-  async function loadData(){
-    try{
-      const r=await fetch(RAW_URL,{cache:"no-store"});
-      list=await r.json();
-      localStorage.setItem("vokabeln",JSON.stringify(list));
-    }catch{
-      list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    }
-  }
-
-  /* ======== Hilfsfunktionen ======== */
-  const shuffle = a => a.sort(()=>Math.random()-.5);
-  const flash = c => { el.trainer.classList.add(c); setTimeout(()=>el.trainer.classList.remove(c),400); };
-
-  function getWrong(correct){
-    let pool = list.map(v=>v[1]);
-    let w;
-    do { w = pool[Math.floor(Math.random()*pool.length)] } while(w===correct);
-    return w;
-  }
-
-  /* ======== Spielstart ======== */
-  function startGame(type,modeSel,custom=null){
-    gameType=type;
-    mode=modeSel;
-    let data=list;
-    const cat=el.cat.value;
-    if(cat!=="Alle") data=data.filter(v=>v[2]===cat);
-    // Spezialmodus Verwechslungsgefahr
-    if(cat==="Rot" || type==="confuse") data=data.filter(v=>v[2]==="Rot");
-
-    if(custom) data=custom;
-    currentSet=shuffle([...data]);
-    index=0;errors=[];skipped=[];
-    el.trainer.style.display="block";
-    el.result.style.display="none";
-    showNext();
-  }
-
-  /* ======== Nächste Karte ======== */
-  function showNext(){
-    if(index>=currentSet.length){
-      if(skipped.length){ currentSet=skipped; skipped=[]; index=0; el.fb.textContent="📘 Übersprungene Runde"; showNext(); return;}
-      showResult(); return;
-    }
-
-    const [en,de,cat] = currentSet[index];
-    let ask, answer;
-    if(mode==="toGerman"){ ask=en; answer=de; }
-    else if(mode==="toEnglish"){ ask=de; answer=en; }
-    else { if(Math.random()<.5){ ask=en; answer=de; } else { ask=de; answer=en; } }
-
-    const color = CAT_COLORS[cat] || "#94a3b8";
-    const textColor = TEXT_ON[cat] || "#fff";
-    el.word.style.background=color;
-    el.word.style.color=textColor;
-    el.word.innerHTML = `<div style="font-size:1.1rem;margin-bottom:8px">${CATEGORIES[cat]}</div><b>${ask}</b>`;
-    el.fb.textContent="";
-
-    const delay = parseInt(el.delay.value);
-
-    // === Modus 1: Klassische Eingabe ===
-    if(gameType==="learn"){
-      el.ans.style.display="inline-block";
-      el.right.style.display=el.wrong.style.display="none";
-      el.skip.style.display="inline-block";
-      el.ans.value="";
-      el.ans.focus();
-
-      el.ans.onkeydown=e=>{
-        if(e.key==="Enter"){
-          const ok = el.ans.value.trim().toLowerCase()===answer.toLowerCase();
-          if(feedbackOn){ el.fb.textContent = ok?"✅ Richtig!":`❌ Falsch → ${answer}`; flash(ok?"correct":"wrong"); }
-          if(!ok) errors.push([ask,answer]);
-          index++;
-          setTimeout(showNext,delay);
-        }
-      };
-      el.skip.onclick=()=>{ skipped.push([en,de,cat]); index++; showNext(); };
-    }
-
-    // === Modus 2: Karteikarten + Verwechslungsgefahr ===
-    else {
-      el.ans.style.display="none";
-      el.right.style.display=el.wrong.style.display=el.skip.style.display="inline-block";
-      trap=Math.random()<.3; // Täuschung aktiv?
-      currentAnswer = trap ? getWrong(answer) : answer;
-      el.fb.innerHTML=`💡 <b>${currentAnswer}</b>`;
-
-      const okBtn = trap ? el.wrong : el.right;
-      okBtn.onclick=()=>{ 
-        if(trap){ openCorrection(answer,ask); }
-        else { nextCard(true,ask,answer); }
-      };
-
-      const failBtn = trap ? el.right : el.wrong;
-      failBtn.onclick=()=>nextCard(false,ask,answer);
-      el.skip.onclick=()=>{ skipped.push([en,de,cat]); index++; showNext(); };
-    }
-  }
-
-  /* ======== Eingabeaufforderung bei Täuschung ======== */
-  function openCorrection(correct,ask){
-    el.ans.style.display="inline-block";
-    el.ans.value="";
-    el.fb.textContent="Gib die richtige Übersetzung ein:";
-    el.right.style.display=el.wrong.style.display="none";
-
-    el.ans.onkeydown=e=>{
-      if(e.key==="Enter"){
-        const ok = el.ans.value.trim().toLowerCase()===correct.toLowerCase();
-        if(feedbackOn){ el.fb.textContent = ok?"✅ Richtig!":`❌ Falsch → ${correct}`; flash(ok?"correct":"wrong"); }
-        if(!ok) errors.push([ask,correct]);
-        index++;
-        setTimeout(showNext,parseInt(el.delay.value));
-      }
-    };
-  }
-
-  /* ======== Nächste Karte im Karteikartenmodus ======== */
-  function nextCard(ok,ask,ans){
-    if(feedbackOn){ el.fb.textContent = ok?"✅ Richtig!":"❌ Falsch!"; flash(ok?"correct":"wrong"); }
-    if(!ok) errors.push([ask,ans]);
-    index++;
-    setTimeout(showNext,parseInt(el.delay.value));
-  }
-
-  /* ======== Ergebnis anzeigen ======== */
-  function showResult(){
-    el.trainer.style.display="none";
-    let html="<h3>Runde beendet</h3>";
-    html += errors.length
-      ? `<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`
-      : "<p>Keine Fehler 🎉</p>";
-    el.result.innerHTML=html;
-    el.result.style.display="block";
-  }
-
-  /* ======== Event-Listener ======== */
-  el.learn.onclick = ()=>startGame("learn",el.mode.value);
-  el.cards.onclick = ()=>startGame("cards",el.mode.value);
-  el.last.onclick = ()=>{
-    const total = list.length;
-    if(!total){ alert("Keine Vokabeln vorhanden."); return; }
-    const recent = list.slice(-30);
-    const confirmMode = confirm("📚 Letzte 30 Vokabeln:\nOK = Karteikarten, Abbrechen = Eingabe");
-    startGame(confirmMode?"cards":"learn",el.mode.value,recent);
-  };
-  el.restart.onclick = ()=>location.reload();
-
-  /* ======== Laden starten ======== */
+  const CAT_COLORS={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65",Rot:"#C0392B"};
+  const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff",Rot:"#fff"};
+  const CATEGORIES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein",Rot:"⚠️ Verwechslungsgefahr"};
+  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const el={cat:category,mode:mode,delay:delay,fbBtn:feedbackBtn,learn:learnBtn,cards:cardsBtn,last:last30Btn,trainer:trainer,word:word,ans:answerInput,fb:feedback,right:rightBtn,wrong:wrongBtn,skip:skipBtn,restart:restartBtn,result:result};
+  let list=[],currentSet=[],index=0,errors=[],skipped=[],modeSel="mixed",gameType="learn";let feedbackOn=true,trap=false,currentAnswer="";
+  el.fbBtn.onclick=()=>{feedbackOn=!feedbackOn;el.fbBtn.classList.toggle("active",feedbackOn);el.fbBtn.textContent=feedbackOn?"🧩 Feedback: AN":"🧩 Feedback: AUS";};
+  function updateCategoryColor(){const v=el.cat.value;if(v==="Alle"){el.cat.style.background="#f1f5f9";el.cat.style.color="#000";return;}el.cat.style.background=CAT_COLORS[v];el.cat.style.color=TEXT_ON[v];}
+  el.cat.onchange=updateCategoryColor;updateCategoryColor();
+  async function loadData(){try{const r=await fetch(RAW_URL,{cache:"no-store"});list=await r.json();localStorage.setItem("vokabeln",JSON.stringify(list));}catch{list=JSON.parse(localStorage.getItem("vokabeln")||"[]");}}
+  const shuffle=a=>a.sort(()=>Math.random()-.5);const flash=c=>{el.trainer.classList.add(c);setTimeout(()=>el.trainer.classList.remove(c),400);};
+  function getWrong(correct){let pool=list.map(v=>v[1]);let w;do{w=pool[Math.floor(Math.random()*pool.length)]}while(w===correct);return w;}
+  function startGame(type,modeV,custom=null){gameType=type;modeSel=modeV;let data=list;const cat=el.cat.value;if(cat!=="Alle")data=data.filter(v=>v[2]===cat);if(cat==="Rot"||type==="confuse")data=data.filter(v=>v[2]==="Rot");if(custom)data=custom;currentSet=shuffle([...data]);index=0;errors=[];skipped=[];el.trainer.style.display="block";el.result.style.display="none";showNext();}
+  function showNext(){if(index>=currentSet.length){if(skipped.length){currentSet=skipped;skipped=[];index=0;el.fb.textContent="📘 Übersprungene Runde";showNext();return;}showResult();return;}
+    const [en,de,cat]=currentSet[index];let ask,answer;if(modeSel==="toGerman"){ask=en;answer=de;}else if(modeSel==="toEnglish"){ask=de;answer=en;}else{if(Math.random()<.5){ask=en;answer=de;}else{ask=de;answer=en;}}
+    const color=CAT_COLORS[cat]||"#94a3b8";const textColor=TEXT_ON[cat]||"#fff";el.word.style.background=color;el.word.style.color=textColor;el.word.innerHTML=`<div style="font-size:1.1rem;margin-bottom:8px">${CATEGORIES[cat]}</div><b>${ask}</b>`;el.fb.textContent="";const delay=parseInt(el.delay.value);
+    if(gameType==="learn"){el.ans.style.display="inline-block";el.right.style.display=el.wrong.style.display="none";el.skip.style.display="inline-block";el.ans.value="";el.ans.focus();el.ans.onkeydown=e=>{if(e.key==="Enter"){const ok=el.ans.value.trim().toLowerCase()===answer.toLowerCase();if(feedbackOn){el.fb.textContent=ok?"✅ Richtig!":`❌ Falsch → ${answer}`;flash(ok?"correct":"wrong");}if(!ok)errors.push([ask,answer]);index++;setTimeout(showNext,delay);}};el.skip.onclick=()=>{skipped.push([en,de,cat]);index++;showNext();};}
+    else{el.ans.style.display="none";el.right.style.display=el.wrong.style.display=el.skip.style.display="inline-block";trap=Math.random()<.3;currentAnswer=trap?getWrong(answer):answer;el.fb.innerHTML=`💡 <b>${currentAnswer}</b>`;const okBtn=trap?el.wrong:el.right;okBtn.onclick=()=>{if(trap){openCorrection(answer,ask);}else{nextCard(true,ask,answer);}};const failBtn=trap?el.right:el.wrong;failBtn.onclick=()=>nextCard(false,ask,answer);el.skip.onclick=()=>{skipped.push([en,de,cat]);index++;showNext();};}}
+  function openCorrection(correct,ask){el.ans.style.display="inline-block";el.ans.value="";el.fb.textContent="Gib die richtige Übersetzung ein:";el.right.style.display=el.wrong.style.display="none";el.ans.onkeydown=e=>{if(e.key==="Enter"){const ok=el.ans.value.trim().toLowerCase()===correct.toLowerCase();if(feedbackOn){el.fb.textContent=ok?"✅ Richtig!":`❌ Falsch → ${correct}`;flash(ok?"correct":"wrong");}if(!ok)errors.push([ask,correct]);index++;setTimeout(showNext,parseInt(el.delay.value));}};}
+  function nextCard(ok,ask,ans){if(feedbackOn){el.fb.textContent=ok?"✅ Richtig!":"❌ Falsch!";flash(ok?"correct":"wrong");}if(!ok)errors.push([ask,ans]);index++;setTimeout(showNext,parseInt(el.delay.value));}
+  function showResult(){el.trainer.style.display="none";let html="<h3>Runde beendet</h3>";html+=errors.length?`<p>${errors.length} Fehler:</p><ul>${errors.map(([q,a])=>`<li>${q} → ${a}</li>`).join("")}</ul>`:"<p>Keine Fehler 🎉</p>";el.result.innerHTML=html;el.result.style.display="block";}
+  el.learn.onclick=()=>startGame("learn",el.mode.value);
+  el.cards.onclick=()=>startGame("cards",el.mode.value);
+  el.last.onclick=()=>{const total=list.length;if(!total){alert("Keine Vokabeln vorhanden.");return;}const recent=list.slice(-30);const confirmMode=confirm("📚 Letzte 30 Vokabeln:\nOK = Karteikarten, Abbrechen = Eingabe");startGame(confirmMode?"cards":"learn",el.mode.value,recent);};
+  el.restart.onclick=()=>location.reload();
   loadData();
 });
 </script>
+</body>
+</html>
