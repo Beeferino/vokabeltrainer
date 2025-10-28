@@ -285,15 +285,32 @@ tr:hover{background:#f8fbff}
   const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
   const idxInList=v=>list.findIndex(x=>x[7]===v[7]);
 
-  function fillCategorySelect(el,withAll=false){
-    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k;o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
-      el.appendChild(o);
-    });
+  function fillCategorySelect(el, withAll = false) {
+  el.innerHTML = withAll
+    ? '<option value="Alle">Alle (bunt gemischt)</option>'
+    : "";
+
+  // Kategorien
+  Object.keys(CATEGORY_NAMES).forEach(k => {
+    const o = document.createElement("option");
+    o.value = k;
+    o.textContent = CATEGORY_NAMES[k];
+    o.style.background = COLOR_MAP[k];
+    o.style.color = TEXT_ON[k];
+    el.appendChild(o);
+  });
+
+  // Neue Filteroption für Verwechslungsgefahr
+  if (withAll) {
+    const dangerOpt = document.createElement("option");
+    dangerOpt.value = "confuse";
+    dangerOpt.textContent = "⚠️ Verwechslungsgefahr-Vokabeln";
+    dangerOpt.style.background = "#ffe4e6";
+    dangerOpt.style.color = "#b91c1c";
+    el.appendChild(dangerOpt);
   }
+}
+
 
   async function loadData(){
     try{
@@ -312,14 +329,21 @@ tr:hover{background:#f8fbff}
     const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
     return {cat,q};
   }
-  function filtered(){
-    const {cat,q}=currentFilter();
-    return list.filter(v=>{
-      const matchCat=(cat==="Alle"||v[2]===cat);
-      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
-      return matchCat&&matchQ;
-    });
-  }
+  function filtered() {
+  const { cat, q } = currentFilter();
+  return list.filter(v => {
+    const matchCat =
+      cat === "Alle" ||
+      v[2] === cat ||
+      (cat === "confuse" && v[6]); // <-- neue Bedingung hier
+    const matchQ =
+      !q ||
+      v[0].toLowerCase().includes(q) ||
+      v[1].toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+}
+
 
   function updateCount(){
     const data=filtered();
