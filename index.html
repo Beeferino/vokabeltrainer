@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -89,8 +89,6 @@ select{
   gap: 12px;
   margin-top: 24px;
 }
-
-/* Beide gleich aussehen lassen */
 .footer-actions a,
 .footer-actions button {
   display: inline-flex;
@@ -109,14 +107,12 @@ select{
   box-shadow: 0 3px 8px rgba(0,0,0,0.05);
   transition: all 0.25s ease;
 }
-
 .footer-actions a:hover,
 .footer-actions button:hover {
   background: linear-gradient(135deg, #e0e7ff, #f1f5ff);
   transform: translateY(-1px);
   box-shadow: 0 5px 12px rgba(37,99,235,0.15);
 }
-
 .feedback-toggle{
   display:flex;align-items:center;justify-content:center;
   gap:6px;margin-bottom:10px
@@ -164,7 +160,8 @@ details.recent-section summary:hover{color:#2563eb}
   margin-top:4px;opacity:.8
 }
 .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
-/* Feedback-Button hervorheben */
+
+/* Feedback-Button (hervorgehoben) */
 .feedback-toggle {
   background: #e0e7ff;
   padding: 10px 16px;
@@ -186,14 +183,13 @@ details.recent-section summary:hover{color:#2563eb}
   transform: scale(1.3);
   accent-color: #2563eb;
 }
-
-/* sanfter Puls-Effekt beim Seitenstart */
 @keyframes pulseOnce {
   0% { transform: scale(1); box-shadow: 0 0 0 rgba(37,99,235,0); }
   40% { transform: scale(1.05); box-shadow: 0 0 12px rgba(37,99,235,.4); }
   100% { transform: scale(1); box-shadow: 0 0 0 rgba(37,99,235,0); }
 }
-/* Moderner Toggle für "Feedback anzeigen" */
+
+/* Moderner Toggle */
 .feedback-toggle {
   display: flex;
   align-items: center;
@@ -205,12 +201,10 @@ details.recent-section summary:hover{color:#2563eb}
   box-shadow: 0 2px 8px rgba(0,0,0,.08);
   transition: all .25s ease;
 }
-
 .feedback-toggle:hover {
   box-shadow: 0 4px 12px rgba(37,99,235,.15);
   transform: translateY(-1px);
 }
-
 .feedback-toggle label {
   font-weight: 700;
   color: #1e3a8a;
@@ -219,7 +213,7 @@ details.recent-section summary:hover{color:#2563eb}
   cursor: pointer;
 }
 
-/* --- Stylischer Schalter --- */
+/* Stylischer Schalter */
 #chkFeedback {
   appearance: none;
   width: 44px;
@@ -231,7 +225,6 @@ details.recent-section summary:hover{color:#2563eb}
   cursor: pointer;
   transition: background .3s ease;
 }
-
 #chkFeedback::before {
   content: "";
   position: absolute;
@@ -244,25 +237,12 @@ details.recent-section summary:hover{color:#2563eb}
   transition: all .3s ease;
   box-shadow: 0 1px 4px rgba(0,0,0,.2);
 }
+#chkFeedback:checked { background: #2563eb; }
+#chkFeedback:checked::before { left: 23px; background: #fff; }
 
-#chkFeedback:checked {
-  background: #2563eb;
-}
-
-#chkFeedback:checked::before {
-  left: 23px;
-  background: #fff;
-}
-/* Abstand zwischen Navigation (controls) und Feedback-Toggle */
-.controls {
-  margin-bottom: 5px;
-}
-
-.feedback-toggle {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
+/* Abstände */
+.controls { margin-bottom: 5px; }
+.feedback-toggle { margin-top: 5px; margin-bottom: 5px; }
 </style>
 </head>
 <body>
@@ -272,7 +252,10 @@ details.recent-section summary:hover{color:#2563eb}
 
   <div class="controls">
     <label>Kategorie:
-      <select id="selCat"><option value="Alle">Alle (bunt gemischt)</option></select>
+      <!-- nur "Alle" im HTML, Rest wird via JS aufgebaut -->
+      <select id="selCat">
+        <option value="Alle">Alle (bunt gemischt)</option>
+      </select>
     </label>
     <label>Modus:
       <select id="selMode">
@@ -297,24 +280,25 @@ details.recent-section summary:hover{color:#2563eb}
 
   <div class="functions">
     <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
-    <div id="btnLast30" class="kachel">📗 Letzte eingebene Vokabeln</div>
+    <div id="btnLast30" class="kachel">📗 Letzte eingegebenen Vokabeln</div>
     <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
   </div>
 
-  <div id="progress" class="progress"></div>
+  <div id="progress" class="progress">Bereit • klicke auf „Vokabel-Abfrage starten“</div>
 
-  <section id="stage">
-    <div id="chip" class="chip">Kategorie</div>
-    <div id="q" class="word"></div>
+  <!-- Stage initial unsichtbar; Inhalte werden per JS gesetzt -->
+  <section id="stage" class="">
+    <div id="chip" class="chip">–</div>
+    <div id="q" class="word">Bereit?</div>
     <div id="offer" class="offer"></div>
 
-    <div id="rowButtons" class="btnrow">
-      <button id="btnRight" class="btn ok">Richtig</button>
-      <button id="btnDec" class="btn bad">Täuschung erkannt</button>
-      <button id="btnSkip" class="btn skip">Überspringen</button>
+    <div id="rowButtons" class="btnrow" style="display:flex;">
+      <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
+      <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
+      <button id="btnSkip" class="btn skip" style="display:none;">Überspringen</button>
     </div>
 
-    <div id="rowInput" class="inprow">
+    <div id="rowInput" class="inprow" style="display:none;">
       <input id="inp" type="text" placeholder="Übersetzung eingeben …">
       <button id="btnSub">Eingabe</button>
     </div>
@@ -333,10 +317,12 @@ details.recent-section summary:hover{color:#2563eb}
   </details>
 
   <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
+  <div style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">🟢 Daten aktuell</div>
 </div>
 
 <script>
 (function(){
+/* --- Kategorien --- */
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
@@ -347,12 +333,25 @@ const CATS={
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"],
   Rot:["Verwechslungsgefahr","#C0392B","#fff"]
 };
+
 const el=id=>document.getElementById(id);
 const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
 const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
 const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
 const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
 const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
+
+/* --- Select dynamisch befüllen (keine Doppelten) --- */
+function buildCatOptions(){
+  while (selCat.options.length > 1) selCat.remove(1); // nur "Alle" bleibt
+  for(const k in CATS){
+    const [label,bg,fg] = CATS[k];
+    const o=document.createElement("option");
+    o.value=k; o.textContent=label; o.style.background=bg; o.style.color=fg;
+    selCat.appendChild(o);
+  }
+}
+buildCatOptions();
 
 /* --- Synchronisierte Datenverwaltung --- */
 let data=[], lastSync=null;
@@ -376,100 +375,172 @@ async function loadData(){
   const lastUsed=localStorage.getItem("index_last_sync");
   const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
   if(localNewer){
-    console.log("Lokale Daten neuer → direkt geladen");
     data=JSON.parse(localStorage.getItem("vokabeln")||"[]");
   }else{
-    console.log("GitHub prüfen …");
     await fetchFromGitHub();
   }
   localStorage.setItem("index_last_sync",new Date().toISOString());
   renderRecent();
 }
 
-/* --- UI & Spielmechanik --- */
-for(const k in CATS){const o=document.createElement("option");o.value=k;o.textContent=CATS[k][0];o.style.background=CATS[k][1];o.style.color=CATS[k][2];selCat.appendChild(o);}
+/* --- Utils & Spielmechanik --- */
+function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
+function pick(list){
+  let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);
+  shuffle(l);
+  return l.slice(0,15);
+}
+function showStage(show){stage.style.display=show?"block":"none";}
+
+/* robustere Eingabeprüfung */
+function normalize(s){
+  return s
+    .trim()
+    .toLowerCase()
+    .normalize("NFD").replace(/\p{Diacritic}/gu,"")
+    .replace(/[-–—]/g,"-")
+    .replace(/\s+/g," ");
+}
+function isCorrectInput(input, solution){
+  const a=normalize(input);
+  const options=solution.split(/[\/;|,]/).map(x=>normalize(x));
+  return options.includes(a);
+}
+
+/* Fehlerliste ohne Duplikate */
+let errorsList=[];
+function addErrorOnce(item){
+  if(!errorsList.includes(item)) errorsList.push(item);
+}
 
 let round=[], i=0, game="learn", delay=3000, trap=false, correct="";
-let errorsList=[];
-
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[r]]=[a[r],a[j]];}}
-function pick(list){let l=selCat.value==="Alle"?list:list.filter(v=>v[2]===selCat.value);shuffle(l);return l.slice(0,15);}
-function setProg(){progress.textContent=`Vokabel ${i+1}/${round.length} | Fehler: ${errorsList.length}`;}
-function showStage(show){stage.style.display=show?"block":"none";}
-function flash(ok){if(!chkFeedback.checked){i++;return next();}stage.classList.add(ok?"flash-correct":"flash-wrong");setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");i++;next();},delay);}
-function randomizeButtons(){const buttons=[btnRight,btnDec,btnSkip];const order=[0,1,2].sort(()=>Math.random()-0.5);rowButtons.innerHTML="";order.forEach(idx=>rowButtons.appendChild(buttons[idx]));}
+function setProg(){
+  progress.textContent=`Vokabel ${Math.min(i+1, round.length)}/${round.length || 0} | Wiederholungen: ${errorsList.length}`;
+}
+function flash(ok){
+  if(!chkFeedback.checked){ i++; return next(); }
+  stage.classList.add(ok?"flash-correct":"flash-wrong");
+  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); i++; next(); }, delay);
+}
+function randomizeButtons(){
+  const buttons=[btnRight,btnDec,btnSkip];
+  const order=[0,1,2].sort(()=>Math.random()-0.5);
+  rowButtons.innerHTML="";
+  order.forEach(idx=>rowButtons.appendChild(buttons[idx]));
+}
 
 function next(){
   if(i>=round.length){
-    if(errorsList.length>0){alert(`❗ ${errorsList.length} Fehler – Wiederholungsrunde startet.`);round=errorsList.map(v=>v);errorsList=[];i=0;btnSkip.style.display="none";next();return;}
-    else{showStage(false);alert(`🎉 Runde beendet – alles korrekt!`);return;}
+    if(errorsList.length>0){
+      alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
+      round=errorsList.map(v=>v);
+      errorsList=[];
+      i=0;
+      btnSkip.style.display="inline-block";
+      next();
+      return;
+    }else{
+      showStage(false);
+      alert(`🎉 Runde beendet – alles korrekt!`);
+      progress.textContent="Fertig! Starte eine neue Runde.";
+      return;
+    }
   }
   delay=parseInt(selDelay.value,10);
   const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0];chip.style.background=catMeta[1];chip.style.color=catMeta[2];
+  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
+
   const askEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
   const question=askEN?en:de;
   const answer=askEN?de:en;
   correct=answer;
+
   q.textContent=question;
+
   if(game==="cards"){
     trap=false;
+
+    // Buttons sichtbar machen (Fix)
+    btnRight.style.display="inline-block";
+    btnDec.style.display="inline-block";
+    btnSkip.style.display="inline-block";
+
     if(Math.random()<0.3){
       const pool=data.map(v=>askEN?v[1]:v[0]);
-      let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===answer);
-      offer.textContent="💡 "+wrong;trap=true;
-    }else offer.textContent="💡 "+answer;
-    rowButtons.style.display="flex";rowInput.style.display="none";inp.value="";randomizeButtons();
+      let wrong;
+      do { wrong=pool[Math.floor(Math.random()*pool.length)]; } while (wrong===answer);
+      offer.textContent="💡 "+wrong; trap=true;
+    }else{
+      offer.textContent="💡 "+answer;
+    }
+    rowButtons.style.display="flex";
+    rowInput.style.display="none";
+    inp.value="";
+    randomizeButtons();
   }else{
-    offer.textContent="";trap=false;
-    rowButtons.style.display="flex";btnRight.style.display="none";btnDec.style.display="none";btnSkip.style.display="inline-block";
-    rowInput.style.display="flex";inp.value="";inp.focus();
+    offer.textContent="";
+    trap=false;
+    btnRight.style.display="none";
+    btnDec.style.display="none";
+    btnSkip.style.display="inline-block";
+    rowButtons.style.display="flex";
+    rowInput.style.display="flex";
+    inp.value="";
+    inp.focus(); inp.select?.();
   }
-  setProg();showStage(true);
+  setProg(); showStage(true);
 }
 
-btnRight.onclick=()=>{const ok=!trap;if(!ok){errorsList.push(round[i]);}flash(ok);};
+/* --- Button-Handler --- */
+btnRight.onclick=()=>{ const ok=!trap; if(!ok) addErrorOnce(round[i]); flash(ok); };
+
 btnDec.onclick=()=>{
   if(game!=="cards") return;
 
-  // Täuschung korrekt erkannt → Eingabefeld anzeigen
   if(trap){
     rowInput.style.display="flex";
     inp.value="";
-    inp.focus();
+    inp.focus(); inp.select?.();
 
-    // Nach Eingabe prüfen
     btnSub.onclick=()=>{
-      const ok = inp.value.trim().toLowerCase() === correct.toLowerCase();
+      const ok=isCorrectInput(inp.value, correct);
       if(ok){
         flash(true);
-      } else {
-        // Nur bei falscher Eingabe Lösung zeigen
-        offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-        errorsList.push(round[i]);
+      }else{
+        offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+        addErrorOnce(round[i]);
         setTimeout(()=>flash(false), parseInt(selDelay.value,10));
       }
     };
-
-  } else {
-    // Täuschung nicht erkannt → Fehler
-    errorsList.push(round[i]);
+  }else{
+    addErrorOnce(round[i]);
     flash(false);
   }
 };
 
-btnSkip.onclick=()=>{errorsList.push(round[i]);i++;next();};
-btnSub.onclick=()=>{const ok=inp.value.trim().toLowerCase()===correct.toLowerCase();if(!ok)errorsList.push(round[i]);flash(ok);};
-inp.addEventListener("keydown",e=>{if(e.key==="Enter")btnSub.click();});
+btnSkip.onclick=()=>{ addErrorOnce(round[i]); i++; next(); };
 
-btnLearn.onclick=()=>{game="learn";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
-btnCards.onclick=()=>{game="cards";i=0;errorsList=[];round=pick(data);btnSkip.style.display="inline-block";next();};
-btnLast30.onclick=()=>{const l=data.slice(-30);if(!l.length)return alert("Keine Vokabeln vorhanden");game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";round=l;i=0;errorsList=[];btnSkip.style.display="inline-block";next();};
+btnSub.onclick=()=>{
+  const ok=isCorrectInput(inp.value, correct);
+  if(!ok) addErrorOnce(round[i]);
+  flash(ok);
+};
+
+inp.addEventListener("keydown",e=>{ if(e.key==="Enter") btnSub.click(); });
+
+btnLearn.onclick=()=>{ game="learn"; i=0; errorsList=[]; round=pick(data); btnSkip.style.display="inline-block"; next(); };
+btnCards.onclick=()=>{ game="cards"; i=0; errorsList=[]; round=pick(data); btnSkip.style.display="inline-block"; next(); };
+btnLast30.onclick=()=>{
+  const l=data.slice(-30);
+  if(!l.length) return alert("Keine Vokabeln vorhanden");
+  game=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe")?"cards":"learn";
+  round=l; i=0; errorsList=[]; btnSkip.style.display="inline-block"; next();
+};
 
 function renderRecent(){
   const last=data.slice(-5).reverse();
-  if(!last.length){recent.textContent="–";return;}
+  if(!last.length){ recent.textContent="–"; return; }
   recent.innerHTML=last.map(v=>{
     const c=CATS[v[2]]||["","#ccc","#000"];
     return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
@@ -478,8 +549,14 @@ function renderRecent(){
   }).join("");
 }
 
+/* Initial: Stage aus, Status setzen */
+showStage(false);
+progress.textContent="Bereit • klicke auf „Vokabel-Abfrage starten“";
+
+/* Daten laden & Recent rendern */
 loadData();
-  /* --- Automatischer Live-Sync & Statusanzeige --- */
+
+/* --- Automatischer Live-Sync & Statusanzeige --- */
 const foot = document.querySelector('.foot');
 let syncState = document.createElement('div');
 syncState.style.textAlign = 'center';
