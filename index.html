@@ -7,81 +7,212 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --blue:#2563eb; --bg:#f1f5f9; --card:#fff;
-  --ok:#22c55e; --bad:#ef4444; --muted:#6b7280;
+  --blue:#2563eb;
+  --ok:#22c55e;
+  --bad:#ef4444;
+  --bg:#f1f5f9;
+  --card:#fff;
+  --muted:#6b7280;
   --shadow:0 10px 30px rgba(0,0,0,.1);
 }
+
+/* Basislayout */
 * {box-sizing:border-box}
 body {
-  margin:0; background:linear-gradient(145deg,#eef4ff,#dbeafe);
-  font-family:Inter,system-ui,sans-serif; color:#0f172a;
+  margin:0;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  font-family:Inter,system-ui,sans-serif;
+  color:#0f172a;
 }
-.container {
-  max-width:1050px; margin:20px auto; background:var(--card);
-  border-radius:18px; box-shadow:var(--shadow);
-  padding:20px; text-align:center;
-}
-h1 {font-weight:800; color:#1e3a8a; margin-bottom:5px;}
-.hr {width:140px; height:4px; background:var(--blue);
-  margin:8px auto 20px; border-radius:4px;}
 
-select, input[type="checkbox"] {
-  padding:8px 12px; border-radius:8px;
-  border:1px solid #cbd5e1; font-size:1rem;
+/* Hauptcontainer */
+.container {
+  max-width:1050px;
+  margin:20px auto;
+  background:var(--card);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:20px;
+  text-align:center;
 }
+
+/* Überschrift */
+h1 {
+  font-weight:800;
+  color:#1e3a8a;
+  margin-bottom:5px;
+}
+.hr {
+  width:140px;
+  height:4px;
+  background:var(--blue);
+  margin:8px auto 20px;
+  border-radius:4px;
+}
+
+/* Controls */
+.controls {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+select, input[type="checkbox"] {
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #cbd5e1;
+  font-size:1rem;
+}
+
+/* Buttons */
 button {
-  cursor:pointer; border:none; border-radius:10px;
-  font-weight:700; transition:.2s; box-shadow:0 4px 10px rgba(0,0,0,.05);
+  cursor:pointer;
+  border:none;
+  border-radius:10px;
+  font-weight:700;
+  transition:.2s;
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
 }
 button:hover {opacity:.9}
 .btn {
-  background:var(--blue); color:#fff; padding:10px 18px; margin:6px;
+  background:var(--blue);
+  color:#fff;
+  padding:10px 18px;
+  margin:6px;
 }
-.mode-btn {
-  display:inline-flex; align-items:center; justify-content:center;
-  background:var(--blue); color:#fff; padding:14px 20px; font-size:1.05rem;
-  margin:10px; border-radius:12px; box-shadow:var(--shadow);
-}
-.mode-btn:hover {transform:translateY(-1px);}
 
-.status {font-weight:600; margin:8px 0;}
-.footer {
-  font-size:.85rem; color:var(--muted);
-  text-align:center; margin-top:25px;
+/* Toolbar */
+.toolbar {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:15px;
+  margin-bottom:15px;
 }
 
 /* Feedback Toggle */
 .feedback-toggle {
-  display:flex; align-items:center; justify-content:center; gap:8px;
-  background:#f8fafc; border-radius:12px; box-shadow:inset 0 0 6px rgba(0,0,0,.05);
-  width:max-content; margin:14px auto; padding:8px 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  background:#f8fafc;
+  border-radius:12px;
+  box-shadow:inset 0 0 6px rgba(0,0,0,.05);
+  width:max-content;
+  margin:14px auto;
+  padding:8px 16px;
   font-weight:600;
 }
-.feedback-toggle input {transform:scale(1.3); cursor:pointer;}
+.feedback-toggle input {
+  transform:scale(1.3);
+  cursor:pointer;
+}
+
+/* Spielmodi */
+.mode-buttons {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:12px;
+  margin-bottom:16px;
+}
+.mode-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--blue);
+  color:#fff;
+  padding:14px 20px;
+  font-size:1.05rem;
+  margin:10px;
+  border-radius:12px;
+  box-shadow:var(--shadow);
+  transition:transform .2s;
+}
+.mode-btn:hover {
+  transform:translateY(-1px);
+}
+
+/* Statusbereich */
+.status {
+  font-weight:600;
+  margin:12px 0;
+}
 
 /* Karteikarten */
 .card {
-  margin:25px auto; width:60%; min-height:120px;
-  background:#d1fae5; border-radius:20px; box-shadow:var(--shadow);
-  display:flex; align-items:center; justify-content:center;
-  font-size:1.6rem; font-weight:700; color:#064e3b;
-  cursor:pointer; transition:transform .5s;
+  margin:25px auto;
+  width:60%;
+  min-height:120px;
+  background:#d1fae5;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.6rem;
+  font-weight:700;
+  color:#064e3b;
+  cursor:pointer;
+  transition:transform .5s;
+  position:relative;
+  perspective:1000px;
 }
-.card.flip {transform:rotateY(180deg);}
-.card.red {border:3px solid var(--bad);}
+.card.flip {
+  transform:rotateY(180deg);
+}
+.card.red {
+  border:3px solid var(--bad);
+}
 
-/* Statistik */
-.stats {margin-top:10px; font-size:.95rem; color:#444;}
+/* Warnsymbol für Verwechslungsgefahr */
+.card .danger-flag {
+  position:absolute;
+  top:10px;
+  right:14px;
+  font-size:1.3rem;
+  color:var(--bad);
+  filter:drop-shadow(0 0 4px rgba(239,68,68,0.3));
+}
 
+/* Statistikbereich */
+.stats {
+  margin-top:10px;
+  font-size:.95rem;
+  color:#444;
+}
+
+/* Feedback Button */
 #feedbackBtn {
-  background:#fff; border:1px solid #cbd5e1;
-  border-radius:10px; padding:10px 20px;
-  box-shadow:var(--shadow); margin:10px 0;
+  background:#fff;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  padding:10px 20px;
+  box-shadow:var(--shadow);
+  margin:10px 0;
+}
+
+/* Fußbereich */
+.footer {
+  font-size:.85rem;
+  color:var(--muted);
+  text-align:center;
+  margin-top:25px;
 }
 
 /* Responsive */
 @media(max-width:700px){
-  .card{width:90%;font-size:1.4rem;}
+  .card {
+    width:90%;
+    font-size:1.4rem;
+  }
+  .controls {
+    flex-direction:column;
+    align-items:center;
+  }
 }
 </style>
 </head>
@@ -136,10 +267,25 @@ button:hover {opacity:.9}
 </div>
 
 <script>
-// =====================================================
-// BASISDATEN UND KONSTANTEN
-// =====================================================
+/* ============================================================
+   HILFSFUNKTIONEN
+   ============================================================ */
 const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+
+function shuffle(array){
+  let currentIndex=array.length,randomIndex;
+  while(currentIndex!==0){
+    randomIndex=Math.floor(Math.random()*currentIndex);
+    currentIndex--;
+    [array[currentIndex],array[randomIndex]]=[array[randomIndex],array[currentIndex]];
+  }
+  return array;
+}
+
+/* ============================================================
+   KATEGORIENDEFINITION (ohne "Rot")
+   ============================================================ */
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
@@ -149,47 +295,54 @@ const CATS={
   Orange:["Elektrotechnik","#E67E22","#fff"],
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"]
 };
-let data=[],errors=[],index=0,correct=0,total=0,wrongAnswers=[];
 
-// =====================================================
-// DATEN LADEN UND NORMALISIEREN
-// =====================================================
+/* ============================================================
+   GLOBALE VARIABLEN
+   ============================================================ */
+let data=[],index=0,correct=0,total=0,errors=[],wrongAnswers=[],sessionList=[];
+
+/* ============================================================
+   DATEN LADEN UND NORMALISIEREN
+   ============================================================ */
 async function fetchFromGitHub(){
   const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   try{
-    const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("fetch failed");
+    const r=await fetch(url,{cache:"no-store"});
+    if(!r.ok) throw new Error("fetch failed");
     const j=await r.json();
-    data = j.map(v=>[
-      v[0]||"", v[1]||"", v[2]||"Gelb",
-      v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
-      !!v[6] // Flag für Verwechslungsgefahr
+    data=j.map(v=>[
+      v[0]||"",v[1]||"",v[2]||"Gelb",
+      v[3]||"",v[4]||"",v[5]||new Date().toISOString(),
+      !!v[6]
     ]);
     localStorage.setItem("vokabeln",JSON.stringify(data));
     localStorage.setItem("vokabeln_updated",new Date().toISOString());
   }catch(e){
-    data = (JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(v=>[
-      v[0]||"", v[1]||"", v[2]||"Gelb",
-      v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
+    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(v=>[
+      v[0]||"",v[1]||"",v[2]||"Gelb",
+      v[3]||"",v[4]||"",v[5]||new Date().toISOString(),
       !!v[6]
     ]);
   }
   buildCatOptions();
+  $("#syncLabel").textContent="🟢 Daten aktuell";
 }
 
-// =====================================================
-// DROPDOWN-FUNKTIONEN
-// =====================================================
+/* ============================================================
+   DROPDOWNS AUFBAUEN
+   ============================================================ */
 function buildCatOptions(){
   const sel=$("#selCat");
   sel.innerHTML='<option value="Alle">Alle (bunt gemischt)</option>';
   for(const k in CATS){
     const [label,bg,fg]=CATS[k];
     const o=document.createElement("option");
-    o.value=k; o.textContent=label;
-    o.style.background=bg; o.style.color=fg;
+    o.value=k;
+    o.textContent=label;
+    o.style.background=bg;
+    o.style.color=fg;
     sel.appendChild(o);
   }
-  // ⚠️ Spezialfilter für Verwechslungsgefahr-Vokabeln
   const dangerOpt=document.createElement("option");
   dangerOpt.value="confuse";
   dangerOpt.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
@@ -198,6 +351,9 @@ function buildCatOptions(){
   sel.appendChild(dangerOpt);
 }
 
+/* ============================================================
+   FILTERN NACH KATEGORIE
+   ============================================================ */
 function filterByCategory(list){
   const cat=$("#selCat").value;
   if(cat==="Alle") return list.slice();
@@ -205,23 +361,31 @@ function filterByCategory(list){
   return list.filter(v=>v[2]===cat);
 }
 
-// =====================================================
-// ANZEIGE / KARTEN / ABFRAGE
-// =====================================================
+/* ============================================================
+   KARTE ANZEIGEN
+   ============================================================ */
 function showCard(front,back,isDanger=false){
   const area=$("#cardArea");
   area.innerHTML="";
   const div=document.createElement("div");
   div.className="card"+(isDanger?" red":"");
   div.textContent=front;
+  if(isDanger){
+    const flag=document.createElement("div");
+    flag.className="danger-flag";
+    flag.textContent="⚠️";
+    div.appendChild(flag);
+  }
   area.appendChild(div);
-
   div.onclick=()=>{
     if(div.textContent===front){div.textContent=back;}
     else{div.textContent=front;}
   };
 }
 
+/* ============================================================
+   NÄCHSTE KARTE / SPIELLOGIK
+   ============================================================ */
 function nextCard(list,mode,delay){
   if(index>=list.length){
     $("#statusArea").innerHTML=`🎉 Runde beendet.<br>Richtig: ${correct}/${total}`;
@@ -235,9 +399,9 @@ function nextCard(list,mode,delay){
   total++;
 }
 
-// =====================================================
-// MODI STARTEN
-// =====================================================
+/* ============================================================
+   MODI STARTEN
+   ============================================================ */
 $("#btnLearn").onclick=()=>startMode("all");
 $("#btnLast30").onclick=()=>startMode("last");
 $("#btnCards").onclick=()=>startMode("cards");
@@ -245,18 +409,35 @@ $("#btnCards").onclick=()=>startMode("cards");
 function startMode(type){
   let list=filterByCategory(data);
   if(type==="last") list=list.slice(-30);
-  index=0; correct=0; total=0; wrongAnswers=[];
+  sessionList=shuffle(list);
+  index=0; correct=0; total=0; errors=[];
   const delay=parseInt($("#selDelay").value);
   const mode=$("#selMode").value;
-  const shuffleList=shuffle(list);
-  nextCard(shuffleList,mode,delay);
+  nextCard(sessionList,mode,delay);
+  $("#statusArea").innerHTML=`🧩 Runde gestartet (${list.length} Karten)`;
 }
 
-function shuffle(a){return a.sort(()=>Math.random()-.5);}
+/* ============================================================
+   STATISTIKEN UND FEEDBACK
+   ============================================================ */
+$("#btnStats").onclick=()=>{
+  $("#statArea").innerHTML=`📊 Gesamt: ${total} | ✅ Richtig: ${correct} | ❌ Fehler: ${errors.length}`;
+};
 
-// =====================================================
-// INITIALISIERUNG
-// =====================================================
+$("#btnErrorsOnly").onclick=()=>{
+  if(errors.length===0){
+    $("#statusArea").textContent="Keine Fehler aus der letzten Runde.";
+    return;
+  }
+  sessionList=shuffle(errors);
+  index=0; correct=0; total=0;
+  $("#statusArea").textContent="🔁 Fehler wiederholen gestartet.";
+  nextCard(sessionList,$("#selMode").value,parseInt($("#selDelay").value));
+};
+
+/* ============================================================
+   INITIALISIERUNG
+   ============================================================ */
 fetchFromGitHub();
 </script>
 </body>
