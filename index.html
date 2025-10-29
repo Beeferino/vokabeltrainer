@@ -110,6 +110,33 @@
   .btn-primary{background:#2563eb;color:#fff}
   .btn-ghost,.btn-primary,.download{border-radius:10px;padding:10px 14px;font-weight:800;border:none;cursor:pointer}
   .download{margin-right:auto;background:#e5f2ff;border:1px solid #c7ddff;color:#0f172a}
+/* ========= Daten & Sync ========= */
+async function loadData(){
+  const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  try{
+    const r=await fetch(url,{cache:"no-store"});
+    if(!r.ok)throw new Error();
+    data=await r.json();
+  }catch(e){
+    console.warn("Konnte keine Daten laden",e);
+    data=[];
+  }
+}
+
+function getDailyProgress(){
+  const today=new Date().toISOString().slice(0,10);
+  return parseInt(localStorage.getItem('daily_'+today)||'0',10);
+}
+
+function updateGoalUI(val){
+  goalFill.style.width=Math.min(100,Math.round(val/30*100))+'%';
+  goalText.textContent=`Tagesziel: ${val} / 30 richtige Antworten`;
+}
+
+async function checkRemoteUpdate(){
+  // Dummy-Funktion: hier könnte später Vergleich mit Cloud-Daten passieren
+  console.log("checkRemoteUpdate()");
+}
 
   /* ===== Abstände ===== */
   .controls { margin-bottom: 18px; }
