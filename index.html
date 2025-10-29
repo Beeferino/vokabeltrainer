@@ -902,24 +902,28 @@ btnSkip.onclick = () => {
 };
 
 /* Karteikarten: „Richtig“ gedrückt */
+/* Karteikarten: „Richtig“ gedrückt */
 btnRight.onclick = () => {
   if (game !== "cards") return;
   const itemRef = round[i];
   totalAsked++;
 
   if (trap) {
-    // Falsches Angebot war gezeigt, "Richtig" ist ein Fehler
+    // Falsches Angebot war gezeigt → "Richtig" ist ein Fehler
     totalErrors++;
     bumpCat(itemRef[2], true, true);
+    recordErrorForSummary(itemRef, currAskedEN);   // <== neu, sorgt für Anzeige im Modal
+    addErrorOnce(itemRef);
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
+    flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
   } else {
     // korrekt erkannt
     bumpCat(itemRef[2], false, true);
     saveDailyProgress(1);
-    flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
+    flashCard(true, () => { i++; maybeCheckpointOr(nextCard); });
   }
 };
+
 
 /* Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub/handleInputSubmit) */
 btnDec.onclick = () => {
