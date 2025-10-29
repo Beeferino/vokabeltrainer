@@ -639,32 +639,19 @@ btnClose.onclick=closeModal;
 btnContinue.onclick = () => {
   closeModal();
 
-  // nichts tun, wenn gerade kein aktives Spiel läuft
-  if (game === "idle") {
-    alert("Keine aktive Runde mehr. Bitte starte neu.");
-    return;
-  }
-
-  // Zähler nicht zurücksetzen – Fortschritt soll weiterlaufen
-  setTimeout(() => {
+  if (checkpointActive) {
+    checkpointActive = false; // wieder zurücksetzen
     if (game === "input") {
-      if (source && source.length > 0) {
-        nextInput();
-        inp.focus();
-      } else {
-        alert("Keine weiteren Vokabeln – Runde ist beendet.");
-        softResetUI();
-      }
+      nextInput();
+      inp.focus();
     } else if (game === "cards") {
-      if (round && i < round.length) {
-        nextCard();
-      } else {
-        alert("Alle Karten erledigt – starte eine neue Runde.");
-        softResetUI();
-      }
+      nextCard();
     }
-  }, 250);
+  } else {
+    softResetUI();
+  }
 };
+
 
 btnDownload.onclick=()=>{
   const lines=[];
