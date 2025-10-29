@@ -688,17 +688,30 @@ function afterAdvanceInput(){
 
 /* ===== Cards Mode (Mitdenker/Täuschungserkennung) ===== */
 function nextCard(){
-  delay=parseInt(selDelay.value,10);
+  delay = parseInt(selDelay.value, 10);
 
-  if(i>=round.length){
-    if(errorsList.length>0){
+  if (i >= round.length) {
+    if (errorsList.length > 0) {
       alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
-      round=errorsList.map(v=>v); errorsList=[]; i=0; nextCard(); return;
-    }else{
-      showStage(false); alert(`🎉 Runde beendet!`);
-      progress.textContent="Fertig! Starte eine neue Runde."; startNote.style.opacity=1; return;
+      round = errorsList.map(v => v);
+      errorsList = [];
+      i = 0;
+      nextCard();
+      return;
+    } else {
+      showStage(false);
+      progress.textContent = "Fertig! Starte eine neue Runde.";
+      startNote.style.opacity = 1;
+
+      // 🔹 Neues Verhalten: Statt nur alert → Feedback-Modal anzeigen
+      setTimeout(() => {
+        endRound(); // öffnet automatisch das Modal mit Statistik & Fehlern
+      }, 300);
+
+      return;
     }
   }
+
 
   const [en,de,cat]=round[i];
   const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
