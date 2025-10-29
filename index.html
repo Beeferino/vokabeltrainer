@@ -631,8 +631,13 @@ modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeMo
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 btnClose.onclick=closeModal;
 btnContinue.onclick = () => {
+  btnContinue.onclick = () => {
   closeModal();
-  // kleinen Delay, damit das Modal-Overlay wirklich entfernt ist
+
+  // wichtig: Zähler und eventuelle Restzustände zurücksetzen
+  sinceCheckpoint = 0;
+  totalSkipped = 0;
+
   setTimeout(() => {
     if (game === "input") {
       nextInput();
@@ -640,8 +645,9 @@ btnContinue.onclick = () => {
     } else {
       nextCard();
     }
-  }, 800);
+  }, 250);
 };
+
 
 btnDownload.onclick=()=>{
   const lines=[];
