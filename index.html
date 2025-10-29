@@ -858,8 +858,34 @@ btnSkip.onclick = () => {
 
   // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
-  totalSkipped++; // 🟡 zählt als übersprungen, nicht korrekt
+  totalSkipped = (totalSkipped || 0) + 1;
   bumpCat(itemRef[2], false);
+
+  // Visuelles Feedback – neutral (grauer Flash)
+  stage.classList.add("flash-wrong");
+
+  setTimeout(() => {
+    stage.classList.remove("flash-wrong");
+
+    // Weiterschalten abhängig vom Spielmodus
+    if (game === "input") {
+      sinceCheckpoint++; // 🟢 Checkpoint zählt weiter
+      if (sinceCheckpoint >= 15) {
+        sinceCheckpoint = 0;
+        const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+        if (endNow) {
+          endRound();
+          return;
+        }
+      }
+      nextInput();
+    } else if (game === "cards") {
+      i++;
+      nextCard();
+    }
+  }, 150);
+};
+
 
   // Kurzes Feedback (grau flashen)
   if (game === "input") {
