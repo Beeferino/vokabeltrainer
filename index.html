@@ -425,6 +425,8 @@ let round=[], i=0, delay=3000, trap=false;
 
 let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
 let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
+  let checkpointActive = false;
+
 
 /* Zusammenfassung/Statistik */
 const errorMap=new Map();           // key -> {q,correct,cat}
@@ -459,10 +461,14 @@ function showStage(show){ stage.style.display=show?"block":"none"; }
 /* ===== Checkpoint-Logik (global) ===== */
 function maybeCheckpointOr(next){
   sinceCheckpoint++;
-  if(sinceCheckpoint >= 15){
+  if (sinceCheckpoint >= 15) {
     sinceCheckpoint = 0;
-    const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Ergebnisse anzeigen?");
-    if(endNow){ endRound(); return; }
+    const endNow = confirm("✅ 15 Fragen beantwortet.\nZwischenstand anzeigen?");
+    if (endNow) {
+      checkpointActive = true;
+      endRound();
+      return;
+    }
   }
   next();
 }
@@ -678,7 +684,14 @@ btnDownload.onclick=()=>{
 
 /* ===== Runde beenden (Modal füllen) ===== */
 function endRound() {
-  showStage(false);
+    // Wenn es nur ein Checkpoint war → Spiel läuft weiter
+  if (checkpointActive) {
+    showStage(true); // sichtbar lassen
+  } else {
+    showStage(false);
+    startNote.style.opacity = 1;
+  }
+
 
   const asked = totalAsked;
   const errors = totalErrors;
