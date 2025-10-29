@@ -1,10 +1,9 @@
-<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>📘 Vokabelübersicht – Beeferino</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
 :root{
   --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
@@ -14,13 +13,9 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
 a{color:#1e3a8a;text-decoration:none}
-
-/* --- Container --- */
 .app{max-width:1100px;margin:20px auto;padding:16px}
 h1{text-align:center;font-weight:800;color:#1e3a8a}
 .hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
-
-/* --- Desktop Toolbar & Tabelle --- */
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
 .toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
 .toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
@@ -30,44 +25,26 @@ table{width:100%;border-collapse:collapse}
 th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
 tr:hover{background:#f8fbff}
 .category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-
-/* --- Markierung für Verwechslungsgefahr --- */
 .red-flag{color:var(--bad);font-weight:700;margin-left:6px}
-
-/* --- Mobile --- */
 .mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
 .mob-title{display:flex;align-items:center;justify-content:space-between}
 .mob-actions{display:flex;gap:10px}
-.iconbtn{
-  width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;
-  background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer
-}
+.iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
 .mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
 .mob-list{display:none;padding:10px}
-
-/* --- Karten --- */
-.card{
-  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s;
-}
+.card{background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s}
 .card.red-card{border-color:var(--bad);box-shadow:0 0 0 2px rgba(239,68,68,.3)}
 .card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-.card-cat{
-  display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px;
-}
+.card-cat{display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px}
 .card-title{font-weight:800;font-size:1.05rem;margin-bottom:6px}
 .card-sub{color:var(--muted);font-size:.95rem;margin-bottom:8px}
 .card-row{text-align:right}
 .card-row button{padding:6px 10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer;font-size:.9rem}
-
-/* --- Action Bar --- */
 .fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3}
 .fabs{display:flex;gap:8px}
 .fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
 .fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
-
-/* --- Modal --- */
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
 .panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px}
 .form-grid{display:grid;gap:10px}
@@ -75,87 +52,16 @@ tr:hover{background:#f8fbff}
 .modal-actions{display:flex;gap:16px;justify-content:flex-end;margin-top:18px}
 .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
 .btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
-
-/* --- Banner --- */
 .banner{display:none;background:#2563eb;color:#fff;padding:8px 14px;text-align:center;font-weight:700;font-size:.9rem}
-
-/* --- Responsive --- */
-@media (max-width:900px){
-  .toolbar,.table-wrap{display:none}
-  .mobile-header,.mob-filters,.mob-list,.fab-row{display:block}
-}
-
-  .confuse-field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 0;
-  border: 1px solid #cfd6e4;
-  border-radius: 10px;
-  background: #f9fafb;
-  font-weight: 600;
-  color: #111;
-}
-/* === Verwechslungsgefahr Toggle Switch === */
-.confuse-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 14px;
-  border: 1px solid #cfd6e4;
-  border-radius: 10px;
-  background: #f9fafb;
-  font-weight: 600;
-  color: #111;
-}
-
-.confuse-toggle .switch {
-  position: relative;
-  display: inline-block;
-  width: 48px;
-  height: 26px;
-}
-
-.confuse-toggle .switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.confuse-toggle .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.3s;
-  border-radius: 34px;
-}
-
-.confuse-toggle .slider:before {
-  position: absolute;
-  content: "";
-  height: 20px;
-  width: 20px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.3s;
-  border-radius: 50%;
-}
-
-.confuse-toggle input:checked + .slider {
-  background-color: var(--bad);
-  box-shadow: 0 0 5px rgba(239, 68, 68, 0.6);
-}
-
-.confuse-toggle input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
+.confuse-field{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border:1px solid #cfd6e4;border-radius:10px;background:#f9fafb;font-weight:600;color:#111}
+.confuse-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid #cfd6e4;border-radius:10px;background:#f9fafb;font-weight:600;color:#111}
+.confuse-toggle .switch{position:relative;display:inline-block;width:48px;height:26px}
+.confuse-toggle .switch input{opacity:0;width:0;height:0}
+.confuse-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:0.3s;border-radius:34px}
+.confuse-toggle .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background-color:white;transition:0.3s;border-radius:50%}
+.confuse-toggle input:checked + .slider{background-color:var(--bad);box-shadow:0 0 5px rgba(239,68,68,0.6)}
+.confuse-toggle input:checked + .slider:before{transform:translateX(22px)}
+@media(max-width:900px){.toolbar,.table-wrap{display:none}.mobile-header,.mob-filters,.mob-list,.fab-row{display:block}}
 </style>
 </head>
 <body>
@@ -163,7 +69,6 @@ tr:hover{background:#f8fbff}
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <!-- Desktop Toolbar -->
   <div class="toolbar">
     <select id="filterCatDesk"></select>
     <input id="searchDesk" type="text" placeholder="Suchen…">
@@ -175,56 +80,20 @@ tr:hover{background:#f8fbff}
     <button id="dateSort" class="btn" title="Nach Erstelldatum sortieren">🗓️</button>
   </div>
 
-  <!-- Desktop Counter -->
   <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
+  <div class="table-wrap"><table id="tbl"><thead><tr><th>⟲</th><th data-sort="0">Englisch</th><th data-sort="1">Deutsch</th><th>Kategorie</th><th style="display:none">Gruppe</th><th style="display:none">Hinweis</th><th>Aktion</th></tr></thead><tbody></tbody></table></div>
+  <div id="pagination" style="text-align:center;margin:16px 0;"></div>
 
-  <!-- Desktop Tabelle -->
-  <div class="table-wrap">
-    <table id="tbl">
-      <thead>
-        <tr>
-          <th>⟲</th><th data-sort="0">Englisch</th><th data-sort="1">Deutsch</th><th>Kategorie</th><th style="display:none">Gruppe</th><th style="display:none">Hinweis</th><th>Aktion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <div id="pagination" style="text-align:center;margin:16px 0;"></div>
-
-  </div>
-
-  <!-- Mobile Header -->
   <div class="mobile-header">
-    <div class="mob-title">
-      <h2 style="margin:0">Vokabeln</h2>
-      <div class="mob-actions">
-        <button class="iconbtn" id="btnBack" title="Zurück zum Trainer">⬅️</button>
-        <button class="iconbtn" id="btnAdjust" title="Anpassen">⚙️</button>
-        <button class="iconbtn" id="btnSync" title="Synchronisieren">🔄</button>
-      </div>
-    </div>
+    <div class="mob-title"><h2 style="margin:0">Vokabeln</h2><div class="mob-actions"><button class="iconbtn" id="btnBack">⬅️</button><button class="iconbtn" id="btnAdjust">⚙️</button><button class="iconbtn" id="btnSync">🔄</button></div></div>
   </div>
-
-  <div class="banner" id="adjustBanner">
-    🔧 Anpassen aktiv – tippe Vokabeln an zum Auswählen oder Hinzufügen
-  </div>
-
-  <div class="mob-filters" id="mobFilters">
-    <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
-    <input id="searchMob" type="text" placeholder="Suchen…">
-    <button id="resetMob" class="btn">Reset</button>
-  </div>
-
+  <div class="banner" id="adjustBanner">🔧 Anpassen aktiv – tippe Vokabeln an zum Auswählen oder Hinzufügen</div>
+  <div class="mob-filters" id="mobFilters"><select id="filterCatMob"></select><input id="searchMob" type="text" placeholder="Suchen…"><button id="resetMob" class="btn">Reset</button></div>
   <div id="countMob" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
-
   <div class="mob-list" id="mobList"></div>
+  <div id="paginationMob" style="text-align:center;margin:16px 0;"></div>
 
-  <div class="fab-row">
-    <div class="fabs">
-      <button class="fab gray" id="fabBack">Zurück</button>
-      <button class="fab blue" id="fabAdjust">Anpassen</button>
-      <button class="fab gray" id="fabSync">Synchronisieren</button>
-    </div>
-  </div>
+  <div class="fab-row"><div class="fabs"><button class="fab gray" id="fabBack">Zurück</button><button class="fab blue" id="fabAdjust">Anpassen</button><button class="fab gray" id="fabSync">Synchronisieren</button></div></div>
 
   <div class="footer" style="text-align:center;margin-top:20px">
     <a href="index.html" style="font-weight:700">⬅️ Zurück zum Trainer</a>
@@ -232,7 +101,6 @@ tr:hover{background:#f8fbff}
   </div>
 </div>
 
-<!-- Modal -->
 <div class="modal" id="modal">
   <div class="panel">
     <h3 id="modalTitle" style="margin-top:0">Vokabel</h3>
@@ -240,25 +108,12 @@ tr:hover{background:#f8fbff}
       <label>Englisch<input id="mEn" type="text"></label>
       <label>Deutsch<input id="mDe" type="text"></label>
       <label>Kategorie<select id="mCat"></select></label>
-      <div class="confuse-field">
-  <div class="confuse-toggle">
-  <span>Verwechslungsgefahr&nbsp;&nbsp;&nbsp;</span>
-  <label class="switch">
-    <input type="checkbox" id="mConfuse">
-    <span class="slider"></span>
-  </label>
-</div>
-
-</div>
-
+      <div class="confuse-field"><div class="confuse-toggle"><span>Verwechslungsgefahr&nbsp;&nbsp;&nbsp;</span><label class="switch"><input type="checkbox" id="mConfuse"><span class="slider"></span></label></div></div>
       <label>Erstellt<input id="mDate" type="date" readonly style="background:#f3f4f6"></label>
       <label>Gruppe / Variante<input id="mGroup" type="text"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
     </div>
-    <div class="modal-actions">
-      <button class="btn ghost" id="mCancel">Abbrechen</button>
-      <button class="btn primary" id="mSave">Speichern</button>
-    </div>
+    <div class="modal-actions"><button class="btn ghost" id="mCancel">Abbrechen</button><button class="btn primary" id="mSave">Speichern</button></div>
   </div>
 </div>
 
@@ -267,59 +122,37 @@ tr:hover{background:#f8fbff}
   const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein"};
   const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65"};
   const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff"};
-
   const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
-
   const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s)),isMobile=()=>matchMedia("(max-width:900px)").matches;
-
   const tbl=$('#tbl tbody'),mobList=$('#mobList'),banner=$('#adjustBanner'),modal=$('#modal'),
   mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mConfuse=$('#mConfuse'),mDate=$('#mDate'),mGroup=$('#mGroup'),mHint=$('#mHint'),
   filterCatDesk=$('#filterCatDesk'),filterCatMob=$('#filterCatMob'),searchDesk=$('#searchDesk'),searchMob=$('#searchMob');
-
   let list=[],editIndex=null,adjustMode=false,selected=new Set();
 
-  const normalize=v=>[
-    v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString(),
-    typeof v[6]==="number"?v[6]:0,v[7]||crypto.randomUUID()
-  ];
+  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString(),typeof v[6]==="number"?v[6]:0,v[7]||crypto.randomUUID()];
   const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
   const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
   const idxInList=v=>list.findIndex(x=>x[7]===v[7]);
 
-  function fillCategorySelect(el, withAll = false) {
-  el.innerHTML = withAll
-    ? '<option value="Alle">Alle (bunt gemischt)</option>'
-    : "";
-
-  // Kategorien
-  Object.keys(CATEGORY_NAMES).forEach(k => {
-    const o = document.createElement("option");
-    o.value = k;
-    o.textContent = CATEGORY_NAMES[k];
-    o.style.background = COLOR_MAP[k];
-    o.style.color = TEXT_ON[k];
-    el.appendChild(o);
-  });
-
-  // Neue Filteroption für Verwechslungsgefahr
-  if (withAll) {
-    const dangerOpt = document.createElement("option");
-    dangerOpt.value = "confuse";
-    dangerOpt.textContent = "⚠️ Verwechslungsgefahr-Vokabeln";
-    dangerOpt.style.background = "#ffe4e6";
-    dangerOpt.style.color = "#b91c1c";
-    el.appendChild(dangerOpt);
+  function fillCategorySelect(el,withAll=false){
+    el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k;o.textContent=CATEGORY_NAMES[k];
+      o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
+      el.appendChild(o);
+    });
+    if(withAll){
+      const o=document.createElement("option");
+      o.value="confuse";o.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
+      o.style.background="#ffe4e6";o.style.color="#b91c1c";el.appendChild(o);
+    }
   }
-}
-
 
   async function loadData(){
-    try{
-      const r=await fetch(RAW_URL,{cache:"no-store"});
-      list=(await r.json()).map(normalize);
-      saveLocal(list);
-    }catch{list=loadLocal();}
+    try{const r=await fetch(RAW_URL,{cache:"no-store"});list=(await r.json()).map(normalize);saveLocal(list);}
+    catch{list=loadLocal();}
     fillCategorySelect(filterCatDesk,true);
     fillCategorySelect(filterCatMob,true);
     fillCategorySelect(mCat,false);
@@ -331,101 +164,68 @@ tr:hover{background:#f8fbff}
     const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
     return {cat,q};
   }
-  function filtered() {
-  const { cat, q } = currentFilter();
-  return list.filter(v => {
-    const matchCat =
-      cat === "Alle" ||
-      v[2] === cat ||
-      (cat === "confuse" && v[6]); // <-- neue Bedingung hier
-    const matchQ =
-      !q ||
-      v[0].toLowerCase().includes(q) ||
-      v[1].toLowerCase().includes(q);
-    return matchCat && matchQ;
-  });
-}
-// === PAGINATION ===
-let currentPage = 1;
-const PAGE_SIZE = 20;
-
-function totalPages() {
-  return Math.ceil(filtered().length / PAGE_SIZE);
-}
-
-function paginatedData() {
-  const data = filtered();
-  const start = (currentPage - 1) * PAGE_SIZE;
-  return data.slice(start, start + PAGE_SIZE);
-}
-
-function changePage(dir) {
-  const pages = totalPages();
-  currentPage += dir;
-  if (currentPage < 1) currentPage = 1;
-  if (currentPage > pages) currentPage = pages;
-  renderAll();
-}
-
-function renderPagination() {
-  const pages = totalPages();
-  const container = document.getElementById("pagination");
-  if (!container) return;
-  if (pages <= 1) {
-    container.innerHTML = "";
-    return;
+  function filtered(){
+    const {cat,q}=currentFilter();
+    return list.filter(v=>{
+      const matchCat=cat==="Alle"||v[2]===cat||(cat==="confuse"&&v[6]);
+      const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
+      return matchCat&&matchQ;
+    });
   }
-  container.innerHTML = `
-    <button class="btn" ${currentPage === 1 ? "disabled" : ""} id="prevPage">⬅️ Zurück</button>
-    <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
-    <button class="btn" ${currentPage === pages ? "disabled" : ""} id="nextPage">Weiter ➡️</button>
-  `;
-  document.getElementById("prevPage").onclick = () => changePage(-1);
-  document.getElementById("nextPage").onclick = () => changePage(1);
-}
 
+  // === PAGINATION ===
+  let currentPage=1;
+  const PAGE_SIZE=20;
+  function totalPages(){return Math.ceil(filtered().length/PAGE_SIZE)||1;}
+  function paginatedData(){
+    const data=filtered();const start=(currentPage-1)*PAGE_SIZE;
+    return data.slice(start,start+PAGE_SIZE);
+  }
+  function changePage(dir){
+    const pages=totalPages();currentPage+=dir;
+    if(currentPage<1)currentPage=1;if(currentPage>pages)currentPage=pages;
+    renderAll();
+  }
+  function renderPagination(){
+    const pages=totalPages();
+    const container=document.getElementById("pagination");
+    const mobContainer=document.getElementById("paginationMob");
+    [container,mobContainer].forEach(el=>{
+      if(!el)return;
+      if(pages<=1){el.innerHTML="";return;}
+      el.innerHTML=`
+        <button class="btn" ${currentPage===1?"disabled":""} id="${el.id}Prev">⬅️ Zurück</button>
+        <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
+        <button class="btn" ${currentPage===pages?"disabled":""} id="${el.id}Next">Weiter ➡️</button>
+      `;
+    });
+    const add=(id,dir)=>{const b=document.getElementById(id);if(b)b.onclick=()=>changePage(dir);};
+    add("paginationPrev",-1);add("paginationNext",1);
+    add("paginationMobPrev",-1);add("paginationMobNext",1);
+  }
 
   function updateCount(){
-    const data=paginatedData();
-
+    const data=filtered();
     const txt=`📘 ${data.length} Vokabel${data.length!==1?"n":""} gefunden`;
-    if(isMobile()){
-      $('#countMob').textContent=txt;
-      $('#countDesk').textContent="";
-    }else{
-      $('#countDesk').textContent=txt;
-      $('#countMob').textContent="";
-    }
+    if(isMobile()){$('#countMob').textContent=txt;$('#countDesk').textContent="";}
+    else{$('#countDesk').textContent=txt;$('#countMob').textContent="";}
   }
 
   function renderDesktop(){
-    const data=filtered();
+    const data=paginatedData();
     tbl.innerHTML=data.map(v=>{
       const i=idxInList(v);
       const danger=v[6]==1?'<span class="red-flag" title="Verwechslungsgefahr">🔴</span>':"";
-      return `<tr title="ID: ${v[7]}">
-        <td><input type="checkbox" data-idx="${i}"></td>
-        <td>${v[0]} ${danger}</td>
-        <td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-        <td style="display:none">${v[3]}</td>
-        <td style="display:none">${v[4]}</td>
-        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
-      </tr>`;
+      return `<tr title="ID: ${v[7]}"><td><input type="checkbox" data-idx="${i}"></td><td>${v[0]} ${danger}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td><td style="display:none">${v[3]}</td><td style="display:none">${v[4]}</td><td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td></tr>`;
     }).join("");
     $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
   }
 
   function renderMobile(){
-    const data=filtered();
+    const data=paginatedData();
     mobList.innerHTML=data.map(v=>{
       const i=idxInList(v),sel=selected.has(i)?" selected":"",red=v[6]==1?" red-card":"";
-      return `<div class="card${sel}${red}" data-idx="${i}">
-        <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-        <div class="card-title">${v[0]}</div>
-        <div class="card-sub">DE: ${v[1]}</div>
-        <div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div>
-      </div>`;
+      return `<div class="card${sel}${red}" data-idx="${i}"><div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div><div class="card-title">${v[0]}</div><div class="card-sub">DE: ${v[1]}</div><div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div></div>`;
     }).join("");
     $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
     $$('.card').forEach(c=>c.onclick=e=>{
@@ -437,27 +237,14 @@ function renderPagination() {
   }
 
   function renderAll(){
-  renderDesktop();
-  renderMobile();
-  updateCount();
-  renderPagination();
-}
-
+    renderDesktop();renderMobile();updateCount();renderPagination();
+  }
 
   function openEdit(i=null){
     editIndex=i;
-    if(i==null){
-      mEn.value=mDe.value=mGroup.value=mHint.value="";
-      mCat.value="Gelb";mConfuse.checked=false;mDate.value=new Date().toISOString().slice(0,10);
-    }else{
-      const v=list[i];
-      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];
-      mGroup.value=v[3];mHint.value=v[4];mConfuse.checked=v[6]==1;
-      mDate.value=new Date(v[5]).toISOString().slice(0,10);
-    }
-    mCat.style.background=COLOR_MAP[mCat.value];
-    mCat.style.color=TEXT_ON[mCat.value];
-    modal.style.display="flex";
+    if(i==null){mEn.value=mDe.value=mGroup.value=mHint.value="";mCat.value="Gelb";mConfuse.checked=false;mDate.value=new Date().toISOString().slice(0,10);}
+    else{const v=list[i];mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mGroup.value=v[3];mHint.value=v[4];mConfuse.checked=v[6]==1;mDate.value=new Date(v[5]).toISOString().slice(0,10);}
+    mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];modal.style.display="flex";
   }
   function closeModal(){modal.style.display="none";}
   $('#mCancel').onclick=closeModal;
@@ -465,12 +252,8 @@ function renderPagination() {
     const en=mEn.value.trim(),de=mDe.value.trim();
     const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim(),confuse=mConfuse.checked?1:0;
     if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
-    if(editIndex==null){
-      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);
-    } else {
-      const old=list[editIndex];
-      list[editIndex]=[en,de,cat,grp,hint,old[5],confuse,old[7]];
-    }
+    if(editIndex==null){list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);}
+    else{const old=list[editIndex];list[editIndex]=[en,de,cat,grp,hint,old[5],confuse,old[7]];}
     saveLocal(list);closeModal();renderAll();
   };
   mCat.onchange=()=>{mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];}
@@ -487,7 +270,7 @@ function renderPagination() {
         list=list.filter((_,i)=>!selected.has(i));saveLocal(list);selected.clear();renderAll();
       };
       $('#fabNew').onclick=()=>openEdit(null);
-    } else {
+    }else{
       bar.innerHTML=`<button class="fab gray" id="fabBack">Zurück</button><button class="fab blue" id="fabAdjust">Anpassen</button><button class="fab gray" id="fabSync">Synchronisieren</button>`;
       $('#fabBack').onclick=()=>location.href="index.html";
       $('#fabAdjust').onclick=()=>toggleAdjust(true);
@@ -516,44 +299,31 @@ function renderPagination() {
   }
 
   $('#addDesk').onclick=()=>openEdit(null);
-  $('#delDesk').onclick=()=>{
-    const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
+  $('#delDesk').onclick=()=>{const ids=$$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx);
     if(!ids.length){alert("Bitte Zeilen markieren.");return;}
     if(!confirm(`${ids.length} Einträge löschen?`))return;
     list=list.filter((_,i)=>!ids.includes(i));saveLocal(list);renderAll();
   };
   $('#syncDesk').onclick=githubSync;
   $('#tokenBtn').onclick=()=>{localStorage.removeItem('gh_token');getToken();};
-
-  $('#resetDesk').onclick=()=>{filterCatDesk.value="Alle";searchDesk.value="";renderAll();}
-  $('#resetMob').onclick=()=>{filterCatMob.value="Alle";searchMob.value="";renderAll();}
-  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{el.addEventListener('input',renderAll);el.addEventListener('change',renderAll);});
-
+  $('#resetDesk').onclick=()=>{filterCatDesk.value="Alle";searchDesk.value="";currentPage=1;renderAll();}
+  $('#resetMob').onclick=()=>{filterCatMob.value="Alle";searchMob.value="";currentPage=1;renderAll();}
+  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{el.addEventListener('input',()=>{currentPage=1;renderAll();});el.addEventListener('change',()=>{currentPage=1;renderAll();});});
   $('#btnBack').onclick=()=>location.href="index.html";
   $('#btnSync').onclick=githubSync;
   $('#btnAdjust').onclick=()=>toggleAdjust(true);
   $('#fabBack').onclick=()=>location.href="index.html";
   $('#fabAdjust').onclick=()=>toggleAdjust(true);
   $('#fabSync').onclick=githubSync;
-
   let sortState={col:null,dir:1};
   $$('#tbl thead th[data-sort]').forEach(th=>{
-    th.style.cursor="pointer";
-    th.title="Sortieren";
-    th.onclick=()=>{
+    th.style.cursor="pointer";th.onclick=()=>{
       const col=parseInt(th.dataset.sort);
       if(sortState.col===col)sortState.dir*=-1;else{sortState.col=col;sortState.dir=1;}
-      list.sort((a,b)=>{
-        const A=(a[col]||"").toLowerCase();
-        const B=(b[col]||"").toLowerCase();
-        return A.localeCompare(B)*sortState.dir;
-      });
+      list.sort((a,b)=>{const A=(a[col]||"").toLowerCase();const B=(b[col]||"").toLowerCase();return A.localeCompare(B)*sortState.dir;});
       saveLocal(list);renderAll();
-      $$('#tbl thead th').forEach(x=>x.style.textDecoration="none");
-      th.style.textDecoration=sortState.dir===1?"underline":"overline";
     };
   });
-
   loadData();
 })();
 </script>
