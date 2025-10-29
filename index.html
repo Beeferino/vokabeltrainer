@@ -1,1011 +1,954 @@
 <!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Vokabeltrainer – Beeferino</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vokabeltrainer – Beeferino</title>
 
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#2563eb">
+  <!-- PWA (fehler-tolerant, falls Datei fehlt) -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#2563eb" />
 
-<style>
-  @media (max-width: 600px) {
-  .controls {
-    gap: 24px;
-  }
-  select {
-    min-width: 120px;
-  }
-}
+  <style>
+    @media (max-width: 600px) {
+      .controls { gap: 24px; }
+      select { min-width: 120px; }
+    }
 
-:root{
-  --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
-  --glass:rgba(255,255,255,.88);
-  --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
-}
-*{box-sizing:border-box}
-body{
-  margin:0;font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)
-}
-body.dark{background:linear-gradient(145deg,#1e293b,#0f172a);color:#f8fafc}
-body.dark .app{background:rgba(30,41,59,.85)}
-.app{
-  max-width:1000px;margin:28px auto;padding:22px;background:var(--glass);
-  border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)
-}
-h1{margin:0;text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a}
-body.dark h1{color:#93c5fd}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
-.controls,.functions, .toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:20px}
-.controls label{display:flex;align-items:center;gap:6px}
-select, .tbtn{
-  padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem;background:#fff
-}
-body.dark select, body.dark .tbtn{background:#0f172a;border-color:#334155;color:#e5e7eb}
-.kachel{
-  flex:1 1 240px;text-align:center;background:var(--blue);color:#fff;padding:14px 18px;border-radius:14px;
-  font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(37,99,235,.25);transition:transform .15s,background .15s
-}
-.kachel small{font-weight:600;opacity:.9}
-.kachel:hover{transform:translateY(-1px);background:var(--blue2)}
-.progress{text-align:center;font-weight:700;margin:8px 0 4px;min-height:1.2em}
-.subnote{text-align:center;font-size:.95rem;color:#334155;margin:-2px 0 12px}
-.subnote b{font-weight:800;color:#1e3a8a}
-body.dark .subnote{color:#cbd5e1} body.dark .subnote b{color:#93c5fd}
-.goalbar{width:90%;max-width:560px;height:10px;border-radius:999px;background:#e5e7eb;margin:8px auto 0;overflow:hidden}
-.goalbar > div{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#10b981);transition:width .4s}
-#stage{
-  display:none;margin-top:14px;padding:28px;border-radius:20px;background:rgba(255,255,255,.95);
-  box-shadow:inset 0 0 10px rgba(0,0,0,.05);text-align:center
-}
-body.dark #stage{background:rgba(2,6,23,.9)}
-.chip{display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:10px}
-.word{font-size:1.9rem;font-weight:800;margin:8px 0 6px}
-.offer{font-size:1.1rem;color:#1f2937;margin:6px 0 12px;min-height:1.3em}
-body.dark .offer{color:#e5e7eb}
-.btnrow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-.btn{border:none;border-radius:12px;padding:10px 20px;font-weight:700;font-size:1rem;cursor:pointer}
-.ok{background:var(--ok);color:#fff}
-.bad{background:var(--bad);color:#fff}
-.skip{background:var(--muted);color:#fff}
-.inprow{display:none;gap:8px;justify-content:center;margin-top:12px}
-.inprow input{
-  width:60%;min-width:260px;padding:10px 14px;border:1px solid #d1d5db;border-radius:12px;font-size:1rem
-}
-.inprow button{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700}
-.flash-correct{animation:good .4s}
-.flash-wrong{animation:bad .4s}
-@keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
-@keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
-.footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
-.footer-actions a,.footer-actions button{
-  display:inline-flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#eaf0ff,#f8faff);
-  border:1px solid #dbe3ff;color:#1f2937;padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none;font-size:1rem;
-  box-shadow:0 3px 8px rgba(0,0,0,.05);transition:all .25s ease
-}
-.footer-actions a:hover,.footer-actions button:hover{background:linear-gradient(135deg,#e0e7ff,#f1f5ff);transform:translateY(-1px);box-shadow:0 5px 12px rgba(37,99,235,.15)}
-.feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
-.trenner{height:3px;width:60%;margin:36px auto 16px;background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);border-radius:2px;animation:shine 5s linear infinite}
-@keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
-details.recent-section{
-  background:rgba(255,255,255,.9);border-radius:20px;padding:22px;margin-top:10px;text-align:center;
-  box-shadow:0 8px 28px rgba(0,0,0,.08);backdrop-filter:blur(12px)
-}
-details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.12)}
-#recent{margin-top:18px;text-align:center;line-height:1.8;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-.recent-item{display:inline-block;min-width:160px;border-radius:14px;padding:12px 18px;font-weight:700;color:#111827;box-shadow:0 4px 12px rgba(0,0,0,.1)}
-.recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px;opacity:.8}
-.foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
-.toolbar .tbtn{cursor:pointer}
-.dark-toggle{display:flex;align-items:center;gap:8px}
+    :root{
+      --blue:#2563eb;--blue2:#1d4ed8;--ink:#0f172a;
+      --glass:rgba(255,255,255,.88);
+      --ok:#22c55e;--bad:#ef4444;--muted:#9ca3af
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:Inter,system-ui,sans-serif;
+      background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)
+    }
+    body.dark{background:linear-gradient(145deg,#1e293b,#0f172a);color:#f8fafc}
+    body.dark .app{background:rgba(30,41,59,.85)}
+    .app{
+      max-width:1000px;margin:28px auto;padding:22px;background:var(--glass);
+      border-radius:22px;box-shadow:0 10px 32px rgba(0,0,0,.10);backdrop-filter:blur(8px)
+    }
+    h1{margin:0;text-align:center;font-size:2rem;font-weight:800;color:#1e3a8a}
+    body.dark h1{color:#93c5fd}
+    .hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
+    .controls,.functions,.toolbar{display:flex;flex-wrap:wrap;justify-content:center;gap:20px}
+    .controls label{display:flex;align-items:center;gap:6px}
+    select,.tbtn{
+      padding:8px 12px;border:1px solid #d1d5db;border-radius:10px;font-size:1rem;background:#fff
+    }
+    body.dark select,body.dark .tbtn{background:#0f172a;border-color:#334155;color:#e5e7eb}
+    .kachel{
+      flex:1 1 240px;text-align:center;background:var(--blue);color:#fff;padding:14px 18px;border-radius:14px;
+      font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(37,99,235,.25);transition:transform .15s,background .15s
+    }
+    .kachel small{font-weight:600;opacity:.9}
+    .kachel:hover{transform:translateY(-1px);background:var(--blue2)}
+    .progress{text-align:center;font-weight:700;margin:8px 0 4px;min-height:1.2em}
+    .subnote{text-align:center;font-size:.95rem;color:#334155;margin:-2px 0 12px}
+    .subnote b{font-weight:800;color:#1e3a8a}
+    body.dark .subnote{color:#cbd5e1} body.dark .subnote b{color:#93c5fd}
+    .goalbar{width:90%;max-width:560px;height:10px;border-radius:999px;background:#e5e7eb;margin:8px auto 0;overflow:hidden}
+    .goalbar>div{height:100%;width:0%;background:linear-gradient(90deg,#34d399,#10b981);transition:width .4s}
+    #stage{
+      display:none;margin-top:14px;padding:28px;border-radius:20px;background:rgba(255,255,255,.95);
+      box-shadow:inset 0 0 10px rgba(0,0,0,.05);text-align:center
+    }
+    body.dark #stage{background:rgba(2,6,23,.9)}
+    .chip{display:inline-block;font-weight:800;padding:8px 14px;border-radius:999px;margin-bottom:10px}
+    .word{font-size:1.9rem;font-weight:800;margin:8px 0 6px}
+    .offer{font-size:1.1rem;color:#1f2937;margin:6px 0 12px;min-height:1.3em}
+    body.dark .offer{color:#e5e7eb}
+    .btnrow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .btn{border:none;border-radius:12px;padding:10px 20px;font-weight:700;font-size:1rem;cursor:pointer}
+    .ok{background:var(--ok);color:#fff}
+    .bad{background:var(--bad);color:#fff}
+    .skip{background:var(--muted);color:#fff}
+    .inprow{display:none;gap:8px;justify-content:center;margin-top:12px}
+    .inprow input{
+      width:60%;min-width:260px;padding:10px 14px;border:1px solid #d1d5db;border-radius:12px;font-size:1rem
+    }
+    .inprow button{background:var(--blue);color:#fff;border:none;border-radius:12px;padding:10px 16px;font-weight:700}
+    .flash-correct{animation:good .4s}
+    .flash-wrong{animation:bad .4s}
+    @keyframes good{from{background:#dcfce7}to{background:rgba(255,255,255,.95)}}
+    @keyframes bad{from{background:#fee2e2}to{background:rgba(255,255,255,.95)}}
+    .footer-actions{display:flex;justify-content:space-between;gap:12px;margin-top:24px}
+    .footer-actions a,.footer-actions button{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#eaf0ff,#f8faff);
+      border:1px solid #dbe3ff;color:#1f2937;padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;text-decoration:none;font-size:1rem;
+      box-shadow:0 3px 8px rgba(0,0,0,.05);transition:all .25s ease
+    }
+    .footer-actions a:hover,.footer-actions button:hover{background:linear-gradient(135deg,#e0e7ff,#f1f5ff);transform:translateY(-1px);box-shadow:0 5px 12px rgba(37,99,235,.15)}
+    .feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
+    .trenner{height:3px;width:60%;margin:36px auto 16px;background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);border-radius:2px;animation:shine 5s linear infinite}
+    @keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
+    details.recent-section{
+      background:rgba(255,255,255,.9);border-radius:20px;padding:22px;margin-top:10px;text-align:center;
+      box-shadow:0 8px 28px rgba(0,0,0,.08);backdrop-filter:blur(12px)
+    }
+    details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.12)}
+    #recent{margin-top:18px;text-align:center;line-height:1.8;display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+    .recent-item{display:inline-block;min-width:160px;border-radius:14px;padding:12px 18px;font-weight:700;color:#111827;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+    .recent-item small{display:block;font-weight:500;font-size:.85rem;margin-top:4px;opacity:.8}
+    .foot{text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
+    .toolbar .tbtn{cursor:pointer}
+    .dark-toggle{display:flex;align-items:center;gap:8px}
 
-/* ===== Modal (Statistik + Fehler) ===== */
-.modal-backdrop{
-  position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
-}
-.modal{
-  width:min(860px,96vw);max-height:85vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.25)
-}
-.modal header{position:sticky;top:0;background:#fff;padding:18px 20px;border-bottom:1px solid #eef2ff;border-top-left-radius:18px;border-top-right-radius:18px}
-.modal h2{margin:0;font-size:1.25rem;color:#0f172a}
-.modal .content{padding:16px 20px 22px}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px}
-.stat{background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
-.stat .label{font-size:.85rem;color:#64748b;font-weight:600}
-.stat .value{font-size:1.25rem;font-weight:800}
-.error-list{margin-top:6px}
-.error-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #eef2ff;border-radius:12px;margin-bottom:8px}
-.badge{font-size:.78rem;font-weight:800;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.06)}
-.modal footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #eef2ff;padding:12px 16px;display:flex;gap:8px;justify-content:flex-end}
-.btn-ghost{background:#f3f4f6;color:#111827;border:1px solid #e5e7eb}
-.btn-primary{background:#2563eb;color:#fff}
-.btn-ghost,.btn-primary,.download{border-radius:10px;padding:10px 14px;font-weight:800;border:none;cursor:pointer}
-.download{margin-right:auto;background:#e5f2ff;border:1px solid #c7ddff;color:#0f172a}
-/* ===== Mehr Abstand zwischen Auswahl und Toolbar ===== */
-.controls { margin-bottom: 18px; }
-.toolbar { margin-top: 6px; }
-/* ===== Harmonischer Abstand unterhalb der Toolbar ===== */
-.toolbar { margin-bottom: 22px; }
+    /* ===== Modal (Statistik + Fehler) ===== */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
+    }
+    .modal{
+      width:min(860px,96vw);max-height:85vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,.25)
+    }
+    .modal header{position:sticky;top:0;background:#fff;padding:18px 20px;border-bottom:1px solid #eef2ff;border-top-left-radius:18px;border-top-right-radius:18px}
+    .modal h2{margin:0;font-size:1.25rem;color:#0f172a}
+    .modal .content{padding:16px 20px 22px}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+    .stat{background:linear-gradient(135deg,#f8fafc,#eff6ff);border:1px solid #e5e7eb;border-radius:12px;padding:12px 14px}
+    .stat .label{font-size:.85rem;color:#64748b;font-weight:600}
+    .stat .value{font-size:1.25rem;font-weight:800}
+    .error-list{margin-top:6px}
+    .error-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #eef2ff;border-radius:12px;margin-bottom:8px}
+    .badge{font-size:.78rem;font-weight:800;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.06)}
+    .modal footer{position:sticky;bottom:0;background:#fff;border-top:1px solid #eef2ff;padding:12px 16px;display:flex;gap:8px;justify-content:flex-end}
+    .btn-ghost{background:#f3f4f6;color:#111827;border:1px solid #e5e7eb}
+    .btn-primary{background:#2563eb;color:#fff}
+    .btn-ghost,.btn-primary,.download{border-radius:10px;padding:10px 14px;font-weight:800;border:none;cursor:pointer}
+    .download{margin-right:auto;background:#e5f2ff;border:1px solid #c7ddff;color:#0f172a}
 
-/* === "Zuletzt hinzugefügt" – Korrigierte Pfeile, beide drehen nach unten === */
-details.recent-section {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 22px;
-  margin-top: 10px;
-  text-align: center;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(10px);
-  transition: all 0.35s ease;
-  overflow: hidden;
-}
-details.recent-section summary {
-  background: rgba(240, 244, 255, 0.8);
-  border-radius: 14px;
-  padding: 10px 14px;
-  font-weight: 700;
-  color: #1e3a8a;
-  cursor: pointer;
-  list-style: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  position: relative;
-  transition: all 0.25s ease;
-}
-details.recent-section summary::before {
-  content: "▶";
-  font-size: 0.85em;
-  color: #2563eb;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-details.recent-section summary::after {
-  content: "◀";
-  font-size: 0.85em;
-  color: #2563eb;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-details.recent-section[open] summary::before,
-details.recent-section[open] summary::after {
-  content: "▼";
-  color: #1d4ed8;
-  transform: none;
-}
-details.recent-section summary:hover {
-  background: rgba(219, 234, 254, 0.9);
-  color: #1e40af;
-}
-details.recent-section[open] {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-}
-details.recent-section > div {
-  overflow: hidden;
-  max-height: 0;
-  opacity: 0;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-}
-details.recent-section[open] > div {
-  max-height: 800px;
-  opacity: 1;
-}
-/* === Dark Mode Variante === */
-body.dark details.recent-section {
-  background: rgba(15, 23, 42, 0.6);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-}
-body.dark details.recent-section summary {
-  background: rgba(255, 255, 255, 0.08);
-  color: #e2e8f0 !important;
-  font-weight: 700;
-  border-radius: 14px;
-  padding: 10px 14px;
-  transition: all 0.25s ease;
-}
-body.dark details.recent-section summary::before,
-body.dark details.recent-section summary::after {
-  color: #60a5fa;
-}
-body.dark details.recent-section[open] summary::before,
-body.dark details.recent-section[open] summary::after {
-  color: #93c5fd;
-}
-body.dark details.recent-section summary:hover {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff !important;
-  text-shadow: 0 0 6px rgba(96,165,250,0.4);
-}
-</style>
+    /* ===== Harmonische Abstände ===== */
+    .controls{margin-bottom:18px}
+    .toolbar{margin:6px 0 22px}
+
+    /* === "Zuletzt hinzugefügt" – Pfeile, beide drehen nach unten === */
+    details.recent-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 22px;
+      margin-top: 10px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      backdrop-filter: blur(10px);
+      transition: all 0.35s ease;
+      overflow: hidden;
+    }
+    details.recent-section summary {
+      background: rgba(240, 244, 255, 0.8);
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight: 700;
+      color: #1e3a8a;
+      cursor: pointer;
+      list-style: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+      transition: all 0.25s ease;
+    }
+    details.recent-section summary::before {
+      content: "▶";
+      font-size: 0.85em;
+      color: #2563eb;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+    details.recent-section summary::after {
+      content: "◀";
+      font-size: 0.85em;
+      color: #2563eb;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+    details.recent-section[open] summary::before,
+    details.recent-section[open] summary::after {
+      content: "▼";
+      color: #1d4ed8;
+      transform: none;
+    }
+    details.recent-section summary:hover {
+      background: rgba(219, 234, 254, 0.9);
+      color: #1e40af;
+    }
+    details.recent-section[open] {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+    }
+    details.recent-section > div {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+    }
+    details.recent-section[open] > div {
+      max-height: 800px;
+      opacity: 1;
+    }
+    body.dark details.recent-section {
+      background: rgba(15, 23, 42, 0.6);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+    }
+    body.dark details.recent-section summary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e2e8f0 !important;
+    }
+    body.dark details.recent-section summary::before,
+    body.dark details.recent-section summary::after {
+      color: #60a5fa;
+    }
+    body.dark details.recent-section[open] summary::before,
+    body.dark details.recent-section[open] summary::after {
+      color: #93c5fd;
+    }
+    body.dark details.recent-section summary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff !important;
+      text-shadow: 0 0 6px rgba(96,165,250,0.4);
+    }
+  </style>
 </head>
 <body>
-<div class="app">
-  <h1>🎯 Vokabeltrainer</h1>
-  <div class="hr"></div>
+  <div class="app">
+    <h1>🎯 Vokabeltrainer</h1>
+    <div class="hr"></div>
 
-  <div class="controls">
-    <label>Kategorie:
-      <select id="selCat">
-        <option value="Alle">Alle (bunt gemischt)</option>
-        <!-- dynamisch befüllt -->
-      </select>
-    </label>
-    <label>Modus:
-      <select id="selMode">
-        <option value="mixed">Gemischt</option>
-        <option value="toGerman">Englisch → Deutsch</option>
-        <option value="toEnglish">Deutsch → Englisch</option>
-      </select>
-    </label>
-    <label>Delay:
-      <select id="selDelay">
-        <option value="1000">1 s</option>
-        <option value="3000" selected>3 s</option>
-        <option value="5000">5 s</option>
-      </select>
-    </label>
-  </div>
-
-  <div class="toolbar">
-    <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
-    <button id="btnStats" class="tbtn">📊 Statistik</button>
-    <label class="dark-toggle tbtn" id="btnDark"><input type="checkbox" id="chkDark"> 🌙 Dark Mode</label>
-    <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
-    <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked> 💬 Feedback</label>
-  </div>
-
-  <div class="functions">
-    <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
-    <div id="btnLast30" class="kachel">📗 Letzte eingegebenen Vokabeln</div>
-    <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
-  </div>
-
-  <!-- Fortschritt & Hinweis -->
-  <div id="progress" class="progress">Bereit.</div>
-  <div id="startNote" class="subnote">
-    Wähle zuerst einen <b>Übungsmodus</b>, um zu beginnen:
-    <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder <b>Deutsch → Englisch</b>.<br>
-    Danach einfach auf <b>„Vokabel-Abfrage starten“</b> klicken.
-    <div class="goalbar"><div id="goalFill"></div></div>
-    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 0 / 30 richtige Antworten</div>
-  </div>
-
-  <section id="stage">
-    <div id="chip" class="chip">–</div>
-    <div id="q" class="word">Bereit?</div>
-    <div id="offer" class="offer"></div>
-
-    <div id="rowButtons" class="btnrow">
-      <!-- Eingabe-Modus nutzt nur Überspringen + Eingabe -->
-      <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
-      <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
-      <button id="btnSkip" class="btn skip" style="display:none;">Weiter</button>
+    <div class="controls">
+      <label>Kategorie:
+        <select id="selCat">
+          <option value="Alle">Alle (bunt gemischt)</option>
+          <!-- dynamisch befüllt -->
+        </select>
+      </label>
+      <label>Modus:
+        <select id="selMode">
+          <option value="mixed">Gemischt</option>
+          <option value="toGerman">Englisch → Deutsch</option>
+          <option value="toEnglish">Deutsch → Englisch</option>
+        </select>
+      </label>
+      <label>Delay:
+        <select id="selDelay">
+          <option value="1000">1 s</option>
+          <option value="3000" selected>3 s</option>
+          <option value="5000">5 s</option>
+        </select>
+      </label>
     </div>
 
-    <div id="rowInput" class="inprow">
-      <input id="inp" type="text" placeholder="Übersetzung eingeben …">
-      <button id="btnSub">Eingabe</button>
+    <div class="toolbar">
+      <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
+      <button id="btnStats" class="tbtn">📊 Statistik</button>
+      <label class="dark-toggle tbtn" id="btnDark"><input type="checkbox" id="chkDark"> 🌙 Dark Mode</label>
+      <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
+      <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked> 💬 Feedback</label>
     </div>
-  </section>
 
-  <div class="footer-actions">
-    <a href="vokabeln.html">📂 Vokabeln</a>
-    <button id="btnHardReload">🔄 Neustart</button>
-  </div>
-
-  <div class="trenner"></div>
-
-  <details class="recent-section">
-    <summary>Zuletzt hinzugefügt</summary>
-    <div id="recent">–</div>
-  </details>
-
-  <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
-  <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
-    🟢 Daten aktuell
-  </div>
-</div>
-
-<!-- ===== Modal ===== -->
-<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <header><h2 id="modalTitle">📊 Runden-Statistik &amp; Fehlerübersicht</h2></header>
-    <div class="content">
-      <div class="stat-grid" id="statGrid"></div>
-      <div class="error-list" id="errorList"></div>
+    <div class="functions">
+      <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
+      <div id="btnLast30" class="kachel">📗 Letzte eingegebenen Vokabeln</div>
+      <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
     </div>
-    <footer>
-      <button id="btnDownload" class="download">⬇️ Fehlerliste speichern</button>
-      <button id="btnContinue" class="btn-ghost">Weiter üben</button>
-      <button id="btnClose" class="btn-primary">Schließen</button>
-    </footer>
+
+    <div id="progress" class="progress">Bereit.</div>
+    <div id="startNote" class="subnote">
+      Wähle zuerst einen <b>Übungsmodus</b>, um zu beginnen:
+      <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder <b>Deutsch → Englisch</b>.<br>
+      Danach einfach auf <b>„Vokabel-Abfrage starten“</b> klicken.
+      <div class="goalbar"><div id="goalFill"></div></div>
+      <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 0 / 30 richtige Antworten</div>
+    </div>
+
+    <section id="stage">
+      <div id="chip" class="chip">–</div>
+      <div id="q" class="word">Bereit?</div>
+      <div id="offer" class="offer"></div>
+
+      <div id="rowButtons" class="btnrow">
+        <!-- Eingabe-Modus nutzt nur Überspringen + Eingabe -->
+        <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
+        <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
+        <button id="btnSkip" class="btn skip" style="display:none;">Weiter</button>
+      </div>
+
+      <div id="rowInput" class="inprow">
+        <input id="inp" type="text" placeholder="Übersetzung eingeben …" />
+        <button id="btnSub">Eingabe</button>
+      </div>
+    </section>
+
+    <div class="footer-actions">
+      <a href="vokabeln.html">📂 Vokabeln</a>
+      <button id="btnHardReload">🔄 Neustart</button>
+    </div>
+
+    <div class="trenner"></div>
+
+    <details class="recent-section">
+      <summary>Zuletzt hinzugefügt</summary>
+      <div id="recent">–</div>
+    </details>
+
+    <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
+    <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
+      🟢 Daten aktuell
+    </div>
   </div>
-</div>
 
-<script>
-(function(){
-/* ========= Setup & Utils ========= */
-/* --- Kategorie "Rot" entfernt; stattdessen Flag v[6] für Verwechslungsgefahr --- */
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"]
-};
+  <!-- ===== Modal ===== -->
+  <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header><h2 id="modalTitle">📊 Runden-Statistik &amp; Fehlerübersicht</h2></header>
+      <div class="content">
+        <div class="stat-grid" id="statGrid"></div>
+        <div class="error-list" id="errorList"></div>
+      </div>
+      <footer>
+        <button id="btnDownload" class="download">⬇️ Fehlerliste speichern</button>
+        <button id="btnContinue" class="btn-ghost">Weiter üben</button>
+        <button id="btnClose" class="btn-primary">Schließen</button>
+      </footer>
+    </div>
+  </div>
 
-const el=id=>document.getElementById(id);
-const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
-const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
-const btnErrorsOnly=el("btnErrorsOnly"), btnStats=el("btnStats");
-const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
-const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
-const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
-const modalBackdrop=el("modalBackdrop"), errorList=el("errorList"), statGrid=el("statGrid");
-const btnClose=el("btnClose"), btnContinue=el("btnContinue"), btnDownload=el("btnDownload");
-const startNote=el("startNote"), goalFill=el("goalFill"), goalText=el("goalText");
-const chkDark=el("chkDark"), chkSound=el("chkSound");
-const btnHardReload=el("btnHardReload");
+  <script>
+  (function(){
+    /* ========= Setup & Utils ========= */
+    const CATS={
+      Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
+      Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
+      Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
+      Gruen:["Drehen / Fräsen","#1E8449","#fff"],
+      HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
+      Orange:["Elektrotechnik","#E67E22","#fff"],
+      Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"]
+    };
 
-/* Kategorien + Spezialfilter befüllen */
-(function buildCatOptions(){
-  while (selCat.options.length > 1) selCat.remove(1);
-  for(const k in CATS){
-    const [label,bg,fg] = CATS[k];
-    const o=document.createElement("option");
-    o.value=k; o.textContent=label; o.style.background=bg; o.style.color=fg;
-    selCat.appendChild(o);
-  }
-  const extra=document.createElement("option");
-  extra.value="confuse";
-  extra.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
-  extra.style.background="#ffe4e6";
-  extra.style.color="#b91c1c";
-  selCat.appendChild(extra);
-})();
+    const el=id=>document.getElementById(id);
+    const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
+    const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
+    const btnErrorsOnly=el("btnErrorsOnly"), btnStats=el("btnStats");
+    const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
+    const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
+    const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
+    const modalBackdrop=el("modalBackdrop"), errorList=el("errorList"), statGrid=el("statGrid");
+    const btnClose=el("btnClose"), btnContinue=el("btnContinue"), btnDownload=el("btnDownload");
+    const startNote=el("startNote"), goalFill=el("goalFill"), goalText=el("goalText");
+    const chkDark=el("chkDark"), chkSound=el("chkSound");
+    const btnHardReload=el("btnHardReload");
 
-/* Mini beep */
-function beep(freq=660, ms=80, type='sine', vol=0.03){
-  if(!chkSound.checked) return;
-  try{
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const o=ctx.createOscillator(), g=ctx.createGain();
-    o.type=type; o.frequency.value=freq; g.gain.value=vol;
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, ms);
-  }catch{}
-}
+    (function buildCatOptions(){
+      while (selCat.options.length > 1) selCat.remove(1);
+      for(const k in CATS){
+        const [label,bg,fg] = CATS[k];
+        const o=document.createElement("option");
+        o.value=k; o.textContent=label; o.style.background=bg; o.style.color=fg;
+        selCat.appendChild(o);
+      }
+      const extra=document.createElement("option");
+      extra.value="confuse";
+      extra.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
+      extra.style.background="#ffe4e6";
+      extra.style.color="#b91c1c";
+      selCat.appendChild(extra);
+    })();
 
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[j-1]]=[a[j-1],a[j]];}}
-function normalize(s){
-  return s.trim().toLowerCase()
-    .normalize("NFD").replace(/\p{Diacritic}/gu,"")
-    .replace(/[-–—]/g,"-").replace(/\s+/g," ");
-}
-function isCorrectInput(input, solution){
-  const a=normalize(input);
-  const opts=solution.split(/[\/;|,]/).map(x=>normalize(x));
-  return opts.includes(a);
-}
-
-/* ========= Daten & Sync ========= */
-let data=[], lastSync=null;
-
-/* Schema: [en,de,cat,group,hint,created,confuseFlag] */
-function normalizeRow(v){
-  return [
-    v[0]||"", v[1]||"", v[2]||"Gelb",
-    v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
-    !!v[6]
-  ];
-}
-
-async function fetchFromGitHub(){
-  const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  try{
-    const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("fetch failed");
-    const j=await r.json();
-    const norm=j.map(normalizeRow);
-    localStorage.setItem("vokabeln",JSON.stringify(norm));
-    localStorage.setItem("vokabeln_updated",new Date().toISOString());
-    data=norm; lastSync=new Date();
-  }catch{
-    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalizeRow);
-  }
-}
-async function loadData(){
-  const localUpd=localStorage.getItem("vokabeln_updated");
-  const lastUsed=localStorage.getItem("index_last_sync");
-  const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
-  if(localNewer){ data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalizeRow); }
-  else{ await fetchFromGitHub(); }
-  localStorage.setItem("index_last_sync",new Date().toISOString());
-  renderRecent();
-}
-function renderRecent(){
-  const last=data.slice(-5).reverse();
-  if(!last.length){ recent.textContent="–"; return; }
-  recent.innerHTML=last.map(v=>{
-    const c=CATS[v[2]]||["","#ccc","#000"];
-    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
-      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
-    </div>`;
-  }).join("");
-}
-
-/* Sync Status */
-let syncState=document.getElementById('syncState');
-function setSyncState(msg,color='#2563eb'){
-  syncState.textContent=msg; syncState.style.color=color; syncState.style.opacity=1;
-  setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
-}
-async function checkRemoteUpdate(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const j=await r.json();
-    const norm=j.map(normalizeRow);
-    const local=(JSON.parse(localStorage.getItem("vokabeln")||"[]"));
-    if(JSON.stringify(norm)!==JSON.stringify(local)){
-      localStorage.setItem("vokabeln",JSON.stringify(norm));
-      localStorage.setItem("vokabeln_updated",new Date().toISOString());
-      setSyncState('🔄 Neue Daten aus Cloud geladen','#22c55e');
-      data=norm; renderRecent();
-    }else setSyncState('🟢 Daten aktuell','#22c55e');
-  }catch{ setSyncState('🟠 Offline – arbeite lokal','#f59e0b'); }
-}
-setSyncState('🟡 Prüfe auf Updates...'); setInterval(checkRemoteUpdate,30000);
-
-/* ========= Tagesziel ========= */
-const DAILY_GOAL=30;
-function saveDailyProgress(correctInc=0){
-  const today=new Date().toISOString().slice(0,10);
-  const key='daily_'+today;
-  const val=parseInt(localStorage.getItem(key)||'0',10)+correctInc;
-  localStorage.setItem(key,String(val));
-  updateGoalUI(val);
-}
-function getDailyProgress(){
-  const today=new Date().toISOString().slice(0,10);
-  return parseInt(localStorage.getItem('daily_'+today)||'0',10);
-}
-function updateGoalUI(val){
-  goalFill.style.width=Math.min(100,Math.round(val/DAILY_GOAL*100))+'%';
-  goalText.textContent=\`Tagesziel: \${val} / \${DAILY_GOAL} richtige Antworten\`;
-}
-
-/* ========= Fehlerjournal ========= */
-function loadErrorBank(){
-  return JSON.parse(localStorage.getItem('error_bank')||'[]'); // array of [en,de,cat]
-}
-function saveErrorToBank(item){
-  const bank=loadErrorBank();
-  if(!bank.find(x=>x[0]===item[0] && x[1]===item[1] && x[2]===item[2])){
-    bank.push(item);
-    localStorage.setItem('error_bank',JSON.stringify(bank));
-  }
-}
-function clearErrorBank(){ localStorage.setItem('error_bank','[]'); }
-
-/* ========= Spiel-States ========= */
-let errorsList=[]; // nur für Karten-Wiederholungen
-function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
-
-let game="idle"; // "input" | "cards" | "idle"
-let modeEndless=false; // true nur im input-Modus
-let round=[], i=0, delay=3000, trap=false;
-
-/* Eingabe-/Karten-Session */
-let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
-let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
-
-/* Zusammenfassung/Statistik */
-const errorMap=new Map();           // key -> {q,correct,cat}
-const catStats=new Map();           // cat -> {asked,errors}
-
-/* Helpers Statistik */
-function resetStats(){
-  totalAsked=0; totalErrors=0; sinceCheckpoint=0; totalSkipped=0;
-  errorMap.clear(); catStats.clear();
-}
-function bumpCat(cat, wasError, countAsAsked = true){
-  const o=catStats.get(cat)||{asked:0,errors:0};
-  if(countAsAsked) o.asked++;
-  if(wasError) o.errors++;
-  catStats.set(cat,o);
-}
-function recordErrorForSummary(item, askedEN){
-  const [en,de,cat]=item;
-  const question = askedEN ? en : de;
-  const answer   = askedEN ? de : en;
-  const key=\`\${en}|\${de}|\${askedEN?1:0}\`;
-  if(!errorMap.has(key)) errorMap.set(key,{q:question,correct:answer,cat});
-}
-
-/* UI helpers */
-function setProg(){
-  progress.textContent=\`Frage \${totalAsked + 1} | Fehler: \${totalErrors}\${modeEndless ? " (Checkpoint alle 15)" : ""}\`;
-}
-function showStage(show){ stage.style.display=show?"block":"none"; }
-
-/* ===== Session Setup ===== */
-function filterByCategory(list){
-  const val = selCat.value;
-  if(val==="Alle") return list.slice();
-  if(val==="confuse") return list.filter(v=>!!v[6]);
-  return list.filter(v=>v[2]===val);
-}
-function pickDirection(){
-  return selMode.value==="toGerman" ? true
-       : selMode.value==="toEnglish" ? false
-       : Math.random()<0.5;
-}
-function startInputSession(pool){
-  game="input"; modeEndless=true; resetStats();
-  source=pool.slice(); shuffle(source); sourceIdx=0; curr=null; correct="";
-  btnRight.style.display="none";
-  btnDec.style.display="none";
-  btnSkip.style.display="inline-block";
-  rowInput.style.display="flex";
-  showStage(true);
-  nextInput();
-}
-function startCardsSession(pool){
-  game="cards"; modeEndless=false; resetStats();
-  errorsList=[]; i=0; trap=false;
-  round=pool.slice(); shuffle(round);
-  btnRight.style.display="inline-block";
-  btnDec.style.display="inline-block";
-  btnSkip.style.display="inline-block";
-  rowInput.style.display="none";
-  showStage(true);
-  nextCard();
-}
-
-/* ===== Input Mode (Endlos & Last30 Eingabe) ===== */
-function nextInput(){
-  delay=parseInt(selDelay.value,10);
-  if(!source.length){ alert("Keine Vokabeln vorhanden"); showStage(false); return; }
-
-  curr=source[sourceIdx];
-  sourceIdx=(sourceIdx+1)%source.length;
-  if(sourceIdx===0) shuffle(source);
-
-  const [en,de,cat]=curr;
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  currAskedEN = pickDirection();
-  const question = currAskedEN ? en : de;
-  correct = currAskedEN ? de : en;
-
-  q.textContent = question;
-  offer.textContent = ""; // entschlackt
-  inp.value=""; inp.focus(); inp.select?.();
-  setProg();
-}
-
-function handleInputSubmit(){
-  if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
-
-  const itemRef = (game==="input") ? curr : round[i];
-  const ok=isCorrectInput(inp.value,correct);
-
-  totalAsked++;
-  if(game==="input"){
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashInput(true);
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      recordErrorForSummary(itemRef,currAskedEN);
-      saveErrorToBank(itemRef);
-      offer.innerHTML=\`❌ Richtige Antwort: <b>\${correct}</b>\`;
-      setTimeout(()=>flashInput(false), delay);
-    }
-  }else{
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashCard(true);
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      addErrorOnce(itemRef);
-      recordErrorForSummary(itemRef, currAskedEN);
-      offer.innerHTML=\`❌ Richtige Antwort: <b>\${correct}</b>\`;
-      setTimeout(()=>flashCard(false), delay);
-    }
-  }
-}
-
-function flashInput(ok){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){
-    afterAdvanceInput();
-    return;
-  }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{
-    stage.classList.remove(ok?"flash-correct":"flash-wrong");
-    afterAdvanceInput();
-  }, delay);
-}
-
-function afterAdvanceInput(){
-  sinceCheckpoint++;
-  if(sinceCheckpoint >= 15){
-    sinceCheckpoint = 0;
-    const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-    if(endNow){
-      setTimeout(() => { endRound(); }, delay + 100);
-      return;
-    }
-  }
-  setTimeout(() => { nextInput(); }, 50);
-}
-
-/* ===== Cards Mode (Mitdenker/Täuschungserkennung) ===== */
-function nextCard(){
-  delay = parseInt(selDelay.value, 10);
-
-  if (i >= round.length) {
-    if (errorsList.length > 0) {
-      alert(\`↻ \${errorsList.length} zur Wiederholung – Runde startet erneut.\`);
-      round = errorsList.map(v => v);
-      errorsList = [];
-      i = 0;
-      nextCard();
-      return;
-    } else {
-      showStage(false);
-      progress.textContent = "Fertig! Starte eine neue Runde.";
-      startNote.style.opacity = 1;
-      setTimeout(() => { endRound(); }, 300);
-      return;
-    }
-  }
-
-  const [en,de,cat]=round[i];
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  const askEN = pickDirection();
-  const question=askEN?en:de;
-  const answer=askEN?de:en;
-  correct=answer;
-  currAskedEN = askEN;
-
-  q.textContent=question;
-
-  if(Math.random()<0.3){
-    const pool=data.map(v=>askEN?v[1]:v[0]);
-    let wrong; do{ wrong=pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
-    offer.textContent="💡 "+wrong; trap=true;
-  }else{
-    offer.textContent="💡 "+answer; trap=false;
-  }
-
-  rowButtons.style.display="flex";
-  rowInput.style.display="none";
-  inp.value="";
-  setProg();
-}
-
-function flashCard(ok){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){
-    afterAdvanceCard();
-    return;
-  }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{
-    stage.classList.remove(ok?"flash-correct":"flash-wrong");
-    afterAdvanceCard();
-  }, delay);
-}
-function afterAdvanceCard(){
-  i++; nextCard();
-}
-
-/* ===== Modal ===== */
-function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
-function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
-modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
-btnClose.addEventListener('click',closeModal);
-btnContinue.addEventListener('click',()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); });
-btnDownload.addEventListener('click',()=>{
-  const lines=[];
-  statGrid.querySelectorAll('.stat').forEach(s=>{
-    const l=s.querySelector('.label')?.textContent?.trim();
-    const v=s.querySelector('.value')?.textContent?.trim();
-    if(l && v) lines.push(\`\${l}: \${v}\`);
-  });
-  lines.push('', 'Fehlerliste:');
-  errorMap.forEach(v=>{
-    const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000"];
-    lines.push(\`- \${v.q} -> \${v.correct} [\${catMeta[0]}]\`);
-  });
-  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
-});
-
-/* ===== Runde beenden (korrekte Logik inkl. Übersprungen) ===== */
-function endRound() {
-  showStage(false);
-
-  const asked = totalAsked;
-  const errors = totalErrors;
-  const skipped = totalSkipped;
-  const correctCount = Math.max(0, asked - errors - skipped);
-  const acc = asked ? Math.round((correctCount / asked) * 100) : 100;
-
-  statGrid.innerHTML = \`
-    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">\${asked}</div></div>
-    <div class="stat"><div class="label">Korrekt</div><div class="value">\${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">\${errors}</div></div>
-    <div class="stat"><div class="label">Übersprungen</div><div class="value">\${skipped}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">\${acc}%</div></div>
-    <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">\${getDailyProgress()}/\${DAILY_GOAL}</div></div>
-  \`;
-
-  if (catStats.size) {
-    const parts = [];
-    catStats.forEach((v, cat) => {
-      const name = (CATS[cat] || ["Kategorie"])[0];
-      parts.push(\`\${name}: \${v.asked - v.errors}/\${v.asked}\`);
-    });
-    statGrid.insertAdjacentHTML(
-      "beforeend",
-      \`<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">\${parts.join(" • ")}</div>
-       </div>\`
-    );
-  }
-
-  errorList.innerHTML = "";
-  if (errorMap.size === 0) {
-    if (skipped > 0 && correctCount === 0) {
-      errorList.innerHTML = \`<div class="error-item" style="justify-content:center">⚠️ Alle Fragen übersprungen.</div>\`;
-    } else {
-      errorList.innerHTML = \`<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>\`;
-    }
-  } else {
-    errorMap.forEach((v) => {
-      const catMeta = CATS[v.cat] || ["Kategorie", "#ddd", "#000"];
-      const row = document.createElement("div");
-      row.className = "error-item";
-      row.innerHTML = \`
-        <div style="text-align:left;max-width:70%;word-break:break-word">
-          <div style="font-weight:800">\${v.q}</div>
-          <div style="opacity:.9">→ <b>\${v.correct}</b></div>
-        </div>
-        <span class="badge" style="background:\${catMeta[1]};color:\${catMeta[2]}">\${catMeta[0]}</span>
-      \`;
-      errorList.appendChild(row);
-    });
-  }
-
-  openModal();
-  startNote.style.opacity = 1;
-}
-
-/* ===== Button-Handler (korrektes Zählen) ===== */
-btnSub.onclick = () => {
-  const itemRef = (game === "input") ? curr : round[i];
-  const ok = isCorrectInput(inp.value, correct);
-
-  totalAsked++;
-  if (ok) {
-    saveDailyProgress(1);
-    bumpCat(itemRef[2], false, true);
-    if(game==="cards"){ /* Eingabe im Kartenmodus zählt als erkannt */ }
-    flashInput(true);
-  } else {
-    totalErrors++;
-    bumpCat(itemRef[2], true, true);
-    recordErrorForSummary(itemRef, currAskedEN);
-    saveErrorToBank(itemRef);
-    offer.innerHTML = \`❌ Richtige Antwort: <b>\${correct}</b>\`;
-    setTimeout(() => flashInput(false), delay);
-  }
-};
-
-// „Weiter“ / Überspringen → zählt NICHT als korrekt und NICHT in Kategorie-asked
-btnSkip.onclick = () => {
-  if (game === "idle") return;
-
-  const itemRef = (game === "input") ? curr : round[i];
-
-  totalAsked++;
-  totalSkipped++;
-  bumpCat(itemRef[2], false, false); // kein asked++ in Kategorien
-
-  // neutrales visuelles Feedback
-  stage.style.transition = "background 0.2s ease";
-  const originalBg = stage.style.backgroundColor;
-  stage.style.backgroundColor = "rgba(148,163,184,0.25)";
-
-  setTimeout(() => {
-    stage.style.backgroundColor = originalBg || "";
-    sinceCheckpoint++;
-
-    if (sinceCheckpoint >= 15) {
-      sinceCheckpoint = 0;
-      const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-      if (endNow) { endRound(); return; }
+    function beep(freq=660, ms=80, type='sine', vol=0.03){
+      if(!chkSound.checked) return;
+      try{
+        const ctx=new (window.AudioContext||window.webkitAudioContext)();
+        const o=ctx.createOscillator(), g=ctx.createGain();
+        o.type=type; o.frequency.value=freq; g.gain.value=vol;
+        o.connect(g); g.connect(ctx.destination);
+        o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, ms);
+      }catch{}
     }
 
-    if (game === "input") {
+    function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[j-1]]=[a[j-1],a[j]];}}
+    function normalize(s){
+      return s.trim().toLowerCase()
+        .normalize("NFD").replace(/\p{Diacritic}/gu,"")
+        .replace(/[-–—]/g,"-").replace(/\s+/g," ");
+    }
+    function isCorrectInput(input, solution){
+      const a=normalize(input);
+      const opts=solution.split(/[\/;|,]/).map(x=>normalize(x));
+      return opts.includes(a);
+    }
+
+    /* ========= Daten & Sync ========= */
+    let data=[], lastSync=null;
+
+    /* Schema: [en,de,cat,group,hint,created,confuseFlag] */
+    function normalizeRow(v){
+      return [
+        v[0]||"", v[1]||"", v[2]||"Gelb",
+        v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
+        !!v[6]
+      ];
+    }
+
+    async function fetchFromGitHub(){
+      const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+      try{
+        const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("fetch failed");
+        const j=await r.json();
+        const norm=j.map(normalizeRow);
+        localStorage.setItem("vokabeln",JSON.stringify(norm));
+        localStorage.setItem("vokabeln_updated",new Date().toISOString());
+        data=norm; lastSync=new Date();
+      }catch{
+        data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalizeRow);
+      }
+    }
+    async function loadData(){
+      const localUpd=localStorage.getItem("vokabeln_updated");
+      const lastUsed=localStorage.getItem("index_last_sync");
+      const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
+      if(localNewer){ data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalizeRow); }
+      else{ await fetchFromGitHub(); }
+      localStorage.setItem("index_last_sync",new Date().toISOString());
+      renderRecent();
+    }
+    function renderRecent(){
+      const last=data.slice(-5).reverse();
+      if(!last.length){ recent.textContent="–"; return; }
+      recent.innerHTML=last.map(v=>{
+        const c=CATS[v[2]]||["","#ccc","#000"];
+        return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
+          <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
+        </div>`;
+      }).join("");
+    }
+
+    /* Sync Status */
+    let syncState=document.getElementById('syncState');
+    function setSyncState(msg,color='#2563eb'){
+      syncState.textContent=msg; syncState.style.color=color; syncState.style.opacity=1;
+      setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
+    }
+    async function checkRemoteUpdate(){
+      try{
+        const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
+        const j=await r.json();
+        const norm=j.map(normalizeRow);
+        const local=(JSON.parse(localStorage.getItem("vokabeln")||"[]"));
+        if(JSON.stringify(norm)!==JSON.stringify(local)){
+          localStorage.setItem("vokabeln",JSON.stringify(norm));
+          localStorage.setItem("vokabeln_updated",new Date().toISOString());
+          setSyncState('🔄 Neue Daten aus Cloud geladen','#22c55e');
+          data=norm; renderRecent();
+        }else setSyncState('🟢 Daten aktuell','#22c55e');
+      }catch{ setSyncState('🟠 Offline – arbeite lokal','#f59e0b'); }
+    }
+    setSyncState('🟡 Prüfe auf Updates...'); setInterval(checkRemoteUpdate,30000);
+
+    /* ========= Tagesziel ========= */
+    const DAILY_GOAL=30;
+    function saveDailyProgress(correctInc=0){
+      const today=new Date().toISOString().slice(0,10);
+      const key='daily_'+today;
+      const val=parseInt(localStorage.getItem(key)||'0',10)+correctInc;
+      localStorage.setItem(key,String(val));
+      updateGoalUI(val);
+    }
+    function getDailyProgress(){
+      const today=new Date().toISOString().slice(0,10);
+      return parseInt(localStorage.getItem('daily_'+today)||'0',10);
+    }
+    function updateGoalUI(val){
+      goalFill.style.width=Math.min(100,Math.round(val/DAILY_GOAL*100))+'%';
+      goalText.textContent=`Tagesziel: ${val} / ${DAILY_GOAL} richtige Antworten`;
+    }
+
+    /* ========= Fehlerjournal ========= */
+    function loadErrorBank(){ return JSON.parse(localStorage.getItem('error_bank')||'[]'); }
+    function saveErrorToBank(item){
+      const bank=loadErrorBank();
+      if(!bank.find(x=>x[0]===item[0] && x[1]===item[1] && x[2]===item[2])){
+        bank.push(item);
+        localStorage.setItem('error_bank',JSON.stringify(bank));
+      }
+    }
+    function clearErrorBank(){ localStorage.setItem('error_bank','[]'); }
+
+    /* ========= Spiel-States ========= */
+    let errorsList=[]; // nur für Karten-Wiederholungen
+    function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
+
+    let game="idle"; // "input" | "cards" | "idle"
+    let modeEndless=false; // true nur im input-Modus
+    let round=[], i=0, delay=3000, trap=false;
+
+    /* Eingabe-/Karten-Session */
+    let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
+    let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
+
+    /* Zusammenfassung/Statistik */
+    const errorMap=new Map();           // key -> {q,correct,cat}
+    const catStats=new Map();           // cat -> {asked,errors}
+
+    /* Helpers Statistik */
+    function resetStats(){
+      totalAsked=0; totalErrors=0; sinceCheckpoint=0; totalSkipped=0;
+      errorMap.clear(); catStats.clear();
+    }
+    function bumpCat(cat, wasError, countAsAsked = true){
+      const o=catStats.get(cat)||{asked:0,errors:0};
+      if(countAsAsked) o.asked++;
+      if(wasError) o.errors++;
+      catStats.set(cat,o);
+    }
+    function recordErrorForSummary(item, askedEN){
+      const [en,de,cat]=item;
+      const question = askedEN ? en : de;
+      const answer   = askedEN ? de : en;
+      const key=`${en}|${de}|${askedEN?1:0}`;
+      if(!errorMap.has(key)) errorMap.set(key,{q:question,correct:answer,cat});
+    }
+
+    /* UI helpers */
+    function setProg(){
+      progress.textContent=`Frage ${totalAsked + 1} | Fehler: ${totalErrors}${modeEndless ? " (Checkpoint alle 15)" : ""}`;
+    }
+    function showStage(show){ stage.style.display=show?"block":"none"; }
+
+    /* ===== Session Setup ===== */
+    function filterByCategory(list){
+      const val = selCat.value;
+      if(val==="Alle") return list.slice();
+      if(val==="confuse") return list.filter(v=>!!v[6]);
+      return list.filter(v=>v[2]===val);
+    }
+    function pickDirection(){
+      return selMode.value==="toGerman" ? true
+           : selMode.value==="toEnglish" ? false
+           : Math.random()<0.5;
+    }
+    function startInputSession(pool){
+      game="input"; modeEndless=true; resetStats();
+      source=pool.slice(); shuffle(source); sourceIdx=0; curr=null; correct="";
+      btnRight.style.display="none";
+      btnDec.style.display="none";
+      btnSkip.style.display="inline-block";
+      rowInput.style.display="flex";
+      showStage(true);
       nextInput();
-    } else if (game === "cards") {
-      i++;
+    }
+    function startCardsSession(pool){
+      game="cards"; modeEndless=false; resetStats();
+      errorsList=[]; i=0; trap=false;
+      round=pool.slice(); shuffle(round);
+      btnRight.style.display="inline-block";
+      btnDec.style.display="inline-block";
+      btnSkip.style.display="inline-block";
+      rowInput.style.display="none";
+      showStage(true);
       nextCard();
     }
-  }, 180);
-};
 
-// Karteikarten: „Richtig“ gedrückt
-btnRight.onclick = () => {
-  if (game !== "cards") return;
-  const itemRef = round[i];
-  totalAsked++;
+    /* ===== Input Mode (Endlos & Last30 Eingabe) ===== */
+    function nextInput(){
+      delay=parseInt(selDelay.value,10);
+      if(!source.length){ alert("Keine Vokabeln vorhanden"); showStage(false); return; }
 
-  if (trap) {
-    // Falsches Angebot war gezeigt, "Richtig" ist ein Fehler
-    totalErrors++;
-    bumpCat(itemRef[2], true, true);
-    offer.innerHTML = \`❌ Richtige Antwort: <b>\${correct}</b>\`;
-    setTimeout(() => flashCard(false), delay);
-  } else {
-    // korrekt erkannt
-    bumpCat(itemRef[2], false, true);
-    saveDailyProgress(1);
-    flashCard(true);
-  }
-};
+      curr=source[sourceIdx];
+      sourceIdx=(sourceIdx+1)%source.length;
+      if(sourceIdx===0) shuffle(source);
 
-// Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub)
-btnDec.onclick = () => {
-  if (game !== "cards") return;
-  rowInput.style.display = "flex";
-  inp.value = "";
-  inp.focus();
-  inp.select?.();
-};
+      const [en,de,cat]=curr;
+      const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
+      chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
 
-/* ===== Tastatursteuerung ===== */
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    if(rowInput.style.display!=="none") btnSub.click();
-  } else if(e.key==='ArrowRight'){
-    btnSkip.click();
-  } else if(e.key.toLowerCase()==='r' && game==='cards'){
-    btnRight.click();
-  } else if(e.key.toLowerCase()==='t' && game==='cards'){
-    btnDec.click();
-  }
-});
+      currAskedEN = pickDirection();
+      const question = currAskedEN ? en : de;
+      correct = currAskedEN ? de : en;
 
-/* ===== Start-Buttons ===== */
-btnLearn.onclick=()=>{
-  startNote.style.opacity=0.4;
-  const pool=filterByCategory(data);
-  if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
-  startInputSession(pool);
-};
+      q.textContent = question;
+      offer.textContent = "";
+      inp.value=""; inp.focus(); inp.select?.();
+      setProg();
+    }
 
-btnCards.onclick=()=>{
-  startNote.style.opacity=0.4;
-  const pool=filterByCategory(data);
-  if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
-  startCardsSession(pool);
-};
+    function handleInputSubmit(){
+      if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
 
-btnLast30.onclick=()=>{
-  const last30=data.slice(-30);
-  if(!last30.length){ alert("Keine Vokabeln vorhanden"); return; }
-  startNote.style.opacity=0.4;
+      const itemRef = (game==="input") ? curr : round[i];
+      const ok=isCorrectInput(inp.value,correct);
 
-  const useCards=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
-  const pool=filterByCategory(last30);
-  if(!pool.length){ alert("Keine passenden Vokabeln in dieser Kategorie."); return; }
+      totalAsked++;
+      if(game==="input"){
+        if(ok){
+          saveDailyProgress(1);
+          bumpCat(itemRef[2],false,true);
+          flashInput(true);
+        }else{
+          totalErrors++;
+          bumpCat(itemRef[2],true,true);
+          recordErrorForSummary(itemRef,currAskedEN);
+          saveErrorToBank(itemRef);
+          offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+          setTimeout(()=>flashInput(false), delay);
+        }
+      }else{
+        // Karten: Eingabe erscheint NUR nach "Täuschung erkannt"
+        if(ok){
+          saveDailyProgress(1);
+          bumpCat(itemRef[2],false,true);
+          flashCard(true);
+        }else{
+          totalErrors++;
+          bumpCat(itemRef[2],true,true);
+          addErrorOnce(itemRef);
+          recordErrorForSummary(itemRef, currAskedEN);
+          offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+          setTimeout(()=>flashCard(false), delay);
+        }
+      }
+    }
 
-  if(useCards){ startCardsSession(pool); }
-  else{ startInputSession(pool); }
-};
+    function flashInput(ok){
+      if(ok){ beep(880,70); } else { beep(220,120,'square'); }
+      if(!chkFeedback.checked){ afterAdvanceInput(); return; }
+      stage.classList.add(ok?"flash-correct":"flash-wrong");
+      setTimeout(()=>{
+        stage.classList.remove(ok?"flash-correct":"flash-wrong");
+        afterAdvanceInput();
+      }, delay);
+    }
 
-/* ===== Fehler wiederholen (Pool = Fehlerbank) ===== */
-btnErrorsOnly.onclick=()=>{
-  const bank=loadErrorBank();
-  if(!bank.length){ alert("Kein Fehlerjournal vorhanden – super!"); return; }
-  const pool=filterByCategory(bank);
-  if(!pool.length){ alert("Keine passenden Fehler in dieser Kategorie."); return; }
-  startInputSession(pool);
-};
+    function afterAdvanceInput(){
+      sinceCheckpoint++;
+      if(sinceCheckpoint >= 15){
+        sinceCheckpoint = 0;
+        const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+        if(endNow){ setTimeout(() => { endRound(); }, 80); return; }
+      }
+      setTimeout(() => { nextInput(); }, 50);
+    }
 
-/* ===== Statistik öffnen (Zwischenstand) ===== */
-btnStats.onclick=()=>{
-  const asked=totalAsked, errors=totalErrors, skipped=totalSkipped;
-  const correctCount=Math.max(0,asked-errors-skipped);
-  const acc=asked ? Math.round((correctCount/asked)*100) : 100;
-  statGrid.innerHTML=\`
-    <div class="stat"><div class="label">Aktuell beantwortet</div><div class="value">\${asked}</div></div>
-    <div class="stat"><div class="label">Korrekt</div><div class="value">\${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">\${errors}</div></div>
-    <div class="stat"><div class="label">Übersprungen</div><div class="value">\${skipped}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">\${acc}%</div></div>
-    <div class="stat"><div class="label">Tagesziel</div><div class="value">\${getDailyProgress()}/\${DAILY_GOAL}</div></div>
-  \`;
-  errorList.innerHTML = errorMap.size ? '' : \`<div class="error-item" style="justify-content:center">Bislang keine Fehler in dieser Runde.</div>\`;
-  if(errorMap.size){
-    errorMap.forEach(v=>{
-      const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
-      const row=document.createElement('div');
-      row.className='error-item';
-      row.innerHTML=\`<div style="text-align:left;max-width:70%"><div style="font-weight:800">\${v.q}</div><div style="opacity:.9">→ <b>\${v.correct}</b></div></div><span class="badge" style="background:\${c[1]};color:\${c[2]}">\${c[0]}</span>\`;
-      errorList.appendChild(row);
+    /* ===== Cards Mode (Mitdenker/Täuschungserkennung) ===== */
+    function nextCard(){
+      delay = parseInt(selDelay.value, 10);
+
+      if (i >= round.length) {
+        if (errorsList.length > 0){
+          alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
+          round = errorsList.slice(); errorsList = []; i = 0;
+          nextCard(); return;
+        } else {
+          showStage(false);
+          progress.textContent = "Fertig! Starte eine neue Runde.";
+          startNote.style.opacity = 1;
+          setTimeout(() => { endRound(); }, 300);
+          return;
+        }
+      }
+
+      const [en,de,cat]=round[i];
+      const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
+      chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
+
+      const askEN = pickDirection();
+      const question=askEN?en:de;
+      const answer=askEN?de:en;
+      correct=answer;
+      currAskedEN = askEN;
+
+      q.textContent=question;
+
+      if(Math.random()<0.3){
+        const pool=data.map(v=>askEN?v[1]:v[0]);
+        let wrong; do{ wrong=pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
+        offer.textContent="💡 "+wrong; trap=true;
+      }else{
+        offer.textContent="💡 "+answer; trap=false;
+      }
+
+      rowButtons.style.display="flex";
+      rowInput.style.display="none";
+      inp.value="";
+      setProg();
+    }
+
+    function flashCard(ok){
+      if(ok){ beep(880,70); } else { beep(220,120,'square'); }
+      if(!chkFeedback.checked){ afterAdvanceCard(); return; }
+      stage.classList.add(ok?"flash-correct":"flash-wrong");
+      setTimeout(()=>{
+        stage.classList.remove(ok?"flash-correct":"flash-wrong");
+        afterAdvanceCard();
+      }, delay);
+    }
+    function afterAdvanceCard(){ i++; nextCard(); }
+
+    /* ===== Modal ===== */
+    function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
+    function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
+    modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
+    document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+    btnClose.addEventListener('click',closeModal);
+    btnContinue.addEventListener('click',()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); });
+    btnDownload.addEventListener('click',()=>{
+      const lines=[];
+      statGrid.querySelectorAll('.stat').forEach(s=>{
+        const l=s.querySelector('.label')?.textContent?.trim();
+        const v=s.querySelector('.value')?.textContent?.trim();
+        if(l && v) lines.push(`${l}: ${v}`);
+      });
+      lines.push('', 'Fehlerliste:');
+      errorMap.forEach(v=>{
+        const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000"];
+        lines.push(`- ${v.q} -> ${v.correct} [${catMeta[0]}]`);
+      });
+      const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
     });
-  }
-  openModal();
-};
 
-/* ===== Dark Mode persist ===== */
-(function initDark(){
-  const s=localStorage.getItem('theme_dark')==='1';
-  if(s){ document.body.classList.add('dark'); chkDark.checked=true; }
-  el('btnDark').addEventListener('change',()=>{
-    if(chkDark.checked){ document.body.classList.add('dark'); localStorage.setItem('theme_dark','1'); }
-    else{ document.body.classList.remove('dark'); localStorage.setItem('theme_dark','0'); }
-  });
-})();
+    /* ===== Runde beenden (korrekte Logik inkl. Übersprungen) ===== */
+    function endRound() {
+      showStage(false);
 
-/* ===== Init ===== */
-function softResetUI(){
-  showStage(false);
-  startNote.style.opacity=1;
-  progress.textContent="Bereit.";
-  offer.textContent="";
-  q.textContent="Bereit?";
-  chip.textContent="–"; chip.style.background=""; chip.style.color="";
-  rowInput.style.display="none";
-  rowButtons.style.display="flex";
-  btnRight.style.display="none";
-  btnDec.style.display="none";
-  btnSkip.style.display="none";
-  resetStats();
-  errorsList=[];
-  round=[]; i=0; source=[]; sourceIdx=0; curr=null; correct=""; game="idle"; modeEndless=false;
-}
+      const asked = totalAsked;
+      const errors = totalErrors;
+      const skipped = totalSkipped;
+      const correctCount = Math.max(0, asked - errors - skipped);
+      const acc = asked ? Math.round((correctCount / asked) * 100) : 100;
 
-softResetUI();
-updateGoalUI(getDailyProgress());
-loadData().then(checkRemoteUpdate);
+      statGrid.innerHTML = `
+        <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">${asked}</div></div>
+        <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
+        <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
+        <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
+        <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
+        <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
+      `;
 
-/* ===== Neustart (Soft-Reset statt reload) ===== */
-btnHardReload.addEventListener('click', softResetUI);
+      if (catStats.size) {
+        const parts = [];
+        catStats.forEach((v, cat) => {
+          const name = (CATS[cat] || ["Kategorie"])[0];
+          parts.push(`${name}: ${v.asked - v.errors}/${v.asked}`);
+        });
+        statGrid.insertAdjacentHTML(
+          "beforeend",
+          `<div class="stat" style="grid-column:1/-1">
+             <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+             <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
+           </div>`
+        );
+      }
 
-/* ===== PWA Register (fehler-tolerant) ===== */
-if('serviceWorker' in navigator){
-  try{
-    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-  }catch{}
-}
+      errorList.innerHTML = "";
+      if (errorMap.size === 0) {
+        if (skipped > 0 && correctCount === 0) {
+          errorList.innerHTML = `<div class="error-item" style="justify-content:center">⚠️ Alle Fragen übersprungen.</div>`;
+        } else {
+          errorList.innerHTML = `<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
+        }
+      } else {
+        errorMap.forEach((v) => {
+          const catMeta = CATS[v.cat] || ["Kategorie", "#ddd", "#000"];
+          const row = document.createElement("div");
+          row.className = "error-item";
+          row.innerHTML = `
+            <div style="text-align:left;max-width:70%;word-break:break-word">
+              <div style="font-weight:800">${v.q}</div>
+              <div style="opacity:.9">→ <b>${v.correct}</b></div>
+            </div>
+            <span class="badge" style="background:${catMeta[1]};color:${catMeta[2]}">${catMeta[0]}</span>
+          `;
+          errorList.appendChild(row);
+        });
+      }
 
-/* ===== Start-Hinweis ausblenden ===== */
-[btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
-  btn.addEventListener("click", () => {
-    startNote.style.display = "none";
-  });
-});
+      openModal();
+      startNote.style.opacity = 1;
+    }
 
-})();
-</script>
+    /* ===== Button-Handler ===== */
+    // Eingabe abschicken (Input- oder Cards-Eingabe nach "Täuschung erkannt")
+    btnSub.onclick = () => { handleInputSubmit(); };
+
+    // „Weiter“ / Überspringen → zählt NICHT als korrekt und NICHT in Kategorie-asked
+    btnSkip.onclick = () => {
+      if (game === "idle") return;
+      const itemRef = (game === "input") ? curr : round[i];
+
+      totalAsked++;
+      totalSkipped++;
+      bumpCat(itemRef[2], false, false); // kein asked++ in Kategorien
+
+      // neutrales visuelles Feedback
+      stage.style.transition = "background 0.2s ease";
+      const originalBg = stage.style.backgroundColor;
+      stage.style.backgroundColor = "rgba(148,163,184,0.25)";
+
+      setTimeout(() => {
+        stage.style.backgroundColor = originalBg || "";
+        sinceCheckpoint++;
+        if (sinceCheckpoint >= 15) {
+          sinceCheckpoint = 0;
+          const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+          if (endNow) { endRound(); return; }
+        }
+        if (game === "input") nextInput();
+        else { i++; nextCard(); }
+      }, 180);
+    };
+
+    // Karteikarten: „Richtig“ gedrückt
+    btnRight.onclick = () => {
+      if (game !== "cards") return;
+      const itemRef = round[i];
+      totalAsked++;
+
+      if (trap) {
+        // Angebot war falsch, "Richtig" ist ein Fehler
+        totalErrors++;
+        bumpCat(itemRef[2], true, true);
+        offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+        setTimeout(() => flashCard(false), delay);
+      } else {
+        // korrekt erkannt
+        bumpCat(itemRef[2], false, true);
+        saveDailyProgress(1);
+        flashCard(true);
+      }
+    };
+
+    // Karteikarten: „Täuschung erkannt“ -> Eingabe aktivieren (Bewertung via btnSub)
+    btnDec.onclick = () => {
+      if (game !== "cards") return;
+      rowInput.style.display = "flex";
+      inp.value = "";
+      inp.focus();
+      inp.select?.();
+    };
+
+    /* ===== Tastatursteuerung ===== */
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){
+        if(rowInput.style.display!=="none") btnSub.click();
+      } else if(e.key==='ArrowRight'){
+        btnSkip.click();
+      } else if(e.key.toLowerCase()==='r' && game==='cards'){
+        btnRight.click();
+      } else if(e.key.toLowerCase()==='t' && game==='cards'){
+        btnDec.click();
+      }
+    });
+
+    /* ===== Start-Buttons ===== */
+    btnLearn.onclick=()=>{
+      startNote.style.opacity=0.4;
+      const pool=filterByCategory(data);
+      if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
+      startInputSession(pool);
+    };
+
+    btnCards.onclick=()=>{
+      startNote.style.opacity=0.4;
+      const pool=filterByCategory(data);
+      if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
+      startCardsSession(pool);
+    };
+
+    btnLast30.onclick=()=>{
+      const last30=data.slice(-30);
+      if(!last30.length){ alert("Keine Vokabeln vorhanden"); return; }
+      startNote.style.opacity=0.4;
+
+      const useCards=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
+      const pool=filterByCategory(last30);
+      if(!pool.length){ alert("Keine passenden Vokabeln in dieser Kategorie."); return; }
+
+      if(useCards){ startCardsSession(pool); }
+      else{ startInputSession(pool); }
+    };
+
+    /* ===== Fehler wiederholen (Pool = Fehlerbank) ===== */
+    btnErrorsOnly.onclick=()=>{
+      const bank=loadErrorBank();
+      if(!bank.length){ alert("Kein Fehlerjournal vorhanden – super!"); return; }
+      const pool=filterByCategory(bank);
+      if(!pool.length){ alert("Keine passenden Fehler in dieser Kategorie."); return; }
+      startInputSession(pool);
+    };
+
+    /* ===== Statistik öffnen (Zwischenstand) ===== */
+    btnStats.onclick=()=>{
+      const asked=totalAsked, errors=totalErrors, skipped=totalSkipped;
+      const correctCount=Math.max(0,asked-errors-skipped);
+      const acc=asked ? Math.round((correctCount/asked)*100) : 100;
+      statGrid.innerHTML=`
+        <div class="stat"><div class="label">Aktuell beantwortet</div><div class="value">${asked}</div></div>
+        <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
+        <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
+        <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
+        <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
+        <div class="stat"><div class="label">Tagesziel</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
+      `;
+      errorList.innerHTML = errorMap.size ? '' : `<div class="error-item" style="justify-content:center">Bislang keine Fehler in dieser Runde.</div>`;
+      if(errorMap.size){
+        errorMap.forEach(v=>{
+          const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
+          const row=document.createElement('div');
+          row.className='error-item';
+          row.innerHTML=`<div style="text-align:left;max-width:70%"><div style="font-weight:800">${v.q}</div><div style="opacity:.9">→ <b>${v.correct}</b></div></div><span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
+          errorList.appendChild(row);
+        });
+      }
+      openModal();
+    };
+
+    /* ===== Dark Mode persist ===== */
+    (function initDark(){
+      const s=localStorage.getItem('theme_dark')==='1';
+      if(s){ document.body.classList.add('dark'); chkDark.checked=true; }
+      el('btnDark').addEventListener('change',()=>{
+        if(chkDark.checked){ document.body.classList.add('dark'); localStorage.setItem('theme_dark','1'); }
+        else{ document.body.classList.remove('dark'); localStorage.setItem('theme_dark','0'); }
+      });
+    })();
+
+    /* ===== Init ===== */
+    function softResetUI(){
+      showStage(false);
+      startNote.style.opacity=1;
+      progress.textContent="Bereit.";
+      offer.textContent="";
+      q.textContent="Bereit?";
+      chip.textContent="–"; chip.style.background=""; chip.style.color="";
+      rowInput.style.display="none";
+      rowButtons.style.display="flex";
+      btnRight.style.display="none";
+      btnDec.style.display="none";
+      btnSkip.style.display="none";
+      resetStats();
+      errorsList=[];
+      round=[]; i=0; source=[]; sourceIdx=0; curr=null; correct=""; game="idle"; modeEndless=false;
+    }
+
+    softResetUI();
+    updateGoalUI(getDailyProgress());
+    loadData().then(checkRemoteUpdate);
+
+    /* ===== Neustart (Soft-Reset statt reload) ===== */
+    btnHardReload.addEventListener('click', softResetUI);
+
+    /* ===== PWA Register (tolerant bei 404) ===== */
+    if('serviceWorker' in navigator){
+      try{ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }catch{}
+    }
+
+    /* ===== Start-Hinweis ausblenden ===== */
+    [btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
+      btn.addEventListener("click", () => { startNote.style.display = "none"; });
+    });
+  })();
+  </script>
 </body>
 </html>
