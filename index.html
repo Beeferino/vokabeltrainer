@@ -132,7 +132,7 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 
 }
 
-/* === "Zuletzt hinzugefügt" – Doppelpfeil, beide drehen nach unten === */
+/* === "Zuletzt hinzugefügt" – Korrigierte Pfeilrichtung, beide drehen nach unten === */
 
 details.recent-section {
   background: rgba(255, 255, 255, 0.95);
@@ -162,20 +162,28 @@ details.recent-section summary {
   transition: all 0.25s ease;
 }
 
-/* Pfeile vor und nach dem Text */
-details.recent-section summary::before,
-details.recent-section summary::after {
+/* --- Linker Pfeil (normal nach rechts) --- */
+details.recent-section summary::before {
   content: "▶";
   font-size: 0.85em;
   color: #2563eb;
-  transition: transform 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Beide Pfeile drehen nach unten beim Öffnen */
+/* --- Rechter Pfeil (gespiegelt nach links) --- */
+details.recent-section summary::after {
+  content: "◀";
+  font-size: 0.85em;
+  color: #2563eb;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* --- Beide Pfeile drehen beim Öffnen nach unten --- */
 details.recent-section[open] summary::before,
 details.recent-section[open] summary::after {
-  transform: rotate(90deg);
+  content: "▼";
   color: #1d4ed8;
+  transform: none;
 }
 
 /* Hovereffekt */
@@ -197,6 +205,7 @@ details.recent-section > div {
   opacity: 0;
   transition: max-height 0.4s ease, opacity 0.3s ease;
 }
+
 details.recent-section[open] > div {
   max-height: 800px;
   opacity: 1;
@@ -233,7 +242,6 @@ body.dark details.recent-section summary:hover {
   text-shadow: 0 0 6px rgba(96,165,250,0.4);
 }
 
-  
 </style>
 </head>
 <body>
