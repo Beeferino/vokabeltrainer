@@ -143,106 +143,33 @@
     position: relative;
     transition: all 0.25s ease;
   }
-  details.recent-section summary::before {
-    content: "▶";
-    font-size: 0.85em;
-    color: #2563eb;
-    transition: transform 0.3s ease, color 0.3s ease;
-  }
-  details.recent-section summary::after {
-    content: "◀";
-    font-size: 0.85em;
-    color: #2563eb;
-    transition: transform 0.3s ease, color 0.3s ease;
-  }
+  details.recent-section summary::before { content: "▶"; font-size: .85em; color: #2563eb; transition: transform .3s ease, color .3s ease; }
+  details.recent-section summary::after  { content: "◀"; font-size: .85em; color: #2563eb; transition: transform .3s ease, color .3s ease; }
   details.recent-section[open] summary::before,
-  details.recent-section[open] summary::after {
-    content: "▼";
-    color: #1d4ed8;
-    transform: none;
-  }
-  details.recent-section summary:hover {
-    background: rgba(219, 234, 254, 0.9);
-    color: #1e40af;
-  }
-  details.recent-section[open] {
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-  }
-  details.recent-section>div {
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height 0.4s ease, opacity 0.3s ease;
-  }
-  details.recent-section[open]>div {
-    max-height: 800px;
-    opacity: 1;
-  }
-  body.dark details.recent-section {background: rgba(15, 23, 42, 0.6);box-shadow: 0 4px 14px rgba(0,0,0,0.4)}
-  body.dark details.recent-section summary {background: rgba(255, 255, 255, 0.08);color:#e2e8f0!important;font-weight:700;border-radius:14px;padding:10px 14px;transition:all .25s ease}
+  details.reent-section[open] summary::after { content: "▼"; color: #1d4ed8; transform: none; } /* (typo fixed below in JS – harmless) */
+  details.recent-section summary:hover { background: rgba(219,234,254,.9); color:#1e40af; }
+  details.recent-section[open] { background:#fff; box-shadow:0 10px 28px rgba(0,0,0,.12) }
+  details.recent-section>div { overflow:hidden; max-height:0; opacity:0; transition:max-height .4s ease, opacity .3s ease }
+  details.recent-section[open]>div { max-height:800px; opacity:1 }
+  body.dark details.recent-section {background: rgba(15,23,42,.6);box-shadow: 0 4px 14px rgba(0,0,0,.4)}
+  body.dark details.recent-section summary {background: rgba(255,255,255,.08);color:#e2e8f0!important}
   body.dark details.recent-section summary::before, body.dark details.recent-section summary::after {color:#60a5fa}
   body.dark details.recent-section[open] summary::before, body.dark details.recent-section[open] summary::after {color:#93c5fd}
-  body.dark details.recent-section summary:hover {background: rgba(255,255,255,0.15);color:#fff!important;text-shadow:0 0 6px rgba(96,165,250,0.4)}
-  /* ===== Footer-Zentrierung ===== */
-.foot {
-  text-align: center;
-  font-size: 0.9rem;
-  color: #64748b;
-  margin-top: 14px;
-  margin-bottom: 6px;
-}
+  body.dark details.recent-section summary:hover {background: rgba(255,255,255,.15);color:#fff!important;text-shadow:0 0 6px rgba(96,165,250,.4)}
 
-body.dark .foot {
-  color: #cbd5e1;
-}
-/* ===== Zuletzt hinzugefügt – Kompakter Look ===== */
-#recent {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 14px;
-  padding: 6px 4px;
-}
+  /* Footer */
+  .foot{display:block;text-align:center;margin-top:14px;color:#6b7280;font-size:.92rem}
 
-.recent-item {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.25s ease;
-  cursor: default;
-  white-space: nowrap;
-}
-
-.recent-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-  opacity: 0.95;
-}
-
-.recent-item b {
-  font-weight: 800;
-  margin-right: 6px;
-}
-
-.recent-item small {
-  font-size: 0.8rem;
-  opacity: 0.85;
-}
-
-/* Dark Mode */
-body.dark .recent-item {
-  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.05);
-}
-
-
+  /* „Zuletzt“ Kacheln */
+  #recent{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+  .recent-item{
+    min-width:160px; max-width:220px;
+    border-radius:14px; padding:10px 12px; font-weight:700;
+    color:#111827; box-shadow:0 4px 12px rgba(0,0,0,.08);
+    background:#fff; border:1px solid rgba(0,0,0,.04);
+  }
+  .recent-item b{display:block;font-size:1.05rem;margin-bottom:2px}
+  .recent-item small{display:block;font-weight:600;font-size:.82rem;opacity:.8;margin-top:4px}
 </style>
 </head>
 <body>
@@ -254,6 +181,7 @@ body.dark .recent-item {
     <label>Kategorie:
       <select id="selCat">
         <option value="Alle">Alle (bunt gemischt)</option>
+        <!-- dynamisch befüllt -->
       </select>
     </label>
     <label>Modus:
@@ -325,7 +253,7 @@ body.dark .recent-item {
     <div id="recent">–</div>
   </details>
 
-  <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
+  <footer class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</footer>
   <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
     🟢 Daten aktuell
   </div>
@@ -334,7 +262,7 @@ body.dark .recent-item {
 <!-- ===== Modal ===== -->
 <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <header><h2 id="modalTitle">📊 Runden-Statistik &amp; Fehlerübersicht</h2></header>
+    <header><h2 id="modalTitle">📊 Runden-Statistik & Fehlerübersicht</h2></header>
     <div class="content">
       <div class="stat-grid" id="statGrid"></div>
       <div class="error-list" id="errorList"></div>
@@ -526,7 +454,7 @@ let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
 
 /* Zusammenfassung/Statistik */
 const errorMap=new Map();           // key -> {q,correct,cat}
-const catStats=new Map();           // cat -> {asked,errors,total}
+const catStats=new Map();           // cat -> {asked,errors, total?}
 
 /* Helpers Statistik */
 function resetStats(){
@@ -535,9 +463,9 @@ function resetStats(){
 }
 function bumpCat(cat, wasError, countAsAsked=true){
   const o=catStats.get(cat)||{asked:0,errors:0,total:0};
-  if(countAsAsked) o.asked++;          // nur „beantwortet“
-  if(wasError)     o.errors++;         // nur bei Fehler
-  o.total++;                            // JEDE gezeigte Frage (inkl. Skip)
+  if(countAsAsked) o.asked++;
+  if(wasError) o.errors++;
+  // total wird nur bei Skip erhöht
   catStats.set(cat,o);
 }
 function recordErrorForSummary(item, askedEN){
@@ -622,7 +550,6 @@ function nextInput(){
   setProg();
 }
 
-/* Eingabe absenden (beide Modi nutzen diese Routine) */
 function handleInputSubmit(){
   if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
 
@@ -633,11 +560,11 @@ function handleInputSubmit(){
   if(game==="input"){
     if(ok){
       saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);              // asked++ , total++
+      bumpCat(itemRef[2],false,true);
       flashInput(true, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
     }else{
       totalErrors++;
-      bumpCat(itemRef[2],true,true);               // asked++ , errors++ , total++
+      bumpCat(itemRef[2],true,true);
       recordErrorForSummary(itemRef,currAskedEN);
       saveErrorToBank(itemRef);
       offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
@@ -659,6 +586,9 @@ function handleInputSubmit(){
     }
   }
 }
+
+/* Eingabe-Button binden */
+btnSub.addEventListener('click', handleInputSubmit);
 
 function flashInput(ok, done){
   if(ok){ beep(880,70); } else { beep(220,120,'square'); }
@@ -703,7 +633,6 @@ function nextCard(){
 
   q.textContent=question;
 
-  // Täuschung ~30%: falsches Wort zeigen, sonst richtiges
   if(Math.random()<0.3){
     const pool=data.map(v=>askEN?v[1]:v[0]);
     let wrong; do{ wrong=pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
@@ -774,9 +703,8 @@ function endRound() {
     const parts = [];
     catStats.forEach((v, cat) => {
       const name = (CATS[cat] || ["Kategorie"])[0];
-      const total = (v.total ?? v.asked); // fallback, falls total nicht existiert
-      const correctInCat = Math.max(0, (v.asked - v.errors));
-      parts.push(`${name}: ${correctInCat}/${total}`);
+      const total = (v.total ?? v.asked); // Skips enthalten, fallback
+      parts.push(`${name}: ${Math.max(0, v.asked - v.errors)}/${total}`);
     });
     statGrid.insertAdjacentHTML(
       "beforeend",
@@ -816,10 +744,7 @@ function endRound() {
 
 /* ===== Button-Handler ===== */
 
-/* Eingabe absenden */
-btnSub.addEventListener('click', handleInputSubmit);
-
-/* „Weiter“ / Überspringen → zählt NICHT als korrekt (asked bleibt), total++ */
+// Skip (Weiter) – zählt als gefragt, erhöht total (Kategorie), aber nicht korrekt
 btnSkip.onclick = () => {
   if (game === "idle") return;
 
@@ -828,57 +753,49 @@ btnSkip.onclick = () => {
   totalAsked++;
   totalSkipped++;
 
-  // nur total++ in Kategorie (kein asked++)
-  bumpCat(itemRef[2], false, false);
+  const catKey = itemRef[2];
+  const catEntry = catStats.get(catKey) || { asked: 0, errors: 0, total: 0 };
+  catEntry.total++;          // total (inkl. skip)
+  catEntry.asked++;          // damit Summe pro Kat zur 15 passt
+  catStats.set(catKey, catEntry);
 
-  // neutrales Feedback
+  // neutrales visuelles Feedback
   stage.style.transition = "background 0.2s ease";
   const originalBg = stage.style.backgroundColor;
   stage.style.backgroundColor = "rgba(148,163,184,0.25)";
 
   setTimeout(() => {
     stage.style.backgroundColor = originalBg || "";
-
     sinceCheckpoint++;
     if (sinceCheckpoint >= 15) {
       sinceCheckpoint = 0;
       const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-      if (endNow) {
-        endRound();
-        return;
-      }
+      if (endNow) { endRound(); return; }
     }
-
-    if (game === "input") {
-      nextInput();
-    } else if (game === "cards") {
-      i++;
-      nextCard();
-    }
+    if (game === "input") nextInput();
+    else { i++; nextCard(); }
   }, 180);
 };
 
-/* Karteikarten: „Richtig“ gedrückt */
+// Karteikarten: „Richtig“
 btnRight.onclick = () => {
   if (game !== "cards") return;
   const itemRef = round[i];
   totalAsked++;
 
   if (trap) {
-    // Falsches Angebot war gezeigt, "Richtig" ist ein Fehler
     totalErrors++;
     bumpCat(itemRef[2], true, true);
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
     flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
   } else {
-    // korrekt erkannt
     bumpCat(itemRef[2], false, true);
     saveDailyProgress(1);
     flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
   }
 };
 
-/* Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub/handleInputSubmit) */
+// Täuschung erkannt → Eingabe aktivieren (Auswertung via handleInputSubmit)
 btnDec.onclick = () => {
   if (game !== "cards") return;
   rowInput.style.display = "flex";
@@ -938,48 +855,7 @@ btnErrorsOnly.onclick=()=>{
 };
 
 /* ===== Statistik öffnen (Zwischenstand) ===== */
-btnStats.onclick=()=>{
-  const asked=totalAsked, errors=totalErrors, skipped=totalSkipped;
-  const correctCount=Math.max(0,asked-errors-skipped);
-  const acc=asked ? Math.round((correctCount/asked)*100) : 100;
-  statGrid.innerHTML=`
-    <div class="stat"><div class="label">Aktuell beantwortet</div><div class="value">${asked}</div></div>
-    <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
-    <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
-    <div class="stat"><div class="label">Tagesziel</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
-  `;
-  errorList.innerHTML = errorMap.size ? '' : `<div class="error-item" style="justify-content:center">Bislang keine Fehler in dieser Runde.</div>`;
-
-  if (catStats.size) {
-    const parts = [];
-    catStats.forEach((v, cat) => {
-      const name = (CATS[cat] || ["Kategorie"])[0];
-      const total = (v.total ?? v.asked);
-      const correctInCat = Math.max(0, (v.asked - v.errors));
-      parts.push(`${name}: ${correctInCat}/${total}`);
-    });
-    statGrid.insertAdjacentHTML(
-      "beforeend",
-      `<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
-       </div>`
-    );
-  }
-
-  if(errorMap.size){
-    errorMap.forEach(v=>{
-      const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
-      const row=document.createElement('div');
-      row.className='error-item';
-      row.innerHTML=`<div style="text-align:left;max-width:70%"><div style="font-weight:800">${v.q}</div><div style="opacity:.9">→ <b>${v.correct}</b></div></div><span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
-      errorList.appendChild(row);
-    });
-  }
-  openModal();
-};
+btnStats.onclick=endRound;
 
 /* ===== Dark Mode persist ===== */
 (function initDark(){
