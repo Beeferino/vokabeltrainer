@@ -1,6 +1,4 @@
-<!doctype html>
-<html lang="de">
-<head>
+<html lang="de"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vokabeltrainer – Beeferino</title>
@@ -198,7 +196,7 @@ body.dark .foot {
 }
 
 </style>
-</head>
+<style type="text/css" id="operaUserStyle"></style></head>
 <body>
 <div class="app">
   <h1>🎯 Vokabeltrainer</h1>
@@ -208,7 +206,7 @@ body.dark .foot {
     <label>Kategorie:
       <select id="selCat">
         <option value="Alle">Alle (bunt gemischt)</option>
-      </select>
+      <option value="Gelb" style="background: rgb(244, 208, 63); color: rgb(0, 0, 0);">Grundwerkzeuge Metallverarbeitung</option><option value="Pink" style="background: rgb(233, 30, 99); color: rgb(255, 255, 255);">Werkzeugkasten Mechaniker</option><option value="Blau" style="background: rgb(25, 118, 210); color: rgb(255, 255, 255);">Blech- / Kunststoffarbeiten</option><option value="Gruen" style="background: rgb(30, 132, 73); color: rgb(255, 255, 255);">Drehen / Fräsen</option><option value="HellesPink" style="background: rgb(245, 73, 39); color: rgb(255, 255, 255);">Hydraulik / Pneumatik</option><option value="Orange" style="background: rgb(230, 126, 34); color: rgb(255, 255, 255);">Elektrotechnik</option><option value="Dunkelgruen" style="background: rgb(17, 122, 101); color: rgb(255, 255, 255);">Fluggerätemechanik allgemein</option><option value="confuse" style="background: rgb(255, 228, 230); color: rgb(185, 28, 28);">⚠️ Verwechslungsgefahr-Vokabeln</option></select>
     </label>
     <label>Modus:
       <select id="selMode">
@@ -220,7 +218,7 @@ body.dark .foot {
     <label>Delay:
       <select id="selDelay">
         <option value="1000">1 s</option>
-        <option value="3000" selected>3 s</option>
+        <option value="3000" selected="">3 s</option>
         <option value="5000">5 s</option>
       </select>
     </label>
@@ -230,8 +228,8 @@ body.dark .foot {
     <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
     <button id="btnStats" class="tbtn">📊 Statistik</button>
     <label class="dark-toggle tbtn" id="btnDark"><input type="checkbox" id="chkDark"> 🌙 Dark Mode</label>
-    <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
-    <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked> 💬 Feedback</label>
+    <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked=""> 🔈 Sound</label>
+    <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked=""> 💬 Feedback</label>
   </div>
 
   <div class="functions">
@@ -241,27 +239,27 @@ body.dark .foot {
   </div>
 
   <!-- Fortschritt & Hinweis -->
-  <div id="progress" class="progress">Bereit.</div>
-  <div id="startNote" class="subnote">
+  <div id="progress" class="progress">Fertig! Starte eine neue Runde.</div>
+  <div id="startNote" class="subnote" style="opacity: 1; display: none;">
     Wähle zuerst einen <b>Übungsmodus</b>, um zu beginnen:
     <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder <b>Deutsch → Englisch</b>.<br>
     Danach einfach auf <b>„Vokabel-Abfrage starten“</b> klicken.
-    <div class="goalbar"><div id="goalFill"></div></div>
-    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 0 / 30 richtige Antworten</div>
+    <div class="goalbar"><div id="goalFill" style="width: 23%;"></div></div>
+    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 7 / 30 richtige Antworten</div>
   </div>
 
-  <section id="stage">
-    <div id="chip" class="chip">–</div>
-    <div id="q" class="word">Bereit?</div>
-    <div id="offer" class="offer"></div>
+  <section id="stage" class="" style="display: none; transition: background 0.2s;">
+    <div id="chip" class="chip" style="background: rgb(233, 30, 99); color: rgb(255, 255, 255);">Werkzeugkasten Mechaniker</div>
+    <div id="q" class="word">drill</div>
+    <div id="offer" class="offer">💡 Bohrer</div>
 
-    <div id="rowButtons" class="btnrow">
-      <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
-      <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
-      <button id="btnSkip" class="btn skip" style="display:none;">Weiter</button>
+    <div id="rowButtons" class="btnrow" style="display: flex;">
+      <button id="btnRight" class="btn ok" style="display: inline-block;">Richtig</button>
+      <button id="btnDec" class="btn bad" style="display: inline-block;">Täuschung erkannt</button>
+      <button id="btnSkip" class="btn skip" style="display: inline-block;">Weiter</button>
     </div>
 
-    <div id="rowInput" class="inprow">
+    <div id="rowInput" class="inprow" style="display: none;">
       <input id="inp" type="text" placeholder="Übersetzung eingeben …">
       <button id="btnSub">Eingabe</button>
     </div>
@@ -276,22 +274,40 @@ body.dark .foot {
 
   <details class="recent-section">
     <summary>Zuletzt hinzugefügt</summary>
-    <div id="recent">–</div>
+    <div id="recent"><div class="recent-item" style="background:#F4D03F;color:#000">
+      <b>broom</b> – Besen<br><small>Grundwerkzeuge Metallverarbeitung</small>
+    </div><div class="recent-item" style="background:#E91E63;color:#fff">
+      <b>drill</b> – Bohrer<br><small>Werkzeugkasten Mechaniker</small>
+    </div><div class="recent-item" style="background:#F4D03F;color:#000">
+      <b>file</b> – Feile<br><small>Grundwerkzeuge Metallverarbeitung</small>
+    </div><div class="recent-item" style="background:#E91E63;color:#fff">
+      <b>hammer</b> – Hammer<br><small>Werkzeugkasten Mechaniker</small>
+    </div><div class="recent-item" style="background:#F4D03F;color:#000">
+      <b>gloves</b> – Handschuhe<br><small>Grundwerkzeuge Metallverarbeitung</small>
+    </div></div>
   </details>
 
   <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
-  <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
-    🟢 Daten aktuell
-  </div>
+  <div id="syncState" style="text-align: center; margin-top: 6px; font-size: 0.9rem; color: rgb(34, 197, 94); opacity: 0.4; transition: opacity 1s;">🟢 Daten aktuell</div>
 </div>
 
 <!-- ===== Modal ===== -->
-<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true" style="display: none;">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
     <header><h2 id="modalTitle">📊 Runden-Statistik &amp; Fehlerübersicht</h2></header>
     <div class="content">
-      <div class="stat-grid" id="statGrid"></div>
-      <div class="error-list" id="errorList"></div>
+      <div class="stat-grid" id="statGrid">
+    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">10</div></div>
+    <div class="stat"><div class="label">Korrekt</div><div class="value">6</div></div>
+    <div class="stat"><div class="label">Fehler</div><div class="value">1</div></div>
+    <div class="stat"><div class="label">Übersprungen</div><div class="value">3</div></div>
+    <div class="stat"><div class="label">Trefferquote</div><div class="value">60%</div></div>
+    <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">7/30</div></div>
+  <div class="stat" style="grid-column:1/-1">
+         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+         <div class="value" style="font-size:1rem">Grundwerkzeuge Metallverarbeitung: 3/5 • Blech- / Kunststoffarbeiten: 2/2 • Werkzeugkasten Mechaniker: 1/3</div>
+       </div></div>
+      <div class="error-list" id="errorList"><div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div></div>
     </div>
     <footer>
       <button id="btnDownload" class="download">⬇️ Fehlerliste speichern</button>
@@ -603,17 +619,16 @@ function handleInputSubmit(){
       saveDailyProgress(1);
       bumpCat(itemRef[2],false,true);
       flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
-   else {
-  totalErrors++;
-  bumpCat(itemRef[2], true, true);
-  addErrorOnce(itemRef);
-  recordErrorForSummary(itemRef, currAskedEN); // <-- HINZUGEFÜGT
-  offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-  flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
-}
+    }else{
+      totalErrors++;
+      bumpCat(itemRef[2],true,true);
+      addErrorOnce(itemRef);
+      recordErrorForSummary(itemRef, currAskedEN);
+      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+      flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
     }
-
-
+  }
+}
 
 function flashInput(ok, done){
   if(ok){ beep(880,70); } else { beep(220,120,'square'); }
@@ -819,26 +834,19 @@ btnRight.onclick = () => {
   const itemRef = round[i];
   totalAsked++;
 
-  btnRight.onclick = () => {
-  if (game !== "cards") return;
-  const itemRef = round[i];
-  totalAsked++;
-
   if (trap) {
     // Falsches Angebot war gezeigt, "Richtig" ist ein Fehler
     totalErrors++;
     bumpCat(itemRef[2], true, true);
-    recordErrorForSummary(itemRef, currAskedEN); // <-- HINZUGEFÜGT
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
+    flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
   } else {
     // korrekt erkannt
     bumpCat(itemRef[2], false, true);
     saveDailyProgress(1);
-    flashCard(true, () => { i++; maybeCheckpointOr(nextCard); });
+    flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
   }
 };
-
 
 /* Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub/handleInputSubmit) */
 btnDec.onclick = () => {
@@ -992,5 +1000,6 @@ if('serviceWorker' in navigator){
 
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
