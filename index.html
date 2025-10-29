@@ -603,16 +603,17 @@ function handleInputSubmit(){
       saveDailyProgress(1);
       bumpCat(itemRef[2],false,true);
       flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      addErrorOnce(itemRef);
-      recordErrorForSummary(itemRef, currAskedEN);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }
-  }
+   else {
+  totalErrors++;
+  bumpCat(itemRef[2], true, true);
+  addErrorOnce(itemRef);
+  recordErrorForSummary(itemRef, currAskedEN); // <-- HINZUGEFÜGT
+  offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+  flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
 }
+    }
+
+
 
 function flashInput(ok, done){
   if(ok){ beep(880,70); } else { beep(220,120,'square'); }
@@ -818,19 +819,26 @@ btnRight.onclick = () => {
   const itemRef = round[i];
   totalAsked++;
 
+  btnRight.onclick = () => {
+  if (game !== "cards") return;
+  const itemRef = round[i];
+  totalAsked++;
+
   if (trap) {
     // Falsches Angebot war gezeigt, "Richtig" ist ein Fehler
     totalErrors++;
     bumpCat(itemRef[2], true, true);
+    recordErrorForSummary(itemRef, currAskedEN); // <-- HINZUGEFÜGT
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
+    flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
   } else {
     // korrekt erkannt
     bumpCat(itemRef[2], false, true);
     saveDailyProgress(1);
-    flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
+    flashCard(true, () => { i++; maybeCheckpointOr(nextCard); });
   }
 };
+
 
 /* Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub/handleInputSubmit) */
 btnDec.onclick = () => {
