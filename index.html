@@ -525,6 +525,8 @@ let round=[], i=0, delay=3000, trap=false;
 /* Eingabe-/Karten-Session */
 let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
 let totalAsked=0, totalErrors=0, sinceCheckpoint=0;
+  let totalSkipped=0; // 🟡 neu: für "Weiter"-Zählung
+
 
 /* Zusammenfassung/Statistik */
 const errorMap=new Map();           // key -> {q,correct,cat}
