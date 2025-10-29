@@ -713,11 +713,21 @@ function endRound() {
   `;
 
   if (catStats.size) {
-    const parts = [];
-    catStats.forEach((v, cat) => {
-      const name = (CATS[cat] || ["Kategorie"])[0];
-      parts.push(`${name}: ${v.asked - v.errors}/${v.asked}`);
-    });
+  const parts = [];
+  catStats.forEach((v, cat) => {
+    const name = (CATS[cat] || ["Kategorie"])[0];
+    const total = v.total ?? v.asked; // falls v.total nicht existiert → fallback auf v.asked
+    parts.push(`${name}: ${v.asked - v.errors}/${total}`);
+  });
+  statGrid.insertAdjacentHTML(
+    "beforeend",
+    `<div class="stat" style="grid-column:1/-1">
+       <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+       <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
+     </div>`
+  );
+}
+
     statGrid.insertAdjacentHTML(
       "beforeend",
       `<div class="stat" style="grid-column:1/-1">
@@ -766,20 +776,19 @@ btnSkip.onclick = () => {
   totalAsked++;
   totalSkipped++;
 
-  // Kategorie erfassen, aber nicht als "asked" zählen
-  bumpCat(itemRef[2], false, true);
-  const catEntry = catStats.get(itemRef[2]);
-  if (catEntry && catEntry.asked > 0) catEntry.asked--; // neutralisieren
+  // Kategorie erfassen und total erhöhen (nicht korrekt)
+  let catEntry = catStats.get(itemRef[2]) || { asked: 0, errors: 0, total: 0 };
+  catEntry.total++;
+  catStats.set(itemRef[2], catEntry);
 
-  // Visuelles Feedback (neutral – graublau statt rot)
+  // Visuelles Feedback (neutral – graublau)
   stage.style.transition = "background 0.2s ease";
   const originalBg = stage.style.backgroundColor;
-  stage.style.backgroundColor = "rgba(148,163,184,0.25)"; // hellgraublau
+  stage.style.backgroundColor = "rgba(148,163,184,0.25)";
 
   setTimeout(() => {
     stage.style.backgroundColor = originalBg || "";
 
-    // 🔹 Globaler Checkpoint alle 15 Fragen
     sinceCheckpoint++;
     if (sinceCheckpoint >= 15) {
       sinceCheckpoint = 0;
@@ -790,7 +799,6 @@ btnSkip.onclick = () => {
       }
     }
 
-    // 🔹 Nächste Frage / Karte aufrufen
     if (game === "input") {
       nextInput();
     } else if (game === "cards") {
@@ -799,6 +807,7 @@ btnSkip.onclick = () => {
     }
   }, 180);
 };
+
 
 
 // Karteikarten: „Richtig“ gedrückt
