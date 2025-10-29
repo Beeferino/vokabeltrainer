@@ -928,16 +928,14 @@ loadData().then(checkRemoteUpdate);
 btnHardReload.addEventListener('click', softResetUI);
 
 /* PWA Register (fehler-tolerant) */
-if('serviceWorker' in navigator){
-  try{ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }catch{}
+if ('serviceWorker' in navigator) {
+  try {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  } catch (e) {
+    console.warn('ServiceWorker konnte nicht registriert werden:', e);
+  }
 }
 
-/* Start-Hinweis ausblenden */
-[btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
-  btn.addEventListener("click", () => {
-    startNote.style.display = "none";
-  });
-});
 
 })();
 </script>
