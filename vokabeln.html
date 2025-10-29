@@ -188,6 +188,8 @@ tr:hover{background:#f8fbff}
       </thead>
       <tbody></tbody>
     </table>
+    <div id="pagination" style="text-align:center;margin:16px 0;"></div>
+
   </div>
 
   <!-- Mobile Header -->
@@ -343,10 +345,49 @@ tr:hover{background:#f8fbff}
     return matchCat && matchQ;
   });
 }
+// === PAGINATION ===
+let currentPage = 1;
+const PAGE_SIZE = 20;
+
+function totalPages() {
+  return Math.ceil(filtered().length / PAGE_SIZE);
+}
+
+function paginatedData() {
+  const data = filtered();
+  const start = (currentPage - 1) * PAGE_SIZE;
+  return data.slice(start, start + PAGE_SIZE);
+}
+
+function changePage(dir) {
+  const pages = totalPages();
+  currentPage += dir;
+  if (currentPage < 1) currentPage = 1;
+  if (currentPage > pages) currentPage = pages;
+  renderAll();
+}
+
+function renderPagination() {
+  const pages = totalPages();
+  const container = document.getElementById("pagination");
+  if (!container) return;
+  if (pages <= 1) {
+    container.innerHTML = "";
+    return;
+  }
+  container.innerHTML = `
+    <button class="btn" ${currentPage === 1 ? "disabled" : ""} id="prevPage">⬅️ Zurück</button>
+    <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
+    <button class="btn" ${currentPage === pages ? "disabled" : ""} id="nextPage">Weiter ➡️</button>
+  `;
+  document.getElementById("prevPage").onclick = () => changePage(-1);
+  document.getElementById("nextPage").onclick = () => changePage(1);
+}
 
 
   function updateCount(){
-    const data=filtered();
+    const data=paginatedData();
+
     const txt=`📘 ${data.length} Vokabel${data.length!==1?"n":""} gefunden`;
     if(isMobile()){
       $('#countMob').textContent=txt;
@@ -395,7 +436,13 @@ tr:hover{background:#f8fbff}
     });
   }
 
-  function renderAll(){renderDesktop();renderMobile();updateCount();}
+  function renderAll(){
+  renderDesktop();
+  renderMobile();
+  updateCount();
+  renderPagination();
+}
+
 
   function openEdit(i=null){
     editIndex=i;
