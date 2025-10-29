@@ -728,15 +728,6 @@ function endRound() {
   );
 }
 
-    statGrid.insertAdjacentHTML(
-      "beforeend",
-      `<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
-       </div>`
-    );
-  }
-
   errorList.innerHTML = "";
   if (errorMap.size === 0) {
     if (skipped > 0 && correctCount === 0) {
