@@ -195,7 +195,6 @@
     <label>Kategorie:
       <select id="selCat">
         <option value="Alle">Alle (bunt gemischt)</option>
-        <!-- dynamisch befüllt -->
       </select>
     </label>
     <label>Modus:
@@ -244,7 +243,6 @@
     <div id="offer" class="offer"></div>
 
     <div id="rowButtons" class="btnrow">
-      <!-- Eingabe-Modus nutzt nur Überspringen + Eingabe -->
       <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
       <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
       <button id="btnSkip" class="btn skip" style="display:none;">Weiter</button>
@@ -277,7 +275,7 @@
 <!-- ===== Modal ===== -->
 <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <header><h2 id="modalTitle">📊 Runden-Statistik & Fehlerübersicht</h2></header>
+    <header><h2 id="modalTitle">📊 Runden-Statistik &amp; Fehlerübersicht</h2></header>
     <div class="content">
       <div class="stat-grid" id="statGrid"></div>
       <div class="error-list" id="errorList"></div>
@@ -469,7 +467,7 @@ let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
 
 /* Zusammenfassung/Statistik */
 const errorMap=new Map();           // key -> {q,correct,cat}
-const catStats=new Map();           // cat -> {asked,errors}
+const catStats=new Map();           // cat -> {asked,errors,total}
 
 /* Helpers Statistik */
 function resetStats(){
@@ -477,9 +475,10 @@ function resetStats(){
   errorMap.clear(); catStats.clear();
 }
 function bumpCat(cat, wasError, countAsAsked=true){
-  const o=catStats.get(cat)||{asked:0,errors:0};
-  if(countAsAsked) o.asked++;
-  if(wasError) o.errors++;
+  const o=catStats.get(cat)||{asked:0,errors:0,total:0};
+  if(countAsAsked) o.asked++;          // nur „beantwortet“
+  if(wasError)     o.errors++;         // nur bei Fehler
+  o.total++;                            // JEDE gezeigte Frage (inkl. Skip)
   catStats.set(cat,o);
 }
 function recordErrorForSummary(item, askedEN){
@@ -564,6 +563,7 @@ function nextInput(){
   setProg();
 }
 
+/* Eingabe absenden (beide Modi nutzen diese Routine) */
 function handleInputSubmit(){
   if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
 
@@ -574,11 +574,11 @@ function handleInputSubmit(){
   if(game==="input"){
     if(ok){
       saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
+      bumpCat(itemRef[2],false,true);              // asked++ , total++
       flashInput(true, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
     }else{
       totalErrors++;
-      bumpCat(itemRef[2],true,true);
+      bumpCat(itemRef[2],true,true);               // asked++ , errors++ , total++
       recordErrorForSummary(itemRef,currAskedEN);
       saveErrorToBank(itemRef);
       offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
@@ -627,7 +627,6 @@ function nextCard(){
       showStage(false);
       progress.textContent = "Fertig! Starte eine neue Runde.";
       startNote.style.opacity = 1;
-      // Modal mit Ergebnissen
       setTimeout(() => { endRound(); }, 300);
       return;
     }
@@ -713,20 +712,21 @@ function endRound() {
   `;
 
   if (catStats.size) {
-  const parts = [];
-  catStats.forEach((v, cat) => {
-    const name = (CATS[cat] || ["Kategorie"])[0];
-    const total = v.total ?? v.asked; // falls v.total nicht existiert → fallback auf v.asked
-    parts.push(`${name}: ${v.asked - v.errors}/${total}`);
-  });
-  statGrid.insertAdjacentHTML(
-    "beforeend",
-    `<div class="stat" style="grid-column:1/-1">
-       <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-       <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
-     </div>`
-  );
-}
+    const parts = [];
+    catStats.forEach((v, cat) => {
+      const name = (CATS[cat] || ["Kategorie"])[0];
+      const total = (v.total ?? v.asked); // fallback, falls total nicht existiert
+      const correctInCat = Math.max(0, (v.asked - v.errors));
+      parts.push(`${name}: ${correctInCat}/${total}`);
+    });
+    statGrid.insertAdjacentHTML(
+      "beforeend",
+      `<div class="stat" style="grid-column:1/-1">
+         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
+       </div>`
+    );
+  }
 
   errorList.innerHTML = "";
   if (errorMap.size === 0) {
@@ -757,22 +757,22 @@ function endRound() {
 
 /* ===== Button-Handler ===== */
 
-// „Weiter“ / Überspringen → zählt NICHT als korrekt
+/* Eingabe absenden */
+btnSub.addEventListener('click', handleInputSubmit);
+
+/* „Weiter“ / Überspringen → zählt NICHT als korrekt (asked bleibt), total++ */
 btnSkip.onclick = () => {
   if (game === "idle") return;
 
   const itemRef = (game === "input") ? curr : round[i];
 
-  // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
   totalSkipped++;
 
-  // Kategorie erfassen und total erhöhen (nicht korrekt)
-  let catEntry = catStats.get(itemRef[2]) || { asked: 0, errors: 0, total: 0 };
-  catEntry.total++;
-  catStats.set(itemRef[2], catEntry);
+  // nur total++ in Kategorie (kein asked++)
+  bumpCat(itemRef[2], false, false);
 
-  // Visuelles Feedback (neutral – graublau)
+  // neutrales Feedback
   stage.style.transition = "background 0.2s ease";
   const originalBg = stage.style.backgroundColor;
   stage.style.backgroundColor = "rgba(148,163,184,0.25)";
@@ -799,9 +799,7 @@ btnSkip.onclick = () => {
   }, 180);
 };
 
-
-
-// Karteikarten: „Richtig“ gedrückt
+/* Karteikarten: „Richtig“ gedrückt */
 btnRight.onclick = () => {
   if (game !== "cards") return;
   const itemRef = round[i];
@@ -821,7 +819,7 @@ btnRight.onclick = () => {
   }
 };
 
-// Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub)
+/* Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub/handleInputSubmit) */
 btnDec.onclick = () => {
   if (game !== "cards") return;
   rowInput.style.display = "flex";
@@ -894,6 +892,24 @@ btnStats.onclick=()=>{
     <div class="stat"><div class="label">Tagesziel</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
   `;
   errorList.innerHTML = errorMap.size ? '' : `<div class="error-item" style="justify-content:center">Bislang keine Fehler in dieser Runde.</div>`;
+
+  if (catStats.size) {
+    const parts = [];
+    catStats.forEach((v, cat) => {
+      const name = (CATS[cat] || ["Kategorie"])[0];
+      const total = (v.total ?? v.asked);
+      const correctInCat = Math.max(0, (v.asked - v.errors));
+      parts.push(`${name}: ${correctInCat}/${total}`);
+    });
+    statGrid.insertAdjacentHTML(
+      "beforeend",
+      `<div class="stat" style="grid-column:1/-1">
+         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
+       </div>`
+    );
+  }
+
   if(errorMap.size){
     errorMap.forEach(v=>{
       const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
