@@ -756,35 +756,50 @@ function endRound() {
 
 /* ===== Button-Handler ===== */
 
-// Eingabe abschicken (nur echte Eingabe zählt als korrekt oder Fehler)
-btnSub.onclick = handleInputSubmit;
-
-// „Weiter“ / Überspringen → zählt NICHT als korrekt und NICHT in Kategorie-asked
+// „Weiter“ / Überspringen → zählt NICHT als korrekt
 btnSkip.onclick = () => {
   if (game === "idle") return;
 
   const itemRef = (game === "input") ? curr : round[i];
 
+  // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
   totalSkipped++;
-  bumpCat(itemRef[2], false, false); // kein asked++ in Kategorien
 
-  // neutrales visuelles Feedback
+  // Kategorie erfassen, aber nicht als "asked" zählen
+  bumpCat(itemRef[2], false, true);
+  const catEntry = catStats.get(itemRef[2]);
+  if (catEntry && catEntry.asked > 0) catEntry.asked--; // neutralisieren
+
+  // Visuelles Feedback (neutral – graublau statt rot)
   stage.style.transition = "background 0.2s ease";
   const originalBg = stage.style.backgroundColor;
-  stage.style.backgroundColor = "rgba(148,163,184,0.25)";
+  stage.style.backgroundColor = "rgba(148,163,184,0.25)"; // hellgraublau
 
   setTimeout(() => {
     stage.style.backgroundColor = originalBg || "";
 
+    // 🔹 Globaler Checkpoint alle 15 Fragen
+    sinceCheckpoint++;
+    if (sinceCheckpoint >= 15) {
+      sinceCheckpoint = 0;
+      const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+      if (endNow) {
+        endRound();
+        return;
+      }
+    }
+
+    // 🔹 Nächste Frage / Karte aufrufen
     if (game === "input") {
-      maybeCheckpointOr(()=> nextInput());
+      nextInput();
     } else if (game === "cards") {
       i++;
-      maybeCheckpointOr(()=> nextCard());
+      nextCard();
     }
   }, 180);
 };
+
 
 // Karteikarten: „Richtig“ gedrückt
 btnRight.onclick = () => {
