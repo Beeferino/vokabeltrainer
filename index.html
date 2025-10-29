@@ -853,17 +853,30 @@ btnSub.onclick = () => {
 // „Weiter“ / Überspringen → zählt NICHT als korrekt
 btnSkip.onclick = () => {
   if (game === "idle") return;
+
   const itemRef = (game === "input") ? curr : round[i];
+
   // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
-  totalSkipped++; // 🟡 <--- Diese Zeile HINZUFÜGEN
+  totalSkipped++; // 🟡 zählt als übersprungen, nicht korrekt
   bumpCat(itemRef[2], false);
+
+  // Kurzes Feedback (grau flashen)
   if (game === "input") {
-    flashInput(true);
+    stage.classList.add("flash-wrong"); // neutrale Rückmeldung
+    setTimeout(() => {
+      stage.classList.remove("flash-wrong");
+      afterAdvanceInput(); // 🔹 explizit nächste Frage laden
+    }, 150);
   } else {
-    flashCard(true);
+    stage.classList.add("flash-wrong");
+    setTimeout(() => {
+      stage.classList.remove("flash-wrong");
+      afterAdvanceCard(); // 🔹 nächste Karte zeigen
+    }, 150);
   }
 };
+
 
 
 // Karteikarten: „Richtig“ gedrückt
