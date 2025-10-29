@@ -131,9 +131,8 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 }
 
 }
-/* === "Zuletzt hinzugefügt" – Light & Dark Mode, mit sanfter Öffnung === */
+/* === "Zuletzt hinzugefügt" – mit Pfeilen direkt an der Schrift === */
 
-/* Light Mode Basis */
 details.recent-section {
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
@@ -153,20 +152,39 @@ details.recent-section summary {
   font-weight: 700;
   color: #1e3a8a;
   cursor: pointer;
-  list-style: none;
+  list-style: none; /* entfernt Standardmarker */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
   transition: all 0.25s ease;
 }
 
-details.recent-section summary::marker {
-  content: "▶ ";
+details.recent-section summary::before {
+  content: "▶";
+  font-size: 0.85em;
   color: #2563eb;
-  font-size: 0.9em;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-details.recent-section[open] summary::marker {
-  content: "▼ ";
+details.recent-section[open] summary::before {
+  transform: rotate(90deg);
   color: #1d4ed8;
+}
+
+details.recent-section summary::after {
+  content: "▶";
+  font-size: 0.85em;
+  color: #2563eb;
+  opacity: 0.5;
+  transition: transform 0.3s ease, color 0.3s ease, opacity 0.3s ease;
+}
+
+details.recent-section[open] summary::after {
+  transform: rotate(90deg);
+  color: #1d4ed8;
+  opacity: 0.6;
 }
 
 details.recent-section summary:hover {
@@ -174,13 +192,13 @@ details.recent-section summary:hover {
   color: #1e40af;
 }
 
-/* Geöffneter Zustand etwas stärker */
+/* Geöffneter Zustand */
 details.recent-section[open] {
   background: rgba(255, 255, 255, 0.98);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
 }
 
-/* === Smooth open/close animation === */
+/* Smooth open/close animation */
 details.recent-section > div {
   overflow: hidden;
   max-height: 0;
@@ -189,7 +207,7 @@ details.recent-section > div {
 }
 
 details.recent-section[open] > div {
-  max-height: 800px; /* reicht für viele Vokabeln */
+  max-height: 800px;
   opacity: 1;
 }
 
@@ -208,20 +226,22 @@ body.dark details.recent-section summary {
   transition: all 0.25s ease;
 }
 
+body.dark details.recent-section summary::before,
+body.dark details.recent-section summary::after {
+  color: #60a5fa;
+}
+
+body.dark details.recent-section[open] summary::before,
+body.dark details.recent-section[open] summary::after {
+  color: #93c5fd;
+}
+
 body.dark details.recent-section summary:hover {
   background: rgba(255, 255, 255, 0.15);
   color: #ffffff !important;
   text-shadow: 0 0 6px rgba(96,165,250,0.4);
 }
 
-body.dark details.recent-section summary::marker {
-  color: #60a5fa;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-body.dark details.recent-section[open] summary::marker {
-  color: #93c5fd;
-}
 
 
 </style>
