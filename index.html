@@ -594,6 +594,72 @@ function nextInput(){
 
 /* Eingabe absenden (beide Modi nutzen diese Routine) */
 
+/* Fehler für Statistik & Modal speichern */
+function recordErrorForSummary(item, askedEN){
+  const [en, de, cat] = item;
+  const question = askedEN ? en : de;
+  const answer   = askedEN ? de : en;
+  const key = `${en}|${de}|${askedEN?1:0}`;
+  if (!errorMap.has(key)) {
+    errorMap.set(key, { q: question, correct: answer, cat });
+  }
+}
+
+/* ===== Cards Mode ===== */
+function nextCard(){
+  delay = parseInt(selDelay.value, 10);
+
+  if (i >= round.length) {
+    if (errorsList.length > 0) {
+      alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
+      round = errorsList.map(v => v);
+      errorsList = [];
+      i = 0;
+      nextCard();
+      return;
+    } else {
+      showStage(false);
+      progress.textContent = "Fertig! Starte eine neue Runde.";
+      startNote.style.opacity = 1;
+      setTimeout(() => { endRound(); }, 300);
+      return;
+    }
+  }
+
+  const [en, de, cat] = round[i];
+  const catMeta = CATS[cat] || ["Kategorie", "#ddd", "#000"];
+  chip.textContent = catMeta[0];
+  chip.style.background = catMeta[1];
+  chip.style.color = catMeta[2];
+
+  const askEN = pickDirection();
+  const question = askEN ? en : de;
+  const answer = askEN ? de : en;
+  correct = answer;
+  currAskedEN = askEN; // <-- wichtig für Fehleranzeige später
+
+  q.textContent = question;
+
+  // Täuschung ~30%: falsches Wort zeigen, sonst richtiges
+  if (Math.random() < 0.3) {
+    const pool = data.map(v => askEN ? v[1] : v[0]);
+    let wrong;
+    do { wrong = pool[Math.floor(Math.random() * pool.length)]; }
+    while (wrong === answer);
+    offer.textContent = "💡 " + wrong;
+    trap = true;
+  } else {
+    offer.textContent = "💡 " + answer;
+    trap = false;
+  }
+
+  rowButtons.style.display = "flex";
+  rowInput.style.display = "none";
+  inp.value = "";
+  setProg();
+}
+
+/* Eingabe absenden (beide Modi nutzen diese Routine) */
 function handleInputSubmit() {
   // Nur aktiv, wenn wir im Eingabe- oder Kartenmodus mit geöffnetem Eingabefeld sind
   if (game !== "input" && !(game === "cards" && rowInput.style.display === "flex")) return;
@@ -604,7 +670,7 @@ function handleInputSubmit() {
   totalAsked++;
 
   if (game === "input") {
-    // ======== Eingabe-Modus ========
+    // ===== Eingabe-Modus =====
     if (ok) {
       saveDailyProgress(1);
       bumpCat(itemRef[2], false, true); // asked++, total++
@@ -619,7 +685,7 @@ function handleInputSubmit() {
     }
 
   } else {
-    // ======== Kartenmodus (Eingabe nach „Täuschung erkannt“) ========
+    // ===== Kartenmodus (Eingabe nach „Täuschung erkannt“) =====
     if (ok) {
       saveDailyProgress(1);
       bumpCat(itemRef[2], false, true);
@@ -628,12 +694,13 @@ function handleInputSubmit() {
       totalErrors++;
       bumpCat(itemRef[2], true, true);
       addErrorOnce(itemRef);
-      recordErrorForSummary(itemRef, currAskedEN); // <-- wichtig für Fehler im Modal
+      recordErrorForSummary(itemRef, currAskedEN); // <== jetzt korrekt erfasst
       offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
       flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
     }
   }
 }
+
 
 
 function flashInput(ok, done){
