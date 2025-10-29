@@ -127,6 +127,14 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 .toolbar { margin-top: 6px; }
 /* ===== Harmonischer Abstand unterhalb der Toolbar ===== */
 .toolbar { margin-bottom: 22px; }
+/* === Fix: "Zuletzt hinzugefügt" im Dark Mode besser lesbar === */
+body.dark details.recent-section summary {
+  color: #e5e7eb;          /* helles Grau (fast Weiß) */
+  font-weight: 700;        /* etwas kräftiger für bessere Lesbarkeit */
+}
+body.dark details.recent-section summary::marker {
+  color: #93c5fd;          /* heller blauer Marker-Dreieck für Kontrast */
+}
 
 </style>
 </head>
