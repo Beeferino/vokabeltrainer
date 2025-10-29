@@ -537,11 +537,13 @@ function resetStats(){
   totalAsked=0; totalErrors=0; sinceCheckpoint=0;
   errorMap.clear(); catStats.clear();
 }
-function bumpCat(cat, wasError){
-  const o=catStats.get(cat)||{asked:0,errors:0};
-  o.asked++; if(wasError) o.errors++;
-  catStats.set(cat,o);
+function bumpCat(cat, wasError, countAsAsked = true) {
+  const o = catStats.get(cat) || { asked: 0, errors: 0 };
+  if (countAsAsked) o.asked++; // 🟢 Nur echte Fragen zählen
+  if (wasError) o.errors++;
+  catStats.set(cat, o);
 }
+
 function recordErrorForSummary(item, askedEN){
   const [en,de,cat]=item;
   const question = askedEN ? en : de;
