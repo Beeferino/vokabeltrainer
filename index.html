@@ -164,10 +164,20 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
     <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
   </div>
 
-  <div class="feedback-toggle">
-    <input type="checkbox" id="chkFeedback" checked>
-    <label for="chkFeedback">Feedback anzeigen</label>
-  </div>
+  <div class="toolbar">
+  <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
+  <button id="btnStats" class="tbtn">📊 Statistik</button>
+  <label class="dark-toggle tbtn" id="btnDark">
+    <input type="checkbox" id="chkDark"> 🌙 Dark Mode
+  </label>
+  <label class="dark-toggle tbtn" id="btnSound">
+    <input type="checkbox" id="chkSound" checked> 🔈 Sound
+  </label>
+  <label class="dark-toggle tbtn" id="btnFeedback">
+    <input type="checkbox" id="chkFeedback" checked> 💬 Feedback anzeigen
+  </label>
+</div>
+
 
   <div class="functions">
     <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
@@ -771,6 +781,11 @@ loadData().then(checkRemoteUpdate);
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
+
+  #btnFeedback input {
+  margin-right: 6px;
+}
+  
 })();
 // ===== Start-Hinweis ausblenden, wenn eine Kachel angeklickt wird =====
 [btnLearn, btnLast30, btnCards].forEach(btn => {
