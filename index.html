@@ -755,39 +755,52 @@ btnDownload.addEventListener('click',()=>{
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
 });
 
-/* Runde beenden -> Modal + Start-Hinweis wieder einblenden */
-function endRound(){
+/* ===== Runde beenden (korrekte Logik inkl. Übersprungen) ===== */
+function endRound() {
   showStage(false);
-  const asked=totalAsked, errors=totalErrors, correctCount=Math.max(0,asked-errors);
-  const acc=asked ? Math.round((correctCount/asked)*100) : 100;
 
-  statGrid.innerHTML=`
+  const asked = totalAsked;
+  const errors = totalErrors;
+  const skipped = totalSkipped; // 🟡 NEU
+  const correctCount = Math.max(0, asked - errors - skipped);
+  const acc = asked ? Math.round((correctCount / asked) * 100) : 100;
+
+  statGrid.innerHTML = `
     <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">${asked}</div></div>
     <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
     <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
+    <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
     <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
     <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
   `;
-  if(catStats.size){
-    const parts=[];
-    catStats.forEach((v,cat)=>{
-      const name=(CATS[cat]||["Kategorie"])[0];
-      parts.push(`${name}: ${v.asked-v.errors}/${v.asked}`);
+
+  if (catStats.size) {
+    const parts = [];
+    catStats.forEach((v, cat) => {
+      const name = (CATS[cat] || ["Kategorie"])[0];
+      parts.push(`${name}: ${v.asked - v.errors}/${v.asked}`);
     });
-    statGrid.insertAdjacentHTML('beforeend',
+    statGrid.insertAdjacentHTML(
+      "beforeend",
       `<div class="stat" style="grid-column:1/-1">
          <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(' • ')}</div>
-       </div>`);
+         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
+       </div>`
+    );
   }
-  errorList.innerHTML='';
-  if(errorMap.size===0){
-    errorList.innerHTML=`<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
-  }else{
-    errorMap.forEach(v=>{
-      const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000"];
-      const row=document.createElement('div');
-      row.className='error-item';
+
+  errorList.innerHTML = "";
+  if (errorMap.size === 0) {
+    if (skipped > 0 && correctCount === 0) {
+      errorList.innerHTML = `<div class="error-item" style="justify-content:center">⚠️ Alle Fragen übersprungen.</div>`;
+    } else {
+      errorList.innerHTML = `<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
+    }
+  } else {
+    errorMap.forEach((v) => {
+      const catMeta = CATS[v.cat] || ["Kategorie", "#ddd", "#000"];
+      const row = document.createElement("div");
+      row.className = "error-item";
       row.innerHTML = `
         <div style="text-align:left;max-width:70%;word-break:break-word">
           <div style="font-weight:800">${v.q}</div>
@@ -798,9 +811,11 @@ function endRound(){
       errorList.appendChild(row);
     });
   }
+
   openModal();
-  startNote.style.opacity=1;
+  startNote.style.opacity = 1;
 }
+
 
 /* ===== Button-Handler (korrektes Zählen) ===== */
 
