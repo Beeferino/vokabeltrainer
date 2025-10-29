@@ -905,6 +905,83 @@ if('serviceWorker' in navigator){
 });
 
 })();
+
+  function endRound() {
+  showStage(false);
+
+  // 🔹 Sicherstellen, dass Statistik-Daten existieren
+  const asked = totalAsked || 0;
+  const errors = totalErrors || 0;
+  const skipped = totalSkipped || 0;
+  const correctCount = Math.max(0, asked - errors - skipped);
+  const acc = asked ? Math.round((correctCount / asked) * 100) : 100;
+
+  // 🔹 Wenn keine Einträge existieren, ersetze leere Maps
+  if (!catStats || !(catStats instanceof Map)) {
+    console.warn("catStats missing, reinit.");
+    catStats = new Map();
+  }
+
+  statGrid.innerHTML = `
+    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">${asked}</div></div>
+    <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
+    <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
+    <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
+    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
+    <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
+  `;
+
+  // 🔹 Kategorie-Zusammenfassung
+  if (catStats.size) {
+    const parts = [];
+    catStats.forEach((v, cat) => {
+      const name = (CATS[cat] || ["Kategorie"])[0];
+      const total = (v.total ?? v.asked);
+      parts.push(`${name}: ${Math.max(0, v.asked - v.errors)}/${total}`);
+    });
+    statGrid.insertAdjacentHTML(
+      "beforeend",
+      `<div class="stat" style="grid-column:1/-1">
+         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
+       </div>`
+    );
+  }
+
+  // 🔹 Fehlerliste
+  errorList.innerHTML = "";
+  if (errorMap.size === 0) {
+    if (skipped > 0 && correctCount === 0) {
+      errorList.innerHTML = `<div class="error-item" style="justify-content:center">⚠️ Alle Fragen übersprungen.</div>`;
+    } else {
+      errorList.innerHTML = `<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
+    }
+  } else {
+    errorMap.forEach((v) => {
+      const catMeta = CATS[v.cat] || ["Kategorie", "#ddd", "#000"];
+      const row = document.createElement("div");
+      row.className = "error-item";
+      row.innerHTML = `
+        <div style="text-align:left;max-width:70%;word-break:break-word">
+          <div style="font-weight:800">${v.q}</div>
+          <div style="opacity:.9">→ <b>${v.correct}</b></div>
+        </div>
+        <span class="badge" style="background:${catMeta[1]};color:${catMeta[2]}">${catMeta[0]}</span>
+      `;
+      errorList.appendChild(row);
+    });
+  }
+
+  // 🔹 Debug: falls alles 0 ist, Hinweis
+  if (asked === 0 && catStats.size === 0) {
+    console.warn("⚠️ endRound() ohne Daten aufgerufen – vermutlich kein bumpCat() ausgelöst.");
+  }
+
+  openModal();
+  startNote.style.opacity = 1;
+}
+
+  
 </script>
 </body>
 </html>
