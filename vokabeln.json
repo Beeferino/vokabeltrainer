@@ -1,408 +1,52 @@
 [
-  [
-    "pliers",
-    "Zange",
-    "Blau",
-    "",
-    "",
-    "2025-01-04T12:00:00Z",
-    0,
-    "22f0461f-0578-4eaf-afdd-94df65f62341"
-  ],
-  [
-    "vice",
-    "Schraubstock",
-    "Pink",
-    "",
-    "",
-    "2025-01-03T12:00:00Z",
-    1,
-    "d6a85d7a-5b58-429b-b8b1-d96b375a409c"
-  ],
-  [
-    "saw",
-    "Säge",
-    "Gelb",
-    "",
-    "",
-    "2025-01-02T12:00:00Z",
-    0,
-    "0eaf4249-d19f-4f4f-bdf1-50ca339425dd"
-  ],
-  [
-    "chisel",
-    "Meißel",
-    "Gelb",
-    "",
-    "",
-    "2025-01-10T12:00:00Z",
-    0,
-    "54b3f2ae-9d54-45bb-ae82-656626984caa"
-  ],
-  [
-    "measuring tape",
-    "Maßband",
-    "Blau",
-    "",
-    "",
-    "2025-01-07T12:00:00Z",
-    0,
-    "1629b517-f54f-435a-b482-b3e26aa9f4fd"
-  ],
-  [
-    "gloves",
-    "Handschuhe",
-    "Gelb",
-    "",
-    "",
-    "2025-01-09T12:00:00Z",
-    0,
-    "aa6c002c-262f-4cbb-ac3c-f8c88a44ce0e"
-  ],
-  [
-    "hammer",
-    "Hammer",
-    "Pink",
-    "",
-    "",
-    "2025-01-01T12:00:00Z",
-    0,
-    "ef2f4aee-b11e-43d6-b757-3af779c0c869"
-  ],
-  [
-    "file",
-    "Feile",
-    "Gelb",
-    "",
-    "",
-    "2025-01-05T12:00:00Z",
-    0,
-    "79ee9dff-1ff4-4a88-b1c9-1af71aa67907"
-  ],
-  [
-    "drill",
-    "Bohrer",
-    "Pink",
-    "",
-    "",
-    "2025-01-06T12:00:00Z",
-    0,
-    "ee6cfe5a-13f6-4f03-8232-22be264989ae"
-  ],
-  [
-    "broom",
-    "Besen",
-    "Gelb",
-    "",
-    "",
-    "2025-01-08T12:00:00Z",
-    0,
-    "e71562c6-b44e-4986-87c3-73e653dcc6e7"
-  ]
-]
-[
-  [
-    "pliers",
-    "Zange",
-    "Blau",
-    "",
-    "",
-    "2025-01-04T12:00:00Z",
-    0,
-    "22f0461f-0578-4eaf-afdd-94df65f62341"
-  ],
-  [
-    "vice",
-    "Schraubstock",
-    "Pink",
-    "",
-    "",
-    "2025-01-03T12:00:00Z",
-    1,
-    "d6a85d7a-5b58-429b-b8b1-d96b375a409c"
-  ],
-  [
-    "saw",
-    "Säge",
-    "Gelb",
-    "",
-    "",
-    "2025-01-02T12:00:00Z",
-    0,
-    "0eaf4249-d19f-4f4f-bdf1-50ca339425dd"
-  ],
-  [
-    "chisel",
-    "Meißel",
-    "Gelb",
-    "",
-    "",
-    "2025-01-10T12:00:00Z",
-    0,
-    "54b3f2ae-9d54-45bb-ae82-656626984caa"
-  ],
-  [
-    "measuring tape",
-    "Maßband",
-    "Blau",
-    "",
-    "",
-    "2025-01-07T12:00:00Z",
-    0,
-    "1629b517-f54f-435a-b482-b3e26aa9f4fd"
-  ],
-  [
-    "gloves",
-    "Handschuhe",
-    "Gelb",
-    "",
-    "",
-    "2025-01-09T12:00:00Z",
-    0,
-    "aa6c002c-262f-4cbb-ac3c-f8c88a44ce0e"
-  ],
-  [
-    "hammer",
-    "Hammer",
-    "Pink",
-    "",
-    "",
-    "2025-01-01T12:00:00Z",
-    0,
-    "ef2f4aee-b11e-43d6-b757-3af779c0c869"
-  ],
-  [
-    "file",
-    "Feile",
-    "Gelb",
-    "",
-    "",
-    "2025-01-05T12:00:00Z",
-    0,
-    "79ee9dff-1ff4-4a88-b1c9-1af71aa67907"
-  ],
-  [
-    "drill",
-    "Bohrer",
-    "Pink",
-    "",
-    "",
-    "2025-01-06T12:00:00Z",
-    0,
-    "ee6cfe5a-13f6-4f03-8232-22be264989ae"
-  ],
-  [
-    "broom",
-    "Besen",
-    "Gelb",
-    "",
-    "",
-    "2025-01-08T12:00:00Z",
-    0,
-    "e71562c6-b44e-4986-87c3-73e653dcc6e7"
-  ]
-]
-[
-  [
-    "pliers",
-    "Zange",
-    "Blau",
-    "",
-    "",
-    "2025-01-04T12:00:00Z",
-    0,
-    "22f0461f-0578-4eaf-afdd-94df65f62341"
-  ],
-  [
-    "vice",
-    "Schraubstock",
-    "Pink",
-    "",
-    "",
-    "2025-01-03T12:00:00Z",
-    1,
-    "d6a85d7a-5b58-429b-b8b1-d96b375a409c"
-  ],
-  [
-    "saw",
-    "Säge",
-    "Gelb",
-    "",
-    "",
-    "2025-01-02T12:00:00Z",
-    0,
-    "0eaf4249-d19f-4f4f-bdf1-50ca339425dd"
-  ],
-  [
-    "chisel",
-    "Meißel",
-    "Gelb",
-    "",
-    "",
-    "2025-01-10T12:00:00Z",
-    0,
-    "54b3f2ae-9d54-45bb-ae82-656626984caa"
-  ],
-  [
-    "measuring tape",
-    "Maßband",
-    "Blau",
-    "",
-    "",
-    "2025-01-07T12:00:00Z",
-    0,
-    "1629b517-f54f-435a-b482-b3e26aa9f4fd"
-  ],
-  [
-    "gloves",
-    "Handschuhe",
-    "Gelb",
-    "",
-    "",
-    "2025-01-09T12:00:00Z",
-    0,
-    "aa6c002c-262f-4cbb-ac3c-f8c88a44ce0e"
-  ],
-  [
-    "hammer",
-    "Hammer",
-    "Pink",
-    "",
-    "",
-    "2025-01-01T12:00:00Z",
-    0,
-    "ef2f4aee-b11e-43d6-b757-3af779c0c869"
-  ],
-  [
-    "file",
-    "Feile",
-    "Gelb",
-    "",
-    "",
-    "2025-01-05T12:00:00Z",
-    0,
-    "79ee9dff-1ff4-4a88-b1c9-1af71aa67907"
-  ],
-  [
-    "drill",
-    "Bohrer",
-    "Pink",
-    "",
-    "",
-    "2025-01-06T12:00:00Z",
-    0,
-    "ee6cfe5a-13f6-4f03-8232-22be264989ae"
-  ],
-  [
-    "broom",
-    "Besen",
-    "Gelb",
-    "",
-    "",
-    "2025-01-08T12:00:00Z",
-    0,
-    "e71562c6-b44e-4986-87c3-73e653dcc6e7"
-  ]
-]
-[
-  [
-    "pliers",
-    "Zange",
-    "Blau",
-    "",
-    "",
-    "2025-01-04T12:00:00Z",
-    0,
-    "22f0461f-0578-4eaf-afdd-94df65f62341"
-  ],
-  [
-    "vice",
-    "Schraubstock",
-    "Pink",
-    "",
-    "",
-    "2025-01-03T12:00:00Z",
-    1,
-    "d6a85d7a-5b58-429b-b8b1-d96b375a409c"
-  ],
-  [
-    "saw",
-    "Säge",
-    "Gelb",
-    "",
-    "",
-    "2025-01-02T12:00:00Z",
-    0,
-    "0eaf4249-d19f-4f4f-bdf1-50ca339425dd"
-  ],
-  [
-    "chisel",
-    "Meißel",
-    "Gelb",
-    "",
-    "",
-    "2025-01-10T12:00:00Z",
-    0,
-    "54b3f2ae-9d54-45bb-ae82-656626984caa"
-  ],
-  [
-    "measuring tape",
-    "Maßband",
-    "Blau",
-    "",
-    "",
-    "2025-01-07T12:00:00Z",
-    0,
-    "1629b517-f54f-435a-b482-b3e26aa9f4fd"
-  ],
-  [
-    "gloves",
-    "Handschuhe",
-    "Gelb",
-    "",
-    "",
-    "2025-01-09T12:00:00Z",
-    0,
-    "aa6c002c-262f-4cbb-ac3c-f8c88a44ce0e"
-  ],
-  [
-    "hammer",
-    "Hammer",
-    "Pink",
-    "",
-    "",
-    "2025-01-01T12:00:00Z",
-    0,
-    "ef2f4aee-b11e-43d6-b757-3af779c0c869"
-  ],
-  [
-    "file",
-    "Feile",
-    "Gelb",
-    "",
-    "",
-    "2025-01-05T12:00:00Z",
-    0,
-    "79ee9dff-1ff4-4a88-b1c9-1af71aa67907"
-  ],
-  [
-    "drill",
-    "Bohrer",
-    "Pink",
-    "",
-    "",
-    "2025-01-06T12:00:00Z",
-    0,
-    "ee6cfe5a-13f6-4f03-8232-22be264989ae"
-  ],
-  [
-    "broom",
-    "Besen",
-    "Gelb",
-    "",
-    "",
-    "2025-01-08T12:00:00Z",
-    0,
-    "e71562c6-b44e-4986-87c3-73e653dcc6e7"
-  ]
+  ["hammer", "Hammer", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["screwdriver", "Schraubendreher", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["pliers", "Zange", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["wrench", "Schraubenschlüssel", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["saw", "Säge", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["drill", "Bohrmaschine", "Orange", "Elektrowerkzeug", "", "2025-01-01", false],
+  ["file", "Feile", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["chisel", "Meißel", "Gelb", "Werkzeug", "", "2025-01-01", false],
+  ["lathe", "Drehmaschine", "Gruen", "Metall", "", "2025-01-01", false],
+  ["milling machine", "Fräsmaschine", "Gruen", "Metall", "", "2025-01-01", false],
+  ["voltage", "Spannung", "Orange", "Elektrotechnik", "", "2025-01-01", false],
+  ["current", "Strom", "Orange", "Elektrotechnik", "", "2025-01-01", false],
+  ["resistor", "Widerstand", "Orange", "Elektrotechnik", "", "2025-01-01", false],
+  ["circuit", "Schaltkreis", "Orange", "Elektrotechnik", "", "2025-01-01", false],
+  ["battery", "Batterie", "Orange", "Elektrotechnik", "", "2025-01-01", false],
+  ["pressure", "Druck", "HellesPink", "Pneumatik", "", "2025-01-01", false],
+  ["valve", "Ventil", "HellesPink", "Pneumatik", "", "2025-01-01", false],
+  ["cylinder", "Zylinder", "HellesPink", "Pneumatik", "", "2025-01-01", false],
+  ["compressor", "Kompressor", "HellesPink", "Pneumatik", "", "2025-01-01", false],
+  ["hose", "Schlauch", "HellesPink", "Pneumatik", "", "2025-01-01", false],
+  ["sheet metal", "Blech", "Blau", "Material", "", "2025-01-01", false],
+  ["plastic", "Kunststoff", "Blau", "Material", "", "2025-01-01", false],
+  ["riveting", "Nieten", "Blau", "Material", "", "2025-01-01", false],
+  ["cutting", "Schneiden", "Blau", "Material", "", "2025-01-01", false],
+  ["forming", "Umformen", "Blau", "Material", "", "2025-01-01", false],
+  ["bolt", "Bolzen", "Gelb", "Werkstück", "", "2025-01-01", false],
+  ["nut", "Mutter", "Gelb", "Werkstück", "", "2025-01-01", false],
+  ["washer", "Unterlegscheibe", "Gelb", "Werkstück", "", "2025-01-01", false],
+  ["spring", "Feder", "Gelb", "Werkstück", "", "2025-01-01", false],
+  ["bearing", "Lager", "Gruen", "Mechanik", "", "2025-01-01", false],
+  ["gear", "Zahnrad", "Gruen", "Mechanik", "", "2025-01-01", false],
+  ["axle", "Achse", "Gruen", "Mechanik", "", "2025-01-01", false],
+  ["shaft", "Welle", "Gruen", "Mechanik", "", "2025-01-01", false],
+  ["hydraulic oil", "Hydrauliköl", "HellesPink", "Hydraulik", "", "2025-01-01", false],
+  ["pump", "Pumpe", "HellesPink", "Hydraulik", "", "2025-01-01", false],
+  ["filter", "Filter", "HellesPink", "Hydraulik", "", "2025-01-01", false],
+  ["air pressure", "Luftdruck", "HellesPink", "Hydraulik", "", "2025-01-01", false],
+  ["toolbox", "Werkzeugkasten", "Pink", "Ausrüstung", "", "2025-01-01", false],
+  ["helmet", "Helm", "Pink", "Ausrüstung", "", "2025-01-01", false],
+  ["gloves", "Handschuhe", "Pink", "Ausrüstung", "", "2025-01-01", false],
+  ["safety shoes", "Sicherheitsschuhe", "Pink", "Ausrüstung", "", "2025-01-01", false],
+  ["goggles", "Schutzbrille", "Pink", "Ausrüstung", "", "2025-01-01", false],
+  ["measure", "messen", "Gelb", "Grundlagen", "", "2025-01-01", false],
+  ["tighten", "anziehen", "Gelb", "Grundlagen", "", "2025-01-01", false],
+  ["loosen", "lösen", "Gelb", "Grundlagen", "", "2025-01-01", false],
+  ["turn", "drehen", "Gruen", "Grundlagen", "", "2025-01-01", false],
+  ["cut", "schneiden", "Blau", "Grundlagen", "", "2025-01-01", false],
+  ["assemble", "montieren", "Pink", "Grundlagen", "", "2025-01-01", false],
+  ["disassemble", "demontieren", "Pink", "Grundlagen", "", "2025-01-01", false],
+  ["inspect", "prüfen", "Dunkelgruen", "Qualität", "", "2025-01-01", false]
 ]
