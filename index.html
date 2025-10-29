@@ -892,27 +892,7 @@ btnSkip.onclick = () => {
   }, 180); // kurzer Delay für Flash
 };
 
-
-
-  // Kurzes Feedback (grau flashen)
-  if (game === "input") {
-    stage.classList.add("flash-wrong"); // neutrale Rückmeldung
-    setTimeout(() => {
-      stage.classList.remove("flash-wrong");
-      afterAdvanceInput(); // 🔹 explizit nächste Frage laden
-    }, 150);
-  } else {
-    stage.classList.add("flash-wrong");
-    setTimeout(() => {
-      stage.classList.remove("flash-wrong");
-      afterAdvanceCard(); // 🔹 nächste Karte zeigen
-    }, 150);
-  }
-};
-
-
-
-// Karteikarten: „Richtig“ gedrückt
+  // Karteikarten: „Richtig“ gedrückt
 btnRight.onclick = () => {
   if (game !== "cards") return;
   const itemRef = round[i];
