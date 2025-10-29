@@ -85,7 +85,7 @@ body.dark .offer{color:#e5e7eb}
   box-shadow:0 3px 8px rgba(0,0,0,.05);transition:all .25s ease
 }
 .footer-actions a:hover,.footer-actions button:hover{background:linear-gradient(135deg,#e0e7ff,#f1f5ff);transform:translateY(-1px);box-shadow:0 5px 12px rgba(37,99,235,.15)}
-.feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
+.feedback-toggle{display:none} /* alte Position ausblenden; jetzt in Toolbar */
 .trenner{height:3px;width:60%;margin:36px auto 16px;background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);border-radius:2px;animation:shine 5s linear infinite}
 @keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
 details.recent-section{
@@ -122,11 +122,18 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 .btn-primary{background:#2563eb;color:#fff}
 .btn-ghost,.btn-primary,.download{border-radius:10px;padding:10px 14px;font-weight:800;border:none;cursor:pointer}
 .download{margin-right:auto;background:#e5f2ff;border:1px solid #c7ddff;color:#0f172a}
-/* ===== Mehr Abstand zwischen Auswahl und Toolbar ===== */
-.controls {  margin-bottom: 18px; }
-.toolbar {  margin-top: 6px; }
+  /* ===== Mehr Abstand zwischen Auswahl und Toolbar ===== */
+.controls {
+  margin-bottom: 18px; /* oder 22px für etwas mehr Luft */
+}
+.toolbar {
+  margin-top: 6px;
+}
 /* ===== Harmonischer Abstand unterhalb der Toolbar ===== */
-.toolbar {  margin-bottom: 22px; }
+.toolbar {
+  margin-bottom: 22px; /* etwas mehr Raum zur Feedback-Zeile */
+}
+
 </style>
 </head>
 <body>
@@ -136,10 +143,7 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 
   <div class="controls">
     <label>Kategorie:
-      <select id="selCat">
-        <option value="Alle">Alle (bunt gemischt)</option>
-        <!-- Die echten Kategorien werden per JS ergänzt; plus Filter „Verwechslungsgefahr-Vokabeln“ -->
-      </select>
+      <select id="selCat"><option value="Alle">Alle (bunt gemischt)</option></select>
     </label>
     <label>Modus:
       <select id="selMode">
@@ -158,19 +162,12 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
   </div>
 
   <div class="toolbar">
-  <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
-  <button id="btnStats" class="tbtn">📊 Statistik</button>
-  <label class="dark-toggle tbtn" id="btnDark">
-    <input type="checkbox" id="chkDark"> 🌙 Dark Mode
-  </label>
-  <label class="dark-toggle tbtn" id="btnSound">
-    <input type="checkbox" id="chkSound" checked> 🔈 Sound
-  </label>
-  <label class="dark-toggle tbtn" id="btnFeedback">
-    <input type="checkbox" id="chkFeedback" checked> 💬 Feedback anzeigen
-  </label>
-</div>
-
+    <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
+    <button id="btnStats" class="tbtn">📊 Statistik</button>
+    <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked> 💬 Feedback</label>
+    <label class="dark-toggle tbtn" id="btnDark"><input type="checkbox" id="chkDark"> 🌙 Dark Mode</label>
+    <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
+  </div>
 
   <div class="functions">
     <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
@@ -242,7 +239,7 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 <script>
 (function(){
 /* ========= Setup & Utils ========= */
-/* --- Kategorien (ohne „Rot“; Verwechslungsgefahr wird als Flag geführt) --- */
+/* --- Kategorien (ohne "Rot"; Verwechslungsgefahr via Flag) --- */
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
@@ -254,7 +251,7 @@ const CATS={
 };
 
 const el=id=>document.getElementById(id);
-const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
+const selCat=el("selCat"), selDelay=el("selDelay"), selMode=el("selMode");
 const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
 const btnErrorsOnly=el("btnErrorsOnly"), btnStats=el("btnStats");
 const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
@@ -263,9 +260,9 @@ const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSu
 const modalBackdrop=el("modalBackdrop"), errorList=el("errorList"), statGrid=el("statGrid");
 const btnClose=el("btnClose"), btnContinue=el("btnContinue"), btnDownload=el("btnDownload");
 const startNote=el("startNote"), goalFill=el("goalFill"), goalText=el("goalText");
-const chkDark=el("chkDark"), chkSound=el("chkSound");
+const chkDark=el("chkDark"), chkSound=el("chkSound"), chkFeedback=el("chkFeedback");
 
-/* Build categories into select (plus „Verwechslungsgefahr-Vokabeln“) */
+/* Build categories into select + Zusatz-Filter "Verwechslungsgefahr" */
 (function buildCatOptions(){
   while (selCat.options.length > 1) selCat.remove(1);
   for(const k in CATS){
@@ -294,7 +291,7 @@ function beep(freq=660, ms=80, type='sine', vol=0.03){
   }catch{}
 }
 
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[j]]=[a[r],a[j]];}}
+function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[j]]= [a[r],a[j]];}}
 function normalize(s){
   return s.trim().toLowerCase()
     .normalize("NFD").replace(/\p{Diacritic}/gu,"")
@@ -308,41 +305,41 @@ function isCorrectInput(input, solution){
 
 /* ========= Daten & Sync ========= */
 let data=[], lastSync=null;
-/* Schema: [en,de,cat,group,hint,created,confuse:boolean] */
+
+/* Datenschema: [en,de,cat,group,hint,created,confuse?] */
 async function fetchFromGitHub(){
   const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   try{
     const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("fetch failed");
     const j=await r.json();
-    const norm=j.map(v=>[
+    const norm=j.map(v=>([
       v[0]||"", v[1]||"", v[2]||"Gelb",
       v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
       !!v[6]
-    ]);
+    ]));
     localStorage.setItem("vokabeln",JSON.stringify(norm));
     localStorage.setItem("vokabeln_updated",new Date().toISOString());
     data=norm; lastSync=new Date();
   }catch(e){
-    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(v=>[
+    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(v=>([
       v[0]||"", v[1]||"", v[2]||"Gelb",
       v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
       !!v[6]
-    ]);
+    ]));
   }
 }
 async function loadData(){
   const localUpd=localStorage.getItem("vokabeln_updated");
   const lastUsed=localStorage.getItem("index_last_sync");
   const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
-  if(localNewer){
-    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(v=>[
+  if(localNewer){ 
+    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(v=>([
       v[0]||"", v[1]||"", v[2]||"Gelb",
       v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
       !!v[6]
-    ]);
-  } else {
-    await fetchFromGitHub();
+    ]));
   }
+  else{ await fetchFromGitHub(); }
   localStorage.setItem("index_last_sync",new Date().toISOString());
   renderRecent();
 }
@@ -367,11 +364,11 @@ async function checkRemoteUpdate(){
   try{
     const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
     const j=await r.json();
-    const norm=j.map(v=>[
+    const norm=j.map(v=>([
       v[0]||"", v[1]||"", v[2]||"Gelb",
       v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
       !!v[6]
-    ]);
+    ]));
     const local=(JSON.parse(localStorage.getItem("vokabeln")||"[]"));
     if(JSON.stringify(norm)!==JSON.stringify(local)){
       localStorage.setItem("vokabeln",JSON.stringify(norm));
@@ -415,17 +412,17 @@ function saveErrorToBank(item){
 function clearErrorBank(){ localStorage.setItem('error_bank','[]'); }
 
 /* ========= Spiel-States ========= */
-let errorsList=[];
+let errorsList=[]; // für klassische Runden (cards)
 function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
 
-let modeEndless=false, game="learn";
-let round=[], i=0, delay=3000, trap=false;
+let modeEndless=false, game="learn"; // game: 'learn' oder 'cards'
+let round=[], i=0, delay=3000;
 
-/* Endlos-Abfrage (entschlackt) */
+/* Endlos-Abfrage (vereinfachte Version) */
 let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
 let totalAsked=0, totalErrors=0, sinceCheckpoint=0;
-const errorMap=new Map();
-const catStats=new Map();
+const errorMap=new Map();           // für Modal
+const catStats=new Map();           // cat -> {asked,errors}
 
 function resetEndless(pool){
   source=pool.slice(); shuffle(source); sourceIdx=0;
@@ -477,7 +474,8 @@ function afterAdvance(){
   }
 }
 function flash(ok){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
+  if(ok){ if(chkSound.checked) beep(880,70); }
+  else { if(chkSound.checked) beep(220,120,'square'); }
   if(!chkFeedback.checked){ return afterAdvance(); }
   stage.classList.add(ok?"flash-correct":"flash-wrong");
   setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); afterAdvance(); }, delay);
@@ -559,21 +557,20 @@ function next(){
 
   if(modeEndless && game==="learn"){
     if(!source.length){ alert("Keine Vokabeln vorhanden"); return; }
-    const item=getNextItem(); curr=item; trap=false;
+    const item=getNextItem(); curr=item; offer.textContent="";
     const [en,de,cat]=item;
     const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
     chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
 
+    // Frage/Antwort Richtung
     currAskedEN = selMode.value==="toGerman" ? true : selMode.value==="toEnglish" ? false : Math.random()<0.5;
     const question = currAskedEN ? en : de;
     const answer   = currAskedEN ? de : en;
     correct=answer;
 
-    /* --- Abfrage: NUR Frage + Eingabefeld (kein Cloze, kein Tipp) --- */
+    // Schlanke Eingabe-UI
     q.textContent = question;
-    offer.textContent = "";
-
-    // Eingabe-Modus
+    offer.textContent = ""; // kein Ablenkungs-Hint
     btnRight.style.display="none";
     btnDec.style.display="none";
     btnSkip.style.display="inline-block";
@@ -585,7 +582,7 @@ function next(){
     return;
   }
 
-  // Klassische Modi (Karten)
+  // Klassische "cards" bleiben unverändert
   if(i>=round.length){
     if(errorsList.length>0){
       alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
@@ -608,7 +605,8 @@ function next(){
   q.textContent=question;
 
   if(game==="cards"){
-    trap=false;
+    // Kartenmodus wie gehabt (inkl. optionaler Täuschung/Angebot)
+    let trap=false;
     btnRight.style.display="inline-block";
     btnDec.style.display="inline-block";
     btnSkip.style.display="inline-block";
@@ -620,48 +618,47 @@ function next(){
       offer.textContent="💡 "+answer;
     }
     rowButtons.style.display="flex"; rowInput.style.display="none"; inp.value="";
+    // button handlers für cards
+    btnRight.onclick=()=>{
+      const itemRef=round[i];
+      const ok=!trap;
+      if(!ok){ addErrorOnce(itemRef); saveErrorToBank(itemRef); }
+      flash(ok);
+    };
+    btnDec.onclick=()=>{
+      const itemRef=round[i];
+      if(trap){
+        rowInput.style.display="flex"; inp.value=""; inp.focus(); inp.select?.();
+        btnSub.onclick=()=>{
+          const ok=isCorrectInput(inp.value,correct);
+          if(ok){ saveDailyProgress(1); flash(true); }
+          else{
+            if(chkFeedback.checked) offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
+            addErrorOnce(itemRef); saveErrorToBank(itemRef);
+            setTimeout(()=>flash(false), delay);
+          }
+        };
+      }else{
+        addErrorOnce(itemRef); saveErrorToBank(itemRef); flash(false);
+      }
+    };
+    btnSkip.onclick=()=>{ addErrorOnce(round[i]); i++; next(); };
+    return;
   }else{
-    offer.textContent=""; trap=false;
+    offer.textContent="";
     btnRight.style.display="none"; btnDec.style.display="none"; btnSkip.style.display="inline-block";
     rowButtons.style.display="flex"; rowInput.style.display="flex"; inp.value=""; inp.focus(); inp.select?.();
   }
   showStage(true); setProg();
 }
 
-/* ===== Button-Handler ===== */
-btnRight.onclick=()=>{
-  const itemRef=(modeEndless && game==="learn")?curr:round[i];
-  const ok=!trap;
-  if(!ok){
-    addErrorOnce(itemRef); saveErrorToBank(itemRef);
-    if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); }
-  }else{
-    if(modeEndless && game==="learn"){ bumpCat(itemRef[2],false); saveDailyProgress(1); }
-  }
-  flash(ok);
-};
-btnDec.onclick=()=>{
-  if(game!=="cards") return;
-  const itemRef=round[i];
-  if(trap){
-    rowInput.style.display="flex"; inp.value=""; inp.focus(); inp.select?.();
-    btnSub.onclick=()=>{
-      const ok=isCorrectInput(inp.value,correct);
-      if(ok){ saveDailyProgress(1); flash(true); }
-      else{
-        offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-        addErrorOnce(itemRef); saveErrorToBank(itemRef);
-        setTimeout(()=>flash(false), parseInt(selDelay.value,10));
-      }
-    };
-  }else{
-    addErrorOnce(itemRef); saveErrorToBank(itemRef); flash(false);
-  }
-};
+/* ===== Button-Handler (vereinfachter Learn-Flow) ===== */
 btnSkip.onclick=()=>{
   const itemRef=(modeEndless && game==="learn")?curr:round[i];
   addErrorOnce(itemRef); saveErrorToBank(itemRef);
-  if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); return afterAdvance(); }
+  if(modeEndless && game==="learn"){
+    recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); return afterAdvance();
+  }
   i++; next();
 };
 btnSub.onclick=()=>{
@@ -669,9 +666,12 @@ btnSub.onclick=()=>{
   const ok=isCorrectInput(inp.value,correct);
   if(!ok){
     addErrorOnce(itemRef); saveErrorToBank(itemRef);
-    if(modeEndless && game==="learn"){ recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true); }
+    if(modeEndless && game==="learn"){
+      recordErrorForSummary(itemRef,currAskedEN); totalErrors++; bumpCat(itemRef[2],true);
+      if(chkFeedback.checked){ offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`; }
+    }
   }else{
-    if(modeEndless && game==="learn"){ bumpCat(itemRef[2],false); saveDailyProgress(1); }
+    if(modeEndless && game==="learn"){ bumpCat(itemRef[2],false); saveDailyProgress(1); if(chkFeedback.checked){ offer.textContent="✅ Richtig!"; } }
   }
   flash(ok);
 };
@@ -680,14 +680,14 @@ btnSub.onclick=()=>{
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'){ btnSub.click(); }
   else if(e.key==='ArrowRight'){ btnSkip.click(); }
-  else if(e.key.toLowerCase()==='r' && game==='cards'){ btnRight.click(); }
+  else if(e.key.toLowerCase()==='r' && game==='cards'){ /* für cards */ }
 });
 
 /* ===== Start-Buttons ===== */
 function filterByCategory(list){
   const val = selCat.value;
   if(val==="Alle") return list.slice();
-  if(val==="confuse") return list.filter(v=>!!v[6]);
+  if(val==="confuse") return list.filter(v=>!!v[6]);   // nur markierte Vokabeln
   return list.filter(v=>v[2]===val);
 }
 
@@ -774,11 +774,6 @@ loadData().then(checkRemoteUpdate);
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
-
-  #btnFeedback input {
-  margin-right: 6px;
-}
-  
 })();
 // ===== Start-Hinweis ausblenden, wenn eine Kachel angeklickt wird =====
 [btnLearn, btnLast30, btnCards].forEach(btn => {
