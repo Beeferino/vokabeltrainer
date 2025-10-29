@@ -137,10 +137,25 @@ body.dark details.recent-section summary::marker {
   color: #60a5fa;            /* heller, blauer Marker-Pfeil */
 }
 
-/* sorgt dafür, dass auch der geschlossene summary-Text nicht abgedunkelt wird */
-body.dark details.recent-section[open] summary,
-body.dark details.recent-section:not([open]) summary {
-  opacity: 1 !important;
+/* === Fix: "Zuletzt hinzugefügt" Leiste im Dark Mode lesbar machen === */
+body.dark details.recent-section summary {
+  background: rgba(255, 255, 255, 0.08); /* leicht abgesetzter Hintergrund */
+  color: #e2e8f0 !important;             /* hellgrauer, klar lesbarer Text */
+  font-weight: 700;
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
+body.dark details.recent-section summary::marker {
+  color: #60a5fa; /* heller blauer Pfeil */
+}
+
+body.dark details.recent-section {
+  background: rgba(15, 23, 42, 0.6);     /* dunkler, transparenter Container */
+  color: #f1f5f9;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
 }
 
 
