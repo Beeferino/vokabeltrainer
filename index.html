@@ -630,7 +630,19 @@ function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttr
 modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 btnClose.onclick=closeModal;
-btnContinue.onclick=()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); };
+btnContinue.onclick = () => {
+  closeModal();
+  // kleinen Delay, damit das Modal-Overlay wirklich entfernt ist
+  setTimeout(() => {
+    if (game === "input") {
+      nextInput();
+      inp.focus();
+    } else {
+      nextCard();
+    }
+  }, 200);
+};
+
 btnDownload.onclick=()=>{
   const lines=[];
   statGrid.querySelectorAll('.stat').forEach(s=>{
