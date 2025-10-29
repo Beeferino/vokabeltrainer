@@ -625,16 +625,24 @@ function flashCard(ok, done){
 }
 
 /* ===== Modal ===== */
-function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
-function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
+function openModal(){ 
+  modalBackdrop.style.display="flex"; 
+  modalBackdrop.setAttribute('aria-hidden','false'); 
+  btnClose.focus(); 
+}
+function closeModal(){ 
+  modalBackdrop.style.display="none"; 
+  modalBackdrop.setAttribute('aria-hidden','true'); 
+}
 modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 btnClose.onclick=closeModal;
+
+// ✅ KORRIGIERT: nur EINE Zuweisung, korrekt geschlossen
 btnContinue.onclick = () => {
-  btnContinue.onclick = () => {
   closeModal();
 
-  // wichtig: Zähler und eventuelle Restzustände zurücksetzen
+  // Zähler/Restzustände zurücksetzen, damit kein sofortiger Re-Checkpoint triggert
   sinceCheckpoint = 0;
   totalSkipped = 0;
 
@@ -647,7 +655,6 @@ btnContinue.onclick = () => {
     }
   }, 250);
 };
-
 
 btnDownload.onclick=()=>{
   const lines=[];
@@ -662,7 +669,11 @@ btnDownload.onclick=()=>{
     lines.push(`- ${v.q} -> ${v.correct} [${catMeta[0]}]`);
   });
   const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
+  const a=document.createElement('a'); 
+  a.href=URL.createObjectURL(blob); 
+  a.download='vokabelrunde.txt'; 
+  a.click(); 
+  URL.revokeObjectURL(a.href);
 };
 
 /* ===== Runde beenden (Modal füllen) ===== */
@@ -936,7 +947,8 @@ if ('serviceWorker' in navigator) {
   }
 }
 
-})();
+})();  <!-- schließt das (function(){ ganz oben -->
 </script>
 </body>
 </html>
+
