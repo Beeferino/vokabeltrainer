@@ -538,22 +538,75 @@ btnLast30.onclick=()=>{const last30=data.slice(-30);if(!last30.length){alert("Ke
   const pool=filterByCategory(last30);if(!pool.length){alert("Keine passenden.");return;}
   if(useCards)startCardsSession(pool);else startInputSession(pool);};
 
-/* ========= Reset & Init ========= */
+/* ===== Init ===== */
 function softResetUI(){
-  showStage(false);startNote.style.opacity=1;progress.textContent="Bereit.";
-  offer.textContent="";q.textContent="Bereit?";chip.textContent="–";chip.style.background="";chip.style.color="";
-  rowInput.style.display="none";rowButtons.style.display="flex";
-  btnRight.style.display=btnDec.style.display=btnSkip.style.display="none";
-  resetStats();errorsList=[];round=[];i=0;source=[];sourceIdx=0;curr=null;correct="";game="idle";modeEndless=false;
+  showStage(false);
+  startNote.style.opacity = 1;
+  progress.textContent = "Bereit.";
+  offer.textContent = "";
+  q.textContent = "Bereit?";
+  chip.textContent = "–";
+  chip.style.background = "";
+  chip.style.color = "";
+  rowInput.style.display = "none";
+  rowButtons.style.display = "flex";
+  btnRight.style.display = "none";
+  btnDec.style.display = "none";
+  btnSkip.style.display = "none";
+  resetStats();
+  errorsList = [];
+  round = [];
+  i = 0;
+  source = [];
+  sourceIdx = 0;
+  curr = null;
+  correct = "";
+  game = "idle";
+  modeEndless = false;
 }
+
 softResetUI();
 updateGoalUI(getDailyProgress());
 loadData().then(checkRemoteUpdate);
-})(); //  <-- Schließt die große anonyme Funktion!
 
-})();
-/* ========= Ende Skript ========= */
+/* Neustart (Soft-Reset) */
+btnHardReload.addEventListener('click', softResetUI);
+
+/* ===== Weiter-üben-Fix (funktioniert garantiert) ===== */
+btnContinue.onclick = () => {
+  closeModal();
+
+  // Zähler zurücksetzen, aber keine Statistik löschen
+  sinceCheckpoint = 0;
+  totalSkipped = 0;
+
+  setTimeout(() => {
+    if (game === "input") {
+      nextInput();
+      inp.focus();
+    } else if (game === "cards") {
+      nextCard();
+    }
+  }, 250);
+};
+
+/* ===== PWA Register (fehler-tolerant) ===== */
+if ('serviceWorker' in navigator) {
+  try {
+    navigator.serviceWorker.register('service-worker.js').catch(() => {});
+  } catch (e) {
+    console.warn('ServiceWorker konnte nicht registriert werden:', e);
+  }
+}
+
+/* ===== Start-Hinweis ausblenden ===== */
+[btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
+  btn.addEventListener("click", () => {
+    startNote.style.display = "none";
+  });
+});
+
+})(); //  ✅ GANZ WICHTIG: Das schließt die Hauptfunktion!
 </script>
 </body>
 </html>
-
