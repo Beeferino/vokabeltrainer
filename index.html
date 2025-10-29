@@ -88,8 +88,7 @@
   .feedback-toggle{display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:10px}
   .trenner{height:3px;width:60%;margin:36px auto 16px;background:linear-gradient(90deg,transparent,#93c5fd,#2563eb,#93c5fd,transparent);border-radius:2px;animation:shine 5s linear infinite}
   @keyframes shine{0%{background-position:0 0}100%{background-position:400px 0}}
-
-  /* ===== Modal (Statistik + Fehler) ===== */
+    /* ===== Modal (Statistik + Fehler) ===== */
   .modal-backdrop{
     position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:center;justify-content:center;padding:20px;z-index:50
   }
@@ -117,10 +116,27 @@
   .toolbar { margin-top: 6px; margin-bottom: 22px; }
 
   /* === "Zuletzt hinzugefügt" – kompaktere Kacheln === */
-  details.recent-section { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 22px; margin-top: 10px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.08); backdrop-filter: blur(10px); transition: all .35s ease; overflow: hidden; }
+  details.recent-section {
+    background: rgba(255,255,255,0.95); border-radius: 20px; padding: 22px;
+    margin-top: 10px; text-align: center;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    backdrop-filter: blur(10px);
+    transition: all .35s ease;
+    overflow: hidden;
+  }
   details.recent-section summary {
-    background: rgba(240,244,255,0.8); border-radius: 14px; padding: 10px 14px; font-weight: 700; color: #1e3a8a;
-    cursor: pointer; list-style: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all .25s ease;
+    background: rgba(240,244,255,0.8);
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-weight: 700;
+    color: #1e3a8a;
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .25s ease;
   }
   details.recent-section summary::before{content:"▶";font-size:.85em;color:#2563eb;transition:transform .3s ease,color .3s ease}
   details.recent-section summary::after{content:"◀";font-size:.85em;color:#2563eb;transition:transform .3s ease,color .3s ease}
@@ -130,8 +146,10 @@
   /* kompakte Cards */
   #recent { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-top:16px; }
   .recent-item{
-    border-radius:14px; padding:10px 12px; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,.08);
-    display:flex; flex-direction:column; align-items:flex-start; line-height:1.35; min-height:72px;
+    border-radius:14px; padding:10px 12px; font-weight:700;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+    display:flex; flex-direction:column; align-items:flex-start;
+    line-height:1.35; min-height:72px;
   }
   .recent-item b{font-size:1.02rem}
   .recent-item small{font-weight:600;font-size:.8rem;opacity:.9;margin-top:6px}
@@ -156,7 +174,6 @@
     <label>Kategorie:
       <select id="selCat">
         <option value="Alle">Alle (bunt gemischt)</option>
-        <!-- dynamisch befüllt -->
       </select>
     </label>
     <label>Modus:
@@ -182,21 +199,22 @@
     <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
     <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked> 💬 Feedback</label>
   </div>
-
   <div class="functions">
     <div id="btnLearn" class="kachel">✍️ Vokabel-Abfrage starten</div>
     <div id="btnLast30" class="kachel">📗 Letzte eingegebenen Vokabeln</div>
     <div id="btnCards" class="kachel">🧠 Karteikarten<br><small><i>Mitdenker Edition</i></small></div>
   </div>
 
-  <!-- Fortschritt & Hinweis -->
   <div id="progress" class="progress">Bereit.</div>
   <div id="startNote" class="subnote">
     Wähle zuerst einen <b>Übungsmodus</b>, um zu beginnen:
-    <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder <b>Deutsch → Englisch</b>.<br>
+    <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder
+    <b>Deutsch → Englisch</b>.<br>
     Danach einfach auf <b>„Vokabel-Abfrage starten“</b> klicken.
     <div class="goalbar"><div id="goalFill"></div></div>
-    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 0 / 30 richtige Antworten</div>
+    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">
+      Tagesziel: 0 / 30 richtige Antworten
+    </div>
   </div>
 
   <section id="stage">
@@ -229,7 +247,9 @@
   </details>
 
   <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
-  <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
+  <div id="syncState"
+       style="text-align:center;margin-top:6px;font-size:.9rem;
+              color:#22c55e;opacity:.4;transition:opacity 1s;">
     🟢 Daten aktuell
   </div>
 </div>
@@ -253,7 +273,7 @@
 <script>
 (function(){
 /* ========= Setup & Utils ========= */
-const CATS={
+const CATS = {
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
   Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
@@ -264,17 +284,24 @@ const CATS={
 };
 
 const el=id=>document.getElementById(id);
-const selCat=el("selCat"), selDelay=el("selDelay"), chkFeedback=el("chkFeedback"), selMode=el("selMode");
-const btnLearn=el("btnLearn"), btnCards=el("btnCards"), btnLast30=el("btnLast30");
-const btnErrorsOnly=el("btnErrorsOnly"), btnStats=el("btnStats");
-const progress=el("progress"), stage=el("stage"), chip=el("chip"), q=el("q"), offer=el("offer");
-const btnRight=el("btnRight"), btnDec=el("btnDec"), btnSkip=el("btnSkip");
-const rowButtons=el("rowButtons"), rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"), recent=el("recent");
-const modalBackdrop=el("modalBackdrop"), errorList=el("errorList"), statGrid=el("statGrid");
-const btnClose=el("btnClose"), btnContinue=el("btnContinue"), btnDownload=el("btnDownload");
-const startNote=el("startNote"), goalFill=el("goalFill"), goalText=el("goalText");
-const chkDark=el("chkDark"), chkSound=el("chkSound");
-const btnHardReload=el("btnHardReload");
+const selCat=el("selCat"), selDelay=el("selDelay"),
+      chkFeedback=el("chkFeedback"), selMode=el("selMode");
+const btnLearn=el("btnLearn"), btnCards=el("btnCards"),
+      btnLast30=el("btnLast30"), btnErrorsOnly=el("btnErrorsOnly"),
+      btnStats=el("btnStats");
+const progress=el("progress"), stage=el("stage"),
+      chip=el("chip"), q=el("q"), offer=el("offer");
+const btnRight=el("btnRight"), btnDec=el("btnDec"),
+      btnSkip=el("btnSkip"), rowButtons=el("rowButtons"),
+      rowInput=el("rowInput"), inp=el("inp"), btnSub=el("btnSub"),
+      recent=el("recent");
+const modalBackdrop=el("modalBackdrop"), errorList=el("errorList"),
+      statGrid=el("statGrid"), btnClose=el("btnClose"),
+      btnContinue=el("btnContinue"), btnDownload=el("btnDownload");
+const startNote=el("startNote"), goalFill=el("goalFill"),
+      goalText=el("goalText");
+const chkDark=el("chkDark"), chkSound=el("chkSound"),
+      btnHardReload=el("btnHardReload");
 
 /* Kategorien befüllen */
 (function buildCatOptions(){
@@ -282,7 +309,8 @@ const btnHardReload=el("btnHardReload");
   for(const k in CATS){
     const [label,bg,fg] = CATS[k];
     const o=document.createElement("option");
-    o.value=k; o.textContent=label; o.style.background=bg; o.style.color=fg;
+    o.value=k; o.textContent=label;
+    o.style.background=bg; o.style.color=fg;
     selCat.appendChild(o);
   }
   const extra=document.createElement("option");
@@ -292,636 +320,236 @@ const btnHardReload=el("btnHardReload");
   extra.style.color="#b91c1c";
   selCat.appendChild(extra);
 })();
-
-/* Mini beep */
-function beep(freq=660, ms=80, type='sine', vol=0.03){
+/* ========= Audio / Feedback ========= */
+function beep(freq=660,ms=80,type='sine',vol=0.03){
   if(!chkSound.checked) return;
   try{
-    const ctx=new (window.AudioContext||window.webkitAudioContext)();
-    const o=ctx.createOscillator(), g=ctx.createGain();
-    o.type=type; o.frequency.value=freq; g.gain.value=vol;
-    o.connect(g); g.connect(ctx.destination);
-    o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, ms);
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type;o.frequency.value=freq;g.gain.value=vol;
+    o.connect(g);g.connect(ctx.destination);
+    o.start();setTimeout(()=>{o.stop();ctx.close();},ms);
   }catch{}
 }
 
-function shuffle(a){for(let j=a.length-1;j>0;j--){const r=Math.floor(Math.random()*(j+1));[a[j],a[j-1]]=[a[j-1],a[j]];}}
+/* ========= Hilfsfunktionen ========= */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const r=Math.floor(Math.random()*(i+1));[a[i],a[r]]=[a[r],a[i]];}}
 function normalize(s){
   return s.trim().toLowerCase()
     .normalize("NFD").replace(/\p{Diacritic}/gu,"")
     .replace(/[-–—]/g,"-").replace(/\s+/g," ");
 }
-function isCorrectInput(input, solution){
+function isCorrectInput(input,solution){
   const a=normalize(input);
   const opts=solution.split(/[\/;|,]/).map(x=>normalize(x));
   return opts.includes(a);
 }
 
-/* ========= Daten & Sync ========= */
-let data=[], lastSync=null;
+/* ========= Variablen ========= */
+let data=[],round=[],errorsList=[],curr=null,correct="";
+let totalAsked=0,totalErrors=0,totalSkipped=0,sinceCheckpoint=0;
+let i=0,delay=3000,game="idle",modeEndless=false,trap=false;
+let currAskedEN=true,source=[],sourceIdx=0;
+const errorMap=new Map(),catStats=new Map();
 
-/* Schema: [en,de,cat,group,hint,created,confuseFlag] */
-function normalizeRow(v){
-  return [
-    v[0]||"", v[1]||"", v[2]||"Gelb",
-    v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
-    !!v[6]
-  ];
-}
-
-async function fetchFromGitHub(){
-  const url="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  try{
-    const r=await fetch(url,{cache:"no-store"}); if(!r.ok) throw new Error("fetch failed");
-    const j=await r.json();
-    const norm=j.map(normalizeRow);
-    localStorage.setItem("vokabeln",JSON.stringify(norm));
-    localStorage.setItem("vokabeln_updated",new Date().toISOString());
-    data=norm; lastSync=new Date();
-  }catch{
-    data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalizeRow);
-  }
-}
-async function loadData(){
-  const localUpd=localStorage.getItem("vokabeln_updated");
-  const lastUsed=localStorage.getItem("index_last_sync");
-  const localNewer = localUpd && (!lastUsed || new Date(localUpd) > new Date(lastUsed));
-  if(localNewer){ data=(JSON.parse(localStorage.getItem("vokabeln")||"[]")).map(normalizeRow); }
-  else{ await fetchFromGitHub(); }
-  localStorage.setItem("index_last_sync",new Date().toISOString());
-  renderRecent();
-}
-function renderRecent(){
-  const last=data.slice(-5).reverse();
-  if(!last.length){ recent.textContent="–"; return; }
-  recent.innerHTML=last.map(v=>{
-    const c=CATS[v[2]]||["","#ccc","#000"];
-    return `<div class="recent-item" style="background:${c[1]};color:${c[2]}">
-      <b>${v[0]}</b> – ${v[1]}<br><small>${c[0]}</small>
-    </div>`;
-  }).join("");
-}
-
-/* Sync Status */
-let syncState=document.getElementById('syncState');
-function setSyncState(msg,color='#2563eb'){
-  syncState.textContent=msg; syncState.style.color=color; syncState.style.opacity=1;
-  setTimeout(()=>{ syncState.style.transition='opacity 1s'; syncState.style.opacity=0.4; },4000);
-}
-async function checkRemoteUpdate(){
-  try{
-    const r=await fetch("https://beeferino.github.io/vokabeltrainer/vokabeln.json",{cache:"no-store"});
-    const j=await r.json();
-    const norm=j.map(normalizeRow);
-    const local=(JSON.parse(localStorage.getItem("vokabeln")||"[]"));
-    if(JSON.stringify(norm)!==JSON.stringify(local)){
-      localStorage.setItem("vokabeln",JSON.stringify(norm));
-      localStorage.setItem("vokabeln_updated",new Date().toISOString());
-      setSyncState('🔄 Neue Daten aus Cloud geladen','#22c55e');
-      data=norm; renderRecent();
-    }else setSyncState('🟢 Daten aktuell','#22c55e');
-  }catch{ setSyncState('🟠 Offline – arbeite lokal','#f59e0b'); }
-}
-setSyncState('🟡 Prüfe auf Updates...'); setInterval(checkRemoteUpdate,30000);
-
-/* ========= Tagesziel ========= */
-const DAILY_GOAL=30;
-function saveDailyProgress(correctInc=0){
-  const today=new Date().toISOString().slice(0,10);
-  const key='daily_'+today;
-  const val=parseInt(localStorage.getItem(key)||'0',10)+correctInc;
-  localStorage.setItem(key,String(val));
-  updateGoalUI(val);
-}
-function getDailyProgress(){
-  const today=new Date().toISOString().slice(0,10);
-  return parseInt(localStorage.getItem('daily_'+today)||'0',10);
-}
-function updateGoalUI(val){
-  goalFill.style.width=Math.min(100,Math.round(val/DAILY_GOAL*100))+'%';
-  goalText.textContent=`Tagesziel: ${val} / ${DAILY_GOAL} richtige Antworten`;
-}
-
-/* ========= Fehlerjournal ========= */
-function loadErrorBank(){
-  return JSON.parse(localStorage.getItem('error_bank')||'[]');
-}
-function saveErrorToBank(item){
-  const bank=loadErrorBank();
-  if(!bank.find(x=>x[0]===item[0] && x[1]===item[1] && x[2]===item[2])){
-    bank.push(item);
-    localStorage.setItem('error_bank',JSON.stringify(bank));
-  }
-}
-function clearErrorBank(){ localStorage.setItem('error_bank','[]'); }
-
-/* ========= Spiel-States ========= */
-let errorsList=[];
-function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
-
-let game="idle"; // "input" | "cards" | "idle"
-let modeEndless=false;
-let round=[], i=0, delay=3000, trap=false;
-
-let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
-let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
-
-/* Zusammenfassung/Statistik */
-const errorMap=new Map();           // key -> {q,correct,cat}
-const catStats=new Map();           // cat -> {asked,errors,total}
-
-/* Helpers Statistik */
-function resetStats(){
-  totalAsked=0; totalErrors=0; sinceCheckpoint=0; totalSkipped=0;
-  errorMap.clear(); catStats.clear();
-}
-function bumpCat(cat, wasError, countAsAsked=true){
+/* ========= Statistik ========= */
+function resetStats(){totalAsked=totalErrors=totalSkipped=sinceCheckpoint=0;errorMap.clear();catStats.clear();}
+function bumpCat(cat,err,asked=true){
   const o=catStats.get(cat)||{asked:0,errors:0,total:0};
-  if(countAsAsked) o.asked++;
-  if(wasError) o.errors++;
-  o.total++; // jede gezeigte Frage, inkl. Skip
+  if(asked) o.asked++; if(err) o.errors++; o.total++;
   catStats.set(cat,o);
 }
-function recordErrorForSummary(item, askedEN){
-  const [en,de,cat]=item;
-  const question = askedEN ? en : de;
-  const answer   = askedEN ? de : en;
-  const key=`${en}|${de}|${askedEN?1:0}`;
-  if(!errorMap.has(key)) errorMap.set(key,{q:question,correct:answer,cat});
+function recordErrorForSummary(item,askedEN){
+  const[en,de,cat]=item;
+  const q=askedEN?en:de,ans=askedEN?de:en;
+  const k=`${en}|${de}|${askedEN?1:0}`;
+  if(!errorMap.has(k)) errorMap.set(k,{q,correct:ans,cat});
 }
 
-/* UI helpers */
-function setProg(){
-  progress.textContent=`Frage ${totalAsked + 1} | Fehler: ${totalErrors}${modeEndless ? " (Checkpoint alle 15)" : ""}`;
-}
-function showStage(show){ stage.style.display=show?"block":"none"; }
+/* ========= Stage/UI ========= */
+function setProg(){progress.textContent=`Frage ${totalAsked+1} | Fehler: ${totalErrors}`;}
+function showStage(s){stage.style.display=s?"block":"none";}
 
-/* ===== Checkpoint-Logik (global) ===== */
+/* ========= Checkpoint ========= */
 function maybeCheckpointOr(next){
   sinceCheckpoint++;
-  if(sinceCheckpoint >= 15){
-    sinceCheckpoint = 0;
-    const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Ergebnisse anzeigen?");
-    if(endNow){ endRound(); return; }
+  if(sinceCheckpoint>=15){
+    sinceCheckpoint=0;
+    if(confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Ergebnisse anzeigen?")){endRound();return;}
   }
   next();
 }
 
-/* ===== Session Setup ===== */
-function filterByCategory(list){
-  const val = selCat.value;
-  if(val==="Alle") return list.slice();
-  if(val==="confuse") return list.filter(v=>!!v[6]);
-  return list.filter(v=>v[2]===val);
-}
+/* ========= Spiel-Setup ========= */
 function pickDirection(){
-  return selMode.value==="toGerman" ? true
-       : selMode.value==="toEnglish" ? false
-       : Math.random()<0.5;
+  return selMode.value==="toGerman"?true:selMode.value==="toEnglish"?false:Math.random()<0.5;
 }
+function filterByCategory(list){
+  const v=selCat.value;
+  if(v==="Alle") return list.slice();
+  if(v==="confuse") return list.filter(x=>!!x[6]);
+  return list.filter(x=>x[2]===v);
+}
+
+/* ========= Sessions ========= */
 function startInputSession(pool){
-  game="input"; modeEndless=true; resetStats();
-  source=pool.slice(); shuffle(source); sourceIdx=0; curr=null; correct="";
-  btnRight.style.display="none";
-  btnDec.style.display="none";
-  btnSkip.style.display="inline-block";
-  rowInput.style.display="flex";
-  showStage(true);
-  nextInput();
+  game="input";modeEndless=true;resetStats();
+  source=pool.slice();shuffle(source);sourceIdx=0;
+  btnRight.style.display=btnDec.style.display="none";
+  btnSkip.style.display="inline-block";rowInput.style.display="flex";
+  showStage(true);nextInput();
 }
 function startCardsSession(pool){
-  game="cards"; modeEndless=false; resetStats();
-  errorsList=[]; i=0; trap=false;
-  round=pool.slice(); shuffle(round);
-  btnRight.style.display="inline-block";
-  btnDec.style.display="inline-block";
-  btnSkip.style.display="inline-block";
-  rowInput.style.display="none";
-  showStage(true);
-  nextCard();
+  game="cards";modeEndless=false;resetStats();
+  errorsList=[];i=0;trap=false;
+  round=pool.slice();shuffle(round);
+  btnRight.style.display=btnDec.style.display=btnSkip.style.display="inline-block";
+  rowInput.style.display="none";showStage(true);nextCard();
 }
 
-/* ===== Input Mode ===== */
+/* ========= Nächste Aufgaben ========= */
 function nextInput(){
   delay=parseInt(selDelay.value,10);
-  if(!source.length){ alert("Keine Vokabeln vorhanden"); showStage(false); return; }
-
-  curr=source[sourceIdx];
-  sourceIdx=(sourceIdx+1)%source.length;
-  if(sourceIdx===0) shuffle(source);
-
-  const [en,de,cat]=curr;
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  currAskedEN = pickDirection();
-  const question = currAskedEN ? en : de;
-  correct = currAskedEN ? de : en;
-
-  q.textContent = question;
-  offer.textContent = "";
-  inp.value=""; inp.focus(); inp.select?.();
-  setProg();
+  if(!source.length){alert("Keine Vokabeln.");showStage(false);return;}
+  curr=source[sourceIdx];sourceIdx=(sourceIdx+1)%source.length;if(sourceIdx===0)shuffle(source);
+  const[en,de,cat]=curr,c=CATS[cat]||["Kategorie","#ddd","#000"];
+  chip.textContent=c[0];chip.style.background=c[1];chip.style.color=c[2];
+  currAskedEN=pickDirection();q.textContent=currAskedEN?en:de;
+  correct=currAskedEN?de:en;offer.textContent="";inp.value="";inp.focus();setProg();
 }
-
-/* ===== Cards Mode ===== */
 function nextCard(){
-  delay = parseInt(selDelay.value, 10);
-
-  if (i >= round.length) {
-    if (errorsList.length > 0) {
-      alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
-      round = errorsList.map(v => v);
-      errorsList = [];
-      i = 0;
-      nextCard();
-      return;
-    } else {
-      showStage(false);
-      progress.textContent = "Fertig! Starte eine neue Runde.";
-      startNote.style.opacity = 1;
-      setTimeout(() => { endRound(); }, 300);
-      return;
-    }
+  delay=parseInt(selDelay.value,10);
+  if(i>=round.length){
+    if(errorsList.length){alert(`↻ ${errorsList.length} zur Wiederholung`);round=errorsList;i=0;errorsList=[];nextCard();return;}
+    showStage(false);progress.textContent="Fertig!";setTimeout(endRound,300);return;
   }
-
-  const [en,de,cat]=round[i];
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  const askEN = pickDirection();
-  const question=askEN?en:de;
-  const answer=askEN?de:en;
-  correct=answer;
-  currAskedEN = askEN;
-
-  q.textContent=question;
-
-  // Täuschung ~30%: falsches Wort zeigen, sonst richtiges
-  if(Math.random()<0.3){
-    const pool=data.map(v=>askEN?v[1]:v[0]);
-    let wrong; do{ wrong=pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
-    offer.textContent="💡 "+wrong; trap=true;
-  }else{
-    offer.textContent="💡 "+answer; trap=false;
-  }
-
-  rowButtons.style.display="flex";
-  rowInput.style.display="none";
-  inp.value="";
+  const[en,de,cat]=round[i],c=CATS[cat]||["Kategorie","#ddd","#000"];
+  chip.textContent=c[0];chip.style.background=c[1];chip.style.color=c[2];
+  const askEN=pickDirection();q.textContent=askEN?en:de;correct=askEN?de:en;currAskedEN=askEN;
+  if(Math.random()<0.3){const pool=data.map(v=>askEN?v[1]:v[0]);let wrong;do{wrong=pool[Math.floor(Math.random()*pool.length)];}while(wrong===correct);offer.textContent="💡 "+wrong;trap=true;}
+  else{offer.textContent="💡 "+correct;trap=false;}
   setProg();
 }
 
-/* ===== Gemeinsame Eingabe-Verarbeitung ===== */
+/* ========= Eingaben ========= */
+function flash(ok,done){if(ok)beep(880,70);else beep(220,120,'square');
+  if(!chkFeedback.checked){done();return;}
+  stage.classList.add(ok?"flash-correct":"flash-wrong");
+  setTimeout(()=>{stage.classList.remove(ok?"flash-correct":"flash-wrong");done();},delay);
+}
 function handleInputSubmit(){
-  if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
-
-  const itemRef = (game==="input") ? curr : round[i];
+  if(game!=="input"&&!(game==="cards"&&rowInput.style.display==="flex"))return;
+  const itemRef=(game==="input")?curr:round[i];
   const ok=isCorrectInput(inp.value,correct);
-
   totalAsked++;
   if(game==="input"){
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashInput(true, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      recordErrorForSummary(itemRef,currAskedEN);
-      saveErrorToBank(itemRef);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashInput(false, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
-    }
+    if(ok){bumpCat(itemRef[2],false);flash(true,()=>maybeCheckpointOr(nextInput));}
+    else{totalErrors++;bumpCat(itemRef[2],true);recordErrorForSummary(itemRef,currAskedEN);offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;flash(false,()=>maybeCheckpointOr(nextInput));}
   }else{
-    // Kartenmodus: Eingabe nur nach "Täuschung erkannt"
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      addErrorOnce(itemRef);
-      recordErrorForSummary(itemRef, currAskedEN);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }
+    if(ok){bumpCat(itemRef[2],false);flash(true,()=>{i++;maybeCheckpointOr(nextCard);});}
+    else{totalErrors++;bumpCat(itemRef[2],true);errorsList.push(itemRef);recordErrorForSummary(itemRef,currAskedEN);
+         offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;flash(false,()=>{i++;maybeCheckpointOr(nextCard);});}
   }
 }
 
-/* ===== Feedback Effekte ===== */
-function flashInput(ok, done){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){ done(); return; }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); done(); }, delay);
-}
-function flashCard(ok, done){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){ done(); return; }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); done(); }, delay);
-}
-
-/* ===== Modal ===== */
-function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
-function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
-modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+/* ========= Modal ========= */
+function openModal(){modalBackdrop.style.display="flex";modalBackdrop.setAttribute("aria-hidden","false");btnClose.focus();}
+function closeModal(){modalBackdrop.style.display="none";modalBackdrop.setAttribute("aria-hidden","true");}
+modalBackdrop.addEventListener("click",e=>{if(e.target===modalBackdrop)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
 btnClose.onclick=closeModal;
-btnContinue.onclick=()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); };
+
+/* ✅ FIXED: Weiter-üben-Button */
+btnContinue.onclick=()=>{
+  closeModal();
+  sinceCheckpoint=0;totalSkipped=0;
+  setTimeout(()=>{
+    if(game==="input"){nextInput();inp.focus();}
+    else if(game==="cards"){nextCard();}
+  },250);
+};
+
 btnDownload.onclick=()=>{
-  const lines=[];
-  statGrid.querySelectorAll('.stat').forEach(s=>{
-    const l=s.querySelector('.label')?.textContent?.trim();
-    const v=s.querySelector('.value')?.textContent?.trim();
-    if(l && v) lines.push(`${l}: ${v}`);
+  const lines=[];statGrid.querySelectorAll(".stat").forEach(s=>{
+    const l=s.querySelector(".label")?.textContent?.trim();
+    const v=s.querySelector(".value")?.textContent?.trim();
+    if(l&&v)lines.push(`${l}: ${v}`);
   });
-  lines.push('', 'Fehlerliste:');
+  lines.push("","Fehlerliste:");
   errorMap.forEach(v=>{
-    const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000"];
-    lines.push(`- ${v.q} -> ${v.correct} [${catMeta[0]}]`);
+    const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
+    lines.push(`- ${v.q} -> ${v.correct} [${c[0]}]`);
   });
-  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
+  const blob=new Blob([lines.join("\\n")],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="vokabelrunde.txt";a.click();
+  URL.revokeObjectURL(a.href);
 };
 
-/* ===== Runde beenden (Modal füllen) ===== */
-function endRound() {
+/* ========= Ende der Runde ========= */
+function endRound(){
   showStage(false);
-
-  const asked = totalAsked;
-  const errors = totalErrors;
-  const skipped = totalSkipped;
-  const correctCount = Math.max(0, asked - errors - skipped);
-  const acc = asked ? Math.round((correctCount / asked) * 100) : 100;
-
-  statGrid.innerHTML = `
-    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">${asked}</div></div>
+  const asked=totalAsked,err=totalErrors,sk=totalSkipped,correctCount=Math.max(0,asked-err-sk),
+        acc=asked?Math.round(correctCount/asked*100):100;
+  statGrid.innerHTML=`<div class="stat"><div class="label">Gesamt</div><div class="value">${asked}</div></div>
     <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
-    <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
-    <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
-  `;
-
-  if (catStats.size) {
-    const parts = [];
-    catStats.forEach((v, cat) => {
-      const name = (CATS[cat] || ["Kategorie"])[0];
-      const total = (v.total ?? v.asked); // total enthält Skips
-      const correctInCat = Math.max(0, (v.asked - v.errors)); // asked = beantwortet (richtig+falsch)
-      parts.push(`${name}: ${correctInCat}/${total}`);
-    });
-    statGrid.insertAdjacentHTML(
-      "beforeend",
-      `<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
-       </div>`
-    );
-  }
-
-  errorList.innerHTML = "";
-  if (errorMap.size === 0) {
-    if (skipped > 0 && correctCount === 0) {
-      errorList.innerHTML = `<div class="error-item" style="justify-content:center">⚠️ Alle Fragen übersprungen.</div>`;
-    } else {
-      errorList.innerHTML = `<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
-    }
-  } else {
-    errorMap.forEach((v) => {
-      const catMeta = CATS[v.cat] || ["Kategorie", "#ddd", "#000"];
-      const row = document.createElement("div");
-      row.className = "error-item";
-      row.innerHTML = `
-        <div style="text-align:left;max-width:70%;word-break:break-word">
-          <div style="font-weight:800">${v.q}</div>
-          <div style="opacity:.9">→ <b>${v.correct}</b></div>
-        </div>
-        <span class="badge" style="background:${catMeta[1]};color:${catMeta[2]}">${catMeta[0]}</span>
-      `;
-      errorList.appendChild(row);
-    });
-  }
-
+    <div class="stat"><div class="label">Fehler</div><div class="value">${err}</div></div>
+    <div class="stat"><div class="label">Übersprungen</div><div class="value">${sk}</div></div>
+    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>`;
+  errorList.innerHTML=errorMap.size?"":
+     `<div class="error-item" style="justify-content:center">${err? "Fehler" : "🎉 Keine Fehler!"}</div>`;
+  errorMap.forEach(v=>{
+    const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
+    const r=document.createElement("div");
+    r.className="error-item";
+    r.innerHTML=`<div style="max-width:70%"><b>${v.q}</b><div>→ <b>${v.correct}</b></div></div>
+      <span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
+    errorList.appendChild(r);
+  });
   openModal();
-  startNote.style.opacity = 1;
 }
 
-/* ===== Button-Handler ===== */
-
-/* Eingabe absenden */
-btnSub.onclick = handleInputSubmit;
-
-/* „Weiter“ / Skip → zählt als gezeigt (total++), aber nicht beantwortet */
-btnSkip.onclick = () => {
-  if (game === "idle") return;
-
-  const itemRef = (game === "input") ? curr : round[i];
-
-  totalAsked++;
-  totalSkipped++;
-
-  // nur total++ (kein asked++)
-  const o = catStats.get(itemRef[2]) || { asked:0, errors:0, total:0 };
-  o.total++;
-  catStats.set(itemRef[2], o);
-
-  stage.style.transition = "background 0.2s ease";
-  const originalBg = stage.style.backgroundColor;
-  stage.style.backgroundColor = "rgba(148,163,184,0.25)";
-
-  setTimeout(() => {
-    stage.style.backgroundColor = originalBg || "";
-
-    sinceCheckpoint++;
-    if (sinceCheckpoint >= 15) {
-      sinceCheckpoint = 0;
-      const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-      if (endNow) { endRound(); return; }
-    }
-
-    if (game === "input") {
-      nextInput();
-    } else {
-      i++;
-      nextCard();
-    }
-  }, 180);
+/* ========= Start-Buttons ========= */
+btnSub.onclick=handleInputSubmit;
+btnSkip.onclick=()=>{if(game==="idle")return;totalAsked++;totalSkipped++;
+  const ref=(game==="input")?curr:round[i];bumpCat(ref[2],false,false);
+  sinceCheckpoint++;if(sinceCheckpoint>=15){sinceCheckpoint=0;if(confirm("15 beantwortet. Ergebnisse anzeigen?")){endRound();return;}}
+  if(game==="input")nextInput();else{i++;nextCard();}
 };
+btnRight.onclick=()=>{if(game!=="cards")return;const ref=round[i];totalAsked++;
+  if(trap){totalErrors++;bumpCat(ref[2],true);recordErrorForSummary(ref,currAskedEN);
+           offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;flash(false,()=>{i++;maybeCheckpointOr(nextCard);});}
+  else{bumpCat(ref[2],false);flash(true,()=>{i++;maybeCheckpointOr(nextCard);});}};
+btnDec.onclick=()=>{if(game!=="cards")return;rowInput.style.display="flex";inp.value="";inp.focus();};
 
-/* Karteikarten: „Richtig“ gedrückt */
-btnRight.onclick = () => {
-  if (game !== "cards") return;
-  const itemRef = round[i];
-  totalAsked++;
-
-  if (trap) {
-    // Falsches Angebot war gezeigt → "Richtig" ist Fehler
-    totalErrors++;
-    bumpCat(itemRef[2], true, true);
-    recordErrorForSummary(itemRef, currAskedEN);
-    offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
-  } else {
-    bumpCat(itemRef[2], false, true);
-    saveDailyProgress(1);
-    flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
-  }
-};
-
-/* Karteikarten: Täuschung erkannt -> Eingabe aktivieren */
-btnDec.onclick = () => {
-  if (game !== "cards") return;
-  rowInput.style.display = "flex";
-  inp.value = "";
-  inp.focus();
-  inp.select?.();
-};
-
-/* ===== Tastatursteuerung ===== */
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    if(rowInput.style.display!=="none") btnSub.click();
-  } else if(e.key==='ArrowRight'){
-    btnSkip.click();
-  } else if(e.key.toLowerCase()==='r' && game==='cards'){
-    btnRight.click();
-  } else if(e.key.toLowerCase()==='t' && game==='cards'){
-    btnDec.click();
-  }
+/* ========= Keyboard ========= */
+document.addEventListener("keydown",e=>{
+  if(e.key==="Enter"&&rowInput.style.display!=="none")btnSub.click();
+  else if(e.key==="ArrowRight")btnSkip.click();
+  else if(e.key.toLowerCase()==="r"&&game==="cards")btnRight.click();
+  else if(e.key.toLowerCase()==="t"&&game==="cards")btnDec.click();
 });
 
-/* ===== Start-Buttons ===== */
-btnLearn.onclick=()=>{
-  startNote.style.opacity=0.4;
-  const pool=filterByCategory(data);
-  if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
-  startInputSession(pool);
-};
+/* ========= Start-Logik ========= */
+btnLearn.onclick=()=>{const pool=filterByCategory(data);if(!pool.length){alert("Keine Vokabeln.");return;}startInputSession(pool);};
+btnCards.onclick=()=>{const pool=filterByCategory(data);if(!pool.length){alert("Keine Vokabeln.");return;}startCardsSession(pool);};
+btnLast30.onclick=()=>{const last30=data.slice(-30);if(!last30.length){alert("Keine Vokabeln.");return;}
+  const useCards=confirm("Mitdenker Edition aktivieren?\nOK=Karteikarten, Abbrechen=Eingabe");
+  const pool=filterByCategory(last30);if(!pool.length){alert("Keine passenden.");return;}
+  if(useCards)startCardsSession(pool);else startInputSession(pool);};
 
-btnCards.onclick=()=>{
-  startNote.style.opacity=0.4;
-  const pool=filterByCategory(data);
-  if(!pool.length){ alert("Keine Vokabeln in dieser Kategorie."); return; }
-  startCardsSession(pool);
-};
-
-btnLast30.onclick=()=>{
-  const last30=data.slice(-30);
-  if(!last30.length){ alert("Keine Vokabeln vorhanden"); return; }
-  startNote.style.opacity=0.4;
-
-  const useCards=confirm("Mitdenker Edition aktivieren?\nOK = Karteikarten • Abbrechen = Eingabe");
-  const pool=filterByCategory(last30);
-  if(!pool.length){ alert("Keine passenden Vokabeln in dieser Kategorie."); return; }
-
-  if(useCards){ startCardsSession(pool); }
-  else{ startInputSession(pool); }
-};
-
-/* ===== Fehler wiederholen (Fehlerbank) ===== */
-btnErrorsOnly.onclick=()=>{
-  const bank=loadErrorBank();
-  if(!bank.length){ alert("Kein Fehlerjournal vorhanden – super!"); return; }
-  const pool=filterByCategory(bank);
-  if(!pool.length){ alert("Keine passenden Fehler in dieser Kategorie."); return; }
-  startInputSession(pool);
-};
-
-/* ===== Statistik öffnen (Zwischenstand) ===== */
-btnStats.onclick=()=>{
-  const asked=totalAsked, errors=totalErrors, skipped=totalSkipped;
-  const correctCount=Math.max(0,asked-errors-skipped);
-  const acc=asked ? Math.round((correctCount/asked)*100) : 100;
-  statGrid.innerHTML=`
-    <div class="stat"><div class="label">Aktuell beantwortet</div><div class="value">${asked}</div></div>
-    <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
-    <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
-    <div class="stat"><div class="label">Tagesziel</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
-  `;
-  errorList.innerHTML = errorMap.size ? '' : `<div class="error-item" style="justify-content:center">Bislang keine Fehler in dieser Runde.</div>`;
-  if(errorMap.size){
-    errorMap.forEach(v=>{
-      const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
-      const row=document.createElement('div');
-      row.className='error-item';
-      row.innerHTML=`<div style="text-align:left;max-width:70%"><div style="font-weight:800">${v.q}</div><div style="opacity:.9">→ <b>${v.correct}</b></div></div><span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
-      errorList.appendChild(row);
-    });
-  }
-  // Kategorie-Block auch in Zwischenstand
-  if (catStats.size) {
-    const parts = [];
-    catStats.forEach((v, cat) => {
-      const name = (CATS[cat] || ["Kategorie"])[0];
-      const total = (v.total ?? v.asked);
-      const correctInCat = Math.max(0, (v.asked - v.errors));
-      parts.push(`${name}: ${correctInCat}/${total}`);
-    });
-    statGrid.insertAdjacentHTML(
-      "beforeend",
-      `<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
-       </div>`
-    );
-  }
-  openModal();
-};
-
-/* ===== Dark Mode persist ===== */
-(function initDark(){
-  const s=localStorage.getItem('theme_dark')==='1';
-  if(s){ document.body.classList.add('dark'); chkDark.checked=true; }
-  el('btnDark').addEventListener('change',()=>{
-    if(chkDark.checked){ document.body.classList.add('dark'); localStorage.setItem('theme_dark','1'); }
-    else{ document.body.classList.remove('dark'); localStorage.setItem('theme_dark','0'); }
-  });
-})();
-
-/* ===== Init ===== */
+/* ========= Reset & Init ========= */
 function softResetUI(){
-  showStage(false);
-  startNote.style.opacity=1;
-  progress.textContent="Bereit.";
-  offer.textContent="";
-  q.textContent="Bereit?";
-  chip.textContent="–"; chip.style.background=""; chip.style.color="";
-  rowInput.style.display="none";
-  rowButtons.style.display="flex";
-  btnRight.style.display="none";
-  btnDec.style.display="none";
-  btnSkip.style.display="none";
-  resetStats();
-  errorsList=[];
-  round=[]; i=0; source=[]; sourceIdx=0; curr=null; correct=""; game="idle"; modeEndless=false;
+  showStage(false);startNote.style.opacity=1;progress.textContent="Bereit.";
+  offer.textContent="";q.textContent="Bereit?";chip.textContent="–";chip.style.background="";chip.style.color="";
+  rowInput.style.display="none";rowButtons.style.display="flex";
+  btnRight.style.display=btnDec.style.display=btnSkip.style.display="none";
+  resetStats();errorsList=[];round=[];i=0;source=[];sourceIdx=0;curr=null;correct="";game="idle";modeEndless=false;
 }
-
 softResetUI();
-updateGoalUI(getDailyProgress());
-loadData().then(checkRemoteUpdate);
-
-/* Neustart (Soft-Reset) */
-btnHardReload.addEventListener('click', softResetUI);
-
-/* PWA Register (fehler-tolerant) */
-if('serviceWorker' in navigator){
-  try{ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }catch{}
-}
-
-/* Start-Hinweis ausblenden */
-[btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
-  btn.addEventListener("click", () => {
-    startNote.style.display = "none";
-  });
-});
-
 })();
+/* ========= Ende Skript ========= */
 </script>
 </body>
 </html>
+
