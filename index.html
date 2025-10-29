@@ -861,30 +861,35 @@ btnSkip.onclick = () => {
   totalSkipped = (totalSkipped || 0) + 1;
   bumpCat(itemRef[2], false);
 
-  // Visuelles Feedback – neutral (grauer Flash)
-  stage.classList.add("flash-wrong");
+  // Visuelles Feedback (neutral – graublau statt rot)
+  stage.style.transition = "background 0.2s ease";
+  const originalBg = stage.style.backgroundColor;
+  stage.style.backgroundColor = "rgba(148,163,184,0.25)"; // hellgraublau
 
   setTimeout(() => {
-    stage.classList.remove("flash-wrong");
+    stage.style.backgroundColor = originalBg || "";
+    sinceCheckpoint++;
 
-    // Weiterschalten abhängig vom Spielmodus
-    if (game === "input") {
-      sinceCheckpoint++; // 🟢 Checkpoint zählt weiter
-      if (sinceCheckpoint >= 15) {
-        sinceCheckpoint = 0;
-        const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-        if (endNow) {
-          endRound();
-          return;
-        }
+    // 🟢 Nach 15 Fragen abfragen, ob beendet werden soll
+    if (sinceCheckpoint >= 15) {
+      sinceCheckpoint = 0;
+      const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+      if (endNow) {
+        endRound();
+        return;
       }
+    }
+
+    // 🟢 Nächste Frage/Karte aufrufen
+    if (game === "input") {
       nextInput();
     } else if (game === "cards") {
       i++;
       nextCard();
     }
-  }, 150);
+  }, 180); // kurzer Delay für Flash
 };
+
 
 
   // Kurzes Feedback (grau flashen)
