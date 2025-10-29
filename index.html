@@ -127,14 +127,22 @@ details.recent-section[open]{background:#fff;box-shadow:0 10px 32px rgba(0,0,0,.
 .toolbar { margin-top: 6px; }
 /* ===== Harmonischer Abstand unterhalb der Toolbar ===== */
 .toolbar { margin-bottom: 22px; }
-/* === Fix: "Zuletzt hinzugefügt" im Dark Mode besser lesbar === */
+/* === Fix: "Zuletzt hinzugefügt" – lesbar in allen Zuständen (Dark Mode) === */
 body.dark details.recent-section summary {
-  color: #e5e7eb;          /* helles Grau (fast Weiß) */
-  font-weight: 700;        /* etwas kräftiger für bessere Lesbarkeit */
+  color: #f1f5f9;            /* sehr helles Grau, gut lesbar */
+  font-weight: 700;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
 }
 body.dark details.recent-section summary::marker {
-  color: #93c5fd;          /* heller blauer Marker-Dreieck für Kontrast */
+  color: #60a5fa;            /* heller, blauer Marker-Pfeil */
 }
+
+/* sorgt dafür, dass auch der geschlossene summary-Text nicht abgedunkelt wird */
+body.dark details.recent-section[open] summary,
+body.dark details.recent-section:not([open]) summary {
+  opacity: 1 !important;
+}
+
 
 </style>
 </head>
