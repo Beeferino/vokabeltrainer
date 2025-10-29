@@ -802,50 +802,73 @@ function endRound(){
   startNote.style.opacity=1;
 }
 
-/* ===== Button-Handler ===== */
-// Eingabe abschicken
-btnSub.onclick=handleInputSubmit;
+/* ===== Button-Handler (korrektes Zählen) ===== */
 
-// Weiter/Überspringen: zählt als Frage, KEIN Fehler
-btnSkip.onclick=()=>{
-  if(game==="idle") return;
-  const itemRef=(game==="input")?curr:round[i];
+// Eingabe abschicken (nur echte Eingabe zählt als korrekt oder Fehler)
+btnSub.onclick = () => {
+  const itemRef = (game === "input") ? curr : round[i];
+  const ok = isCorrectInput(inp.value, correct);
+
   totalAsked++;
-  bumpCat(itemRef[2],false); // kein Fehler
-  if(game==="input"){ flashInput(true); } else { flashCard(true); }
+  if (ok) {
+    saveDailyProgress(1);
+    bumpCat(itemRef[2], false);
+    flashInput(true);
+  } else {
+    totalErrors++;
+    bumpCat(itemRef[2], true);
+    recordErrorForSummary(itemRef, currAskedEN);
+    saveErrorToBank(itemRef);
+    offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+    setTimeout(() => flashInput(false), delay);
+  }
 };
 
-// Karteikarten: „Richtig“ (kein Eingabefeld)
-btnRight.onclick=()=>{
-  if(game!=="cards") return;
-  const itemRef=round[i];
+// „Weiter“ / Überspringen → zählt NICHT als korrekt
+btnSkip.onclick = () => {
+  if (game === "idle") return;
+  const itemRef = (game === "input") ? curr : round[i];
+  // Frage gezählt, aber weder Fehler noch Erfolg
+  totalAsked++;
+  bumpCat(itemRef[2], false);
+  if (game === "input") {
+    flashInput(true);
+  } else {
+    flashCard(true);
+  }
+};
 
-  // zählt immer als beantwortete Frage
+// Karteikarten: „Richtig“ gedrückt
+btnRight.onclick = () => {
+  if (game !== "cards") return;
+  const itemRef = round[i];
   totalAsked++;
 
-  if(trap){
-    // Falsch klassifiziert, aber KEIN "Fehler" im Sinne der falschen Eingabe (wie gefordert)
-    // Wir zeigen die richtige Lösung kurz an
-    offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-    bumpCat(itemRef[2],false); // kein Fehler zählen
-    setTimeout(()=>flashCard(false), delay);
-  }else{
+  if (trap) {
+    // Täuschung erkannt, aber falsch eingeordnet → KEIN Fehler
+    offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+    bumpCat(itemRef[2], false);
+    setTimeout(() => flashCard(false), delay);
+  } else {
     // korrekt erkannt
-    bumpCat(itemRef[2],false);
+    bumpCat(itemRef[2], false);
     saveDailyProgress(1);
     flashCard(true);
   }
 };
 
-// Karteikarten: „Täuschung erkannt“ → Eingabe öffnen
-btnDec.onclick=()=>{
-  if(game!=="cards") return;
-  const itemRef=round[i];
-  // Wenn Täuschung vermutet, immer Eingabe verlangen
-  rowInput.style.display="flex";
-  inp.value=""; inp.focus(); inp.select?.();
-  // handleInputSubmit übernimmt Zählung & Bewertung
+// Karteikarten: Täuschung erkannt -> Eingabe aktivieren
+btnDec.onclick = () => {
+  if (game !== "cards") return;
+  const itemRef = round[i];
+  // Eingabefeld öffnen
+  rowInput.style.display = "flex";
+  inp.value = "";
+  inp.focus();
+  inp.select?.();
+  // Bewertung nach Eingabe über btnSub
 };
+
 
 /* ===== Tastatursteuerung ===== */
 document.addEventListener('keydown',e=>{
