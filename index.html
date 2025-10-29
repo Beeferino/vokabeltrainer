@@ -1,6 +1,4 @@
-<!doctype html>
-<html lang="de">
-<head>
+<html lang="de"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Vokabeltrainer – Beeferino</title>
@@ -116,37 +114,89 @@
   .controls { margin-bottom: 18px; }
   .toolbar { margin-top: 6px; margin-bottom: 22px; }
 
-  /* === "Zuletzt hinzugefügt" – kompaktere Kacheln === */
-  details.recent-section { background: rgba(255,255,255,0.95); border-radius: 20px; padding: 22px; margin-top: 10px; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,0.08); backdrop-filter: blur(10px); transition: all .35s ease; overflow: hidden; }
+  /* === "Zuletzt hinzugefügt" – Pfeile === */
+  details.recent-section {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 22px;
+    margin-top: 10px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
+    transition: all 0.35s ease;
+    overflow: hidden;
+  }
   details.recent-section summary {
-    background: rgba(240,244,255,0.8); border-radius: 14px; padding: 10px 14px; font-weight: 700; color: #1e3a8a;
-    cursor: pointer; list-style: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all .25s ease;
+    background: rgba(240, 244, 255, 0.8);
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-weight: 700;
+    color: #1e3a8a;
+    cursor: pointer;
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    position: relative;
+    transition: all 0.25s ease;
   }
-  details.recent-section summary::before{content:"▶";font-size:.85em;color:#2563eb;transition:transform .3s ease,color .3s ease}
-  details.recent-section summary::after{content:"◀";font-size:.85em;color:#2563eb;transition:transform .3s ease,color .3s ease}
+  details.recent-section summary::before {
+    content: "▶";
+    font-size: 0.85em;
+    color: #2563eb;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  details.recent-section summary::after {
+    content: "◀";
+    font-size: 0.85em;
+    color: #2563eb;
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
   details.recent-section[open] summary::before,
-  details.recent-section[open] summary::after{content:"▼";color:#1d4ed8}
-
-  /* kompakte Cards */
-  #recent { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin-top:16px; }
-  .recent-item{
-    border-radius:14px; padding:10px 12px; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,.08);
-    display:flex; flex-direction:column; align-items:flex-start; line-height:1.35; min-height:72px;
+  details.recent-section[open] summary::after {
+    content: "▼";
+    color: #1d4ed8;
+    transform: none;
   }
-  .recent-item b{font-size:1.02rem}
-  .recent-item small{font-weight:600;font-size:.8rem;opacity:.9;margin-top:6px}
-
-  /* === Dark-Variante Recent === */
-  body.dark details.recent-section {background: rgba(15,23,42,0.6); box-shadow: 0 4px 14px rgba(0,0,0,0.4)}
-  body.dark details.recent-section summary {background: rgba(255,255,255,0.08); color:#e2e8f0!important}
+  details.recent-section summary:hover {
+    background: rgba(219, 234, 254, 0.9);
+    color: #1e40af;
+  }
+  details.recent-section[open] {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  }
+  details.recent-section>div {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+  }
+  details.recent-section[open]>div {
+    max-height: 800px;
+    opacity: 1;
+  }
+  body.dark details.recent-section {background: rgba(15, 23, 42, 0.6);box-shadow: 0 4px 14px rgba(0,0,0,0.4)}
+  body.dark details.recent-section summary {background: rgba(255, 255, 255, 0.08);color:#e2e8f0!important;font-weight:700;border-radius:14px;padding:10px 14px;transition:all .25s ease}
   body.dark details.recent-section summary::before, body.dark details.recent-section summary::after {color:#60a5fa}
-  body.dark .recent-item{box-shadow:0 4px 8px rgba(0,0,0,.25)}
-
+  body.dark details.recent-section[open] summary::before, body.dark details.recent-section[open] summary::after {color:#93c5fd}
+  body.dark details.recent-section summary:hover {background: rgba(255,255,255,0.15);color:#fff!important;text-shadow:0 0 6px rgba(96,165,250,0.4)}
   /* ===== Footer-Zentrierung ===== */
-  .foot { text-align:center; font-size:.9rem; color:#64748b; margin-top:14px; margin-bottom:6px; }
-  body.dark .foot { color:#cbd5e1; }
+.foot {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+body.dark .foot {
+  color: #cbd5e1;
+}
+
 </style>
-</head>
+<style type="text/css" id="operaUserStyle"></style></head>
 <body>
 <div class="app">
   <h1>🎯 Vokabeltrainer</h1>
@@ -156,8 +206,7 @@
     <label>Kategorie:
       <select id="selCat">
         <option value="Alle">Alle (bunt gemischt)</option>
-        <!-- dynamisch befüllt -->
-      </select>
+      <option value="Gelb" style="background: rgb(244, 208, 63); color: rgb(0, 0, 0);">Grundwerkzeuge Metallverarbeitung</option><option value="Pink" style="background: rgb(233, 30, 99); color: rgb(255, 255, 255);">Werkzeugkasten Mechaniker</option><option value="Blau" style="background: rgb(25, 118, 210); color: rgb(255, 255, 255);">Blech- / Kunststoffarbeiten</option><option value="Gruen" style="background: rgb(30, 132, 73); color: rgb(255, 255, 255);">Drehen / Fräsen</option><option value="HellesPink" style="background: rgb(245, 73, 39); color: rgb(255, 255, 255);">Hydraulik / Pneumatik</option><option value="Orange" style="background: rgb(230, 126, 34); color: rgb(255, 255, 255);">Elektrotechnik</option><option value="Dunkelgruen" style="background: rgb(17, 122, 101); color: rgb(255, 255, 255);">Fluggerätemechanik allgemein</option><option value="confuse" style="background: rgb(255, 228, 230); color: rgb(185, 28, 28);">⚠️ Verwechslungsgefahr-Vokabeln</option></select>
     </label>
     <label>Modus:
       <select id="selMode">
@@ -169,7 +218,7 @@
     <label>Delay:
       <select id="selDelay">
         <option value="1000">1 s</option>
-        <option value="3000" selected>3 s</option>
+        <option value="3000" selected="">3 s</option>
         <option value="5000">5 s</option>
       </select>
     </label>
@@ -179,8 +228,8 @@
     <button id="btnErrorsOnly" class="tbtn">🔁 Fehler wiederholen</button>
     <button id="btnStats" class="tbtn">📊 Statistik</button>
     <label class="dark-toggle tbtn" id="btnDark"><input type="checkbox" id="chkDark"> 🌙 Dark Mode</label>
-    <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked> 🔈 Sound</label>
-    <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked> 💬 Feedback</label>
+    <label class="dark-toggle tbtn" id="btnSound"><input type="checkbox" id="chkSound" checked=""> 🔈 Sound</label>
+    <label class="dark-toggle tbtn" id="btnFeedback"><input type="checkbox" id="chkFeedback" checked=""> 💬 Feedback</label>
   </div>
 
   <div class="functions">
@@ -190,27 +239,27 @@
   </div>
 
   <!-- Fortschritt & Hinweis -->
-  <div id="progress" class="progress">Bereit.</div>
-  <div id="startNote" class="subnote">
+  <div id="progress" class="progress">Fertig! Starte eine neue Runde.</div>
+  <div id="startNote" class="subnote" style="opacity: 1; display: none;">
     Wähle zuerst einen <b>Übungsmodus</b>, um zu beginnen:
     <b>Gemischt</b> (abwechselnd), <b>Englisch → Deutsch</b> oder <b>Deutsch → Englisch</b>.<br>
     Danach einfach auf <b>„Vokabel-Abfrage starten“</b> klicken.
-    <div class="goalbar"><div id="goalFill"></div></div>
-    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 0 / 30 richtige Antworten</div>
+    <div class="goalbar"><div id="goalFill" style="width: 23%;"></div></div>
+    <div style="font-size:.85rem;margin-top:6px;opacity:.8" id="goalText">Tagesziel: 7 / 30 richtige Antworten</div>
   </div>
 
-  <section id="stage">
-    <div id="chip" class="chip">–</div>
-    <div id="q" class="word">Bereit?</div>
-    <div id="offer" class="offer"></div>
+  <section id="stage" class="" style="display: none; transition: background 0.2s;">
+    <div id="chip" class="chip" style="background: rgb(233, 30, 99); color: rgb(255, 255, 255);">Werkzeugkasten Mechaniker</div>
+    <div id="q" class="word">drill</div>
+    <div id="offer" class="offer">💡 Bohrer</div>
 
-    <div id="rowButtons" class="btnrow">
-      <button id="btnRight" class="btn ok" style="display:none;">Richtig</button>
-      <button id="btnDec" class="btn bad" style="display:none;">Täuschung erkannt</button>
-      <button id="btnSkip" class="btn skip" style="display:none;">Weiter</button>
+    <div id="rowButtons" class="btnrow" style="display: flex;">
+      <button id="btnRight" class="btn ok" style="display: inline-block;">Richtig</button>
+      <button id="btnDec" class="btn bad" style="display: inline-block;">Täuschung erkannt</button>
+      <button id="btnSkip" class="btn skip" style="display: inline-block;">Weiter</button>
     </div>
 
-    <div id="rowInput" class="inprow">
+    <div id="rowInput" class="inprow" style="display: none;">
       <input id="inp" type="text" placeholder="Übersetzung eingeben …">
       <button id="btnSub">Eingabe</button>
     </div>
@@ -225,22 +274,40 @@
 
   <details class="recent-section">
     <summary>Zuletzt hinzugefügt</summary>
-    <div id="recent">–</div>
+    <div id="recent"><div class="recent-item" style="background:#F4D03F;color:#000">
+      <b>broom</b> – Besen<br><small>Grundwerkzeuge Metallverarbeitung</small>
+    </div><div class="recent-item" style="background:#E91E63;color:#fff">
+      <b>drill</b> – Bohrer<br><small>Werkzeugkasten Mechaniker</small>
+    </div><div class="recent-item" style="background:#F4D03F;color:#000">
+      <b>file</b> – Feile<br><small>Grundwerkzeuge Metallverarbeitung</small>
+    </div><div class="recent-item" style="background:#E91E63;color:#fff">
+      <b>hammer</b> – Hammer<br><small>Werkzeugkasten Mechaniker</small>
+    </div><div class="recent-item" style="background:#F4D03F;color:#000">
+      <b>gloves</b> – Handschuhe<br><small>Grundwerkzeuge Metallverarbeitung</small>
+    </div></div>
   </details>
 
   <div class="foot">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
-  <div id="syncState" style="text-align:center;margin-top:6px;font-size:.9rem;color:#22c55e;opacity:.4;transition:opacity 1s;">
-    🟢 Daten aktuell
-  </div>
+  <div id="syncState" style="text-align: center; margin-top: 6px; font-size: 0.9rem; color: rgb(34, 197, 94); opacity: 0.4; transition: opacity 1s;">🟢 Daten aktuell</div>
 </div>
 
 <!-- ===== Modal ===== -->
-<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true">
+<div id="modalBackdrop" class="modal-backdrop" aria-hidden="true" style="display: none;">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <header><h2 id="modalTitle">📊 Runden-Statistik & Fehlerübersicht</h2></header>
+    <header><h2 id="modalTitle">📊 Runden-Statistik &amp; Fehlerübersicht</h2></header>
     <div class="content">
-      <div class="stat-grid" id="statGrid"></div>
-      <div class="error-list" id="errorList"></div>
+      <div class="stat-grid" id="statGrid">
+    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">10</div></div>
+    <div class="stat"><div class="label">Korrekt</div><div class="value">6</div></div>
+    <div class="stat"><div class="label">Fehler</div><div class="value">1</div></div>
+    <div class="stat"><div class="label">Übersprungen</div><div class="value">3</div></div>
+    <div class="stat"><div class="label">Trefferquote</div><div class="value">60%</div></div>
+    <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">7/30</div></div>
+  <div class="stat" style="grid-column:1/-1">
+         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
+         <div class="value" style="font-size:1rem">Grundwerkzeuge Metallverarbeitung: 3/5 • Blech- / Kunststoffarbeiten: 2/2 • Werkzeugkasten Mechaniker: 1/3</div>
+       </div></div>
+      <div class="error-list" id="errorList"><div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div></div>
     </div>
     <footer>
       <button id="btnDownload" class="download">⬇️ Fehlerliste speichern</button>
@@ -276,7 +343,7 @@ const startNote=el("startNote"), goalFill=el("goalFill"), goalText=el("goalText"
 const chkDark=el("chkDark"), chkSound=el("chkSound");
 const btnHardReload=el("btnHardReload");
 
-/* Kategorien befüllen */
+/* Kategorien + Spezialfilter befüllen */
 (function buildCatOptions(){
   while (selCat.options.length > 1) selCat.remove(1);
   for(const k in CATS){
@@ -404,7 +471,7 @@ function updateGoalUI(val){
 
 /* ========= Fehlerjournal ========= */
 function loadErrorBank(){
-  return JSON.parse(localStorage.getItem('error_bank')||'[]');
+  return JSON.parse(localStorage.getItem('error_bank')||'[]'); // array of [en,de,cat]
 }
 function saveErrorToBank(item){
   const bank=loadErrorBank();
@@ -416,13 +483,14 @@ function saveErrorToBank(item){
 function clearErrorBank(){ localStorage.setItem('error_bank','[]'); }
 
 /* ========= Spiel-States ========= */
-let errorsList=[];
+let errorsList=[]; // nur für Karten-Wiederholungen
 function addErrorOnce(item){ if(!errorsList.includes(item)) errorsList.push(item); }
 
 let game="idle"; // "input" | "cards" | "idle"
-let modeEndless=false;
+let modeEndless=false; // true nur im input-Modus
 let round=[], i=0, delay=3000, trap=false;
 
+/* Eingabe-/Karten-Session */
 let source=[], sourceIdx=0, curr=null, currAskedEN=true, correct="";
 let totalAsked=0, totalErrors=0, sinceCheckpoint=0, totalSkipped=0;
 
@@ -437,9 +505,9 @@ function resetStats(){
 }
 function bumpCat(cat, wasError, countAsAsked=true){
   const o=catStats.get(cat)||{asked:0,errors:0,total:0};
-  if(countAsAsked) o.asked++;
-  if(wasError) o.errors++;
-  o.total++; // jede gezeigte Frage, inkl. Skip
+  if(countAsAsked) o.asked++;          // nur „beantwortet“
+  if(wasError)     o.errors++;         // nur bei Fehler
+  o.total++;                            // JEDE gezeigte Frage (inkl. Skip)
   catStats.set(cat,o);
 }
 function recordErrorForSummary(item, askedEN){
@@ -524,6 +592,127 @@ function nextInput(){
   setProg();
 }
 
+/* Eingabe absenden (beide Modi nutzen diese Routine) */
+
+/* Fehler für Statistik & Modal speichern */
+function recordErrorForSummary(item, askedEN){
+  const [en, de, cat] = item;
+  const question = askedEN ? en : de;
+  const answer   = askedEN ? de : en;
+  const key = `${en}|${de}|${askedEN?1:0}`;
+  if (!errorMap.has(key)) {
+    errorMap.set(key, { q: question, correct: answer, cat });
+  }
+}
+
+/* ===== Cards Mode ===== */
+function nextCard(){
+  delay = parseInt(selDelay.value, 10);
+
+  if (i >= round.length) {
+    if (errorsList.length > 0) {
+      alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
+      round = errorsList.map(v => v);
+      errorsList = [];
+      i = 0;
+      nextCard();
+      return;
+    } else {
+      showStage(false);
+      progress.textContent = "Fertig! Starte eine neue Runde.";
+      startNote.style.opacity = 1;
+      setTimeout(() => { endRound(); }, 300);
+      return;
+    }
+  }
+
+  const [en, de, cat] = round[i];
+  const catMeta = CATS[cat] || ["Kategorie", "#ddd", "#000"];
+  chip.textContent = catMeta[0];
+  chip.style.background = catMeta[1];
+  chip.style.color = catMeta[2];
+
+  const askEN = pickDirection();
+  const question = askEN ? en : de;
+  const answer = askEN ? de : en;
+  correct = answer;
+  currAskedEN = askEN; // <-- wichtig für Fehleranzeige später
+
+  q.textContent = question;
+
+  // Täuschung ~30%: falsches Wort zeigen, sonst richtiges
+  if (Math.random() < 0.3) {
+    const pool = data.map(v => askEN ? v[1] : v[0]);
+    let wrong;
+    do { wrong = pool[Math.floor(Math.random() * pool.length)]; }
+    while (wrong === answer);
+    offer.textContent = "💡 " + wrong;
+    trap = true;
+  } else {
+    offer.textContent = "💡 " + answer;
+    trap = false;
+  }
+
+  rowButtons.style.display = "flex";
+  rowInput.style.display = "none";
+  inp.value = "";
+  setProg();
+}
+
+/* Eingabe absenden (beide Modi nutzen diese Routine) */
+function handleInputSubmit() {
+  // Nur aktiv, wenn wir im Eingabe- oder Kartenmodus mit geöffnetem Eingabefeld sind
+  if (game !== "input" && !(game === "cards" && rowInput.style.display === "flex")) return;
+
+  const itemRef = (game === "input") ? curr : round[i];
+  const ok = isCorrectInput(inp.value, correct);
+
+  totalAsked++;
+
+  if (game === "input") {
+    // ===== Eingabe-Modus =====
+    if (ok) {
+      saveDailyProgress(1);
+      bumpCat(itemRef[2], false, true); // asked++, total++
+      flashInput(true, () => maybeCheckpointOr(() => setTimeout(nextInput, 50)));
+    } else {
+      totalErrors++;
+      bumpCat(itemRef[2], true, true); // asked++, errors++, total++
+      recordErrorForSummary(itemRef, currAskedEN);
+      saveErrorToBank(itemRef);
+      offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+      flashInput(false, () => maybeCheckpointOr(() => setTimeout(nextInput, 50)));
+    }
+
+  } else {
+    // ===== Kartenmodus (Eingabe nach „Täuschung erkannt“) =====
+    if (ok) {
+      saveDailyProgress(1);
+      bumpCat(itemRef[2], false, true);
+      flashCard(true, () => { i++; maybeCheckpointOr(nextCard); });
+    } else {
+      totalErrors++;
+      bumpCat(itemRef[2], true, true);
+      addErrorOnce(itemRef);
+      recordErrorForSummary(itemRef, currAskedEN); // <== jetzt korrekt erfasst
+      offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+      flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
+    }
+  }
+}
+
+
+
+function flashInput(ok, done){
+  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
+  if(!chkFeedback.checked){ done(); return; }
+  stage.classList.add(ok?"flash-correct":"flash-wrong");
+  setTimeout(()=>{
+    stage.classList.remove(ok?"flash-correct":"flash-wrong");
+    done();
+  }, delay);
+}
+
 /* ===== Cards Mode ===== */
 function nextCard(){
   delay = parseInt(selDelay.value, 10);
@@ -572,91 +761,24 @@ function nextCard(){
   setProg();
 }
 
-/* ===== Gemeinsame Eingabe-Verarbeitung ===== */
-function handleInputSubmit(){
-  if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
-
-  const itemRef = (game==="input") ? curr : round[i];
-  const ok=isCorrectInput(inp.value,correct);
-
-  totalAsked++;
-  if(game==="input"){
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashInput(true, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      recordErrorForSummary(itemRef,currAskedEN);
-      saveErrorToBank(itemRef);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashInput(false, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
-    }
-  }else{
-    // Kartenmodus: Eingabe nur nach "Täuschung erkannt"
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      addErrorOnce(itemRef);
-      recordErrorForSummary(itemRef, currAskedEN);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }
-  }
-}
-
-/* ===== Feedback Effekte ===== */
-function flashInput(ok, done){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){ done(); return; }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); done(); }, delay);
-}
 function flashCard(ok, done){
   if(ok){ beep(880,70); } else { beep(220,120,'square'); }
   if(!chkFeedback.checked){ done(); return; }
   stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{ stage.classList.remove(ok?"flash-correct":"flash-wrong"); done(); }, delay);
+  setTimeout(()=>{
+    stage.classList.remove(ok?"flash-correct":"flash-wrong");
+    done();
+  }, delay);
 }
 
 /* ===== Modal ===== */
-function openModal(){ 
-  modalBackdrop.style.display="flex"; 
-  modalBackdrop.setAttribute('aria-hidden','false'); 
-  btnClose.focus(); 
-}
-function closeModal(){ 
-  modalBackdrop.style.display="none"; 
-  modalBackdrop.setAttribute('aria-hidden','true'); 
-}
+function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
+function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
 modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
-btnClose.onclick=closeModal;
-
-// ✅ KORRIGIERT: nur EINE Zuweisung, korrekt geschlossen
-btnContinue.onclick = () => {
-  closeModal();
-
-  // Zähler/Restzustände zurücksetzen, damit kein sofortiger Re-Checkpoint triggert
-  sinceCheckpoint = 0;
-  totalSkipped = 0;
-
-  setTimeout(() => {
-    if (game === "input") {
-      nextInput();
-      inp.focus();
-    } else {
-      nextCard();
-    }
-  }, 250);
-};
-
-btnDownload.onclick=()=>{
+btnClose.addEventListener('click',closeModal);
+btnContinue.addEventListener('click',()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); });
+btnDownload.addEventListener('click',()=>{
   const lines=[];
   statGrid.querySelectorAll('.stat').forEach(s=>{
     const l=s.querySelector('.label')?.textContent?.trim();
@@ -669,14 +791,10 @@ btnDownload.onclick=()=>{
     lines.push(`- ${v.q} -> ${v.correct} [${catMeta[0]}]`);
   });
   const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-  const a=document.createElement('a'); 
-  a.href=URL.createObjectURL(blob); 
-  a.download='vokabelrunde.txt'; 
-  a.click(); 
-  URL.revokeObjectURL(a.href);
-};
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
+});
 
-/* ===== Runde beenden (Modal füllen) ===== */
+/* ===== Runde beenden ===== */
 function endRound() {
   showStage(false);
 
@@ -699,8 +817,8 @@ function endRound() {
     const parts = [];
     catStats.forEach((v, cat) => {
       const name = (CATS[cat] || ["Kategorie"])[0];
-      const total = (v.total ?? v.asked); // total enthält Skips
-      const correctInCat = Math.max(0, (v.asked - v.errors)); // asked = beantwortet (richtig+falsch)
+      const total = (v.total ?? v.asked); // fallback, falls total nicht existiert
+      const correctInCat = Math.max(0, (v.asked - v.errors));
       parts.push(`${name}: ${correctInCat}/${total}`);
     });
     statGrid.insertAdjacentHTML(
@@ -742,9 +860,9 @@ function endRound() {
 /* ===== Button-Handler ===== */
 
 /* Eingabe absenden */
-btnSub.onclick = handleInputSubmit;
+btnSub.addEventListener('click', handleInputSubmit);
 
-/* „Weiter“ / Skip → zählt als gezeigt (total++), aber nicht beantwortet */
+/* „Weiter“ / Überspringen → zählt NICHT als korrekt (asked bleibt), total++ */
 btnSkip.onclick = () => {
   if (game === "idle") return;
 
@@ -753,11 +871,10 @@ btnSkip.onclick = () => {
   totalAsked++;
   totalSkipped++;
 
-  // nur total++ (kein asked++)
-  const o = catStats.get(itemRef[2]) || { asked:0, errors:0, total:0 };
-  o.total++;
-  catStats.set(itemRef[2], o);
+  // nur total++ in Kategorie (kein asked++)
+  bumpCat(itemRef[2], false, false);
 
+  // neutrales Feedback
   stage.style.transition = "background 0.2s ease";
   const originalBg = stage.style.backgroundColor;
   stage.style.backgroundColor = "rgba(148,163,184,0.25)";
@@ -769,12 +886,15 @@ btnSkip.onclick = () => {
     if (sinceCheckpoint >= 15) {
       sinceCheckpoint = 0;
       const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-      if (endNow) { endRound(); return; }
+      if (endNow) {
+        endRound();
+        return;
+      }
     }
 
     if (game === "input") {
       nextInput();
-    } else {
+    } else if (game === "cards") {
       i++;
       nextCard();
     }
@@ -782,26 +902,30 @@ btnSkip.onclick = () => {
 };
 
 /* Karteikarten: „Richtig“ gedrückt */
+/* Karteikarten: „Richtig“ gedrückt */
 btnRight.onclick = () => {
   if (game !== "cards") return;
   const itemRef = round[i];
   totalAsked++;
 
   if (trap) {
-    // Falsches Angebot war gezeigt → "Richtig" ist Fehler
+    // Falsches Angebot war gezeigt → "Richtig" ist ein Fehler
     totalErrors++;
     bumpCat(itemRef[2], true, true);
-    recordErrorForSummary(itemRef, currAskedEN);
+    recordErrorForSummary(itemRef, currAskedEN);   // <== neu, sorgt für Anzeige im Modal
+    addErrorOnce(itemRef);
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
+    flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
   } else {
+    // korrekt erkannt
     bumpCat(itemRef[2], false, true);
     saveDailyProgress(1);
-    flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
+    flashCard(true, () => { i++; maybeCheckpointOr(nextCard); });
   }
 };
 
-/* Karteikarten: Täuschung erkannt -> Eingabe aktivieren */
+
+/* Karteikarten: Täuschung erkannt -> Eingabe aktivieren (Bewertung via btnSub/handleInputSubmit) */
 btnDec.onclick = () => {
   if (game !== "cards") return;
   rowInput.style.display = "flex";
@@ -851,7 +975,7 @@ btnLast30.onclick=()=>{
   else{ startInputSession(pool); }
 };
 
-/* ===== Fehler wiederholen (Fehlerbank) ===== */
+/* ===== Fehler wiederholen (Pool = Fehlerbank) ===== */
 btnErrorsOnly.onclick=()=>{
   const bank=loadErrorBank();
   if(!bank.length){ alert("Kein Fehlerjournal vorhanden – super!"); return; }
@@ -874,16 +998,7 @@ btnStats.onclick=()=>{
     <div class="stat"><div class="label">Tagesziel</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
   `;
   errorList.innerHTML = errorMap.size ? '' : `<div class="error-item" style="justify-content:center">Bislang keine Fehler in dieser Runde.</div>`;
-  if(errorMap.size){
-    errorMap.forEach(v=>{
-      const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
-      const row=document.createElement('div');
-      row.className='error-item';
-      row.innerHTML=`<div style="text-align:left;max-width:70%"><div style="font-weight:800">${v.q}</div><div style="opacity:.9">→ <b>${v.correct}</b></div></div><span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
-      errorList.appendChild(row);
-    });
-  }
-  // Kategorie-Block auch in Zwischenstand
+
   if (catStats.size) {
     const parts = [];
     catStats.forEach((v, cat) => {
@@ -899,6 +1014,16 @@ btnStats.onclick=()=>{
          <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
        </div>`
     );
+  }
+
+  if(errorMap.size){
+    errorMap.forEach(v=>{
+      const c=CATS[v.cat]||["Kategorie","#ddd","#000"];
+      const row=document.createElement('div');
+      row.className='error-item';
+      row.innerHTML=`<div style="text-align:left;max-width:70%"><div style="font-weight:800">${v.q}</div><div style="opacity:.9">→ <b>${v.correct}</b></div></div><span class="badge" style="background:${c[1]};color:${c[2]}">${c[0]}</span>`;
+      errorList.appendChild(row);
+    });
   }
   openModal();
 };
@@ -935,20 +1060,23 @@ softResetUI();
 updateGoalUI(getDailyProgress());
 loadData().then(checkRemoteUpdate);
 
-/* Neustart (Soft-Reset) */
+/* ===== Neustart (Soft-Reset statt reload) ===== */
 btnHardReload.addEventListener('click', softResetUI);
 
-/* PWA Register (fehler-tolerant) */
-if ('serviceWorker' in navigator) {
-  try {
-    navigator.serviceWorker.register('service-worker.js').catch(() => {});
-  } catch (e) {
-    console.warn('ServiceWorker konnte nicht registriert werden:', e);
-  }
+/* ===== PWA Register (fehler-tolerant) ===== */
+if('serviceWorker' in navigator){
+  try{ navigator.serviceWorker.register('service-worker.js').catch(()=>{}); }catch{}
 }
 
-})();  <!-- schließt das (function(){ ganz oben -->
-</script>
-</body>
-</html>
+/* ===== Start-Hinweis ausblenden ===== */
+[btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
+  btn.addEventListener("click", () => {
+    startNote.style.display = "none";
+  });
+});
 
+})();
+</script>
+
+
+</body></html>
