@@ -537,313 +537,16 @@ function resetStats(){
   totalAsked=0; totalErrors=0; sinceCheckpoint=0;
   errorMap.clear(); catStats.clear();
 }
+
+/* ========= Statistik & Zählung ========= */
+
+// 🟢 Nur echte Fragen zählen
 function bumpCat(cat, wasError, countAsAsked = true) {
   const o = catStats.get(cat) || { asked: 0, errors: 0 };
-  if (countAsAsked) o.asked++; // nur echte Fragen zählen
+  if (countAsAsked) o.asked++; // zähle nur reale Fragen
   if (wasError) o.errors++;
   catStats.set(cat, o);
 }
-
-function recordErrorForSummary(item, askedEN){
-  const [en,de,cat]=item;
-  const question = askedEN ? en : de;
-  const answer   = askedEN ? de : en;
-  const key=`${en}|${de}|${askedEN?1:0}`;
-  if(!errorMap.has(key)) errorMap.set(key,{q:question,correct:answer,cat});
-}
-
-/* UI helpers */
-function setProg(){
-  progress.textContent=`Frage ${totalAsked + 1} | Fehler: ${totalErrors}${modeEndless ? " (Checkpoint alle 15)" : ""}`;
-}
-function showStage(show){ stage.style.display=show?"block":"none"; }
-
-/* ===== Session Setup ===== */
-function filterByCategory(list){
-  const val = selCat.value;
-  if(val==="Alle") return list.slice();
-  if(val==="confuse") return list.filter(v=>!!v[6]);
-  return list.filter(v=>v[2]===val);
-}
-function pickDirection(){
-  return selMode.value==="toGerman" ? true
-       : selMode.value==="toEnglish" ? false
-       : Math.random()<0.5;
-}
-function startInputSession(pool){
-  game="input"; modeEndless=true; resetStats();
-  source=pool.slice(); shuffle(source); sourceIdx=0; curr=null; correct="";
-  btnRight.style.display="none";
-  btnDec.style.display="none";
-  btnSkip.style.display="inline-block";
-  rowInput.style.display="flex";
-  showStage(true);
-  nextInput();
-}
-function startCardsSession(pool){
-  game="cards"; modeEndless=false; resetStats();
-  errorsList=[]; i=0; trap=false;
-  round=pool.slice(); shuffle(round);
-  btnRight.style.display="inline-block";
-  btnDec.style.display="inline-block";
-  btnSkip.style.display="inline-block";
-  rowInput.style.display="none";
-  showStage(true);
-  nextCard();
-}
-
-/* ===== Input Mode (Endlos & Last30 Eingabe) ===== */
-function nextInput(){
-  delay=parseInt(selDelay.value,10);
-  if(!source.length){ alert("Keine Vokabeln vorhanden"); showStage(false); return; }
-
-  curr=source[sourceIdx];
-  sourceIdx=(sourceIdx+1)%source.length;
-  if(sourceIdx===0) shuffle(source);
-
-  const [en,de,cat]=curr;
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  currAskedEN = pickDirection();
-  const question = currAskedEN ? en : de;
-  correct = currAskedEN ? de : en;
-
-  q.textContent = question;
-  offer.textContent = ""; // entschlackt
-  inp.value=""; inp.focus(); inp.select?.();
-  setProg();
-}
-
-function handleInputSubmit(){
-  if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
-
-  const itemRef = (game==="input") ? curr : round[i];
-  const ok=isCorrectInput(inp.value,correct);
-
-  // Zählregeln
-  totalAsked++;
-  if(game==="input"){
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false);
-      flashInput(true);
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true);
-      recordErrorForSummary(itemRef,currAskedEN);
-      saveErrorToBank(itemRef);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      setTimeout(()=>flashInput(false), delay);
-    }
-  }else{
-    // Karten: Eingabe erscheint NUR nach "Täuschung erkannt"
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false);
-      flashCard(true);
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true);
-      addErrorOnce(itemRef);
-      recordErrorForSummary(itemRef, currAskedEN); // currAskedEN wird in Karten unten gesetzt
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      setTimeout(()=>flashCard(false), delay);
-    }
-  }
-}
-
-function flashInput(ok){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){
-    afterAdvanceInput();
-    return;
-  }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{
-    stage.classList.remove(ok?"flash-correct":"flash-wrong");
-    afterAdvanceInput();
-  }, delay);
-}
-
-function afterAdvanceInput(){
-  sinceCheckpoint++;
-
-  // Nach jeder Eingabe prüfen, ob ein Checkpoint erreicht wurde
-  if(sinceCheckpoint >= 15){
-    sinceCheckpoint = 0;
-    const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-    if(endNow){
-      // kleine Verzögerung, damit Flash-Effekt fertig ist
-      setTimeout(() => {
-        endRound();
-      }, delay + 100);
-      return;
-    }
-  }
-
-  // Nur wenn nicht beendet, geht’s weiter zur nächsten Vokabel
-  setTimeout(() => {
-    nextInput();
-  }, 50);
-}
-
-/* ===== Cards Mode (Mitdenker/Täuschungserkennung) ===== */
-function nextCard(){
-  delay = parseInt(selDelay.value, 10);
-
-  if (i >= round.length) {
-    if (errorsList.length > 0) {
-      alert(`↻ ${errorsList.length} zur Wiederholung – Runde startet erneut.`);
-      round = errorsList.map(v => v);
-      errorsList = [];
-      i = 0;
-      nextCard();
-      return;
-    } else {
-      showStage(false);
-      progress.textContent = "Fertig! Starte eine neue Runde.";
-      startNote.style.opacity = 1;
-
-      // 🔹 Neues Verhalten: Statt nur alert → Feedback-Modal anzeigen
-      setTimeout(() => {
-        endRound(); // öffnet automatisch das Modal mit Statistik & Fehlern
-      }, 300);
-
-      return;
-    }
-  }
-
-
-  const [en,de,cat]=round[i];
-  const catMeta=CATS[cat]||["Kategorie","#ddd","#000"];
-  chip.textContent=catMeta[0]; chip.style.background=catMeta[1]; chip.style.color=catMeta[2];
-
-  // Richtung nur für Eingabe im Täuschungsfall relevant (wir fragen Lösung passend zur gezeigten Seite)
-  const askEN = pickDirection();
-  const question=askEN?en:de;
-  const answer=askEN?de:en;
-  correct=answer;
-  currAskedEN = askEN; // fürs Fehlerjournal
-
-  q.textContent=question;
-
-  // Täuschung ~30%: falsches Wort zeigen, sonst richtiges
-  if(Math.random()<0.3){
-    const pool=data.map(v=>askEN?v[1]:v[0]);
-    let wrong; do{ wrong=pool[Math.floor(Math.random()*pool.length)]; }while(wrong===answer);
-    offer.textContent="💡 "+wrong; trap=true;
-  }else{
-    offer.textContent="💡 "+answer; trap=false;
-  }
-
-  // Buttons/Inputs
-  rowButtons.style.display="flex";
-  rowInput.style.display="none";
-  inp.value="";
-  setProg();
-}
-
-function flashCard(ok){
-  if(ok){ beep(880,70); } else { beep(220,120,'square'); }
-  if(!chkFeedback.checked){
-    afterAdvanceCard();
-    return;
-  }
-  stage.classList.add(ok?"flash-correct":"flash-wrong");
-  setTimeout(()=>{
-    stage.classList.remove(ok?"flash-correct":"flash-wrong");
-    afterAdvanceCard();
-  }, delay);
-}
-function afterAdvanceCard(){
-  i++; nextCard();
-}
-
-/* ===== Modal ===== */
-function openModal(){ modalBackdrop.style.display="flex"; modalBackdrop.setAttribute('aria-hidden','false'); btnClose.focus(); }
-function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttribute('aria-hidden','true'); }
-modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
-btnClose.addEventListener('click',closeModal);
-btnContinue.addEventListener('click',()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); });
-btnDownload.addEventListener('click',()=>{
-  const lines=[];
-  statGrid.querySelectorAll('.stat').forEach(s=>{
-    const l=s.querySelector('.label')?.textContent?.trim();
-    const v=s.querySelector('.value')?.textContent?.trim();
-    if(l && v) lines.push(`${l}: ${v}`);
-  });
-  lines.push('', 'Fehlerliste:');
-  errorMap.forEach(v=>{
-    const catMeta=CATS[v.cat]||["Kategorie","#ddd","#000"];
-    lines.push(`- ${v.q} -> ${v.correct} [${catMeta[0]}]`);
-  });
-  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
-  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='vokabelrunde.txt'; a.click(); URL.revokeObjectURL(a.href);
-});
-
-/* ===== Runde beenden (korrekte Logik inkl. Übersprungen) ===== */
-function endRound() {
-  showStage(false);
-
-  const asked = totalAsked;
-  const errors = totalErrors;
-  const skipped = totalSkipped; // 🟡 NEU
-  const correctCount = Math.max(0, asked - errors - skipped);
-  const acc = asked ? Math.round((correctCount / asked) * 100) : 100;
-
-  statGrid.innerHTML = `
-    <div class="stat"><div class="label">Gesamt beantwortet</div><div class="value">${asked}</div></div>
-    <div class="stat"><div class="label">Korrekt</div><div class="value">${correctCount}</div></div>
-    <div class="stat"><div class="label">Fehler</div><div class="value">${errors}</div></div>
-    <div class="stat"><div class="label">Übersprungen</div><div class="value">${skipped}</div></div>
-    <div class="stat"><div class="label">Trefferquote</div><div class="value">${acc}%</div></div>
-    <div class="stat"><div class="label">Tagesziel (heute)</div><div class="value">${getDailyProgress()}/${DAILY_GOAL}</div></div>
-  `;
-
-  if (catStats.size) {
-    const parts = [];
-    catStats.forEach((v, cat) => {
-      const name = (CATS[cat] || ["Kategorie"])[0];
-      parts.push(`${name}: ${v.asked - v.errors}/${v.asked}`);
-    });
-    statGrid.insertAdjacentHTML(
-      "beforeend",
-      `<div class="stat" style="grid-column:1/-1">
-         <div class="label">Pro Kategorie (korrekt/gesamt)</div>
-         <div class="value" style="font-size:1rem">${parts.join(" • ")}</div>
-       </div>`
-    );
-  }
-
-  errorList.innerHTML = "";
-  if (errorMap.size === 0) {
-    if (skipped > 0 && correctCount === 0) {
-      errorList.innerHTML = `<div class="error-item" style="justify-content:center">⚠️ Alle Fragen übersprungen.</div>`;
-    } else {
-      errorList.innerHTML = `<div class="error-item" style="justify-content:center">🎉 Keine Fehler in dieser Runde!</div>`;
-    }
-  } else {
-    errorMap.forEach((v) => {
-      const catMeta = CATS[v.cat] || ["Kategorie", "#ddd", "#000"];
-      const row = document.createElement("div");
-      row.className = "error-item";
-      row.innerHTML = `
-        <div style="text-align:left;max-width:70%;word-break:break-word">
-          <div style="font-weight:800">${v.q}</div>
-          <div style="opacity:.9">→ <b>${v.correct}</b></div>
-        </div>
-        <span class="badge" style="background:${catMeta[1]};color:${catMeta[2]}">${catMeta[0]}</span>
-      `;
-      errorList.appendChild(row);
-    });
-  }
-
-  openModal();
-  startNote.style.opacity = 1;
-}
-
 
 /* ===== Button-Handler (korrektes Zählen) ===== */
 
@@ -853,13 +556,14 @@ btnSub.onclick = () => {
   const ok = isCorrectInput(inp.value, correct);
 
   totalAsked++;
+
   if (ok) {
     saveDailyProgress(1);
-    bumpCat(itemRef[2], false, true); // richtige Antwort
+    bumpCat(itemRef[2], false, true); // ✅ echte Frage, korrekt
     flashInput(true);
   } else {
     totalErrors++;
-    bumpCat(itemRef[2], true, true);  // Fehler
+    bumpCat(itemRef[2], true, true); // ✅ echte Frage, Fehler
     recordErrorForSummary(itemRef, currAskedEN);
     saveErrorToBank(itemRef);
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
@@ -876,8 +580,7 @@ btnSkip.onclick = () => {
   // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
   totalSkipped = (totalSkipped || 0) + 1;
-  bumpCat(itemRef[2], false, false); // kein echtes asked++
-
+  bumpCat(itemRef[2], false, false); // ❌ kein echtes asked++
 
   // Visuelles Feedback (neutral – graublau statt rot)
   stage.style.transition = "background 0.2s ease";
@@ -908,7 +611,7 @@ btnSkip.onclick = () => {
   }, 180); // kurzer Delay für Flash
 };
 
-  // Karteikarten: „Richtig“ gedrückt
+// Karteikarten: „Richtig“ gedrückt
 btnRight.onclick = () => {
   if (game !== "cards") return;
   const itemRef = round[i];
@@ -917,11 +620,11 @@ btnRight.onclick = () => {
   if (trap) {
     // Täuschung erkannt, aber falsch eingeordnet → KEIN Fehler
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    bumpCat(itemRef[2], false, true); // richtige Antwort
+    bumpCat(itemRef[2], false, true); // echte Karte, aber kein Fehler
     setTimeout(() => flashCard(false), delay);
   } else {
     // korrekt erkannt
-    bumpCat(itemRef[2], false, true); // richtige Antwort
+    bumpCat(itemRef[2], false, true); // echte Karte, korrekt
     saveDailyProgress(1);
     flashCard(true);
   }
