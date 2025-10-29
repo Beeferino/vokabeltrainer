@@ -547,6 +547,10 @@ function softResetUI(){
   resetStats();errorsList=[];round=[];i=0;source=[];sourceIdx=0;curr=null;correct="";game="idle";modeEndless=false;
 }
 softResetUI();
+updateGoalUI(getDailyProgress());
+loadData().then(checkRemoteUpdate);
+})(); //  <-- Schließt die große anonyme Funktion!
+
 })();
 /* ========= Ende Skript ========= */
 </script>
