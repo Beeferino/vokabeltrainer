@@ -663,14 +663,25 @@ function flashInput(ok){
 }
 
 function afterAdvanceInput(){
-  // Checkpoint alle 15 Fragen
   sinceCheckpoint++;
-  if(sinceCheckpoint>=15){
-    sinceCheckpoint=0;
-    const endNow=confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
-    if(endNow){ endRound(); return; }
+
+  // Nach jeder Eingabe prüfen, ob ein Checkpoint erreicht wurde
+  if(sinceCheckpoint >= 15){
+    sinceCheckpoint = 0;
+    const endNow = confirm("✅ 15 Fragen beantwortet.\nRunde beenden und Fehler anzeigen?");
+    if(endNow){
+      // kleine Verzögerung, damit Flash-Effekt fertig ist
+      setTimeout(() => {
+        endRound();
+      }, delay + 100);
+      return;
+    }
   }
-  nextInput();
+
+  // Nur wenn nicht beendet, geht’s weiter zur nächsten Vokabel
+  setTimeout(() => {
+    nextInput();
+  }, 50);
 }
 
 /* ===== Cards Mode (Mitdenker/Täuschungserkennung) ===== */
