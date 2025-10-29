@@ -593,42 +593,48 @@ function nextInput(){
 }
 
 /* Eingabe absenden (beide Modi nutzen diese Routine) */
-function handleInputSubmit(){
-  if(game!=="input" && !(game==="cards" && rowInput.style.display==="flex")) return;
 
-  const itemRef = (game==="input") ? curr : round[i];
-  const ok=isCorrectInput(inp.value,correct);
+function handleInputSubmit() {
+  // Nur aktiv, wenn wir im Eingabe- oder Kartenmodus mit geöffnetem Eingabefeld sind
+  if (game !== "input" && !(game === "cards" && rowInput.style.display === "flex")) return;
+
+  const itemRef = (game === "input") ? curr : round[i];
+  const ok = isCorrectInput(inp.value, correct);
 
   totalAsked++;
-  if(game==="input"){
-    if(ok){
+
+  if (game === "input") {
+    // ======== Eingabe-Modus ========
+    if (ok) {
       saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);              // asked++ , total++
-      flashInput(true, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
-    }else{
+      bumpCat(itemRef[2], false, true); // asked++, total++
+      flashInput(true, () => maybeCheckpointOr(() => setTimeout(nextInput, 50)));
+    } else {
       totalErrors++;
-      bumpCat(itemRef[2],true,true);               // asked++ , errors++ , total++
-      recordErrorForSummary(itemRef,currAskedEN);
-      saveErrorToBank(itemRef);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashInput(false, ()=> maybeCheckpointOr(()=> setTimeout(nextInput,50)));
-    }
-  }else{
-    // Karten: Eingabe erscheint NUR nach "Täuschung erkannt"
-    if(ok){
-      saveDailyProgress(1);
-      bumpCat(itemRef[2],false,true);
-      flashCard(true, ()=> { i++; maybeCheckpointOr(nextCard); });
-    }else{
-      totalErrors++;
-      bumpCat(itemRef[2],true,true);
-      addErrorOnce(itemRef);
+      bumpCat(itemRef[2], true, true); // asked++, errors++, total++
       recordErrorForSummary(itemRef, currAskedEN);
-      offer.innerHTML=`❌ Richtige Antwort: <b>${correct}</b>`;
-      flashCard(false, ()=> { i++; maybeCheckpointOr(nextCard); });
+      saveErrorToBank(itemRef);
+      offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+      flashInput(false, () => maybeCheckpointOr(() => setTimeout(nextInput, 50)));
+    }
+
+  } else {
+    // ======== Kartenmodus (Eingabe nach „Täuschung erkannt“) ========
+    if (ok) {
+      saveDailyProgress(1);
+      bumpCat(itemRef[2], false, true);
+      flashCard(true, () => { i++; maybeCheckpointOr(nextCard); });
+    } else {
+      totalErrors++;
+      bumpCat(itemRef[2], true, true);
+      addErrorOnce(itemRef);
+      recordErrorForSummary(itemRef, currAskedEN); // <-- wichtig für Fehler im Modal
+      offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
+      flashCard(false, () => { i++; maybeCheckpointOr(nextCard); });
     }
   }
 }
+
 
 function flashInput(ok, done){
   if(ok){ beep(880,70); } else { beep(220,120,'square'); }
