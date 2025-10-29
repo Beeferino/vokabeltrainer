@@ -931,11 +931,15 @@ btnHardReload.addEventListener('click', softResetUI);
 if ('serviceWorker' in navigator) {
   try {
     navigator.serviceWorker.register('service-worker.js').catch(() => {});
-   } catch (e) {
+  } catch (e) {
     console.warn('ServiceWorker konnte nicht registriert werden:', e);
   }
-})();
+}
+
+}  // <- schließt die große (function(){ ganz oben)
+
 </script>
 </body>
 </html>
+
 
