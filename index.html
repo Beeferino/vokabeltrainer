@@ -630,7 +630,36 @@ function closeModal(){ modalBackdrop.style.display="none"; modalBackdrop.setAttr
 modalBackdrop.addEventListener('click',e=>{ if(e.target===modalBackdrop) closeModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
 btnClose.onclick=closeModal;
-btnContinue.onclick=()=>{ closeModal(); if(game==="input") nextInput(); else nextCard(); };
+btnContinue.onclick = () => {
+  closeModal();
+
+  // nichts tun, wenn gerade kein aktives Spiel läuft
+  if (game === "idle") {
+    alert("Keine aktive Runde mehr. Bitte starte neu.");
+    return;
+  }
+
+  // Zähler nicht zurücksetzen – Fortschritt soll weiterlaufen
+  setTimeout(() => {
+    if (game === "input") {
+      if (source && source.length > 0) {
+        nextInput();
+        inp.focus();
+      } else {
+        alert("Keine weiteren Vokabeln – Runde ist beendet.");
+        softResetUI();
+      }
+    } else if (game === "cards") {
+      if (round && i < round.length) {
+        nextCard();
+      } else {
+        alert("Alle Karten erledigt – starte eine neue Runde.");
+        softResetUI();
+      }
+    }
+  }, 250);
+};
+
 btnDownload.onclick=()=>{
   const lines=[];
   statGrid.querySelectorAll('.stat').forEach(s=>{
