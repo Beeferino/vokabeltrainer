@@ -856,6 +856,7 @@ btnSkip.onclick = () => {
   const itemRef = (game === "input") ? curr : round[i];
   // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
+  totalSkipped++; // 🟡 <--- Diese Zeile HINZUFÜGEN
   bumpCat(itemRef[2], false);
   if (game === "input") {
     flashInput(true);
@@ -863,6 +864,7 @@ btnSkip.onclick = () => {
     flashCard(true);
   }
 };
+
 
 // Karteikarten: „Richtig“ gedrückt
 btnRight.onclick = () => {
@@ -1012,12 +1014,13 @@ if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js');
 }
 
-/* ===== Start-Hinweis ausblenden, wenn eine Kachel angeklickt wird ===== */
-[btnLearn, btnLast30, btnCards].forEach(btn => {
+/* ===== Start-Hinweis ausblenden, wenn eine Kachel oder "Fehler wiederholen" angeklickt wird ===== */
+[btnLearn, btnLast30, btnCards, btnErrorsOnly].forEach(btn => {
   btn.addEventListener("click", () => {
     startNote.style.display = "none";
   });
 });
+
 
 })();
 </script>
