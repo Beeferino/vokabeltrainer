@@ -539,7 +539,7 @@ function resetStats(){
 }
 function bumpCat(cat, wasError, countAsAsked = true) {
   const o = catStats.get(cat) || { asked: 0, errors: 0 };
-  if (countAsAsked) o.asked++; // 🟢 Nur echte Fragen zählen
+  if (countAsAsked) o.asked++; // nur echte Fragen zählen
   if (wasError) o.errors++;
   catStats.set(cat, o);
 }
@@ -855,11 +855,11 @@ btnSub.onclick = () => {
   totalAsked++;
   if (ok) {
     saveDailyProgress(1);
-    bumpCat(itemRef[2], false);
+    bumpCat(itemRef[2], false, true); // richtige Antwort
     flashInput(true);
   } else {
     totalErrors++;
-    bumpCat(itemRef[2], true);
+    bumpCat(itemRef[2], true, true);  // Fehler
     recordErrorForSummary(itemRef, currAskedEN);
     saveErrorToBank(itemRef);
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
@@ -876,7 +876,8 @@ btnSkip.onclick = () => {
   // Frage gezählt, aber weder Fehler noch Erfolg
   totalAsked++;
   totalSkipped = (totalSkipped || 0) + 1;
-  bumpCat(itemRef[2], false);
+  bumpCat(itemRef[2], false, false); // kein echtes asked++
+
 
   // Visuelles Feedback (neutral – graublau statt rot)
   stage.style.transition = "background 0.2s ease";
@@ -916,11 +917,11 @@ btnRight.onclick = () => {
   if (trap) {
     // Täuschung erkannt, aber falsch eingeordnet → KEIN Fehler
     offer.innerHTML = `❌ Richtige Antwort: <b>${correct}</b>`;
-    bumpCat(itemRef[2], false);
+    bumpCat(itemRef[2], false, true); // richtige Antwort
     setTimeout(() => flashCard(false), delay);
   } else {
     // korrekt erkannt
-    bumpCat(itemRef[2], false);
+    bumpCat(itemRef[2], false, true); // richtige Antwort
     saveDailyProgress(1);
     flashCard(true);
   }
