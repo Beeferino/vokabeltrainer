@@ -202,6 +202,78 @@ body.dark .dark-toggle{background:#1e293b;border-color:#334155;color:#e2e8f0;}
   .grid-view{grid-template-columns:1fr 1fr;}
   .fab-row{display:block;}
 }
+  /* === Mobile Optimierung (bessere Sichtbarkeit & Anpassung) === */
+@media(max-width:900px){
+  body {
+    font-size: 0.9rem;
+    zoom: 0.9; /* etwas rauszoomen */
+  }
+
+  table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;       /* horizontales Scrollen nur falls nötig */
+    border-spacing: 0;
+  }
+
+  th, td {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+  }
+
+  .category-chip {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+
+  #countDesk {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+
+  /* Buttons kleiner & platzsparend */
+  .toolbar .btn,
+  .fab {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  /* Kopfzeile kompakter */
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .hr {
+    width: 120px;
+    height: 3px;
+  }
+
+  /* Kartenansicht: kleinere Karten, mehr pro Zeile */
+  .grid-view {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .card {
+    padding: 12px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+  }
+
+  .card-sub {
+    font-size: 0.85rem;
+  }
+
+  /* Modal kompakter auf kleinen Screens */
+  .panel {
+    padding: 14px;
+    width: 94%;
+  }
+}
+
 </style>
 </head>
 
