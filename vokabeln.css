@@ -404,3 +404,91 @@ th, td {
     font-size: 1.2rem;
   }
 }
+/* === Dark Mode (analog index.html) ===================================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --blue: #3b82f6;            /* etwas heller im Darkmode */
+    --shadow: 0 6px 22px rgba(0,0,0,.45);
+  }
+
+  body {
+    background: #0b1220;        /* tiefes Navy */
+    color: #e5e7eb;
+  }
+
+  /* Cards / Panels / App-Container */
+  .desktop-app,
+  .card,
+  .panel {
+    background: #0f172a;        /* slate-900 */
+    color: #e5e7eb;
+    box-shadow: var(--shadow);
+  }
+
+  /* Toolbar & Inputs */
+  .toolbar input,
+  .toolbar select,
+  .form-grid input,
+  .form-grid select,
+  .form-grid textarea,
+  #mDate {
+    background: #111827;        /* gray-900 */
+    color: #e5e7eb;
+    border: 1px solid #334155;  /* slate-700 */
+  }
+  .toolbar input::placeholder { color: #94a3b8; }
+  .form-grid input:focus,
+  .form-grid select:focus,
+  .form-grid textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.25);
+    background: #0b1322;
+  }
+
+  /* Buttons */
+  .btn { background: var(--blue); color: #0b1220; }
+  .btn.warn { background: #ef4444; color: #0b1220; }
+  .btn.ghost { background: #111827; color: #e5e7eb; }
+  .btn:hover { filter: brightness(1.07); }
+
+  /* Tabellen-Styling */
+  table { color: #e5e7eb; }
+  th, td { border-bottom: 1px solid #1f2937; }
+  tr:hover { background: #0b1322; }
+  th.sortable:hover { color: var(--blue); }
+
+  /* Zähler / kleine Akzente */
+  #countDesk, #countMob { color: #93c5fd; }
+
+  /* Kategorie-Chips behalten Inline-Hintergründe;
+     hier nur ein dunklerer Rand für bessere Absetzung */
+  .category-chip { box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
+
+  /* Modal-Overlay etwas dunkler */
+  .modal { background: rgba(0,0,0,.6); }
+  .modal .panel { background: #0f172a; }
+  .modal-actions { border-top: 1px solid #1f2937; }
+
+  /* Verwechslungsgefahr-Toggle */
+  .confuse-toggle {
+    background: #0b1322;
+    border-color: #1f2937;
+    color: #e5e7eb;
+  }
+  .confuse-toggle .slider { background: #334155; }                 /* off: dunkelgrau */
+  .confuse-toggle input:checked + .slider {
+    background: #ef4444; box-shadow: 0 0 6px rgba(239,68,68,.45);   /* on: rot bleibt */
+  }
+
+  /* Mobile */
+  .mobile-app { color: #e5e7eb; }
+  .iconbtn { color: #e5e7eb; }
+
+  /* Home-/Back-Button falls vorhanden */
+  .back-home, .back-home-text {
+    background: #1f2937; color: #e5e7eb;
+    box-shadow: 0 6px 18px rgba(0,0,0,.45);
+  }
+  .back-home:hover, .back-home-text:hover { background: #111827; }
+}
+
