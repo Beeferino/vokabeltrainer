@@ -317,3 +317,23 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
   .abc-overlay { position: fixed; right: -100%; transition: right 0.3s ease; }
   .abc-overlay.show { right: 0; }
 }
+/* ===============================
+   🌙 Fix: Lesbarkeit Gelb im Darkmode
+=================================*/
+[data-theme="dark"] .mob-card-top {
+  filter: brightness(0.9);
+}
+
+[data-theme="dark"] .mob-card-top[style*="#F4D03F"],
+[data-theme="dark"] .mob-card-top[style*="F4D03F"],
+[data-theme="dark"] .category-chip[style*="#F4D03F"],
+[data-theme="dark"] .category-chip[style*="F4D03F"] {
+  background-color: #bfae2d !important; /* dunkleres Gelb */
+  color: #fff !important;                /* weißer Text */
+}
+
+/* Optional: im Lightmode bleibt Gelb hell mit schwarzem Text */
+[data-theme="light"] .mob-card-top[style*="#F4D03F"],
+[data-theme="light"] .category-chip[style*="#F4D03F"] {
+  color: #000 !important;
+}
