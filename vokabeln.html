@@ -1,775 +1,748 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>📘 Vokabelübersicht – Beeferino</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📘 Vokabelübersicht – Beeferino</title>
 
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!-- Schrift & Theme -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#2563eb">
 
-  <!-- ======== Grundlegendes Styling ======== -->
-  <style>
-    :root {
-      --ink:#0f172a; --muted:#6b7280; --bg:#f7f9fb; --card:#ffffff;
-      --blue:#2563eb; --ok:#16a34a; --bad:#ef4444; --amber:#f59e0b;
-      --border:#e5ebf3; --shadow:0 8px 26px rgba(0,0,0,.08);
-    }
+<style>
+:root{
+  --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
+  --blue:#2563eb;--ok:#16a34a;--bad:#ef4444;
+  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  color:var(--ink);
+  transition:background .4s ease,color .4s ease;
+}
+body.dark{
+  background:linear-gradient(145deg,#1e293b,#0f172a);
+  color:#f1f5f9;
+}
 
-    * { box-sizing: border-box; }
-    body {
-      margin:0;
-      font-family: Inter, system-ui, sans-serif;
-      background: linear-gradient(145deg,#eef4ff,#dbeafe);
-      color: var(--ink);
-    }
+/* App-Container */
+.app{max-width:1100px;margin:24px auto;padding:16px;}
 
-    a { color:#1e3a8a; text-decoration:none; }
+/* Header */
+h1{text-align:center;font-weight:800;font-size:2rem;color:#1e3a8a;}
+body.dark h1{color:#93c5fd;}
+.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 24px;}
+body.dark .hr{background:#60a5fa;}
 
-    .app {
-      max-width:1200px;
-      margin:18px auto;
-      padding:16px;
-    }
+/* Toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:14px;}
+.toolbar select,.toolbar input{
+  padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px;font-size:1rem;
+  background:#fff;transition:background .3s ease;
+}
+body.dark .toolbar select,body.dark .toolbar input{
+  background:#0f172a;color:#e2e8f0;border-color:#334155;
+}
+.toolbar .btn{
+  background:var(--blue);color:#fff;border:none;border-radius:10px;
+  padding:8px 14px;font-weight:700;cursor:pointer;transition:opacity .3s;
+}
+.toolbar .btn:hover{opacity:.9;}
+.toolbar .btn.warn{background:var(--bad);}
+.toolbar .btn.toggle{
+  background:#e0e7ff;color:#1e3a8a;font-weight:800;
+}
+body.dark .toolbar .btn.toggle{background:#1e293b;color:#93c5fd;}
 
-    h1 {
-      text-align:center;
-      font-weight:800;
-      color:#1e3a8a;
-      margin:0;
-    }
+/* Zähler */
+#countDesk,#countMob{text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a;}
+body.dark #countDesk,body.dark #countMob{color:#93c5fd;}
 
-    .hr {
-      width:160px;
-      height:4px;
-      background:#2563eb;
-      border-radius:4px;
-      margin:10px auto 18px;
-    }
+/* Tabellenansicht */
+.table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;}
+body.dark .table-wrap{background:rgba(30,41,59,.8);box-shadow:0 6px 20px rgba(0,0,0,.6);}
+table{width:100%;border-collapse:collapse;}
+th,td{padding:10px 12px;border-bottom:1px solid var(--border);text-align:left;}
+tr:hover{background:#f8fbff;}
+body.dark tr:hover{background:rgba(148,163,184,.1);}
+.category-chip{
+  padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem;
+}
+.red-flag{color:var(--bad);font-weight:700;margin-left:6px;}
+body.dark .red-flag{color:#fca5a5;}
 
-    /* ===== Toolbar oben ===== */
-    .toolbar {
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:center;
-      margin:12px 0;
-    }
+/* Kachelansicht */
+.grid-view{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;margin-top:10px;
+}
+.card{
+  background:#fff;border:1px solid #e5ebf3;border-radius:14px;
+  padding:16px;box-shadow:0 4px 10px rgba(0,0,0,.06);
+  transition:transform .15s,box-shadow .25s,border-color .25s;
+}
+body.dark .card{background:rgba(30,41,59,.85);border-color:#334155;}
+.card:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,.1);}
+.card-cat{
+  display:inline-block;padding:4px 10px;border-radius:999px;
+  color:#fff;font-weight:700;margin-bottom:10px;
+}
+.card-title{font-weight:800;font-size:1.1rem;margin-bottom:6px;}
+.card-sub{color:var(--muted);font-size:.95rem;margin-bottom:8px;line-height:1.35;}
+body.dark .card-sub{color:#cbd5e1;}
+.confuse-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(239,68,68,0.08);color:#b91c1c;
+  font-size:.8rem;padding:2px 6px;border-radius:999px;font-weight:600;
+}
+body.dark .confuse-badge{
+  background:rgba(239,68,68,0.15);color:#fca5a5;
+}
 
-    .toolbar select, .toolbar input {
-      padding:8px 12px;
-      border:1px solid #cfd6e4;
-      border-radius:10px;
-      background:#fff;
-    }
+/* FAB / Mobile-Leiste */
+.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);
+  padding:10px;border-top:1px solid #e5ebf3;}
+body.dark .fab-row{background:rgba(15,23,42,.9);border-top-color:#334155;}
+.fabs{display:flex;gap:8px;}
+.fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff;}
+.fab.gray{background:#6b7280;}
+.fab.warn{background:var(--bad);}
+.fab.blue{background:var(--blue);}
 
-    .btn {
-      background:var(--blue);
-      color:#fff;
-      border:none;
-      border-radius:10px;
-      padding:8px 14px;
-      font-weight:700;
-      cursor:pointer;
-    }
-    .btn.warn { background:var(--bad); }
-    .btn.gray { background:#6b7280; }
-    .btn.ghost { background:#eef4ff; color:#111; border:1px solid #dbe3ff; }
-    .btn:disabled { opacity:.5; cursor:not-allowed; }
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);
+  display:none;align-items:center;justify-content:center;z-index:50;}
+.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px;}
+body.dark .panel{background:#1e293b;color:#f1f5f9;}
+.form-grid{display:grid;gap:10px;}
+.form-grid input,.form-grid select,.form-grid textarea{
+  width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px;
+}
+body.dark .form-grid input,body.dark .form-grid select,body.dark .form-grid textarea{
+  background:#0f172a;color:#e2e8f0;border-color:#334155;
+}
+.modal-actions{display:flex;gap:16px;justify-content:flex-end;margin-top:18px;}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;}
+.btn.primary{background:var(--blue);color:#fff;}
+.btn.ghost{background:#eef4ff;color:#111;}
+body.dark .btn.ghost{background:#334155;color:#e2e8f0;}
 
-    /* ===== Schalter: Listen- oder Kachelansicht ===== */
-    .view-toggle {
-      display:flex;
-      align-items:center;
-      gap:8px;
-      padding:8px 12px;
-      border:1px solid #cfd6e4;
-      border-radius:10px;
-      background:#fff;
-      font-weight:700;
-    }
+/* Dark-Mode-Toggle */
+.dark-toggle{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px;
+  cursor:pointer;font-weight:700;background:#fff;transition:all .3s;
+}
+body.dark .dark-toggle{background:#1e293b;border-color:#334155;color:#e2e8f0;}
 
-    .view-toggle .switch {
-      position:relative;
-      display:inline-block;
-      width:56px;
-      height:28px;
-    }
-    .view-toggle .switch input { opacity:0; width:0; height:0; }
-
-    .view-toggle .slider {
-      position:absolute;
-      cursor:pointer;
-      top:0; left:0; right:0; bottom:0;
-      background:#cbd5e1;
-      transition:.25s;
-      border-radius:999px;
-    }
-
-    .view-toggle .slider:before {
-      content:"";
-      position:absolute;
-      width:22px; height:22px;
-      left:3px; top:3px;
-      background:#fff;
-      border-radius:50%;
-      transition:.25s;
-    }
-
-    .view-toggle input:checked + .slider { background:#60a5fa; }
-    .view-toggle input:checked + .slider:before { transform:translateX(28px); }
-
-    /* ===== Tabellenansicht ===== */
-    .table-wrap {
-      background:#fff;
-      border-radius:16px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-
-    table {
-      width:100%;
-      border-collapse:collapse;
-    }
-
-    th, td {
-      padding:10px;
-      border-bottom:1px solid var(--border);
-      text-align:left;
-    }
-
-    tr:hover { background:#f8fbff; }
-
-    .category-chip {
-      padding:4px 10px;
-      border-radius:999px;
-      color:#fff;
-      font-weight:700;
-      font-size:.88rem;
-      white-space:nowrap;
-    }
-
-    .red-flag {
-      color:#b91c1c;
-      font-weight:700;
-      margin-left:6px;
-      cursor:help;
-    }
-
-    /* ===== Kachelansicht (Grid) ===== */
-    .grid {
-      display:grid;
-      gap:12px;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-    @media(min-width:1200px) {
-      .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    }
-
-    .card {
-      background:#fff;
-      border:1px solid #e5ebf3;
-      border-radius:14px;
-      padding:14px;
-      box-shadow:0 4px 10px rgba(0,0,0,.06);
-      transition:box-shadow .2s,border-color .2s;
-    }
-
-    .card.selected {
-      border-color:#60a5fa;
-      box-shadow:0 0 0 3px rgba(37,99,235,.15);
-    }
-
-    .card.red-card {
-      border-color:var(--bad);
-      box-shadow:0 0 0 2px rgba(239,68,68,.18);
-    }
-
-    .card-cat {
-      display:inline-block;
-      padding:4px 10px;
-      border-radius:999px;
-      color:#fff;
-      font-weight:700;
-      margin-bottom:8px;
-    }
-
-    .kv {
-      display:grid;
-      grid-template-columns:110px 1fr;
-      gap:12px 10px;
-      font-size:.95rem;
-    }
-
-    .kv .k { color:var(--muted); }
-
-    .badge-danger {
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-      background:#fee2e2;
-      color:#991b1b;
-      border:1px solid #fecaca;
-      border-radius:12px;
-      font-weight:800;
-      padding:6px 10px;
-      margin-bottom:6px;
-    }
-
-    .card-row {
-      text-align:right;
-      margin-top:10px;
-    }
-
-    .card-row button {
-      padding:6px 10px;
-      border:none;
-      border-radius:10px;
-      font-weight:700;
-      background:var(--blue);
-      color:#fff;
-      cursor:pointer;
-      font-size:.9rem;
-    }
-
-    /* ===== Pagination ===== */
-    .pager {
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      margin:16px 0;
-    }
-
-    /* ===== Modal ===== */
-    .modal {
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.4);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      z-index:50;
-    }
-
-    .panel {
-      background:#fff;
-      border-radius:14px;
-      padding:18px;
-      width:92%;
-      max-width:540px;
-      box-shadow:var(--shadow);
-    }
-
-    .form-grid {
-      display:grid;
-      gap:10px;
-    }
-
-    .form-grid input, .form-grid select, .form-grid textarea {
-      width:100%;
-      padding:10px;
-      border:1px solid #cfd6e4;
-      border-radius:10px;
-      background:#fff;
-    }
-
-    .modal-actions {
-      display:flex;
-      gap:12px;
-      justify-content:flex-end;
-      margin-top:16px;
-    }
-
-    .confuse-toggle {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px;
-      border:1px solid #cfd6e4;
-      border-radius:10px;
-      background:#f9fafb;
-      font-weight:600;
-      color:#111;
-    }
-
-    .confuse-toggle .switch {
-      position:relative;
-      display:inline-block;
-      width:52px;
-      height:28px;
-    }
-
-    .confuse-toggle .switch input { opacity:0; width:0; height:0; }
-
-    .confuse-toggle .slider {
-      position:absolute;
-      cursor:pointer;
-      top:0; left:0; right:0; bottom:0;
-      background:#cbd5e1;
-      transition:.25s;
-      border-radius:999px;
-    }
-
-    .confuse-toggle .slider:before {
-      content:"";
-      position:absolute;
-      width:22px; height:22px;
-      left:3px; top:3px;
-      background:#fff;
-      border-radius:50%;
-      transition:.25s;
-    }
-
-    .confuse-toggle input:checked + .slider { background:#fca5a5; }
-    .confuse-toggle input:checked + .slider:before { transform:translateX(24px); }
-  </style>
+/* Responsiveness */
+@media(max-width:900px){
+  .toolbar,.table-wrap{display:none;}
+  .grid-view{grid-template-columns:1fr 1fr;}
+  .fab-row{display:block;}
+}
+</style>
 </head>
+
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <!-- Toolbar mit Ansichtsschalter -->
+  <!-- Toolbar -->
   <div class="toolbar">
-    <select id="filterCatDesk"></select>
-    <input id="searchDesk" type="text" placeholder="Suchen…">
-    <button id="resetDesk" class="btn gray">Reset</button>
-    <span class="view-toggle">Ansicht
-      <label class="switch">
-        <input type="checkbox" id="viewSwitch">
-        <span class="slider"></span>
-      </label>
-      <span id="viewLabel">Liste</span>
-    </span>
-    <button id="addDesk" class="btn">➕ Neu</button>
+    <select id="filterCatDesk">
+      <option value="Alle">Alle (bunt gemischt)</option>
+    </select>
+    <input id="searchDesk" type="text" placeholder="Suchen …">
+    <button id="resetDesk" class="btn">Reset</button>
+    <button id="addDesk" class="btn">➕ Neue</button>
     <button id="delDesk" class="btn warn">🗑️ Löschen</button>
     <button id="syncDesk" class="btn">📤 Sync</button>
+    <button id="tokenBtn" class="btn">⚙️ Token</button>
+    <button id="viewToggle" class="btn toggle">🧱 Kachelansicht</button>
+    <label class="dark-toggle"><input type="checkbox" id="chkDark"> 🌙 Dark Mode</label>
   </div>
 
-  <!-- Zähleranzeige -->
-  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
+  <!-- Zähler -->
+  <div id="countDesk">📘 0 Vokabeln gefunden</div>
 
   <!-- Tabellenansicht -->
-  <div id="listView" class="table-wrap" style="display:block;">
-    <table>
+  <div class="table-wrap" id="listView">
+    <table id="tbl">
       <thead>
         <tr>
           <th>⟲</th>
-          <th>Englisch</th>
-          <th>Deutsch</th>
+          <th data-sort="0">Englisch</th>
+          <th data-sort="1">Deutsch</th>
           <th>Kategorie</th>
+          <th>Gruppe</th>
+          <th>Hinweis</th>
           <th>Aktion</th>
         </tr>
       </thead>
-      <tbody id="tblBody"></tbody>
+      <tbody></tbody>
     </table>
   </div>
+
   <!-- Kachelansicht -->
-  <div id="gridView" style="display:none;">
-    <div id="grid" class="grid"></div>
+  <div id="gridView" class="grid-view" style="display:none;"></div>
+
+  <!-- Pagination -->
+  <div id="pagination" style="text-align:center;margin:16px 0;"></div>
+
+  <!-- Mobile FAB-Leiste -->
+  <div class="fab-row">
+    <div class="fabs">
+      <button class="fab gray" id="fabBack">Zurück</button>
+      <button class="fab blue" id="fabAdjust">Anpassen</button>
+      <button class="fab gray" id="fabSync">Sync</button>
+    </div>
   </div>
 
-  <!-- Pagination unten -->
-  <div id="pager" class="pager">
-    <button class="btn" id="pgPrev">⬅️ Zurück</button>
-    <span id="pgInfo" style="font-weight:700">Seite 1 / 1</span>
-    <button class="btn" id="pgNext">Weiter ➡️</button>
+  <!-- Footer -->
+  <div style="text-align:center;margin-top:24px">
+    <a href="index.html" style="font-weight:700">⬅️ Zurück zum Trainer</a>
+    <div style="margin-top:6px;color:var(--muted);">© 2025 Beeferino • lokal / GitHub</div>
   </div>
 </div>
 
-<!-- ===== Modal zur Bearbeitung / Neuanlage ===== -->
+<!-- Modal für Bearbeiten / Neuanlage -->
 <div class="modal" id="modal">
   <div class="panel">
-    <h3 id="modalTitle">Vokabel bearbeiten</h3>
+    <h3 id="modalTitle" style="margin-top:0">Vokabel</h3>
     <div class="form-grid">
-      <label>Englisch
-        <input id="mEn" type="text" placeholder="englisches Wort">
-      </label>
-      <label>Deutsch
-        <input id="mDe" type="text" placeholder="deutsche Übersetzung">
-      </label>
-      <label>Kategorie
-        <select id="mCat"></select>
-      </label>
+      <label>Englisch <input id="mEn" type="text"></label>
+      <label>Deutsch <input id="mDe" type="text"></label>
+      <label>Kategorie <select id="mCat"></select></label>
+      <label>Gruppe / Variante <input id="mGroup" type="text"></label>
+      <label>Hinweis <textarea id="mHint" rows="2"></textarea></label>
       <div class="confuse-toggle">
         <span>Verwechslungsgefahr</span>
-        <label class="switch">
-          <input type="checkbox" id="mConfuse">
-          <span class="slider"></span>
-        </label>
+        <label class="switch"><input type="checkbox" id="mConfuse"><span class="slider"></span></label>
       </div>
-      <label>Gruppe
-        <input id="mGroup" type="text" placeholder="z. B. Lektion 5">
-      </label>
-      <label>Hinweis
-        <textarea id="mHint" rows="2" placeholder="Optionaler Merksatz"></textarea>
-      </label>
     </div>
     <div class="modal-actions">
-      <button class="btn gray" id="mCancel">Abbrechen</button>
-      <button class="btn" id="mSave">Speichern</button>
+      <button class="btn ghost" id="mCancel">Abbrechen</button>
+      <button class="btn primary" id="mSave">Speichern</button>
     </div>
   </div>
 </div>
-
-<!-- ===== Haupt-Skript ===== -->
 <script>
 (function(){
-  /* ===============================
-     KONSTANTEN UND BASISFUNKTIONEN
-     =============================== */
-
-  // Kategorienamen, Farben und Textfarben
+  /* =========================
+     Konstanten & Utilities
+  ========================== */
   const CATEGORY_NAMES = {
-    Gelb: "Grundwerkzeuge Metallverarbeitung",
-    Pink: "Werkzeugkasten Mechaniker",
-    Blau: "Blech- / Kunststoffarbeiten",
-    Gruen: "Drehen / Fräsen",
-    HellesPink: "Hydraulik / Pneumatik",
-    Orange: "Elektrotechnik",
-    Dunkelgruen: "Fluggerätemechanik allgemein"
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein"
   };
   const COLOR_MAP = {
     Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2",
     Gruen:"#1E8449", HellesPink:"#F54927",
     Orange:"#E67E22", Dunkelgruen:"#117A65"
   };
-  const TEXT_ON = {
-    Gelb:"#000", Pink:"#fff", Blau:"#fff",
-    Gruen:"#fff", HellesPink:"#fff",
-    Orange:"#fff", Dunkelgruen:"#fff"
-  };
+  const TEXT_ON = { Gelb:"#000", Pink:"#fff", Blau:"#fff", Gruen:"#fff", HellesPink:"#fff", Orange:"#fff", Dunkelgruen:"#fff" };
 
-  // Datenquelle (lokal / Remote)
-  const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const RAW_URL   = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const GH_OWNER  = "beeferino";
+  const GH_REPO   = "vokabeltrainer";
+  const GH_PATH   = "vokabeln.json";
 
-  // Hilfs-Shortcuts
-  const $  = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
+  const $  = (s)=>document.querySelector(s);
+  const $$ = (s)=>Array.from(document.querySelectorAll(s));
+  const byId = (id)=>document.getElementById(id);
 
-  /* ===== Referenzen auf DOM-Elemente ===== */
-  const tblBody=$("#tblBody"), grid=$("#grid"),
-        listView=$("#listView"), gridView=$("#gridView"),
-        viewSwitch=$("#viewSwitch"), viewLabel=$("#viewLabel"),
-        filterCatDesk=$("#filterCatDesk"), searchDesk=$("#searchDesk"),
-        countDesk=$("#countDesk"), pgPrev=$("#pgPrev"),
-        pgNext=$("#pgNext"), pgInfo=$("#pgInfo"),
-        modal=$("#modal"), mEn=$("#mEn"), mDe=$("#mDe"),
-        mCat=$("#mCat"), mConfuse=$("#mConfuse"),
-        mGroup=$("#mGroup"), mHint=$("#mHint");
-
-  /* ===== Programm-Status ===== */
-  let list = [];            // Gesamte Vokabeln
-  let editIndex = null;     // Aktueller Index bei Bearbeitung
-  let selected = new Set(); // Auswahl für Mehrfach-Aktionen
-  let viewMode = "list";    // "list" oder "grid"
-  let currentPage = 1;      // Aktuelle Seite
-  const PAGE_SIZE = 15;     // 15 Vokabeln / Seite
-
-  /* ===== Hilfsfunktionen ===== */
-
-  // Normalisierung eines Datensatzes (zur Sicherheit)
+  // Daten-Schema: [en, de, cat, group, hint, createdISO, confuse(0/1), id]
   const normalize = v => [
-    v[0]||"", v[1]||"", v[2]||"Gelb",
-    v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
-    v[6]?1:0, v[7]||String(Math.random()).slice(2)
+    v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"",
+    v[5] || new Date().toISOString(),
+    typeof v[6]==="number" ? v[6] : (v[6] ? 1 : 0),
+    v[7] || (crypto?.randomUUID?.() || String(Math.random()).slice(2))
   ];
 
-  // LocalStorage-Verwaltung
-  const loadLocal = () =>
-    JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-  const saveLocal = d =>
-    localStorage.setItem("vokabeln", JSON.stringify(d));
+  /* =========================
+     State
+  ========================== */
+  let list = [];                       // Vollständige Daten
+  let currentPage = 1;                 // Seitenindex (1-basiert)
+  const PAGE_SIZE = 15;                // Vorgabe
+  let currentView = "list";            // "list" | "grid"
+  let adjustMode = false;              // Anpassen-Modus
+  let selectedIds = new Set();         // Ausgewählte IDs (ansichts-übergreifend)
+  let sortState = { col: null, dir: 1 }; // Tabellen-Sortierung (0=EN, 1=DE)
 
-  // Index in Liste finden über eindeutige ID (v[7])
-  const idxInList = v => list.findIndex(x => x[7] === v[7]);
+  /* =========================
+     DOM-Elemente
+  ========================== */
+  const filterCatDesk = byId("filterCatDesk");
+  const searchDesk    = byId("searchDesk");
+  const resetDesk     = byId("resetDesk");
+  const addDesk       = byId("addDesk");
+  const delDesk       = byId("delDesk");
+  const syncDesk      = byId("syncDesk");
+  const tokenBtn      = byId("tokenBtn");
+  const viewToggle    = byId("viewToggle");
+  const chkDark       = byId("chkDark");
 
-  // Kategorien in Dropdowns schreiben
-  function fillCategorySelect(el){
-    el.innerHTML = "";
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k;
-      o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k];
-      o.style.color=TEXT_ON[k];
-      el.appendChild(o);
-    });
-  }
+  const countDesk     = byId("countDesk");
+  const listView      = byId("listView");
+  const gridView      = byId("gridView");
+  const tblBody       = $("#tbl tbody");
+  const paginationEl  = byId("pagination");
 
-  /* ==========================
-     DATENLADEN UND INIT
-     ========================== */
-  async function loadData(){
-    try{
-      // Versuch: Remote-Quelle
-      const r=await fetch(RAW_URL,{cache:"no-store"});
-      const j=await r.json();
-      list=j.map(normalize);
-      saveLocal(list);
-    }catch{
-      // Fallback: Lokale Daten
-      list=loadLocal();
-    }
-    fillCategorySelect(filterCatDesk);
-    fillCategorySelect(mCat);
-    renderAll();
-  }
+  // FAB (Mobile)
+  const fabBack    = byId("fabBack");
+  const fabAdjust  = byId("fabAdjust");
+  const fabSync    = byId("fabSync");
 
-  /* ==========================
-     FILTER, SUCHE, PAGINATION
-     ========================== */
-  function filtered(){
-    const cat = filterCatDesk.value || "Alle";
-    const q = searchDesk.value.trim().toLowerCase();
-    return list.filter(v=>{
-      const cOk = cat==="Alle" || v[2]===cat;
-      const qOk = !q ||
-        v[0].toLowerCase().includes(q) ||
-        v[1].toLowerCase().includes(q) ||
-        (v[4]||"").toLowerCase().includes(q);
-      return cOk && qOk;
-    });
-  }
+  // Modal
+  const modal      = byId("modal");
+  const modalTitle = byId("modalTitle");
+  const mEn        = byId("mEn");
+  const mDe        = byId("mDe");
+  const mCat       = byId("mCat");
+  const mGroup     = byId("mGroup");
+  const mHint      = byId("mHint");
+  const mConfuse   = byId("mConfuse");
+  const mCancel    = byId("mCancel");
+  const mSave      = byId("mSave");
 
-  function pageSlice(){
-    const d = filtered();
-    const pages = Math.max(1, Math.ceil(d.length/PAGE_SIZE));
-    if(currentPage>pages) currentPage=pages;
-    const s=(currentPage-1)*PAGE_SIZE;
-    return d.slice(s,s+PAGE_SIZE);
-  }
+  let editId = null; // null: Neu, sonst ID des zu bearbeitenden Datensatzes
 
-  function updatePager(){
-    const p=Math.max(1,Math.ceil(filtered().length/PAGE_SIZE));
-    pgInfo.textContent=`Seite ${currentPage} / ${p}`;
-    pgPrev.disabled=currentPage<=1;
-    pgNext.disabled=currentPage>=p;
-  }
+  /* =========================
+     Helpers
+  ========================== */
+  const loadLocal  = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+  const saveLocal  = (d) => localStorage.setItem("vokabeln", JSON.stringify(d));
+  const setDark    = (on) => { document.body.classList.toggle("dark", !!on); localStorage.setItem("theme_dark", on ? "1":"0"); };
+  const isDark     = () => localStorage.getItem("theme_dark")==="1";
 
-  pgPrev.onclick=()=>{currentPage=Math.max(1,currentPage-1);renderAll();};
-  pgNext.onclick=()=>{currentPage++;renderAll();};
-  /* ==========================
-     DARSTELLUNG – LISTE
-     ========================== */
-  function renderList(){
-    const data = pageSlice();
-    tblBody.innerHTML = data.map(v=>{
-      const i = idxInList(v);
-      const danger = v[6]==1 ? '<span class="red-flag" title="Verwechslungsgefahr">⚠️</span>' : "";
-      const catColor = COLOR_MAP[v[2]], catText = TEXT_ON[v[2]];
-      return `
-        <tr>
-          <td><input type="checkbox" data-idx="${i}"></td>
-          <td>${v[0]} ${danger}</td>
-          <td>${v[1]}</td>
-          <td><span class="category-chip" style="background:${catColor};color:${catText}">${CATEGORY_NAMES[v[2]]}</span></td>
-          <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
-        </tr>`;
-    }).join("");
-
-    // Event-Handler
-    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-  }
-
-  /* ==========================
-     DARSTELLUNG – KACHELANSICHT
-     ========================== */
-  function renderGrid(){
-    const data = pageSlice();
-    grid.innerHTML = data.map(v=>{
-      const i = idxInList(v);
-      const danger = v[6]==1 ? `<div class="badge-danger">⚠️ Verwechslungsgefahr</div>` : "";
-      const catColor = COLOR_MAP[v[2]], catText = TEXT_ON[v[2]];
-      const hasHint = v[4] ? `<div class="kv"><div class="k">Hinweis:</div><div>${v[4]}</div></div>` : "";
-      const hasGroup = v[3] ? `<div class="kv"><div class="k">Gruppe:</div><div>${v[3]}</div></div>` : "";
-      return `
-        <div class="card ${v[6]==1?"red-card":""}" data-idx="${i}">
-          <div class="card-cat" style="background:${catColor};color:${catText}">${CATEGORY_NAMES[v[2]]}</div>
-          ${danger}
-          <div class="kv">
-            <div class="k">Englisch:</div><div><strong>${v[0]}</strong></div>
-            <div class="k">Deutsch:</div><div>${v[1]}</div>
-          </div>
-          ${hasGroup}
-          ${hasHint}
-          <div class="card-row">
-            <button class="btn" data-edit="${i}">Bearbeiten</button>
-          </div>
-        </div>`;
-    }).join("");
-
-    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-  }
-
-  /* ==========================
-     GESAMT-RENDER UND ZÄHLER
-     ========================== */
-  function renderAll(){
-    updatePager();
-    const d = filtered();
-    const txt = `📘 ${d.length} Vokabel${d.length!==1?"n":""} gefunden`;
-    countDesk.textContent = txt;
-
-    if(viewMode==="list"){
-      listView.style.display="block";
-      gridView.style.display="none";
-      renderList();
-    }else{
-      listView.style.display="none";
-      gridView.style.display="block";
-      renderGrid();
-    }
-  }
-
-  /* ==========================
-     ANSICHTS-UMSCHALTER
-     ========================== */
-  viewSwitch.addEventListener("change",()=>{
-    viewMode = viewSwitch.checked ? "grid" : "list";
-    viewLabel.textContent = viewMode==="grid" ? "Kacheln" : "Liste";
-    renderAll();
-  });
-
-  /* ==========================
-     MODAL-FUNKTIONEN
-     ========================== */
-  function openEdit(i=null){
-    editIndex=i;
-    if(i==null){
-      // Neue Vokabel
-      mEn.value=""; mDe.value=""; mGroup.value=""; mHint.value="";
-      mCat.value="Gelb"; mConfuse.checked=false;
-      $("#modalTitle").textContent="Neue Vokabel anlegen";
-    }else{
-      const v=list[i];
-      mEn.value=v[0]; mDe.value=v[1];
-      mCat.value=v[2]; mGroup.value=v[3]; mHint.value=v[4];
-      mConfuse.checked=v[6]==1;
-      $("#modalTitle").textContent="Vokabel bearbeiten";
-    }
-    mCat.style.background=COLOR_MAP[mCat.value];
-    mCat.style.color=TEXT_ON[mCat.value];
-    modal.style.display="flex";
-  }
-
-  function closeModal(){ modal.style.display="none"; }
-  $("#mCancel").onclick=closeModal;
-
-  $("#mSave").onclick=()=>{
-    const en=mEn.value.trim(), de=mDe.value.trim();
-    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim(), conf=mConfuse.checked?1:0;
-    if(!en||!de){alert("Bitte Englisch und Deutsch ausfüllen.");return;}
-    if(editIndex==null)
-      list.push([en,de,cat,grp,hint,new Date().toISOString(),conf,String(Math.random()).slice(2)]);
-    else{
-      const old=list[editIndex];
-      list[editIndex]=[en,de,cat,grp,hint,old[5],conf,old[7]];
-    }
-    saveLocal(list);
-    closeModal();
-    renderAll();
-  };
-
-  mCat.onchange=()=>{
-    mCat.style.background=COLOR_MAP[mCat.value];
-    mCat.style.color=TEXT_ON[mCat.value];
-  };
-  modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
-
-  /* ==========================
-     FILTER & SUCHE-EVENTS
-     ========================== */
-  [filterCatDesk,searchDesk].forEach(el=>{
-    el.addEventListener("input",()=>{currentPage=1;renderAll();});
-    el.addEventListener("change",()=>{currentPage=1;renderAll();});
-  });
-  /* ==========================
-     AKTIONEN: NEU, LÖSCHEN, SYNC
-     ========================== */
-  $("#addDesk").onclick=()=>openEdit(null);
-
-  $("#delDesk").onclick=()=>{
-    const checked = $$("input[type='checkbox'][data-idx]:checked").map(x=>+x.dataset.idx);
-    if(!checked.length){alert("Bitte Zeilen markieren.");return;}
-    if(!confirm(`${checked.length} Vokabel${checked.length>1?"n":""} löschen?`))return;
-    list=list.filter((_,i)=>!checked.includes(i));
-    saveLocal(list);
-    renderAll();
-  };
-
-  $("#resetDesk").onclick=()=>{
-    filterCatDesk.value="Alle";
-    searchDesk.value="";
-    currentPage=1;
-    renderAll();
-  };
-
-  /* ===== GitHub Synchronisierung ===== */
-  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
   function getToken(){
-    let t=localStorage.getItem('gh_token')||"";
+    let t = localStorage.getItem("gh_token") || "";
     if(!t){
-      t=prompt("GitHub Token (repo-Scope):","");
-      if(t){localStorage.setItem('gh_token',t);alert("Token gespeichert.");}
+      t = prompt("GitHub Token (repo-Scope):", "");
+      if(t){ localStorage.setItem("gh_token", t); alert("Token gespeichert."); }
     }
     return t;
   }
 
-  async function githubSync(){
-    const token=getToken(); if(!token) return;
-    try{
-      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-      const meta=await fetch(api,{headers:{Authorization:`token ${token}`}}).then(r=>r.json());
-      const sha=meta.sha;
-      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
-      const body={message:"Update via Vokabel-UI",content,sha};
-      const res=await fetch(api,{
-        method:"PUT",
-        headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},
-        body:JSON.stringify(body)
-      });
-      if(!res.ok) throw new Error(await res.text());
-      alert("✅ Erfolgreich in GitHub-Datenbank eingetragen!");
-    }catch(e){
-      console.error(e);
-      alert("❌ Fehler beim Sync: "+e.message);
-    }
-  }
+  function slugCat(c){ return CATEGORY_NAMES[c] || "Kategorie"; }
 
-  $("#syncDesk").onclick=githubSync;
-
-  /* ==========================
-     SERVICE WORKER REGISTER
-     ========================== */
-  if('serviceWorker' in navigator){
-    try{
-      navigator.serviceWorker.register('service-worker.js').catch(()=>{});
-    }catch(e){
-      console.warn("ServiceWorker konnte nicht registriert werden:", e);
-    }
-  }
-
-  /* ==========================
-     INIT
-     ========================== */
-  function initCategories(){
-    filterCatDesk.innerHTML='<option value="Alle">Alle (bunt gemischt)</option>';
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k;
-      o.textContent=CATEGORY_NAMES[k];
-      o.style.background=COLOR_MAP[k];
-      o.style.color=TEXT_ON[k];
-      filterCatDesk.appendChild(o);
+  function sortListInPlace(){
+    if (sortState.col==null) return;
+    const col = sortState.col;
+    const dir = sortState.dir;
+    list.sort((a,b)=>{
+      const A = (a[col]||"").toLowerCase();
+      const B = (b[col]||"").toLowerCase();
+      return A.localeCompare(B) * dir;
     });
   }
 
-  initCategories();
-  loadData();
+  /* =========================
+     Filter, Suche, Pagination
+  ========================== */
+  // Filter-Werte (nur Desktop-Toolbar – mobil nutzt dieselben Daten / Rendering)
+  function currentFilter(){
+    const cat = (filterCatDesk.value || "Alle");
+    const q = (searchDesk.value || "").trim().toLowerCase();
+    return { cat, q };
+  }
 
-})(); // Ende der IIFE
+  function filteredData(){
+    const { cat, q } = currentFilter();
+    return list.filter(v=>{
+      const byCat =
+        cat==="Alle" || v[2]===cat || (cat==="confuse" && v[6]==1);
+      const byQ = !q
+        || v[0].toLowerCase().includes(q)
+        || v[1].toLowerCase().includes(q)
+        || (v[3]||"").toLowerCase().includes(q)
+        || (v[4]||"").toLowerCase().includes(q);
+      return byCat && byQ;
+    });
+  }
+
+  function totalPages(){
+    const len = filteredData().length;
+    return Math.max(1, Math.ceil(len / PAGE_SIZE));
+  }
+
+  function pageSlice(){
+    const data = filteredData();
+    const start = (currentPage-1) * PAGE_SIZE;
+    return data.slice(start, start + PAGE_SIZE);
+  }
+
+  function clampPage(){
+    const pages = totalPages();
+    if(currentPage > pages) currentPage = pages;
+    if(currentPage < 1) currentPage = 1;
+  }
+
+  function updateCount(){
+    const len = filteredData().length;
+    countDesk.textContent = `📘 ${len} Vokabel${len!==1? "n":""} gefunden`;
+  }
+
+  function renderPagination(){
+    clampPage();
+    const pages = totalPages();
+    if (pages <= 1){
+      paginationEl.innerHTML = "";
+      return;
+    }
+    paginationEl.innerHTML = `
+      <button class="btn" id="paginationPrev" ${currentPage===1?"disabled":""}>⬅️ Zurück</button>
+      <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
+      <button class="btn" id="paginationNext" ${currentPage===pages?"disabled":""}>Weiter ➡️</button>
+    `;
+    byId("paginationPrev")?.addEventListener("click", ()=>{ currentPage--; renderAll(); });
+    byId("paginationNext")?.addEventListener("click", ()=>{ currentPage++; renderAll(); });
+  }
+
+  /* =========================
+     Rendering – Liste
+  ========================== */
+  function englishCell(en, confuse){
+    // Verwechslungsgefahr-Icon direkt bei Englisch
+    return `${escapeHTML(en)}${confuse? ' <span class="red-flag" title="Verwechslungsgefahr">🔴</span>': ''}`;
+  }
+
+  function escapeHTML(s){ return (s||"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+  function renderList(){
+    const rows = pageSlice();
+    tblBody.innerHTML = rows.map(v=>{
+      const [en,de,cat,group,hint,created,confuse,id] = v;
+      const chip = `<span class="category-chip" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${slugCat(cat)}</span>`;
+      const checked = selectedIds.has(id) ? ' checked' : '';
+      return `
+        <tr data-id="${id}">
+          <td><input type="checkbox" data-id="${id}"${checked}></td>
+          <td>${englishCell(en, confuse)}</td>
+          <td>${escapeHTML(de)}</td>
+          <td>${chip}</td>
+          <td>${escapeHTML(group)}</td>
+          <td>${escapeHTML(hint)}</td>
+          <td><button class="btn" data-edit="${id}">✏️ Bearbeiten</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    // Checkboxen (Mehrfachauswahl)
+    $$('input[type="checkbox"][data-id]').forEach(cb=>{
+      cb.onchange = ()=>{
+        const id = cb.getAttribute("data-id");
+        if(cb.checked) selectedIds.add(id); else selectedIds.delete(id);
+      };
+    });
+
+    // Edit-Buttons
+    $$('button[data-edit]').forEach(b=>{
+      b.onclick = ()=> openEdit(b.getAttribute("data-edit"));
+    });
+
+    // Spaltensortierung (nur EN/DE)
+    $$('#tbl thead th[data-sort]').forEach(th=>{
+      th.style.cursor = "pointer";
+      th.onclick = ()=>{
+        const col = parseInt(th.dataset.sort,10);
+        if (sortState.col === col) sortState.dir *= -1;
+        else { sortState.col = col; sortState.dir = 1; }
+        sortListInPlace(); currentPage = 1; renderAll();
+      };
+    });
+  }
+
+  /* =========================
+     Rendering – Kacheln
+  ========================== */
+  function renderGrid(){
+    const rows = pageSlice();
+    gridView.innerHTML = rows.map(v=>{
+      const [en,de,cat,group,hint,created,confuse,id] = v;
+      const selected = selectedIds.has(id) ? ' style="outline:3px solid rgba(37,99,235,.35);"' : '';
+      const catBadge = `<span class="card-cat" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${slugCat(cat)}</span>`;
+      const confuseBadge = confuse ? `<span class="confuse-badge" title="Verwechslungsgefahr">🔴 Hinweis</span>` : '';
+      return `
+        <div class="card" data-id="${id}"${selected}>
+          <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+            ${catBadge}
+            ${confuseBadge}
+          </div>
+          <div class="card-title" style="margin-top:6px">${escapeHTML(en)}</div>
+          <div class="card-sub">DE: ${escapeHTML(de)}</div>
+          ${group? `<div class="card-sub">Gruppe: <b>${escapeHTML(group)}</b></div>`: ``}
+          ${hint? `<div class="card-sub">Hinweis: ${escapeHTML(hint)}</div>`: ``}
+          <div class="card-row" style="text-align:right;margin-top:6px">
+            <button class="mobEdit btn" data-edit="${id}">Bearbeiten</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    // Auswahl im Anpassen-Modus (Card anklicken)
+    $$('#gridView .card').forEach(card=>{
+      card.onclick = (e)=>{
+        if (!adjustMode) return;
+        if (e.target?.dataset?.edit) return; // Klick auf "Bearbeiten" nicht als Auswahl werten
+        const id = card.getAttribute("data-id");
+        if (selectedIds.has(id)) { selectedIds.delete(id); card.style.outline = ""; }
+        else { selectedIds.add(id); card.style.outline = "3px solid rgba(37,99,235,.35)"; }
+      };
+    });
+
+    // Edit
+    $$('#gridView .mobEdit').forEach(btn=>{
+      btn.onclick = (e)=> {
+        e.stopPropagation();
+        openEdit(btn.getAttribute("data-edit"));
+      };
+    });
+  }
+
+  /* =========================
+     Render Switch & All
+  ========================== */
+  function renderAll(){
+    updateCount();
+    renderPagination();
+    if (currentView === "list"){
+      listView.style.display = "block";
+      gridView.style.display = "none";
+      renderList();
+    } else {
+      listView.style.display = "none";
+      gridView.style.display = "grid";
+      renderGrid();
+    }
+    // Button-Beschriftung anpassen
+    viewToggle.textContent = currentView === "list" ? "🧱 Kachelansicht" : "📋 Listenansicht";
+  }
+
+  /* =========================
+     Modal Neu/Bearbeiten
+  ========================== */
+  function fillCategorySelect(el, withAll=false){
+    el.innerHTML = withAll ? `<option value="Alle">Alle (bunt gemischt)</option>` : "";
+    for (const k of Object.keys(CATEGORY_NAMES)){
+      const o = document.createElement("option");
+      o.value = k; o.textContent = CATEGORY_NAMES[k];
+      o.style.background = COLOR_MAP[k];
+      o.style.color = TEXT_ON[k];
+      el.appendChild(o);
+    }
+    if (withAll){
+      const o = document.createElement("option");
+      o.value = "confuse"; o.textContent = "⚠️ Verwechslungsgefahr";
+      o.style.background = "#ffe4e6"; o.style.color = "#b91c1c";
+      el.appendChild(o);
+    }
+  }
+
+  function openEdit(id){
+    editId = id || null;
+    if (!id){
+      modalTitle.textContent = "Neue Vokabel";
+      mEn.value = ""; mDe.value=""; mGroup.value=""; mHint.value="";
+      mCat.value = "Gelb"; mConfuse.checked = false;
+    }else{
+      const v = list.find(x=>x[7]===id);
+      if (!v) return;
+      modalTitle.textContent = "Vokabel bearbeiten";
+      mEn.value = v[0]; mDe.value = v[1];
+      mCat.value = v[2];
+      mGroup.value = v[3]||"";
+      mHint.value = v[4]||"";
+      mConfuse.checked = v[6]==1;
+    }
+    modal.style.display = "flex";
+  }
+  function closeModal(){ modal.style.display = "none"; }
+
+  mCancel.onclick = closeModal;
+  modal.addEventListener("click",(e)=>{ if (e.target===modal) closeModal(); });
+  mSave.onclick = ()=>{
+    const en = mEn.value.trim();
+    const de = mDe.value.trim();
+    if (!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
+    const cat = mCat.value;
+    const group = mGroup.value.trim();
+    const hint  = mHint.value.trim();
+    const confuse = mConfuse.checked ? 1 : 0;
+
+    if (!editId){
+      const row = normalize([en,de,cat,group,hint,new Date().toISOString(),confuse]);
+      list.push(row);
+    } else {
+      const idx = list.findIndex(x=>x[7]===editId);
+      if (idx>=0){
+        const old = list[idx];
+        list[idx] = [en,de,cat,group,hint,old[5],confuse,old[7]];
+      }
+    }
+    saveLocal(list);
+    closeModal();
+    currentPage = 1;
+    renderAll();
+  };
+
+  /* =========================
+     Toolbar / FAB Aktionen
+  ========================== */
+  // View Toggle
+  viewToggle.onclick = ()=>{
+    currentView = (currentView === "list") ? "grid" : "list";
+    renderAll();
+  };
+
+  // Reset-Fix: setzt Dropdown sichtbar auf "Alle", leert Suche, Seite 1
+  resetDesk.onclick = ()=>{
+    filterCatDesk.value = "Alle";
+    searchDesk.value = "";
+    currentPage = 1;
+    renderAll();
+  };
+
+  // Suche/Filter
+  filterCatDesk.addEventListener("change", ()=>{ currentPage=1; renderAll(); });
+  searchDesk.addEventListener("input", ()=>{ currentPage=1; renderAll(); });
+
+  // Neu
+  addDesk.onclick = ()=> openEdit(null);
+
+  // Löschen (ausgewählte IDs)
+  delDesk.onclick = ()=>{
+    if (!selectedIds.size){ alert("Keine Auswahl."); return; }
+    if (!confirm(`${selectedIds.size} Einträge löschen?`)) return;
+    list = list.filter(v=> !selectedIds.has(v[7]));
+    selectedIds.clear();
+    saveLocal(list);
+    currentPage = 1;
+    renderAll();
+  };
+
+  // GitHub Sync
+  tokenBtn.onclick = ()=>{ localStorage.removeItem("gh_token"); getToken(); };
+  async function githubSync(){
+    const token = getToken(); if(!token) return;
+    try{
+      const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      const get = await fetch(api, { headers:{ Authorization:`token ${token}` }});
+      const meta = await get.json();
+      const sha  = meta.sha;
+
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(list, null, 2))));
+      const res = await fetch(api, {
+        method:"PUT",
+        headers:{ Authorization:`token ${token}`, "Content-Type":"application/json" },
+        body:JSON.stringify({ message:"Update via Vokabel-UI", content, sha })
+      });
+      if(!res.ok) throw new Error(await res.text());
+      alert("✅ Erfolgreich synchronisiert.");
+    }catch(e){
+      console.error(e);
+      alert("❌ Sync fehlgeschlagen.");
+    }
+  }
+  syncDesk.onclick = githubSync;
+
+  // FAB: Back / Adjust / Sync
+  fabBack.onclick = ()=> location.href = "index.html";
+  fabSync.onclick = githubSync;
+
+  function enterAdjustMode(){
+    adjustMode = true;
+    // FAB-Leiste umkonfigurieren
+    const bar = $('.fabs');
+    bar.innerHTML = `
+      <button class="fab gray" id="fabEnd">Beenden</button>
+      <button class="fab warn" id="fabDelete">Löschen</button>
+      <button class="fab blue" id="fabNew">Neu</button>
+    `;
+    byId("fabEnd").onclick = exitAdjustMode;
+    byId("fabDelete").onclick = ()=>{
+      if (!selectedIds.size){ alert("Keine Auswahl."); return; }
+      if (!confirm(`${selectedIds.size} Einträge löschen?`)) return;
+      list = list.filter(v=> !selectedIds.has(v[7]));
+      selectedIds.clear();
+      saveLocal(list);
+      currentPage = 1;
+      renderAll();
+    };
+    byId("fabNew").onclick = ()=> openEdit(null);
+  }
+  function exitAdjustMode(){
+    adjustMode = false;
+    selectedIds.clear();
+    const bar = $('.fabs');
+    bar.innerHTML = `
+      <button class="fab gray" id="fabBack">Zurück</button>
+      <button class="fab blue" id="fabAdjust">Anpassen</button>
+      <button class="fab gray" id="fabSync">Sync</button>
+    `;
+    byId("fabBack").onclick = ()=> location.href = "index.html";
+    byId("fabAdjust").onclick = enterAdjustMode;
+    byId("fabSync").onclick = githubSync;
+    renderAll();
+  }
+  fabAdjust.onclick = enterAdjustMode;
+
+  /* =========================
+     Dark Mode (Fade)
+  ========================== */
+  // initial
+  setDark(isDark());
+  chkDark.checked = isDark();
+  // sanfter Fade wird über CSS transition an body gesteuert
+  chkDark.addEventListener("change", ()=>{
+    setDark(chkDark.checked);
+  });
+
+  /* =========================
+     Init: Kategorien füllen, Laden, Render
+  ========================== */
+  function populateFilters(){
+    // Desktop-Filter mit "Alle" & Kategorien & "confuse"
+    fillCategorySelect(filterCatDesk, true);
+    // Bearbeiten-Modal (ohne "Alle" & "confuse")
+    fillCategorySelect(mCat, false);
+
+    // Standard auf "Alle" sichtbar lassen
+    filterCatDesk.value = filterCatDesk.value || "Alle";
+  }
+
+  async function loadData(){
+    try{
+      const r = await fetch(RAW_URL, { cache:"no-store" });
+      const j = await r.json();
+      list = j.map(normalize);
+      saveLocal(list);
+    }catch{
+      list = loadLocal();
+    }
+  }
+
+  // Klick auf Tabelle-Checkbox außerhalb von Adjust-Mode ist dennoch ok (klassische Desktop-Auswahl)
+  // Beim View-Switch bleibt Auswahl erhalten (ID-basiert)
+
+  // Start
+  (async function start(){
+    populateFilters();
+    await loadData();
+    sortListInPlace();
+    currentPage = 1;
+    renderAll();
+  })();
+
+})();
 </script>
-</body>
-</html>
