@@ -461,7 +461,84 @@ close.onclick = () => overlay.classList.remove("show");
     const tbtn = document.getElementById("themeToggle");
     if(tbtn) tbtn.addEventListener("click", toggleTheme);
   }
+// Gerät erkennen: Desktop oder Mobile
+const isMobile = window.matchMedia("(max-width: 900px)").matches;
 
   // Start
+if (isMobile) {
+  renderMobileView();
+} else {
   loadData();
-});
+}
+
+// === Mobile: Kartenliste statt Tabelle ======================================
+function renderMobileView() {
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div class="mobile-app">
+      <div class="mob-header">
+        <h2>Vokabeln</h2>
+        <div><button class="iconbtn" id="syncMob" title="Mit GitHub synchronisieren">🔄</button></div>
+      </div>
+      <div id="mobList" class="mob-list"></div>
+
+      <!-- Floating Add Button -->
+      <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
+
+      <!-- A–Z Floating Button -->
+      <button id="abcToggle" class="mob-abc-btn">A–Z</button>
+
+      <!-- Overlay (gleiches ABC-Panel, nur mobil gerendert) -->
+      <div class="abc-overlay" id="abcOverlay">
+        <div class="abc-panel">
+          <div class="abc-header">
+            <span class="abc-title">Wähle Buchstabe</span>
+            <button id="abcClose" class="abc-close">✕</button>
+          </div>
+          <div class="abc-list" id="abcFilter"></div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  renderMobileList();
+  document.getElementById("syncMob").onclick = githubSync;
+  document.getElementById("addMob").onclick = () => openEdit(null);
+  renderABCOverlayMobile();
+}
+
+function renderMobileList() {
+  const container = document.getElementById("mobList");
+  container.innerHTML = list
+    .map(
+      (v, i) => `
+      <div class="mob-card" data-idx="${i}">
+        <div class="mob-card-top" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
+          ${CATEGORY_NAMES[v[2]]}
+        </div>
+        <div class="mob-card-content">
+          <div class="mob-en">${v[0]}</div>
+          <div class="mob-de">${v[1]}</div>
+          ${v[6] === 1 ? `<div class="mob-warning">⚠️ Verwechslungsgefahr</div>` : ""}
+        </div>
+      </div>`
+    )
+    .join("");
+
+  // Karte tippen = Bearbeiten
+  container.querySelectorAll(".mob-card").forEach((c) => {
+    c.onclick = () => openEdit(parseInt(c.dataset.idx, 10));
+  });
+}
+
+function renderABCOverlayMobile() {
+  const overlay = document.getElementById("abcOverlay");
+  const btn = document.getElementById("abcToggle");
+  const close = document.getElementById("abcClose");
+
+  btn.onclick = () => {
+    overlay.classList.add("show");
+    setTimeout(() => renderABCFilter(), 40); // nutzt deine bestehende renderABCFilter()
+  };
+  close.onclick = () => overlay.classList.remove("show");
+}

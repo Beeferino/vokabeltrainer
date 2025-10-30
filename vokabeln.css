@@ -122,3 +122,125 @@ select {
   color: #cbd5e1;
   border-color: #334155;
 }
+/* -------------------------------
+   📱 MOBILE VIEW – überarbeitet
+--------------------------------*/
+@media (max-width: 900px) {
+  .desktop-app .toolbar,
+  .desktop-app .table-wrap,
+  .desktop-app #pagination,
+  .desktop-app h1,
+  .desktop-app .hr {
+    display: none !important;
+  }
+
+  .mobile-app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg);
+  }
+
+  .mob-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .mob-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .mob-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* 🎨 Modernisierte Karte */
+  .mob-card {
+    background: var(--card);
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .mob-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Schlanker Farbstreifen oben */
+  .mob-card-top {
+    height: 6px;
+    background: var(--blue);
+  }
+
+  .mob-card-content {
+    padding: 12px 14px 14px;
+  }
+
+  .mob-en {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .mob-de {
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-size: 0.95rem;
+  }
+
+  .mob-warning {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--bad);
+    background: rgba(239,68,68,0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+
+  /* Floating Buttons */
+  .mob-add-btn,
+  .mob-abc-btn {
+    position: fixed;
+    bottom: 20px;
+    z-index: 150;
+    border: none;
+    border-radius: 50%;
+    width: 58px;
+    height: 58px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+
+  .mob-add-btn { right: 20px; background: var(--blue); }
+  .mob-abc-btn  { right: 90px; background: #e67e22; }
+  .mob-add-btn:hover, .mob-abc-btn:hover { transform: scale(1.08); }
+
+  /* ABC Overlay */
+  .abc-overlay { position: fixed; right: -100%; transition: right 0.3s ease; }
+  .abc-overlay.show { right: 0; }
+}
