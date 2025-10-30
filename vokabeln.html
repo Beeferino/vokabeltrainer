@@ -3,155 +3,301 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
+<title>📘 Vokabelübersicht – Liste & Kacheln</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
 <style>
 :root{
   --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
-  --blue:#2563eb;--ok:#16a34a;--bad:#ef4444;
-  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1)
+  --blue:#2563eb;--ok:#16a34a;--bad:#ef4444;--amber:#f59e0b;
+  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.08)
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)}
+html,body{height:100%}
+body{
+  margin:0;font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(145deg,#eef4ff,#dbeafe);color:var(--ink)
+}
 a{color:#1e3a8a;text-decoration:none}
-.app{max-width:1100px;margin:20px auto;padding:16px}
-h1{text-align:center;font-weight:800;color:#1e3a8a}
-.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
-.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
-.toolbar .warn{background:var(--bad)}
+.app{max-width:1200px;margin:18px auto;padding:16px}
+
+h1{text-align:center;font-weight:800;color:#1e3a8a;margin:0}
+.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 18px}
+
+/* ===== Toolbar (Desktop) ===== */
+.toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:12px 0
+}
+.toolbar select,.toolbar input{
+  padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px;background:#fff
+}
+.btn{
+  background:var(--blue);color:#fff;border:none;border-radius:10px;
+  padding:8px 14px;font-weight:700;cursor:pointer
+}
+.btn.warn{background:var(--bad)}
+.btn.gray{background:#6b7280}
+.btn.ghost{background:#eef4ff;color:#111;border:1px solid #dbe3ff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* Ansicht-Schalter */
+.view-toggle{display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px;background:#fff;font-weight:700}
+.view-toggle .switch{position:relative;display:inline-block;width:56px;height:28px}
+.view-toggle .switch input{opacity:0;width:0;height:0}
+.view-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;transition:.25s;border-radius:999px}
+.view-toggle .slider:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s}
+.view-toggle input:checked + .slider{background:#60a5fa}
+.view-toggle input:checked + .slider:before{transform:translateX(28px)}
+
+/* ===== Table (Listenansicht) ===== */
 .table-wrap{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
 table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left;vertical-align:top}
 tr:hover{background:#f8fbff}
-.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-.red-flag{color:var(--bad);font-weight:700;margin-left:6px}
+th[data-sort]{cursor:pointer}
+.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.88rem;white-space:nowrap}
+.red-flag{color:var(--bad);font-weight:800;margin-left:6px}
+.small-muted{font-size:.9rem;color:var(--muted)}
+
+/* ===== Grid (Kachelansicht) ===== */
+.grid{
+  display:grid;gap:12px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+@media(min-width:1200px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));} /* optional 3 Spalten auf sehr breiten Screens */
+}
+.card{
+  background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s
+}
+.card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+.card.red-card{border-color:var(--bad);box-shadow:0 0 0 2px rgba(239,68,68,.18)}
+.card-cat{display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px}
+.card-title{font-weight:800;font-size:1.06rem;margin:2px 0 6px}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:4px 10px;font-size:.95rem}
+.kv .k{color:var(--muted)}
+.badge-danger{display:inline-flex;align-items:center;gap:6px;background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:12px;font-weight:800;padding:6px 10px;margin-top:8px}
+.card-row{text-align:right;margin-top:8px}
+.card-row button{padding:6px 10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer;font-size:.9rem}
+
+/* ===== Pagination ===== */
+.pager{
+  display:flex;align-items:center;justify-content:center;gap:10px;margin:16px 0
+}
+
+/* ===== Mobile-Header & FABs ===== */
 .mobile-header{display:none;position:sticky;top:0;background:#eef4ff;padding:10px;border-bottom:1px solid #dbe3ff;z-index:10}
 .mob-title{display:flex;align-items:center;justify-content:space-between}
-.mob-actions{display:flex;gap:10px}
+.mob-actions{display:flex;gap:8px}
 .iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid #cfd6e4;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.mob-filters{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
-.mob-filters select,.mob-filters input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.mob-list{display:none;padding:10px}
-.card{background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 4px 10px rgba(0,0,0,.06);transition:box-shadow .2s,border-color .2s}
-.card.red-card{border-color:var(--bad);box-shadow:0 0 0 2px rgba(239,68,68,.3)}
-.card.selected{border-color:#60a5fa;box-shadow:0 0 0 3px rgba(37,99,235,.15)}
-.card-cat{display:inline-block;padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px}
-.card-title{font-weight:800;font-size:1.05rem;margin-bottom:6px}
-.card-sub{color:var(--muted);font-size:.95rem;margin-bottom:6px}
-.card-row{text-align:right}
-.card-row button{padding:6px 10px;border:none;border-radius:10px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer;font-size:.9rem}
-.confuse-field{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:6px 10px;color:#b91c1c;font-weight:700;margin-top:6px;text-align:center}
-.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3}
+
+.mob-controls{display:none;gap:8px;padding:10px;background:#f9fbff;border-bottom:1px solid #e5ebf3}
+.mob-controls select,.mob-controls input{flex:1;padding:10px;border:1px solid #cfd6e4;border-radius:10px;background:#fff}
+
+.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid #e5ebf3;z-index:10}
 .fabs{display:flex;gap:8px}
 .fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
 .fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:520px}
-.form-grid{display:grid;gap:10px}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px}
-.modal-actions{display:flex;gap:16px;justify-content:flex-end;margin-top:18px}
-.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer}
-.btn.primary{background:var(--blue);color:#fff}.btn.ghost{background:#eef4ff;color:#111}
+
 .banner{display:none;background:#2563eb;color:#fff;padding:8px 14px;text-align:center;font-weight:700;font-size:.9rem}
+
+/* ===== Modal ===== */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
+.panel{background:#fff;border-radius:14px;padding:18px;width:92%;max-width:540px;box-shadow:var(--shadow)}
+.form-grid{display:grid;gap:10px}
+.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px;background:#fff}
+.modal-actions{display:flex;gap:12px;justify-content:flex-end;margin-top:16px}
+.confuse-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px;border:1px solid #cfd6e4;border-radius:10px;background:#f9fafb;font-weight:600;color:#111}
+.confuse-toggle .switch{position:relative;display:inline-block;width:52px;height:28px}
+.confuse-toggle .switch input{opacity:0;width:0;height:0}
+.confuse-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;transition:.25s;border-radius:999px}
+.confuse-toggle .slider:before{content:"";position:absolute;width:22px;height:22px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.25s}
+.confuse-toggle input:checked + .slider{background:#fca5a5}
+.confuse-toggle input:checked + .slider:before{transform:translateX(24px)}
+
+/* ===== Responsive Umschaltung ===== */
 @media(max-width:900px){
   .toolbar,.table-wrap{display:none}
-  .mobile-header,.mob-filters,.mob-list,.fab-row{display:block}
+  .mobile-header,.mob-controls,.fab-row{display:block}
 }
 </style>
 </head>
-
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
+  <!-- ===== Desktop Toolbar ===== -->
   <div class="toolbar">
-    <select id="filterCatDesk"><option value="Alle">Alle (bunt gemischt)</option></select>
+    <select id="filterCatDesk"></select>
     <input id="searchDesk" type="text" placeholder="Suchen…">
-    <button id="resetDesk" class="btn">Reset</button>
-    <button id="addDesk" class="btn">➕ Neue</button>
+    <button id="resetDesk" class="btn gray">Reset</button>
+
+    <span class="view-toggle" title="Zwischen Listen- und Kachelansicht umschalten">
+      Ansicht
+      <label class="switch">
+        <input type="checkbox" id="viewSwitch">
+        <span class="slider"></span>
+      </label>
+      <span id="viewLabel">Liste</span>
+    </span>
+
+    <button id="addDesk" class="btn">➕ Neu</button>
     <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-    <button id="syncDesk" class="btn">📤 In Datenbank eintragen</button>
-    <button id="tokenBtn" class="btn">⚙️ Token</button>
-    <button id="dateSort" class="btn" title="Nach Erstelldatum sortieren">🗓️</button>
+    <button id="syncDesk" class="btn">📤 Sync</button>
+    <button id="tokenBtn" class="btn ghost">⚙️ Token</button>
   </div>
 
-  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a">📘 0 Vokabeln</div>
-  <div class="table-wrap"><table id="tbl"><thead><tr><th>⟲</th><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Aktion</th></tr></thead><tbody></tbody></table></div>
+  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
 
+  <!-- ===== Listenansicht ===== -->
+  <div id="listView" class="table-wrap" style="display:block;">
+    <table>
+      <thead>
+        <tr>
+          <th>⟲</th>
+          <th data-sort="0">Englisch</th>
+          <th data-sort="1">Deutsch</th>
+          <th>Kategorie</th>
+          <th style="width:26%">Details</th>
+          <th>Aktion</th>
+        </tr>
+      </thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ===== Kachelansicht ===== -->
+  <div id="gridView" style="display:none;">
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <!-- ===== Pagination (Desktop + Mobil teilen sich Logik) ===== -->
+  <div id="pager" class="pager">
+    <button class="btn" id="pgPrev">⬅️ Zurück</button>
+    <span id="pgInfo" style="font-weight:700">Seite 1 / 1</span>
+    <button class="btn" id="pgNext">Weiter ➡️</button>
+  </div>
+
+  <!-- ===== Mobile Header & Controls ===== -->
   <div class="mobile-header">
-    <div class="mob-title"><h2 style="margin:0">Vokabeln</h2>
+    <div class="mob-title">
+      <h2 style="margin:0">Vokabeln</h2>
       <div class="mob-actions">
         <button class="iconbtn" id="btnBack">⬅️</button>
-        <button class="iconbtn" id="btnAdjust">⚙️</button>
+        <button class="iconbtn" id="btnView">🗂️</button>
         <button class="iconbtn" id="btnSync">🔄</button>
       </div>
     </div>
   </div>
-
-  <div class="mob-filters">
-    <select id="filterCatMob"><option value="Alle">Alle (bunt gemischt)</option></select>
+  <div class="mob-controls">
+    <select id="filterCatMob"></select>
     <input id="searchMob" type="text" placeholder="Suchen…">
-    <button id="resetMob" class="btn">Reset</button>
+    <button id="resetMob" class="btn gray" style="width:100%">Reset</button>
   </div>
 
-  <div id="countMob" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
-  <div class="mob-list" id="mobList"></div>
+  <div class="banner" id="adjustBanner">🔧 Anpassen aktiv – tippe Elemente an zum Auswählen (oder „Neu“)</div>
 
+  <!-- FABs (mobil) -->
   <div class="fab-row">
-    <div class="fabs">
+    <div class="fabs" id="fabBar">
       <button class="fab gray" id="fabBack">Zurück</button>
       <button class="fab blue" id="fabAdjust">Anpassen</button>
       <button class="fab gray" id="fabSync">Synchronisieren</button>
     </div>
   </div>
 
-  <div class="footer" style="text-align:center;margin-top:20px">
+  <div class="footer" style="text-align:center;margin-top:16px">
     <a href="index.html" style="font-weight:700">⬅️ Zurück zum Trainer</a>
-    <div style="margin-top:6px;color:#6b7280">© 2025 Beeferino • Datenquelle: lokal / GitHub</div>
+    <div style="margin-top:6px;color:#6b7280">© 2025 Beeferino • Datenquelle: GitHub / lokal</div>
   </div>
 </div>
 
+<!-- ===== Modal ===== -->
 <div class="modal" id="modal">
   <div class="panel">
     <h3 id="modalTitle" style="margin-top:0">Vokabel</h3>
     <div class="form-grid">
       <label>Englisch<input id="mEn" type="text"></label>
       <label>Deutsch<input id="mDe" type="text"></label>
-      <label>Kategorie<select id="mCat"></select></label>
+      <label>Kategorie
+        <select id="mCat"></select>
+      </label>
+      <div class="confuse-toggle">
+        <span>Verwechslungsgefahr</span>
+        <label class="switch">
+          <input type="checkbox" id="mConfuse"><span class="slider"></span>
+        </label>
+      </div>
+      <label>Erstellt<input id="mDate" type="date" readonly style="background:#f3f4f6"></label>
       <label>Gruppe / Variante<input id="mGroup" type="text"></label>
       <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
-      <div class="confuse-field"><label><input type="checkbox" id="mConfuse"> ⚠️ Verwechslungsgefahr</label></div>
     </div>
     <div class="modal-actions">
-      <button class="btn ghost" id="mCancel">Abbrechen</button>
-      <button class="btn primary" id="mSave">Speichern</button>
+      <button class="btn gray" id="mCancel">Abbrechen</button>
+      <button class="btn" id="mSave">Speichern</button>
     </div>
   </div>
 </div>
 
 <script>
 (function(){
-  const CATEGORY_NAMES={Gelb:"Grundwerkzeuge Metallverarbeitung",Pink:"Werkzeugkasten Mechaniker",Blau:"Blech- / Kunststoffarbeiten",Gruen:"Drehen / Fräsen",HellesPink:"Hydraulik / Pneumatik",Orange:"Elektrotechnik",Dunkelgruen:"Fluggerätemechanik allgemein"};
+  /* ======= Konstanten & Helfer ======= */
+  const CATEGORY_NAMES={
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein"
+  };
   const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65"};
   const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff"};
 
-  const $=s=>document.querySelector(s),$$=s=>Array.from(document.querySelectorAll(s));
-  const tbl=$('#tbl tbody'),mobList=$('#mobList'),modal=$('#modal'),
-    mEn=$('#mEn'),mDe=$('#mDe'),mCat=$('#mCat'),mGroup=$('#mGroup'),mHint=$('#mHint'),mConfuse=$('#mConfuse'),
-    filterCatDesk=$('#filterCatDesk'),filterCatMob=$('#filterCatMob'),
-    searchDesk=$('#searchDesk'),searchMob=$('#searchMob');
-  let list=[],editIndex=null;
+  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const GH_OWNER="beeferino", GH_REPO="vokabeltrainer", GH_PATH="vokabeln.json";
 
-  const normalize=v=>[v[0]||"",v[1]||"",v[2]||"Gelb",v[3]||"",v[4]||"",v[5]||new Date().toISOString(),typeof v[6]==="number"?v[6]:0,v[7]||crypto.randomUUID()];
+  const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+  const isMobile=()=>matchMedia("(max-width:900px)").matches;
+
+  /* ======= DOM Refs ======= */
+  const tblBody=$("#tblBody");
+  const grid=$("#grid");
+  const listView=$("#listView");
+  const gridView=$("#gridView");
+  const viewSwitch=$("#viewSwitch");
+  const viewLabel=$("#viewLabel");
+
+  const filterCatDesk=$("#filterCatDesk"), filterCatMob=$("#filterCatMob");
+  const searchDesk=$("#searchDesk"), searchMob=$("#searchMob");
+  const countDesk=$("#countDesk");
+  const pgPrev=$("#pgPrev"), pgNext=$("#pgNext"), pgInfo=$("#pgInfo");
+
+  const modal=$("#modal"), mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"),
+        mConfuse=$("#mConfuse"), mDate=$("#mDate"), mGroup=$("#mGroup"), mHint=$("#mHint");
+
+  /* ======= State ======= */
+  const PAGE_SIZE=15;
+  let list=[], editIndex=null, adjustMode=false, selected=new Set();
+  let viewMode="list"; // "list" | "grid"
+  let currentPage=1;
+  let sortState={col:null,dir:1};
+
+  /* ======= Normierung, Storage ======= */
+  // Schema: [en, de, cat, group, hint, createdISO, confuse(0|1), id]
+  const normalize=v=>[
+    v[0]||"", v[1]||"", v[2]||"Gelb",
+    v[3]||"", v[4]||"", v[5]||new Date().toISOString(),
+    typeof v[6]==="number" ? v[6] : (v[6] ? 1 : 0),
+    v[7] || (crypto && crypto.randomUUID ? crypto.randomUUID() : String(Math.random()).slice(2))
+  ];
   const loadLocal=()=>JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
   const saveLocal=d=>localStorage.setItem("vokabeln",JSON.stringify(d));
   const idxInList=v=>list.findIndex(x=>x[7]===v[7]);
 
-  function fillCategorySelect(el,withAll=false){
+  /* ======= Laden ======= */
+  function fillCategorySelect(el,withAll){
     el.innerHTML=withAll?'<option value="Alle">Alle (bunt gemischt)</option>':"";
     Object.keys(CATEGORY_NAMES).forEach(k=>{
       const o=document.createElement("option");
@@ -159,81 +305,335 @@ tr:hover{background:#f8fbff}
       o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
       el.appendChild(o);
     });
+    if(withAll){
+      const extra=document.createElement("option");
+      extra.value="confuse";extra.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
+      extra.style.background="#ffe4e6";extra.style.color="#b91c1c";el.appendChild(extra);
+    }
   }
 
-  function renderDesktop(){
-    tbl.innerHTML=list.map((v,i)=>`
-      <tr>
-        <td><input type="checkbox" data-idx="${i}"></td>
-        <td>${v[0]}</td><td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-        <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
-      </tr>
-    `).join("");
+  async function loadData(){
+    try{
+      const r=await fetch(RAW_URL,{cache:"no-store"});
+      const j=await r.json();
+      list=j.map(normalize);
+      saveLocal(list);
+    }catch{
+      list=loadLocal();
+    }
+    fillCategorySelect(filterCatDesk,true);
+    fillCategorySelect(filterCatMob,true);
+    fillCategorySelect(mCat,false);
+    renderAll();
+  }
+
+  /* ======= Filter / Suche ======= */
+  function currentFilter(){
+    const cat=(isMobile()?filterCatMob.value:filterCatDesk.value)||"Alle";
+    const q=(isMobile()?searchMob.value:searchDesk.value).trim().toLowerCase();
+    return {cat,q};
+  }
+  function filtered(){
+    const {cat,q}=currentFilter();
+    return list.filter(v=>{
+      const catOk = cat==="Alle" || v[2]===cat || (cat==="confuse" && v[6]==1);
+      const qOk = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q) || (v[4]||"").toLowerCase().includes(q);
+      return catOk && qOk;
+    });
+  }
+
+  /* ======= Pagination ======= */
+  function totalPages(){ return Math.max(1, Math.ceil(filtered().length / PAGE_SIZE)); }
+  function pageSlice(){
+    const data=filtered();
+    const pages=totalPages();
+    if(currentPage>pages) currentPage=pages;
+    const start=(currentPage-1)*PAGE_SIZE;
+    return data.slice(start, start+PAGE_SIZE);
+  }
+  function updatePager(){
+    const pages=totalPages();
+    pgInfo.textContent=`Seite ${currentPage} / ${pages}`;
+    pgPrev.disabled=currentPage<=1;
+    pgNext.disabled=currentPage>=pages;
+  }
+  pgPrev.onclick=()=>{currentPage=Math.max(1,currentPage-1);renderAll();}
+  pgNext.onclick=()=>{currentPage=Math.min(totalPages(),currentPage+1);renderAll();}
+
+  /* ======= Render: Liste ======= */
+  function renderList(){
+    const data=pageSlice();
+    tblBody.innerHTML=data.map(v=>{
+      const i=idxInList(v);
+      const chip=`<span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span>`;
+      const red=v[6]==1?'<span class="red-flag" title="Verwechslungsgefahr">🔴</span>':'';
+      const details=[
+        v[3] ? `<div><span class="small-muted">Gruppe:</span> ${escapeHtml(v[3])}</div>` : "",
+        v[4] ? `<div><span class="small-muted">Hinweis:</span> ${escapeHtml(v[4])}</div>` : ""
+      ].join("");
+      return `
+        <tr title="ID: ${v[7]}">
+          <td><input type="checkbox" data-idx="${i}" ${selected.has(i)?'checked':''}></td>
+          <td>${escapeHtml(v[0])} ${red}</td>
+          <td>${escapeHtml(v[1])}</td>
+          <td>${chip}</td>
+          <td>${details || '<span class="small-muted">–</span>'}</td>
+          <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
+        </tr>
+      `;
+    }).join("");
+
+    // Checkbox-Selection
+    $$('input[type="checkbox"][data-idx]').forEach(cb=>{
+      cb.onchange=()=>{
+        const i=+cb.dataset.idx;
+        if(cb.checked) selected.add(i); else selected.delete(i);
+      };
+    });
     $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
   }
 
-  function renderMobile(){
-    mobList.innerHTML=list.map((v,i)=>{
-      const red=v[6]==1?" red-card":"";
-      const group=v[3]?`<div class="card-sub">🔹 Gruppe: ${v[3]}</div>`:"";
-      const hint=v[4]?`<div class="card-sub">💬 Hinweis: ${v[4]}</div>`:"";
-      const confuse=v[6]==1?`<div class="confuse-field">⚠️ Verwechslungsgefahr</div>`:"";
+  /* ======= Render: Grid ======= */
+  function renderGrid(){
+    const data=pageSlice();
+    grid.innerHTML=data.map(v=>{
+      const i=idxInList(v), sel=selected.has(i)?" selected":"", red=v[6]==1?" red-card":"";
+      const chipStyle=`background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}`;
       return `
-        <div class="card${red}" data-idx="${i}">
-          <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-          <div class="card-title">${v[0]}</div>
-          <div class="card-sub">DE: ${v[1]}</div>
-          ${group}${hint}${confuse}
-          <div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div>
-        </div>`;
+        <div class="card${sel}${red}" data-idx="${i}">
+          <div class="card-cat" style="${chipStyle}">${CATEGORY_NAMES[v[2]]}</div>
+          <div class="card-title">${escapeHtml(v[0])} <span class="small-muted">→ ${escapeHtml(v[1])}</span></div>
+
+          <div class="kv">
+            <div class="k">Englisch</div><div>${escapeHtml(v[0])}</div>
+            <div class="k">Deutsch</div><div>${escapeHtml(v[1])}</div>
+            ${v[3] ? `<div class="k">Gruppe</div><div>${escapeHtml(v[3])}</div>` : ""}
+            ${v[4] ? `<div class="k">Hinweis</div><div>${escapeHtml(v[4])}</div>` : ""}
+            <div class="k">Erstellt</div><div>${fmtDate(v[5])}</div>
+          </div>
+
+          ${v[6]==1 ? `<div class="badge-danger">🔴 Verwechslungsgefahr</div>` : ""}
+
+          <div class="card-row">
+            <button class="mobEdit btn" data-edit="${i}">Bearbeiten</button>
+          </div>
+        </div>
+      `;
     }).join("");
+
     $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
+    $$('.card').forEach(c=>{
+      c.onclick=e=>{
+        if(!adjustMode || e.target.classList.contains('mobEdit')) return;
+        const i=+c.dataset.idx;
+        if(selected.has(i)) selected.delete(i); else selected.add(i);
+        c.classList.toggle('selected');
+      };
+    });
   }
 
-  function renderAll(){renderDesktop();renderMobile();}
+  /* ======= Render: Allgemein ======= */
+  function updateCount(){
+    const n=filtered().length;
+    const txt=`📘 ${n} Vokabel${n!==1?'n':''} gefunden`;
+    if(!isMobile()) countDesk.textContent=txt;
+  }
+  function renderAll(){
+    // Sichtbarkeit je Modus
+    listView.style.display = (viewMode==='list')?'block':'none';
+    gridView.style.display = (viewMode==='grid')?'block':'none';
+    viewSwitch.checked = (viewMode==='grid');
+    viewLabel.textContent = viewMode==='grid' ? 'Kacheln' : 'Liste';
 
+    // Render
+    if(viewMode==='list') renderList(); else renderGrid();
+    updatePager();
+    updateCount();
+    wireSortHeaders(); // Sortierpfeile bleiben aktiv in Listenansicht
+  }
+
+  /* ======= Sortierung (Liste) ======= */
+  function wireSortHeaders(){
+    if(viewMode!=='list') return;
+    $$('#listView thead th[data-sort]').forEach(th=>{
+      th.onclick=()=>{
+        const col=parseInt(th.dataset.sort,10);
+        if(sortState.col===col) sortState.dir*=-1; else { sortState.col=col; sortState.dir=1; }
+        list.sort((a,b)=>{
+          const A=(a[col]||"").toLowerCase(), B=(b[col]||"").toLowerCase();
+          return A.localeCompare(B) * sortState.dir;
+        });
+        saveLocal(list);
+        renderAll();
+      };
+    });
+  }
+
+  /* ======= Edit/Neu Modal ======= */
   function openEdit(i=null){
     editIndex=i;
-    if(i==null){mEn.value=mDe.value=mGroup.value=mHint.value="";mCat.value="Gelb";mConfuse.checked=false;}
-    else{
+    if(i==null){
+      mEn.value=mDe.value=mGroup.value=mHint.value="";
+      mCat.value="Gelb"; mConfuse.checked=false;
+      mDate.value=new Date().toISOString().slice(0,10);
+    }else{
       const v=list[i];
-      mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mGroup.value=v[3];mHint.value=v[4];mConfuse.checked=v[6]==1;
+      mEn.value=v[0]; mDe.value=v[1]; mCat.value=v[2];
+      mGroup.value=v[3]; mHint.value=v[4];
+      mConfuse.checked=v[6]==1;
+      mDate.value=new Date(v[5]).toISOString().slice(0,10);
     }
+    styleCatSelect(mCat);
     modal.style.display="flex";
   }
-  function closeModal(){modal.style.display="none";}
-  $('#mCancel').onclick=closeModal;
-  $('#mSave').onclick=()=>{
-    const en=mEn.value.trim(),de=mDe.value.trim(),cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim(),confuse=mConfuse.checked?1:0;
-    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
-    if(editIndex==null)list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);
-    else list[editIndex]=[en,de,cat,grp,hint,new Date().toISOString(),confuse,list[editIndex][7]];
-    saveLocal(list);closeModal();renderAll();
-  };
-  modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+  function closeModal(){ modal.style.display="none"; }
 
-  $('#addDesk').onclick=()=>openEdit(null);
-  $('#resetDesk').onclick=()=>{filterCatDesk.value="Alle";searchDesk.value="";renderAll();}
-  $('#resetMob').onclick=()=>{filterCatMob.value="Alle";searchMob.value="";renderAll();}
-  $('#btnBack').onclick=()=>location.href="index.html";
-  $('#fabBack').onclick=()=>location.href="index.html";
+  $("#mCancel").onclick=closeModal;
+  $("#mSave").onclick=()=>{
+    const en=mEn.value.trim(), de=mDe.value.trim();
+    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
+    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim(), confuse=mConfuse.checked?1:0;
 
-  // Dummy Initialdaten
-  list = loadLocal();
-  if(!list.length){
-    list = [
-      ["hammer","Hammer","Gelb","Werkzeug","Zum Schlagen von Nägeln",new Date().toISOString(),0,crypto.randomUUID()],
-      ["screwdriver","Schraubendreher","Gelb","Werkzeug","Zum Festziehen von Schrauben",new Date().toISOString(),1,crypto.randomUUID()],
-      ["valve","Ventil","HellesPink","Hydraulik","Steuert Flüssigkeiten",new Date().toISOString(),0,crypto.randomUUID()]
-    ];
+    if(editIndex==null){
+      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);
+    }else{
+      const old=list[editIndex];
+      list[editIndex]=[en,de,cat,grp,hint,old[5],confuse,old[7]];
+    }
     saveLocal(list);
+    closeModal();
+    renderAll();
+  };
+  mCat.onchange=()=>styleCatSelect(mCat);
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeModal(); });
+
+  function styleCatSelect(sel){
+    sel.style.background=COLOR_MAP[sel.value];
+    sel.style.color=TEXT_ON[sel.value];
   }
 
-  fillCategorySelect(mCat,false);
+  /* ======= Adjust-Mode (Mehrfachauswahl) ======= */
+  function setAdjust(on){
+    adjustMode=on;
+    selected.clear();
+    $("#adjustBanner").style.display = on ? 'block' : 'none';
+    // FAB-Bar aktualisieren
+    const bar=$("#fabBar");
+    if(on){
+      bar.innerHTML=`
+        <button class="fab gray" id="fabEnd">Beenden</button>
+        <button class="fab warn" id="fabDelete">Löschen</button>
+        <button class="fab blue" id="fabNew">Neu</button>`;
+      $("#fabEnd").onclick=()=>setAdjust(false);
+      $("#fabDelete").onclick=onDeleteSelected;
+      $("#fabNew").onclick=()=>openEdit(null);
+    }else{
+      bar.innerHTML=`
+        <button class="fab gray" id="fabBack">Zurück</button>
+        <button class="fab blue" id="fabAdjust">Anpassen</button>
+        <button class="fab gray" id="fabSync">Synchronisieren</button>`;
+      $("#fabBack").onclick=()=>location.href="index.html";
+      $("#fabAdjust").onclick=()=>setAdjust(true);
+      $("#fabSync").onclick=githubSync;
+    }
+    renderAll();
+  }
+
+  function onDeleteSelected(){
+    const indices = viewMode==='list'
+      ? $$('input[type="checkbox"][data-idx]:checked').map(x=>+x.dataset.idx)
+      : Array.from(selected.values());
+    if(!indices.length){ alert("Keine Auswahl"); return; }
+    if(!confirm(`${indices.length} Einträge löschen?`)) return;
+    const set=new Set(indices);
+    list=list.filter((_,i)=>!set.has(i));
+    saveLocal(list);
+    selected.clear();
+    renderAll();
+  }
+
+  /* ======= GitHub Sync ======= */
+  function getToken(){
+    let t=localStorage.getItem('gh_token')||"";
+    if(!t){
+      t=prompt("GitHub Token (repo-Scope):","");
+      if(t){ localStorage.setItem('gh_token',t); alert("Token gespeichert."); }
+    }
+    return t;
+  }
+  async function githubSync(){
+    const token=getToken(); if(!token) return;
+    try{
+      const api=`https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
+      const meta=await (await fetch(api,{headers:{Authorization:`token ${token}`}})).json();
+      const sha=meta.sha;
+      const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+      const res=await fetch(api,{
+        method:'PUT',
+        headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})
+      });
+      if(!res.ok) throw new Error(await res.text());
+      alert("✅ Erfolgreich in Datenbank eingetragen.");
+    }catch(e){
+      console.error(e);
+      alert("❌ Sync fehlgeschlagen.");
+    }
+  }
+
+  /* ======= Utilities ======= */
+  function escapeHtml(s){ return (s||"").replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m])); }
+  function fmtDate(iso){ try{ return new Date(iso).toLocaleDateString(); }catch{ return "–"; } }
+
+  /* ======= Events global ======= */
+  // Ansicht umschalten
+  viewSwitch.onchange=()=>{ viewMode = viewSwitch.checked ? "grid" : "list"; renderAll(); };
+  // Mobile Iconbutton zum Umschalten
+  $("#btnView").onclick=()=>{ viewMode = (viewMode==="list" ? "grid" : "list"); renderAll(); };
+
+  // Desktop Buttons
+  $("#addDesk").onclick=()=>openEdit(null);
+  $("#delDesk").onclick=onDeleteSelected;
+  $("#syncDesk").onclick=githubSync;
+  $("#tokenBtn").onclick=()=>{ localStorage.removeItem('gh_token'); getToken(); };
+
+  // Resets
+  $("#resetDesk").onclick=()=>{ filterCatDesk.value="Alle"; searchDesk.value=""; currentPage=1; renderAll(); };
+  $("#resetMob").onclick=()=>{ filterCatMob.value="Alle"; searchMob.value=""; currentPage=1; renderAll(); };
+
+  // Filter & Suche reagieren
+  [filterCatDesk,filterCatMob,searchDesk,searchMob].forEach(el=>{
+    el.addEventListener('input',()=>{ currentPage=1; renderAll(); });
+    el.addEventListener('change',()=>{ currentPage=1; renderAll(); });
+  });
+
+  // Mobile Header
+  $("#btnBack").onclick=()=>location.href="index.html";
+  $("#btnSync").onclick=githubSync;
+
+  // FABs initial
+  $("#fabBack").onclick=()=>location.href="index.html";
+  $("#fabAdjust").onclick=()=>setAdjust(true);
+  $("#fabSync").onclick=githubSync;
+
+  // Globales Klicken in Listenansicht (Zeilenselection via Checkbox schon verdrahtet)
+  // – in Grid über .card-Handler gelöst.
+
+  // Klick außerhalb Modal schließt
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+  /* ======= Start ======= */
+  // Kategorien für Modal füllen
+  (function initCatOptionsForModal(){
+    fillCategorySelect(mCat,false);
+    styleCatSelect(mCat);
+  })();
+
+  // Kategorien für Filter füllen (wird in loadData nochmal aufgerufen, ist ok)
   fillCategorySelect(filterCatDesk,true);
   fillCategorySelect(filterCatMob,true);
-  renderAll();
+
+  loadData();
 })();
 </script>
 </body>
