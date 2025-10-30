@@ -1,0 +1,406 @@
+:root {
+  --blue: #1e3a8a;
+  --shadow: 0 4px 14px rgba(0,0,0,0.1);
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f6f8fa;
+  color: #111;
+}
+
+h1, h2, h3 {
+  margin: 0 0 10px;
+}
+
+/* === Buttons === */
+.btn {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn:hover { opacity: 0.9; }
+.btn.warn { background: #dc2626; }
+.btn.ghost { background: #eef4ff; color: #111; }
+.btn.primary { background: var(--blue); color: #fff; }
+
+/* === Desktop Layout === */
+.desktop-app {
+  max-width: 1200px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.toolbar input, .toolbar select {
+  padding: 8px;
+  border: 1px solid #cfd6e4;
+  border-radius: 8px;
+}
+
+/* === Table === */
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+.category-chip {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* === Mobile View === */
+.mobile-app {
+  padding: 14px;
+}
+.mob-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.iconbtn {
+  background: none;
+  border: none;
+  font-size: 1.4em;
+  cursor: pointer;
+}
+.mob-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+.card {
+  background: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+}
+.card-cat {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+.card-title {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.card-sub {
+  color: #555;
+}
+
+/* === Modal === */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.panel {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  width: 92%;
+  max-width: 520px;
+  box-shadow: var(--shadow);
+}
+.form-grid {
+  display: grid;
+  gap: 10px;
+}
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cfd6e4;
+  border-radius: 10px;
+}
+
+/* === Fix: Modal-Inhalte nicht überlaufen lassen === */
+.modal .panel {
+  max-width: 520px;
+  width: 92%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+
+.form-grid {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* === Optisches Feintuning für das Modal === */
+.modal .panel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.15);
+  animation: fadeInModal 0.25s ease-out;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-grid label {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid textarea {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  border: 1px solid #cfd6e4;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  outline: none;
+  background: #fff;
+}
+
+.modal-actions {
+  margin-top: 24px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 16px;
+}
+
+/* Leichter Abstand zwischen Buttons */
+.modal-actions .btn {
+  min-width: 100px;
+}
+
+/* Mobile Modal Scroll fix */
+@media (max-width: 700px) {
+  .modal .panel {
+    width: 96%;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+}
+
+
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+/* === Verwechslungsgefahr-Schalter === */
+/* === Kompakter, aber mit rotem Balken: Verwechslungsgefahr === */
+/* === Kompakter, echter Toggle für Verwechslungsgefahr === */
+.confuse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid #cfd6e4;
+  border-radius: 10px;
+  background: #f9fafb;
+  font-weight: 600;
+  color: #111;
+  font-size: 0.95rem;
+}
+
+.confuse-toggle span::before {
+  content: "⚠️ ";
+  margin-right: 6px;
+}
+
+.confuse-toggle .switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.confuse-toggle .switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.confuse-toggle .slider {
+  position: absolute;
+  inset: 0;
+  background-color: #e5e7eb; /* Grau standardmäßig */
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.confuse-toggle .slider:before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+}
+
+/* Aktiviert → roter Balken */
+.confuse-toggle input:checked + .slider {
+  background-color: #ef4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+}
+
+.confuse-toggle input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* === Kategorie-Feld zeigt gewählte Farbe === */
+#mCat {
+  transition: background-color 0.3s, color 0.3s;
+  font-weight: 600;
+  border: 1px solid #cfd6e4;
+  border-radius: 8px;
+  padding: 8px;
+  appearance: none;
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+}
+
+
+
+/* === Kategorie-Feld zeigt gewählte Farbe === */
+#mCat {
+  transition: background-color 0.3s, color 0.3s;
+  font-weight: 600;
+  border: 1px solid #cfd6e4;
+  border-radius: 8px;
+  padding: 8px;
+  appearance: none;
+  background-position: right 10px center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 26px;
+}
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 34px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px; width: 20px;
+  left: 3px; bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+.switch input:checked + .slider {
+  background-color: #ef4444;
+  box-shadow: 0 0 5px rgba(239,68,68,0.6);
+}
+.switch input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* === Delete Confirmation === */
+#confirmModal .panel {
+  text-align: center;
+}
+#confirmModal .modal-actions {
+  justify-content: center;
+}
+/* === Button: Zurück zum Trainer === */
+.back-home {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 99;
+  background: var(--blue);
+  color: #fff;
+  font-size: 1.4rem;
+  text-decoration: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s, transform 0.15s;
+}
+
+
+
+@media (max-width: 700px) {
+  .back-home {
+    top: 10px;
+    left: 10px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+}
