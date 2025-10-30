@@ -2,172 +2,269 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>📘 Vokabelübersicht – Beeferino</title>
+
+<!-- Inter-Font -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <style>
+/* ========= Farb- und Designvariablen ========= */
 :root{
-  --ink:#0f172a;
-  --muted:#6b7280;
-  --bg:#f7f9fb;
+  --ink:#0f172a;             /* Primärschriftfarbe (Light) */
+  --muted:#64748b;
+  --bg:#f8fafc;
   --card:#ffffff;
+  --border:#e2e8f0;
+  --shadow:0 8px 26px rgba(0,0,0,.08);
   --blue:#2563eb;
-  --ok:#16a34a;
   --bad:#ef4444;
-  --border:#e5ebf3;
-  --shadow:0 8px 26px rgba(0,0,0,.08)
+  --ok:#16a34a;
 }
-*{box-sizing:border-box}
+
+/* ========= Grundlayout ========= */
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-  margin:0;
   font-family:Inter,system-ui,sans-serif;
-  background:linear-gradient(145deg,#eef4ff,#dbeafe);
+  background:var(--bg);
   color:var(--ink);
-  transition:background .3s,color .3s;
+  min-height:100vh;
+  transition:background-color .4s,color .4s;
 }
-a{color:#1e3a8a;text-decoration:none}
-.app{max-width:1100px;margin:20px auto;padding:16px}
-h1{text-align:center;font-weight:800;color:#1e3a8a;margin:0}
-.hr{width:160px;height:4px;background:#2563eb;border-radius:4px;margin:10px auto 20px}
+h1{text-align:center;font-weight:800;margin:10px 0 4px;color:#1e3a8a}
+.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:8px auto 16px}
+
+/* ========= Toolbar oben ========= */
 .toolbar{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-  margin:10px 0;
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px auto 16px;
+  max-width:1100px;
 }
-.toolbar select,.toolbar input{
+.toolbar select,
+.toolbar input{
   padding:8px 12px;
-  border:1px solid #cfd6e4;
+  border:1px solid var(--border);
   border-radius:10px;
+  font-size:.95rem;
 }
 .toolbar button{
+  background:var(--blue);
+  color:#fff;
   border:none;
   border-radius:10px;
   padding:8px 14px;
   font-weight:700;
   cursor:pointer;
 }
-button.primary{background:var(--blue);color:#fff;}
-button.outline{background:#fff;border:1px solid #cfd6e4;color:#111;}
-button.danger{background:var(--bad);color:#fff;}
-button.active{background:var(--blue);color:#fff;}
-.subtitle{text-align:center;font-weight:600;color:#1e3a8a;margin-bottom:12px;}
+.toolbar button.warn{background:var(--bad)}
+.toolbar button.outline{
+  background:transparent;
+  color:var(--ink);
+  border:1px solid var(--border);
+}
+.toolbar button.small{padding:6px 10px;font-size:.9rem}
+.toolbar button.active{box-shadow:0 0 0 2px var(--blue) inset}
+
+/* ========= Tabellenbereich ========= */
+.table-wrap{
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  margin:auto;
+  max-width:1100px;
+}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{font-weight:700;background:#f1f5f9}
+tr:hover{background:#f8fafc}
+.category-chip{
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:.9rem;
+  color:#fff;
+}
+.red-flag{color:var(--bad);margin-left:4px}
+
+/* ========= Grid (Kachelansicht) ========= */
+.grid{
+  display:none;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;
+  padding:10px;
+  max-width:1100px;
+  margin:auto;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  box-shadow:var(--shadow);
+  transition:.25s;
+  cursor:pointer;
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1);}
+.card.selected{outline:3px solid var(--blue);}
+.card-title{font-weight:800;font-size:1.05rem;margin-bottom:6px;}
+.card-sub{color:var(--muted);margin-bottom:8px;}
+.card-cat{
+  display:inline-block;
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:.9rem;
+}
+.confuse{color:#ef4444;font-weight:700;margin-left:6px;}
+
+/* ========= Mobile Footer-Buttons (wird in Teil 4 aktiviert) ========= */
+.mobile-bar{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  background:rgba(255,255,255,.9);
+  padding:10px;
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(10px);
+  z-index:40;
+}
+.mobile-bar button{
+  flex:1;
+  border:none;
+  border-radius:12px;
+  font-weight:700;
+  padding:12px;
+  cursor:pointer;
+  transition:.25s;
+}
+.mobile-bar button.primary{background:var(--blue);color:#fff}
+.mobile-bar button.outline{background:#fff;border:1px solid var(--border)}
+.mobile-bar button.danger{background:var(--bad);color:#fff}
+
+/* ========= Dark Mode ========= */
+body.dark{
+  --bg:#0f172a;
+  --card:#1e293b;
+  --ink:#f1f5f9;
+  --border:#334155;
+  --muted:#94a3b8;
+  background:linear-gradient(145deg,#1e293b,#0f172a);
+  color:var(--ink);
+}
+body.dark table th{background:#1e293b}
+body.dark .table-wrap,
+body.dark .card{background:#1e293b;border-color:#334155;}
+body.dark .mobile-bar{background:rgba(30,41,59,.9);}
+body.dark .toolbar button.outline{border-color:#475569;color:#f1f5f9;}
+body.dark .toolbar select,
+body.dark .toolbar input{background:#1e293b;color:#f1f5f9;border-color:#475569;}
+
+/* ========= Responsivität ========= */
+@media(max-width:900px){
+  .toolbar,#tableContainer{display:none}
+  .grid{display:grid;grid-template-columns:1fr 1fr;}
+}
+@media(min-width:901px){
+  .mobile-bar{display:none}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
   <h1>📘 Vokabelübersicht</h1>
   <div class="hr"></div>
 
-  <!-- Toolbar -->
+  <!-- ===== Toolbar mit Dark-Mode-Schalter ===== -->
   <div class="toolbar">
-    <select id="filterCategory">
+    <select id="filterCat">
       <option value="Alle">Alle (bunt gemischt)</option>
-      <option value="confuse">⚠️ Verwechslungsgefahr</option>
     </select>
-    <input type="text" id="searchInput" placeholder="Suchen …">
+    <input id="searchInput" type="text" placeholder="Suchen…">
     <button id="btnReset" class="outline">Reset</button>
-    <button id="btnNew" class="primary">+ Neue</button>
-    <button id="btnDelete" class="danger" disabled>Löschen</button>
-    <button id="btnSync" class="outline" style="max-width:160px;">📄 Sync</button>
-  </div>
-
-  <!-- Ansichtsschalter -->
-  <div class="toolbar">
-    <button id="btnList" class="outline active">📋 Liste</button>
-    <button id="btnCards" class="outline">🧩 Kacheln</button>
+    <button id="btnList" class="outline active">Liste</button>
+    <button id="btnCards" class="outline">Kacheln</button>
     <button id="btnDark" class="outline">🌙 Dark Mode</button>
+    <button id="btnSync" class="outline small">📤 Sync</button>
+    <button id="btnBack" class="outline small" onclick="location.href='index.html'">⬅️ Trainer</button>
   </div>
 
-  <!-- Zähler -->
-  <div class="subtitle"><b id="vocabCount">–</b> Vokabeln gefunden</div>
+  <!-- ===== Zähler ===== -->
+  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a">
+    📘 <span id="countNum">0</span> Vokabeln gefunden
+  </div>
 
-  <!-- Tabelle -->
-  <div id="tableContainer">
-    <table id="vocabTable" style="width:100%;border-collapse:collapse;">
+  <!-- ===== Tabellenansicht ===== -->
+  <div class="table-wrap" id="tableContainer">
+    <table>
       <thead>
         <tr>
-          <th style="width:30px;"><input type="checkbox" id="selectAll"></th>
+          <th></th>
           <th>Englisch</th>
           <th>Deutsch</th>
           <th>Kategorie</th>
-          <th>Aktion</th>
         </tr>
       </thead>
-      <tbody id="tableBody"></tbody>
+      <tbody id="tblBody"></tbody>
     </table>
   </div>
 
-  <!-- Kachelansicht -->
-  <div id="gridContainer" class="grid" style="display:none;"></div>
+  <!-- ===== Kachelansicht (wird dynamisch gefüllt) ===== -->
+  <div class="grid" id="grid"></div>
 
-  <!-- Mobile Footer-Buttons -->
-  <div id="mobileBar" class="mobile-bar">
-    <button id="btnTrainer" class="outline">Trainer</button>
-    <button id="btnAdjust" class="primary">Anpassen</button>
-    <button id="btnSyncMobile" class="outline">Sync</button>
-  </div>
+  <!-- Platzhalter für Pagination -->
+  <div id="pagination"></div>
 </div>
-<!-- Bearbeiten-Modal -->
-<div class="modal" id="editModal" style="display:none;">
-  <div class="panel">
-    <h3 id="modalTitle" style="margin-top:0">Vokabel bearbeiten</h3>
-    <div class="form-grid">
+<!-- ========= Modal zum Bearbeiten / Neu anlegen ========= -->
+<div class="modal" id="modal" style="display:none;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;">
+  <div class="panel" style="background:var(--card);border-radius:16px;padding:20px;width:92%;max-width:520px;box-shadow:var(--shadow);">
+    <h3 style="margin-top:0;font-weight:800;color:var(--ink);">Vokabel bearbeiten</h3>
+    <div class="form-grid" style="display:grid;gap:12px;">
       <label>Englisch
-        <input id="mEn" type="text" placeholder="Englisches Wort">
+        <input id="mEn" type="text" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;">
       </label>
       <label>Deutsch
-        <input id="mDe" type="text" placeholder="Deutsche Übersetzung">
+        <input id="mDe" type="text" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;">
       </label>
       <label>Kategorie
-        <select id="mCat"></select>
+        <select id="mCat" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;"></select>
       </label>
       <label>Gruppe / Variante
-        <input id="mGroup" type="text" placeholder="z. B. Werkzeug">
+        <input id="mGroup" type="text" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;">
       </label>
       <label>Hinweis
-        <textarea id="mHint" rows="2" placeholder="optional"></textarea>
+        <textarea id="mHint" rows="2" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;"></textarea>
       </label>
-      <div class="toggle">
-        <span>Verwechslungsgefahr</span>
-        <label class="switch">
-          <input type="checkbox" id="mConfuse">
-          <span class="slider"></span>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <label>Erstellt:
+          <input id="mDate" type="date" readonly style="background:#f3f4f6;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">
         </label>
+        <!-- schöner Toggle-Schalter -->
+        <div class="confuse-toggle" style="display:flex;align-items:center;gap:8px;">
+          <span>Verwechslungsgefahr</span>
+          <label class="switch" style="position:relative;display:inline-block;width:48px;height:26px;">
+            <input type="checkbox" id="mConfuse" style="opacity:0;width:0;height:0;">
+            <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:34px;">
+              <span style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%;"></span>
+            </span>
+          </label>
+        </div>
       </div>
-      <label>Erstellt
-        <input id="mDate" type="text" readonly style="background:#f3f4f6;">
-      </label>
     </div>
-    <div class="modal-actions">
-      <button class="outline" id="btnCancel">Abbrechen</button>
-      <button class="primary" id="btnSave">Speichern</button>
+    <div class="modal-actions" style="display:flex;gap:16px;justify-content:flex-end;margin-top:18px;">
+      <button id="btnCancel" class="outline">Abbrechen</button>
+      <button id="btnSave" class="primary">Speichern</button>
     </div>
   </div>
 </div>
 
-<style>
-/* Modal + Form-Layout + Toggle */
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:#fff;border-radius:14px;padding:20px;width:92%;max-width:520px;box-shadow:var(--shadow)}
-.form-grid{display:grid;gap:10px}
-.form-grid input,.form-grid select,.form-grid textarea{
-  width:100%;padding:10px;border:1px solid #cfd6e4;border-radius:10px;font-family:inherit
-}
-.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
-.switch{position:relative;display:inline-block;width:50px;height:26px}
-.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:.3s;border-radius:34px}
-.slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background-color:white;transition:.3s;border-radius:50%}
-input:checked + .slider{background-color:#ef4444}
-input:checked + .slider:before{transform:translateX(24px)}
-</style>
-
+<!-- ========= Script: Datenstruktur, Kategorien, LocalStorage ========= -->
 <script>
 (function(){
 
-/* ==================== Kategorien-Setup ==================== */
+/* ===== Kategorien definieren (Name, Hintergrund, Schriftfarbe) ===== */
 const CATS={
   Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
   Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
@@ -178,72 +275,86 @@ const CATS={
   Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"]
 };
 
-/* ==================== DOM-Referenzen ==================== */
-const tblBody=document.getElementById("tableBody");
-const grid=document.getElementById("gridContainer");
-const countLabel=document.getElementById("vocabCount");
-const selectCat=document.getElementById("filterCategory");
-const searchInput=document.getElementById("searchInput");
-const btnList=document.getElementById("btnList");
-const btnCards=document.getElementById("btnCards");
-const btnNew=document.getElementById("btnNew");
-const btnDelete=document.getElementById("btnDelete");
-const btnSync=document.getElementById("btnSync");
-const selectAll=document.getElementById("selectAll");
-
-/* Modal-Felder */
-const modal=document.getElementById("editModal");
+/* ===== DOM-Referenzen ===== */
+const modal=document.getElementById("modal");
 const mEn=document.getElementById("mEn");
 const mDe=document.getElementById("mDe");
 const mCat=document.getElementById("mCat");
 const mGroup=document.getElementById("mGroup");
 const mHint=document.getElementById("mHint");
-const mConfuse=document.getElementById("mConfuse");
 const mDate=document.getElementById("mDate");
+const mConfuse=document.getElementById("mConfuse");
 const btnSave=document.getElementById("btnSave");
 const btnCancel=document.getElementById("btnCancel");
+const tblBody=document.getElementById("tblBody");
+const grid=document.getElementById("grid");
+const selectCat=document.getElementById("filterCat");
+const searchInput=document.getElementById("searchInput");
+const countLabel=document.getElementById("countNum");
+const btnList=document.getElementById("btnList");
+const btnCards=document.getElementById("btnCards");
+const btnDark=document.getElementById("btnDark");
+const btnSync=document.getElementById("btnSync");
 
-/* ==================== Datenmodell ==================== */
+/* ===== Globale Zustände ===== */
 let vocabData=[];
-const normalize=v=>[
-  v[0]||"",v[1]||"",v[2]||"Gelb",
-  v[3]||"",v[4]||"",
-  v[5]||new Date().toISOString(),
-  v[6]?1:0
-];
-function loadLocal(){
-  return JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-}
+let selectedRows=new Set();
+
+/* ===== Hilfsfunktionen zum LocalStorage ===== */
 function saveLocal(){
   localStorage.setItem("vokabeln",JSON.stringify(vocabData));
 }
+function loadLocal(){
+  const d=localStorage.getItem("vokabeln");
+  return d?JSON.parse(d):[];
+}
 
-/* ==================== Initiale Kategorien-Dropdowns ==================== */
+/* ===== Kategorie-Selects füllen ===== */
+function populateCategoryFilter(){
+  selectCat.innerHTML='<option value="Alle">Alle (bunt gemischt)</option><option value="confuse">⚠️ Verwechslungsgefahr</option>';
+  for(const k in CATS){
+    const [name,bg,fg]=CATS[k];
+    const opt=document.createElement("option");
+    opt.value=k;opt.textContent=name;
+    opt.style.background=bg;opt.style.color=fg;
+    selectCat.appendChild(opt);
+  }
+}
 function populateEditCategorySelect(){
   mCat.innerHTML="";
   for(const k in CATS){
-    const [label,bg,fg]=CATS[k];
-    const o=document.createElement("option");
-    o.value=k;o.textContent=label;o.style.background=bg;o.style.color=fg;
-    mCat.appendChild(o);
+    const [name,bg,fg]=CATS[k];
+    const opt=document.createElement("option");
+    opt.value=k;opt.textContent=name;
+    opt.style.background=bg;opt.style.color=fg;
+    mCat.appendChild(opt);
   }
 }
-function populateCategoryFilter(){
-  while(selectCat.options.length>2)selectCat.remove(2);
-  for(const k in CATS){
-    const [label,bg,fg]=CATS[k];
-    const o=document.createElement("option");
-    o.value=k;o.textContent=label;o.style.background=bg;o.style.color=fg;
-    selectCat.appendChild(o);
-  }
+
+/* ===== Neuerstellungsvorlage ===== */
+function newVocab(){
+  return ["","",Object.keys(CATS)[0],"","",new Date().toISOString(),0];
 }
+
+/* ===== Eventlistener für Modal ===== */
+mCat.onchange=()=>{
+  const [_,bg,fg]=CATS[mCat.value];
+  mCat.style.background=bg;mCat.style.color=fg;
+};
+
+/* ===== Startdaten vorbereiten ===== */
+populateCategoryFilter();
+populateEditCategorySelect();
+vocabData=loadLocal();
+
+/* ===== Nächster Teil bringt Rendering und Logik ===== */
 /* ==================== Rendering ==================== */
-let viewMode="list";
+let viewMode="list";           // „list“ oder „cards“
 let currentPage=1;
 const PAGE_SIZE=15;
-let selectedRows=new Set();
 let adjustMode=false;
 
+/* === Haupt-Renderfunktion === */
 function render(){
   const q=searchInput.value.toLowerCase().trim();
   const cat=selectCat.value;
@@ -267,33 +378,25 @@ function render(){
     grid.style.display="grid";
     document.getElementById("tableContainer").style.display="none";
   }
-
   renderPagination(pages);
 }
 
-/* ==================== Tabelle ==================== */
+/* ==================== Tabellenansicht ==================== */
 function renderTable(data){
   tblBody.innerHTML=data.map((v,i)=>{
-    const confuseIcon=v[6]?'<span style="color:#ef4444;margin-left:4px;" title="Verwechslungsgefahr">⚠️</span>':'';
+    const confuse=v[6]?'<span class="red-flag" title="Verwechslungsgefahr">⚠️</span>':'';
     const [label,bg,fg]=CATS[v[2]];
     return `
-      <tr>
-        <td><input type="checkbox" data-index="${i}"></td>
-        <td>${v[0]} ${confuseIcon}</td>
+      <tr data-idx="${i}" class="row">
+        <td style="width:32px;text-align:center;"><span style="opacity:.6;">✏️</span></td>
+        <td>${v[0]} ${confuse}</td>
         <td>${v[1]}</td>
-        <td><span style="background:${bg};color:${fg};padding:4px 10px;border-radius:999px;font-weight:600;">${label}</span></td>
-        <td><button class="outline small" data-edit="${i}">Bearbeiten</button></td>
+        <td><span class="category-chip" style="background:${bg};color:${fg}">${label}</span></td>
       </tr>`;
   }).join("");
-  Array.from(tblBody.querySelectorAll("button[data-edit]")).forEach(btn=>{
-    btn.onclick=()=>openEdit(parseInt(btn.dataset.edit));
-  });
-  Array.from(tblBody.querySelectorAll("input[type=checkbox][data-index]")).forEach(ch=>{
-    ch.onchange=()=>{
-      const i=parseInt(ch.dataset.index);
-      if(ch.checked)selectedRows.add(i);else selectedRows.delete(i);
-      btnDelete.disabled=selectedRows.size===0;
-    };
+
+  Array.from(tblBody.querySelectorAll(".row")).forEach(row=>{
+    row.onclick=()=>openEdit(parseInt(row.dataset.idx));
   });
 }
 
@@ -305,18 +408,16 @@ function renderCards(data){
     const sel=selectedRows.has(i)?"selected":"";
     return `
       <div class="card ${sel}" data-idx="${i}">
-        <div class="card-header">
-          <div class="card-title">${v[0]} <span class="confuse">${confuse}</span></div>
-          <div class="card-sub">DE: ${v[1]}</div>
-        </div>
+        <div class="card-title">${v[0]} <span class="confuse">${confuse}</span></div>
+        <div class="card-sub">DE: ${v[1]}</div>
         <div class="card-cat" style="background:${bg};color:${fg}">${label}</div>
       </div>`;
   }).join("");
 
   Array.from(grid.querySelectorAll(".card")).forEach(card=>{
     card.onclick=()=>{
-      if(!adjustMode){const idx=parseInt(card.dataset.idx);openEdit(idx);return;}
       const idx=parseInt(card.dataset.idx);
+      if(!adjustMode){openEdit(idx);return;}
       if(selectedRows.has(idx))selectedRows.delete(idx);else selectedRows.add(idx);
       card.classList.toggle("selected");
     };
@@ -325,21 +426,14 @@ function renderCards(data){
 
 /* ==================== Pagination ==================== */
 function renderPagination(total){
-  let cont=document.getElementById("pagination");
-  if(!cont){
-    cont=document.createElement("div");
-    cont.id="pagination";
-    cont.style.textAlign="center";
-    cont.style.margin="12px";
-    document.querySelector(".app").appendChild(cont);
-  }
+  const cont=document.getElementById("pagination");
   if(total<=1){cont.innerHTML="";return;}
   cont.innerHTML=`
     <button class="outline" id="prevPg" ${currentPage===1?"disabled":""}>⬅️</button>
     <span style="margin:0 10px;">Seite ${currentPage} / ${total}</span>
     <button class="outline" id="nextPg" ${currentPage===total?"disabled":""}>➡️</button>
   `;
-  document.getElementById("prevPg").onclick=()=>{currentPage--;if(currentPage<1)currentPage=1;render();};
+  document.getElementById("prevPg").onclick=()=>{if(currentPage>1){currentPage--;render();}};
   document.getElementById("nextPg").onclick=()=>{currentPage++;render();};
 }
 
@@ -352,8 +446,8 @@ function openEdit(i){
   mCat.value=v[2];
   mGroup.value=v[3];
   mHint.value=v[4];
-  mConfuse.checked=v[6];
   mDate.value=new Date(v[5]).toISOString().slice(0,10);
+  mConfuse.checked=v[6];
   btnSave.onclick=()=>saveEdit(i);
 }
 function closeModal(){modal.style.display="none";}
@@ -376,174 +470,114 @@ function saveEdit(i){
   render();
 }
 
-/* ==================== Buttons ==================== */
-btnNew.onclick=()=>{
-  vocabData.push(["","",Object.keys(CATS)[0],"","",new Date().toISOString(),0]);
+/* ==================== Neu / Löschen ==================== */
+function addNew(){
+  vocabData.push(newVocab());
   saveLocal();
   render();
-};
-btnDelete.onclick=()=>{
-  if(!selectedRows.size)return;
-  if(!confirm(`${selectedRows.size} löschen?`))return;
+}
+function deleteSelected(){
+  if(!selectedRows.size)return alert("Keine Auswahl");
+  if(!confirm(`${selectedRows.size} Einträge löschen?`))return;
   vocabData=vocabData.filter((_,i)=>!selectedRows.has(i));
   selectedRows.clear();
   saveLocal();
   render();
-};
+}
 
 /* ==================== Filter / Suche ==================== */
 selectCat.onchange=()=>{currentPage=1;render();};
 searchInput.oninput=()=>{currentPage=1;render();};
 document.getElementById("btnReset").onclick=()=>{
-  searchInput.value="";selectCat.value="Alle";currentPage=1;render();
+  searchInput.value="";
+  selectCat.value="Alle";
+  currentPage=1;
+  render();
 };
 
 /* ==================== Ansichtsschalter ==================== */
 btnList.onclick=()=>{viewMode="list";btnList.classList.add("active");btnCards.classList.remove("active");render();}
 btnCards.onclick=()=>{viewMode="cards";btnCards.classList.add("active");btnList.classList.remove("active");render();}
+/* ==================== Mobile-Bar und Aktionen ==================== */
+const mobileBar=document.createElement("div");
+mobileBar.className="mobile-bar";
+mobileBar.innerHTML=`
+  <button id="mbTrainer" class="outline">🎯 Trainer</button>
+  <button id="mbAdjust" class="primary">✏️ Anpassen</button>
+  <button id="mbSync" class="outline">🔄 Sync</button>
+`;
+document.body.appendChild(mobileBar);
 
-/* ==================== Mobile Buttons ==================== */
-const bar=document.getElementById("mobileBar");
-const btnTrainer=document.getElementById("btnTrainer");
-const btnAdjust=document.getElementById("btnAdjust");
-const btnSyncMobile=document.getElementById("btnSyncMobile");
+const mbTrainer=document.getElementById("mbTrainer");
+const mbAdjust=document.getElementById("mbAdjust");
+const mbSync=document.getElementById("mbSync");
 
-btnTrainer.onclick=()=>location.href="index.html";
-btnSyncMobile.onclick=()=>alert("Sync gestartet ...");
-btnAdjust.onclick=()=>{
+/* === mobile Bar Funktionalität === */
+mbTrainer.onclick=()=>location.href="index.html";
+mbAdjust.onclick=()=>{
   adjustMode=!adjustMode;
+  selectedRows.clear();
+  Array.from(document.querySelectorAll(".card")).forEach(c=>c.classList.remove("selected"));
   if(adjustMode){
-    bar.innerHTML=`
-      <button id="btnDeleteMob" class="danger">Löschen</button>
-      <button id="btnDoneMob" class="primary">Fertig</button>
-      <button id="btnNewMob" class="outline">Neue Vokabel</button>`;
-    document.getElementById("btnDeleteMob").onclick=btnDelete.onclick;
-    document.getElementById("btnNewMob").onclick=btnNew.onclick;
-    document.getElementById("btnDoneMob").onclick=()=>{
-      adjustMode=false;
-      bar.innerHTML='<button id="btnTrainer" class="outline">Trainer</button><button id="btnAdjust" class="primary">Anpassen</button><button id="btnSyncMobile" class="outline">Sync</button>';
-      document.getElementById("btnTrainer").onclick=btnTrainer.onclick;
-      document.getElementById("btnAdjust").onclick=btnAdjust.onclick;
-      document.getElementById("btnSyncMobile").onclick=btnSyncMobile.onclick;
-      selectedRows.clear();render();
-    };
+    mbAdjust.textContent="✅ Fertig";
+    mbSync.textContent="🗑️ Löschen";
+    mbSync.classList.add("danger");
+    mbSync.onclick=deleteSelected;
   }else{
-    bar.innerHTML='<button id="btnTrainer" class="outline">Trainer</button><button id="btnAdjust" class="primary">Anpassen</button><button id="btnSyncMobile" class="outline">Sync</button>';
-    document.getElementById("btnTrainer").onclick=btnTrainer.onclick;
-    document.getElementById("btnAdjust").onclick=btnAdjust.onclick;
-    document.getElementById("btnSyncMobile").onclick=btnSyncMobile.onclick;
+    mbAdjust.textContent="✏️ Anpassen";
+    mbSync.textContent="🔄 Sync";
+    mbSync.classList.remove("danger");
+    mbSync.onclick=syncNow;
   }
-  render();
+};
+mbSync.onclick=syncNow;
+
+/* ==================== Dark-Mode-Toggle ==================== */
+function applyDarkMode(on){
+  document.body.classList.toggle("dark",on);
+  localStorage.setItem("darkMode",on?"1":"0");
+}
+function toggleDarkMode(){
+  const on=!document.body.classList.contains("dark");
+  applyDarkMode(on);
+  btnDark.textContent=on?"☀️ Light Mode":"🌙 Dark Mode";
+}
+/* restore last mode */
+applyDarkMode(localStorage.getItem("darkMode")==="1");
+btnDark.textContent=document.body.classList.contains("dark")?"☀️ Light Mode":"🌙 Dark Mode";
+btnDark.onclick=toggleDarkMode;
+
+/* sanftes Fading bei Mode-Wechsel */
+const cssFade=document.createElement("style");
+cssFade.textContent=`body{transition:background-color .4s ease,color .4s ease;}`;
+document.head.appendChild(cssFade);
+
+/* ==================== GitHub-/Sync-Simulation ==================== */
+async function syncNow(){
+  try{
+    btnSync.textContent="⏳ Sync läuft…";
+    await new Promise(r=>setTimeout(r,1200)); // simulierte Netzwartezeit
+    btnSync.textContent="✅ Synchronisiert";
+    setTimeout(()=>btnSync.textContent="📤 Sync",1500);
+  }catch(e){
+    console.warn("Sync-Fehler",e);
+    btnSync.textContent="❌ Fehler";
+  }
 }
 
-/* ==================== Start ==================== */
-populateEditCategorySelect();
-populateCategoryFilter();
-vocabData=loadLocal();
+/* ==================== Startlogik ==================== */
 render();
-/* ==================== Dark Mode ==================== */
-const btnDark=document.getElementById("btnDark");
-let darkMode=false;
-btnDark.onclick=()=>{
-  darkMode=!darkMode;
-  document.body.classList.toggle("dark",darkMode);
-  btnDark.textContent=darkMode?"☀️ Light Mode":"🌙 Dark Mode";
+
+/* --- Public API optional für externe Nutzung --- */
+window.vocabApp={
+  add:addNew,
+  delete:deleteSelected,
+  render,
+  syncNow,
+  toggleDarkMode
 };
 
-/* ==================== Service ==================== */
-})(); // Ende Hauptfunktion
+})(); // Ende IIFE
 </script>
-
-<style>
-/* ====== Kartenlayout ====== */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:16px;
-  margin-top:16px;
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  box-shadow:var(--shadow);
-  transition:.25s;
-  cursor:pointer;
-}
-.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1);}
-.card.selected{outline:3px solid var(--blue);}
-.card-title{font-weight:800;font-size:1.05rem;margin-bottom:6px;}
-.card-sub{color:var(--muted);margin-bottom:10px;}
-.card-cat{
-  display:inline-block;
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:700;
-  font-size:.9rem;
-}
-.confuse{color:#ef4444;font-weight:700;margin-left:6px;}
-
-/* ====== Mobile Footer Buttons ====== */
-.mobile-bar{
-  position:sticky;
-  bottom:0;
-  background:rgba(255,255,255,.9);
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  padding:10px;
-  border-top:1px solid var(--border);
-  z-index:30;
-}
-.mobile-bar button{
-  flex:1;
-  padding:12px;
-  border-radius:10px;
-  font-weight:700;
-}
-
-/* ====== Dark Mode Styling ====== */
-body.dark{
-  --bg:#0f172a;
-  --ink:#f1f5f9;
-  --card:#1e293b;
-  --border:#334155;
-  --muted:#94a3b8;
-  background:linear-gradient(145deg,#1e293b,#0f172a);
-  color:var(--ink);
-  transition:background .4s,color .4s;
-}
-body.dark .panel{background:#1e293b;color:#f1f5f9;border:1px solid #334155;}
-body.dark .toolbar button.outline{background:#1e293b;color:#f1f5f9;border-color:#475569;}
-body.dark .toolbar select,body.dark .toolbar input{background:#1e293b;color:#f1f5f9;border-color:#475569;}
-body.dark .card{background:#1e293b;border-color:#334155;}
-body.dark .mobile-bar{background:rgba(30,41,59,.9);}
-body.dark .modal{background:rgba(0,0,0,.6);}
-body.dark table{color:var(--ink);}
-body.dark tr:hover{background:#334155;}
-
-/* ====== Fade Animation ====== */
-body,body.dark{
-  transition:background-color .4s ease,color .4s ease;
-}
-
-/* ====== Tabellenstil ====== */
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-tr:hover{background:#f8fbff}
-button.small{font-size:.9rem;padding:5px 10px}
-
-/* ====== Responsiveness ====== */
-@media(max-width:900px){
-  .toolbar,#tableContainer{display:none}
-  .grid{grid-template-columns:1fr 1fr;}
-  .mobile-bar{display:flex}
-}
-@media(min-width:901px){
-  .mobile-bar{display:none}
-}
-</style>
-
 </body>
 </html>
