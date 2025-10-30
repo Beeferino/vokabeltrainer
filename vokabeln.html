@@ -13,7 +13,8 @@
   <!-- Modal: Add/Edit/Delete -->
   <div class="modal" id="modal" style="display:none;">
     <div class="panel">
-      <h3 style="margin:0 0 10px 0;">Vokabel</h3>
+      <div id="confuseBanner" class="confuse-banner" style="display:none;">⚠️ Verwechslungsgefahr aktiv</div>
+      <h3 style="margin:10px 0 12px 0;">Vokabel</h3>
       <div class="form-grid">
         <label>Englisch
           <input id="mEn" type="text" />
@@ -25,16 +26,16 @@
           <select id="mCat"></select>
         </label>
 
-        <div class="confuse-toggle">
-          <span>⚠️ Verwechslungsgefahr</span>
-          <label class="switch" title="Gefahr ein/aus">
+        <div class="confuse-toggle" title="Verwechslungsgefahr markieren">
+          <span>Verwechslungsgefahr</span>
+          <label class="switch">
             <input type="checkbox" id="mConfuse" />
             <span class="slider"></span>
           </label>
         </div>
 
         <label>Hinweis
-          <textarea id="mHint" rows="3"></textarea>
+          <textarea id="mHint" rows="3" spellcheck="false"></textarea>
         </label>
 
         <label>Erstellt am
@@ -42,7 +43,7 @@
         </label>
       </div>
       <div class="modal-actions">
-        <button class="btn ghost" id="mDelete" title="Diese Vokabel löschen">Löschen</button>
+        <button class="btn ghost" id="mDelete" title="Diese Vokabel löschen">🗑️ Löschen</button>
         <div style="flex:1"></div>
         <button class="btn ghost" id="mCancel">Abbrechen</button>
         <button class="btn primary" id="mSave">Speichern</button>
@@ -50,7 +51,7 @@
     </div>
   </div>
 
-  <!-- Floating Theme Toggle -->
+  <!-- Desktop Theme Toggle (oben rechts) -->
   <button id="themeToggle" class="theme-toggle" title="Design umschalten">🌙</button>
 
   <script src="vokabeln.js"></script>

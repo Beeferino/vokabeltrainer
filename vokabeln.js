@@ -262,6 +262,7 @@ window.addEventListener("DOMContentLoaded", () => {
   const mSave = document.getElementById("mSave");
   const mDelete = document.getElementById("mDelete");
   const mCreated = document.getElementById("mCreated");
+  const confuseBanner = document.getElementById("confuseBanner");
 
   function fillModalCategories() {
     mCat.innerHTML = "";
@@ -272,15 +273,9 @@ window.addEventListener("DOMContentLoaded", () => {
       mCat.appendChild(o);
     });
     // Select einfärben
-    if (mCat.value) {
-      mCat.style.background = COLOR_MAP[mCat.value];
-      mCat.style.color = TEXT_ON[mCat.value];
-    }
-    mCat.addEventListener("change", () => {
-      const sel = mCat.value;
-      mCat.style.background = COLOR_MAP[sel];
-      mCat.style.color = TEXT_ON[sel];
-    });
+    const paint = () => { mCat.style.background = COLOR_MAP[mCat.value]; mCat.style.color = TEXT_ON[mCat.value]; };
+    paint();
+    mCat.onchange = paint;
   }
 
   function openEdit(i) {
@@ -303,9 +298,11 @@ window.addEventListener("DOMContentLoaded", () => {
       mConfuse.checked = v[6] === 1;
       mCreated.value = new Date(v[5]).toLocaleDateString();
     }
-    // set color on select
+    // Farbe anwenden & Banner je nach Verwechslungsgefahr
     mCat.style.background = COLOR_MAP[mCat.value];
     mCat.style.color = TEXT_ON[mCat.value];
+    confuseBanner.style.display = mConfuse.checked ? "block" : "none";
+    mConfuse.onchange = () => { confuseBanner.style.display = mConfuse.checked ? "block" : "none"; };
     modal.style.display = "flex";
   }
 
@@ -428,11 +425,14 @@ window.addEventListener("DOMContentLoaded", () => {
         </div>
         <div id="mobList" class="mob-list"></div>
 
-        <!-- Floating Add Button -->
-        <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
-
-        <!-- A–Z Floating Button -->
-        <button id="abcToggle" class="mob-abc-btn">A–Z</button>
+        <!-- Floating Buttons in umgedrehter L-Form -->
+        <div class="mob-fab-corner">
+          <button id="themeToggle" class="mob-fab theme" title="Hell/Dunkel umschalten"></button>
+          <div class="mob-fab-row">
+            <button id="abcToggle" class="mob-fab orange" title="Nach Buchstabe filtern">A–Z</button>
+            <button id="addMob" class="mob-fab blue" title="Neue Vokabel hinzufügen">➕</button>
+          </div>
+        </div>
 
         <!-- Overlay (mobil) -->
         <div class="abc-overlay" id="abcOverlay">
@@ -451,6 +451,9 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("syncMob").onclick = githubSync;
     document.getElementById("addMob").onclick = () => openEdit(null);
     renderABCOverlayMobile();
+    // Theme button works here too
+    const tbtn = document.getElementById("themeToggle");
+    if (tbtn) tbtn.addEventListener("click", toggleTheme);
   }
 
   function renderMobileList() {
@@ -520,8 +523,8 @@ window.addEventListener("DOMContentLoaded", () => {
   function applyTheme(mode){
     document.documentElement.setAttribute("data-theme", mode);
     localStorage.setItem("theme", mode);
-    const btn = document.getElementById("themeToggle");
-    if(btn) btn.textContent = mode === "dark" ? "☀️" : "🌙";
+    const btn = document.querySelector("#themeToggle.theme-toggle, .mob-fab.theme");
+    if(btn) btn.textContent = "";
   }
   function toggleTheme(){
     const current = localStorage.getItem("theme") || "light";
@@ -537,11 +540,13 @@ window.addEventListener("DOMContentLoaded", () => {
   // Start
   loadData();
 
-  // Re-render on viewport change
+  // Re-render on viewport change (switch layouts seamlessly)
+  let lastMobile = isMobile();
   window.addEventListener("resize", () => {
-    const wasMobile = document.querySelector(".mobile-app") !== null;
     const nowMobile = isMobile();
-    if (nowMobile && !wasMobile) renderByViewport();
-    if (!nowMobile && wasMobile) renderByViewport();
+    if (nowMobile !== lastMobile) {
+      lastMobile = nowMobile;
+      renderByViewport();
+    }
   });
 });
