@@ -1,954 +1,893 @@
-<!-- =========================
-  vokabeln.html — TEIL 1/4
-  Head + CSS (Dark Mode, Mobile, Anpassen)
-  ========================= -->
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>📘 Vokabelübersicht – Beeferino</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>📘 Vokabelübersicht – Beeferino</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<meta name="color-scheme" content="light dark">
 
-  <!-- Systemschrift + Inter (nur für feinere Typo) -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* =========================================================
+   VOKABELN – LAYOUT & THEME (Light/Dark mit sanftem Fade)
+   ========================================================= */
+:root{
+  --bg: #f4f7ff;
+  --card: #ffffff;
+  --ink: #0f172a;
+  --muted: #6b7280;
+  --border: #dbe3ff;
+  --shade: 0 10px 28px rgba(15, 23, 42, .08);
 
-  <style>
-    /* ---------------------------
-       DESIGN-TOKENS / VARIABLEN
-       --------------------------- */
-    :root{
-      --ink:#0f172a;            /* Primärtext hell */
-      --ink-weak:#334155;       /* Sekundärtext hell */
-      --muted:#64748b;          /* Tertiärtext hell */
-      --bg:#eef4ff;             /* Seitenhintergrund hell */
-      --bg2:#dbeafe;            /* Verlauf hell */
-      --card:#ffffff;           /* Karten/Table hell */
-      --stroke:#e5ebf3;         /* Rahmen hell */
+  --blue: #2563eb;
+  --blue-2: #1d4ed8;
+  --green: #16a34a;
+  --red: #ef4444;
+  --amber: #f59e0b;
 
-      --blue:#2563eb;           /* Primärfarbe */
-      --blue-2:#1d4ed8;         /* Hover */
-      --accent:#60a5fa;         /* Akzent */
-      --ok:#16a34a;             /* Positiv */
-      --bad:#ef4444;            /* Warn/Löschen */
-      --orange:#f59e0b;         /* Hinweis */
+  --chip-bg: #eef2ff;
+  --chip-ink: #1e3a8a;
 
-      --chip-bg:#eef2ff;        /* Badge-hell */
-      --chip-stroke:#c7d2fe;
+  --cat-Gelb: #F4D03F;
+  --cat-Pink: #E91E63;
+  --cat-Blau: #1976D2;
+  --cat-Gruen: #1E8449;
+  --cat-HellesPink: #F54927;
+  --cat-Orange: #E67E22;
+  --cat-Dunkelgruen: #117A65;
 
-      --shadow: 0 10px 28px rgba(0,0,0,.10);
+  --text-on-bright: #000;
+  --text-on-dark: #fff;
 
-      /* Dark-Mode Farben */
-      --ink-d:#e5e7eb;          /* Primärtext dunkel */
-      --ink-weak-d:#cbd5e1;
-      --muted-d:#94a3b8;
-      --bg-d:#0b1220;
-      --bg2-d:#0e1628;
-      --card-d:#121a2b;
-      --stroke-d:#1f2a3b;
+  --fade-ms: 280ms;
+}
+@media (prefers-color-scheme: dark) {
+  :root{
+    --bg: #0f172a;
+    --card: #111827;
+    --ink: #e5e7eb;
+    --muted: #9aa4b2;
+    --border: #233144;
+    --shade: 0 10px 30px rgba(0, 0, 0, .35);
+    --chip-bg:#172036;
+    --chip-ink:#93c5fd;
+  }
+}
+*{box-sizing:border-box}
+html, body{
+  margin:0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol", sans-serif;
+  color:var(--ink);
+  background: radial-gradient(1200px 600px at 50% -100px, #dbeafe 0%, transparent 60%) , var(--bg);
+  transition: background-color var(--fade-ms) ease, color var(--fade-ms) ease, background var(--fade-ms) ease;
+}
+.app{
+  max-width: 1200px;
+  margin: 22px auto 40px;
+  padding: 10px 16px 40px;
+}
 
-      --chip-bg-d:#0f1a30;
-      --chip-stroke-d:#233454;
+/* ---------------------------------------------------------
+   Header
+   --------------------------------------------------------- */
+.h1{
+  display:flex; align-items:center; gap:14px; justify-content:center;
+  font-weight:800; font-size: clamp(1.6rem, 2.3vw, 2.4rem);
+  letter-spacing:.2px;
+}
+.h1 .icon{font-size:1.8em}
+.subbar{
+  width: 220px; height: 6px; border-radius:999px; margin: 8px auto 12px;
+  background: linear-gradient(90deg, #60a5fa, #2563eb, #60a5fa);
+  opacity:.9;
+}
 
-      /* Übergang für Dark-Mode Fade */
-      --fade: .28s ease;
-    }
+/* ---------------------------------------------------------
+   Toolbar
+   --------------------------------------------------------- */
+.toolbar{
+  display:grid;
+  grid-template-columns: 1fr auto auto auto auto;
+  gap:10px;
+  align-items:center;
+  margin: 8px 0 14px;
+}
+@media (max-width: 900px){
+  .toolbar{
+    grid-template-columns: 1fr 1fr;
+  }
+}
 
-    /* ---------------------------
-       GRUNDLAYOUT
-       --------------------------- */
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji", sans-serif;
-      background: radial-gradient(1200px 600px at 50% -100px, var(--bg), var(--bg2)) fixed;
-      color: var(--ink);
-      transition: background var(--fade), color var(--fade);
-    }
-    .app{
-      max-width: 1180px;
-      margin: 22px auto 48px;
-      padding: 0 14px 40px;
-    }
+select, input[type="text"]{
+  width:100%;
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background: var(--card);
+  color: var(--ink);
+  transition: border-color .2s ease, background-color var(--fade-ms) ease, color var(--fade-ms) ease;
+}
+input[type="text"]::placeholder{ color:var(--muted); }
 
-    /* Titelblock */
-    .title{
-      text-align:center;
-      color:#1e3a8a;
-      margin: 8px 0 18px;
-      transition: color var(--fade);
-    }
-    .title h1{
-      margin:0;
-      font-weight: 800;
-      font-size: clamp(1.8rem, 2.8vw + 1rem, 2.6rem);
-      letter-spacing:.2px;
-    }
-    .hr{
-      width: min(260px, 60%);
-      height: 6px;
-      margin: 12px auto 10px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity:.9;
-    }
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  border:1px solid var(--border); background: var(--card);
+  color: var(--ink);
+  padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+  box-shadow: var(--shade);
+  transition: transform .08s ease, background-color var(--fade-ms), color var(--fade-ms), border-color var(--fade-ms);
+  user-select:none;
+}
+.btn:active{ transform: translateY(1px); }
+.btn.primary{ background: linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; border-color:transparent; }
+.btn.warn{ background: linear-gradient(135deg, #f87171, #ef4444); color:#fff; border-color:transparent; }
+.btn.soft{ background: linear-gradient(135deg, #eef2ff, #f8faff); }
+.btn.toggle-active{ outline: 2px solid #60a5fa; }
+.btn.small{ padding:8px 12px; border-radius:10px; font-weight:700; }
+.btn.block{ width:100%; justify-content:center; }
 
-    /* Info-Zeile */
-    .meta{
-      text-align:center;
-      font-weight:700;
-      color:#1f2937;
-      margin: 4px 0 16px;
-    }
+/* ---------------------------------------------------------
+   Count + view toggle row
+   --------------------------------------------------------- */
+.count-row{
+  display:flex; align-items:center; justify-content:space-between;
+  flex-wrap:wrap; gap:10px; margin: 8px 0 12px;
+}
+.badge{
+  display:inline-flex; align-items:center; gap:8px;
+  background: var(--chip-bg); color: var(--chip-ink);
+  padding:8px 12px; border-radius:12px; font-weight:800;
+}
 
-    /* ---------------------------
-       TOOLBAR (Desktop/Mobile)
-       --------------------------- */
-    .toolbar{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      justify-content:center;
-      margin: 12px auto 16px;
-    }
-    .toolbar select,
-    .toolbar input[type="text"]{
-      padding: 10px 14px;
-      border: 1px solid var(--stroke);
-      border-radius: 12px;
-      background:#fff;
-      font-size: 1rem;
-      min-height: 44px;
-      min-width: 220px;
-      transition: border-color var(--fade), background var(--fade), color var(--fade);
-    }
-    .toolbar input[type="text"]{min-width:260px}
+/* ---------------------------------------------------------
+   Table (Desktop) – mobile Anpassungen folgen weiter unten
+   --------------------------------------------------------- */
+.table-wrap{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shade);
+  overflow: hidden;
+}
+table{ width:100%; border-collapse: collapse; }
+thead th{
+  text-align:left; font-weight:800; padding:14px 14px; background: linear-gradient(180deg, rgba(99,102,241,.06), transparent 60%);
+  border-bottom: 1px solid var(--border);
+}
+tbody td{
+  padding:16px 14px; border-bottom: 1px solid var(--border);
+}
+tbody tr:hover{ background: rgba(99,102,241,.05); }
 
-    .btn{
-      border:none;
-      border-radius:12px;
-      padding: 10px 16px;
-      font-weight:800;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: transform .06s ease, background var(--fade), color var(--fade), border-color var(--fade);
-      min-height:44px;
-    }
-    .btn:active{transform: translateY(1px)}
-    .btn.primary{background:var(--blue); color:#fff}
-    .btn.primary:hover{background:var(--blue-2)}
-    .btn.ghost{
-      background: linear-gradient(135deg,#f1f5ff,#f8faff);
-      border: 1px solid var(--chip-stroke);
-      color:#1f2937;
-    }
-    .btn.warn{background:var(--bad); color:#fff}
-    .btn.neu{
-      background:linear-gradient(135deg,#3b82f6,#2563eb);
-      color:#fff;
-    }
-    .btn.switch{
-      background:linear-gradient(135deg,#eaf0ff,#f7faff);
-      border:1px solid var(--chip-stroke);
-      color:#1f2937;
-    }
+.cell-english a{ font-weight:800; color:#2563eb; text-decoration:none; }
+.cell-english a:hover{ text-decoration:underline; }
 
-    /* Umschalter List/Kachel */
-    .mode-toggle{
-      border:1px solid var(--chip-stroke);
-      background:linear-gradient(135deg,#f8fbff,#ffffff);
-      border-radius:12px;
-      padding:8px;
-      display:flex;
-      gap:6px;
-    }
-    .seg{
-      padding:8px 12px;
-      border-radius:8px;
-      font-weight:800;
-      cursor:pointer;
-      user-select:none;
-    }
-    .seg.active{
-      background:var(--blue);
-      color:#fff;
-    }
+.cat-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px; font-weight:800; font-size:.9rem;
+  background: var(--chip-bg); color: var(--chip-ink);
+  border: 1px solid var(--border);
+}
+.cat-dot{
+  width:10px; height:10px; border-radius:50%;
+  background:#94a3b8;
+}
 
-    /* ---------------------------
-       TABELLE (Desktop first)
-       --------------------------- */
-    .table-wrap{
-      background: var(--card);
-      border: 1px solid var(--stroke);
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      transition: background var(--fade), border-color var(--fade);
-    }
-    table{
-      width:100%;
-      border-collapse: collapse;
-    }
-    thead th{
-      text-align:left;
-      padding: 16px 14px;
-      background: linear-gradient(180deg, rgba(99,102,241,.08), rgba(99,102,241,.02));
-      border-bottom: 1px solid var(--stroke);
-      font-weight: 800;
-      letter-spacing:.3px;
-      position: sticky;
-      top:0; z-index:5;
-    }
-    tbody td{
-      border-bottom: 1px solid var(--stroke);
-      padding: 14px;
-      vertical-align: middle;
-      line-height: 1.35;
-    }
-    tbody tr:hover{ background: rgba(37, 99, 235, .04) }
+/* kompakte Punkt-Farbe für Kategorien */
+.dot-Gelb{background:var(--cat-Gelb)}
+.dot-Pink{background:var(--cat-Pink)}
+.dot-Blau{background:var(--cat-Blau)}
+.dot-Gruen{background:var(--cat-Gruen)}
+.dot-HellesPink{background:var(--cat-HellesPink)}
+.dot-Orange{background:var(--cat-Orange)}
+.dot-Dunkelgruen{background:var(--cat-Dunkelgruen)}
 
-    /* Spaltenbreiten */
-    .col-check{ width: 64px; }
-    .col-en{ width: 28%; }
-    .col-de{ width: 34%; }
-    .col-cat{ width: 24%; }
-    .col-grp{ width: 12%; }
-    .col-hint{ width: 16%; }
-    .col-act{ width: 140px; text-align:right; }
+/* Verwechslungsgefahr mini-indikator */
+.confuse-flag{
+  display:inline-flex; align-items:center; gap:6px; margin-left:10px;
+  padding:2px 8px; border-radius:999px; font-weight:800; font-size:.78rem;
+  background: rgba(239,68,68,.10); color:#ef4444; border:1px solid rgba(239,68,68,.25);
+}
 
-    /* Edit-Button in Desktopliste */
-    .btn-row{
-      display:flex;
-      gap:8px;
-      justify-content:flex-end;
-    }
+/* ---------------------------------------------------------
+   Pagination
+   --------------------------------------------------------- */
+.pagination{
+  display:flex; align-items:center; justify-content:center; gap:10px; margin: 14px 0 0;
+}
+.pagination .btn[disabled]{ opacity:.55; pointer-events:none; }
 
-    /* Kategorie-Badge – kompakt & bündig */
-    .cat-badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--chip-stroke);
-      background: var(--chip-bg);
-      font-weight: 800;
-      white-space: nowrap;
-      line-height:1;
-    }
-    .cat-dot{
-      width:10px;height:10px;border-radius:50%;
-      background:#94a3b8;
-      outline:1px solid rgba(0,0,0,.05);
-    }
+/* ---------------------------------------------------------
+   Kachelansicht
+   --------------------------------------------------------- */
+.grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 900px){
+  .grid{ grid-template-columns: 1fr; }
+}
+.card{
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  box-shadow: var(--shade);
+  padding: 14px 14px 12px;
+  display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+}
+.card-main{ min-width:0; }
+.card-title{ font-weight:800; font-size:1.05rem; margin:0 0 4px; }
+.card-sub{ color:var(--muted); margin-bottom:8px; }
+.card-meta{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.card .confuse-flag{ margin-left:0; padding:2px 6px; }
 
-    /* Verwechslungsgefahr in Liste – kleines Icon neben Englisch */
-    .flag{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width: 20px; height:20px;
-      border-radius:4px;
-      background: rgba(239,68,68,.08);
-      border:1px solid rgba(239,68,68,.35);
-      color:#b91c1c;
-      font-size:.78rem;
-      font-weight: 800;
-      margin-left: 8px;
-    }
-    .flag::before{content:"!"}
+/* klickbare Zeilen im Anpassungsmodus */
+.row-selectable{ cursor: pointer; }
+.row-selected{ background: rgba(37,99,235,.09); outline: 3px solid rgba(37,99,235,.25); }
 
-    /* ---------------------------
-       KACHEL-ANSICHT (Grid)
-       --------------------------- */
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 12px;
-      margin-top: 14px;
-    }
-    .card{
-      background: var(--card);
-      border:1px solid var(--stroke);
-      border-radius:16px;
-      padding:14px;
-      box-shadow: var(--shadow);
-      transition: transform .08s ease, border-color var(--fade), background var(--fade);
-    }
-    .card:hover{ transform: translateY(-1px); }
-    .card-head{
-      display:flex; align-items:center; gap:10px; margin-bottom:6px;
-    }
-    .term-en{
-      font-weight:800; font-size:1.05rem; color: var(--blue);
-      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    }
-    .term-de{
-      font-weight:700; color: var(--ink);
-      margin: 2px 0 8px;
-      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    }
-    .meta-row{
-      display:flex; flex-wrap:wrap; gap:8px; align-items:center;
-    }
-    .badge-mini{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:5px 9px;border-radius:999px;border:1px solid var(--chip-stroke);
-      background:var(--chip-bg);font-weight:800;font-size:.88rem;
-      line-height:1;
-    }
-    .mini-dot{ width:8px;height:8px;border-radius:999px; background:#94a3b8; }
+/* ---------------------------------------------------------
+   Mobile Table – nur 3 Spalten sichtbar
+   --------------------------------------------------------- */
+@media (max-width: 900px){
+  /* Checkbox-Spalte grundsätzlich verstecken (außer im Anpassen-Modus via JS) */
+  td.col-check, th.col-check{ display:none; }
+  /* Gruppe/Hinweis/Aktion ausblenden */
+  td.col-group, th.col-group,
+  td.col-hint, th.col-hint,
+  td.col-action, th.col-action{ display:none; }
+  /* kompaktere Zellen */
+  tbody td{ padding:14px 12px; }
+}
 
-    /* „Verwechslungsgefahr“ in Kachel – dezenter Chip */
-    .confuse-chip{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:4px 8px;border-radius:10px;
-      background: rgba(239,68,68,.09);
-      border: 1px dashed rgba(239,68,68,.35);
-      color:#b91c1c; font-weight:800; font-size:.82rem;
-    }
-    .confuse-chip::before{content:"⚠"; font-size:.9rem}
+/* ---------------------------------------------------------
+   FAB Fußleiste (nur mobile sichtbar)
+   --------------------------------------------------------- */
+.fabbar{
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display:none;
+  padding:10px; background: color-mix(in oklab, var(--card) 88%, transparent);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(6px);
+}
+.fabs{
+  display:flex; gap:8px;
+}
+.fabs .btn{ flex:1 1 0; }
 
-    /* Bearbeiten-Button in Kachel (mobil sichtbar im Anpassen-Modus) */
-    .card-actions{
-      display:flex; gap:8px; justify-content:flex-end; margin-top:10px;
-    }
-    .card .btn-edit{
-      display:none; /* wird in anpassen--on auf block gesetzt */
-      padding:8px 12px; font-size:.9rem; border-radius:10px;
-      background:var(--blue); color:#fff; border:none; font-weight:800; cursor:pointer;
-    }
+/* ---------------------------------------------------------
+   Modal (Bearbeiten / Vokabel View)
+   --------------------------------------------------------- */
+.modal{
+  position: fixed; inset:0; display:none; align-items:center; justify-content:center; z-index: 60;
+  background: rgba(15,23,42,.55);
+}
+.panel{
+  width:min(560px, 96vw); background: var(--card); color: var(--ink);
+  border:1px solid var(--border); border-radius: 16px; box-shadow: var(--shade);
+  padding: 16px 16px 14px;
+}
+.panel h3{ margin: 0 0 10px; font-size:1.25rem; font-weight:800; }
+.form-grid{ display:grid; gap:10px; }
+.form-grid input, .form-grid select, .form-grid textarea{
+  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:12px;
+  background: var(--card); color: var(--ink);
+}
+.modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top: 12px; }
 
-    /* ---------------------------
-       PAGINATION
-       --------------------------- */
-    .pagination{
-      display:flex;align-items:center;justify-content:center;gap:12px;
-      margin: 16px 0 8px;
-    }
-    .pagination .btn[disabled]{opacity:.55; cursor:not-allowed}
-    .page-info{ font-weight:700 }
+/* Confuse SWITCH (optisch) */
+.switch{
+  position:relative; display:inline-block; width: 52px; height: 28px;
+  vertical-align:middle;
+}
+.switch input{ opacity:0; width:0; height:0; }
+.slider{
+  position:absolute; inset:0; border-radius:999px; background:#cbd5e1; transition: all .2s ease;
+}
+.slider:before{
+  content:""; position:absolute; height:20px; width:20px; left:4px; top:4px; border-radius:50%; background:#fff; transition: transform .2s ease;
+  box-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+.switch input:checked + .slider{ background:#ef4444; }
+.switch input:checked + .slider:before{ transform: translateX(24px); }
 
-    /* ---------------------------
-       MOBIL-ANPASSUNGEN
-       --------------------------- */
-    @media (max-width: 900px){
-      /* Desktopliste bleibt, aber wir lassen nur benötigte Spalten stehen */
-      .col-grp, .col-hint, .col-act{ display:none; }
+/* ---------------------------------------------------------
+   Dark toggle indicator
+   --------------------------------------------------------- */
+.theme-indicator{ opacity:.85 }
 
-      /* Checkboxen standardmäßig unsichtbar, bis Anpassen aktiviert ist */
-      .col-check{ width: 40px; }
-      td.col-check input[type="checkbox"]{
-        visibility: hidden;  /* wird in .anpassen--on sichtbar */
-      }
-      /* Zeilen kompakter */
-      tbody td{ padding: 12px 10px; }
-      thead th{ padding: 14px 10px; }
-
-      /* Kategorie bündig – kleiner Badge direkt im DE-Feld */
-      .col-cat{ display: none; }
-      .de-with-chip{
-        display:flex; align-items:center; gap:8px;
-        flex-wrap:wrap;
-      }
-      .cat-badge{ padding:4px 8px; font-size:.88rem }
-
-      /* Kleinere Schrift, sodass mehr Zeilen auf den Screen passen */
-      tbody td, thead th{ font-size: 0.98rem }
-      .term-de, .term-en{ font-size: 1rem }
-
-      /* Kachel-Grid → 1 Spalte auf sehr kleinen Geräten */
-      .grid{ grid-template-columns: 1fr; }
-
-      /* Mobile FAB-Leiste (sichtbar nur mobil) */
-      .fab-row{
-        position: sticky;
-        bottom: 0;
-        z-index: 40;
-        display:flex;
-        justify-content:center;
-        padding: 10px;
-        background: rgba(255,255,255,.86);
-        border-top: 1px solid var(--stroke);
-        backdrop-filter: blur(8px);
-      }
-      .fab-row .fabs{ display:flex; gap:8px; width:100%; max-width:720px }
-      .fab{ flex:1; padding:12px; border:none; border-radius:12px; font-weight:800; cursor:pointer; color:#fff }
-      .fab.gray{ background:#6b7280 }
-      .fab.warn{ background:var(--bad) }
-      .fab.blue{ background:var(--blue) }
-
-      /* Im Listenmodus: Bearbeiten-Buttons & Checkboxen nur im Anpassen-Modus sichtbar */
-      .anpassen--on td.col-check input[type="checkbox"]{ visibility: visible; }
-      .anpassen--on .btn-edit{ display:inline-flex }
-    }
-
-    /* ---------------------------
-       DARK MODE (mit sanftem Fade)
-       --------------------------- */
-    .dark{
-      color: var(--ink-d);
-      background: radial-gradient(1200px 600px at 50% -100px, var(--bg-d), var(--bg2-d)) fixed;
-    }
-    .dark .title{ color:#93c5fd }
-    .dark .meta{ color: var(--ink-weak-d) }
-    .dark .toolbar select,
-    .dark .toolbar input[type="text"]{
-      background: var(--card-d); color: var(--ink-d);
-      border-color: var(--stroke-d);
-    }
-    .dark .btn.ghost,
-    .dark .btn.switch{
-      background: linear-gradient(135deg,#0f172a,#0b1323);
-      color: var(--ink-d);
-      border-color: var(--stroke-d);
-    }
-
-    .dark .table-wrap{ background: var(--card-d); border-color: var(--stroke-d) }
-    .dark thead th{ border-color: var(--stroke-d) }
-    .dark tbody td{ border-color: var(--stroke-d) }
-    .dark tbody tr:hover{ background: rgba(99,102,241,.08) }
-
-    .dark .cat-badge{
-      background: var(--chip-bg-d);
-      border-color: var(--chip-stroke-d);
-      color: var(--ink-d);
-    }
-    .dark .badge-mini{
-      background: var(--chip-bg-d);
-      border-color: var(--chip-stroke-d);
-      color: var(--ink-d);
-    }
-    .dark .flag{
-      background: rgba(239,68,68,.12);
-      border-color: rgba(239,68,68,.45);
-      color:#fecaca;
-    }
-    .dark .fab-row{
-      background: rgba(2,6,23,.8);
-      border-top-color: var(--stroke-d);
-    }
-
-    /* Sanfter Übergang aller Primärelemente im Themewechsel */
-    .dark, .dark .table-wrap, .dark .card, .dark .toolbar select,
-    .dark .toolbar input[type="text"], .dark .btn.ghost, .dark .btn.switch{
-      transition: background var(--fade), color var(--fade), border-color var(--fade), box-shadow var(--fade);
-    }
-
-    /* ---------------------------
-       HILFSKLASSEN
-       --------------------------- */
-    .hidden{ display:none !important }
-    .center{ text-align:center }
-    .nowrap{ white-space:nowrap }
-  </style>
+/* ---------------------------------------------------------
+   Helpers
+   --------------------------------------------------------- */
+.hidden{ display:none !important; }
+.sep{ height:1px; background:var(--border); margin:8px 0; }
+.center{ text-align:center; }
+.nowrap{ white-space:nowrap; }
+</style>
 </head>
-  <!-- =========================
-  vokabeln.html — TEIL 2/4
-  Body + Strukturelle Elemente
-  ========================= -->
 <body>
-  <div class="app">
+<div class="app" id="app">
+  <!-- ====================== Header ====================== -->
+  <div class="h1">
+    <span class="icon">📘</span>
+    <div>Vokabelübersicht</div>
+  </div>
+  <div class="subbar"></div>
 
-    <!-- Titel & Headline -->
-    <div class="title">
-      <h1>📘 Vokabelübersicht</h1>
-      <div class="hr"></div>
-      <div class="meta" id="countDesk">–</div>
+  <!-- ====================== Toolbar ====================== -->
+  <div class="toolbar" id="toolbar">
+    <select id="filterSelect" aria-label="Kategorie filtern">
+      <!-- dynamisch befüllt; enthält auch 'Alle' & 'Verwechslungsgefahr' -->
+    </select>
+
+    <input id="searchInput" type="text" placeholder="Suchen…" aria-label="Suche">
+
+    <button class="btn soft" id="btnReset">Reset</button>
+
+    <button class="btn primary" id="btnAdd">
+      <span>➕</span><span>Neue</span>
+    </button>
+
+    <button class="btn warn hidden" id="btnDelete">
+      <span>🗑️</span><span>Löschen</span>
+    </button>
+
+    <button class="btn soft" id="btnSync" style="grid-column: 1 / -1;">
+      <span>🔁</span><span>Sync</span>
+    </button>
+  </div>
+
+  <!-- Count + View toggles -->
+  <div class="count-row">
+    <div class="badge" id="countBadge">📘 0 Vokabeln gefunden</div>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <button id="btnList" class="btn soft small toggle-active">📋 Liste</button>
+      <button id="btnCards" class="btn soft small">🧩 Kacheln</button>
+      <button id="btnTheme" class="btn soft small theme-indicator">🌙 Dark Mode</button>
     </div>
+  </div>
 
-    <!-- Toolbar mit Filter, Suche, Reset, Buttons -->
-    <div class="toolbar">
-      <select id="filterCatDesk" title="Kategorie filtern">
-        <option value="Alle">Alle (bunt gemischt)</option>
-      </select>
-      <input id="searchDesk" type="text" placeholder="Suchen…" />
-      <button id="resetDesk" class="btn ghost" title="Filter zurücksetzen">Reset</button>
-      <button id="addDesk" class="btn primary" title="Neue Vokabel hinzufügen">➕ Neue</button>
-      <button id="delDesk" class="btn warn" title="Markierte löschen">🗑️ Löschen</button>
-      <button id="syncDesk" class="btn" title="Mit GitHub synchronisieren">🔄 Sync</button>
+  <!-- ====================== LISTENANSICHT ====================== -->
+  <div id="listView" class="table-wrap" role="region" aria-label="Vokabel-Liste">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-check">⟲</th>
+          <th>Englisch</th>
+          <th>Deutsch</th>
+          <th class="col-cat">Kategorie</th>
+          <th class="col-group">Gruppe</th>
+          <th class="col-hint">Hinweis</th>
+          <th class="col-action">Aktion</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <!-- Rows dynamically -->
+      </tbody>
+    </table>
+  </div>
 
-      <!-- Umschalter Listen/Kachelansicht -->
-      <div class="mode-toggle" id="modeSwitch">
-        <div class="seg active" data-mode="list">📋 Liste</div>
-        <div class="seg" data-mode="grid">🧩 Kacheln</div>
+  <!-- ====================== KACHELANSICHT ====================== -->
+  <div id="cardView" class="grid hidden" aria-live="polite" aria-label="Vokabel-Kacheln">
+    <!-- Cards dynamically -->
+  </div>
+
+  <!-- Pagination (für beide Ansichten, identische Instanz) -->
+  <div class="pagination" id="pagination">
+    <button class="btn small" id="pagePrev">⬅️ Zurück</button>
+    <div id="pageInfo" class="badge">Seite 1 / 1</div>
+    <button class="btn small" id="pageNext">Weiter ➡️</button>
+  </div>
+
+  <!-- ====================== FAB (nur Mobile sichtbar) ====================== -->
+  <div class="fabbar" id="fabbar">
+    <div class="fabs" id="fabs">
+      <button class="btn soft" id="fabBack">Zurück</button>
+      <button class="btn primary" id="fabAdjust">Anpassen</button>
+      <button class="btn soft" id="fabSync">Sync</button>
+    </div>
+  </div>
+</div>
+
+<!-- ====================== MODAL: Vokabel bearbeiten ====================== -->
+<div class="modal" id="modal">
+  <div class="panel">
+    <h3 id="modalTitle">Vokabel</h3>
+    <div class="form-grid">
+      <label>Englisch
+        <input id="mEn" type="text">
+      </label>
+      <label>Deutsch
+        <input id="mDe" type="text">
+      </label>
+      <label>Kategorie
+        <select id="mCat"></select>
+      </label>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 10px 12px; border:1px solid var(--border); border-radius:12px; background:var(--card);">
+        <span style="font-weight:800;">Verwechslungsgefahr</span>
+        <label class="switch" title="Verwechslungsgefahr">
+          <input type="checkbox" id="mConfuse">
+          <span class="slider"></span>
+        </label>
       </div>
 
-      <!-- Dark-Mode-Schalter -->
-      <button id="darkModeToggle" class="btn switch" title="Helles/Dunkles Design">🌙 Dark Mode</button>
+      <label>Gruppe / Variante
+        <input id="mGroup" type="text">
+      </label>
+      <label>Hinweis
+        <textarea id="mHint" rows="2"></textarea>
+      </label>
+      <label>Erstellt
+        <input id="mDate" type="date" readonly style="background: #f3f4f6">
+      </label>
     </div>
 
-    <!-- =========================
-         TABELLENANSICHT (Desktop-Basis)
-         ========================= -->
-    <div class="table-wrap" id="listView">
-      <table id="tbl">
-        <thead>
-          <tr>
-            <th class="col-check">✓</th>
-            <th class="col-en">Englisch</th>
-            <th class="col-de">Deutsch</th>
-            <th class="col-cat">Kategorie</th>
-            <th class="col-grp">Gruppe</th>
-            <th class="col-hint">Hinweis</th>
-            <th class="col-act">Aktion</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Vokabelzeilen werden dynamisch gerendert -->
-        </tbody>
-      </table>
+    <div class="modal-actions">
+      <button class="btn soft" id="mCancel">Abbrechen</button>
+      <button class="btn primary" id="mSave">Speichern</button>
     </div>
+  </div>
+</div>
 
-    <!-- Pagination -->
-    <div class="pagination" id="pagination">
-      <button class="btn" id="pgPrev" disabled>⬅️ Zurück</button>
-      <span class="page-info">–</span>
-      <button class="btn" id="pgNext">Weiter ➡️</button>
-    </div>
-
-    <!-- =========================
-         KACHELANSICHT (Grid)
-         ========================= -->
-    <div id="gridView" class="grid hidden">
-      <!-- Kacheln werden dynamisch erzeugt -->
-    </div>
-
-    <!-- =========================
-         MOBILE FAB-Leiste
-         ========================= -->
-    <div class="fab-row">
-      <div class="fabs">
-        <button class="fab gray" id="fabBack">Zurück</button>
-        <button class="fab blue" id="fabAdjust">Anpassen</button>
-        <button class="fab gray" id="fabSync">Sync</button>
-      </div>
-    </div>
-
-    <!-- =========================
-         MODAL-FENSTER (Bearbeiten / Neu)
-         ========================= -->
-    <div class="modal" id="modal" style="display:none;">
-      <div class="panel">
-        <h3 id="modalTitle" style="margin-top:0;">Vokabel bearbeiten</h3>
-        <div class="form-grid">
-
-          <label>Englisch
-            <input id="mEn" type="text" placeholder="z. B. hammer" />
-          </label>
-
-          <label>Deutsch
-            <input id="mDe" type="text" placeholder="z. B. Hammer" />
-          </label>
-
-          <label>Kategorie
-            <select id="mCat"></select>
-          </label>
-
-          <!-- Verwechslungsgefahr-Schalter -->
-          <div class="confuse-toggle">
-            <span>Verwechslungsgefahr</span>
-            <label class="switch">
-              <input type="checkbox" id="mConfuse" />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <label>Gruppe / Variante
-            <input id="mGroup" type="text" />
-          </label>
-
-          <label>Hinweis
-            <textarea id="mHint" rows="2"></textarea>
-          </label>
-        </div>
-
-        <div class="modal-actions">
-          <button class="btn ghost" id="mCancel">Abbrechen</button>
-          <button class="btn primary" id="mSave">Speichern</button>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /app -->
-<!-- =========================
-  vokabeln.html — TEIL 3/4
-  Script: Datenlogik + Rendering + Umschalter
-  ========================= -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+/* =========================================================
+   VOKABELN – LOGIK
+   ========================================================= */
+(function(){
+  /* ---------- Konstanten & Maps ---------- */
+  const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const PAGE_SIZE = 15;
 
-  /* ========= Elemente ========= */
-  const tblBody = document.querySelector("#tbl tbody");
-  const gridView = document.getElementById("gridView");
-  const listView = document.getElementById("listView");
-  const pagination = document.getElementById("pagination");
-  const pgPrev = document.getElementById("pgPrev");
-  const pgNext = document.getElementById("pgNext");
-  const pageInfo = pagination.querySelector(".page-info");
-  const modeSwitch = document.getElementById("modeSwitch");
-  const countDesk = document.getElementById("countDesk");
-
-  const filterCatDesk = document.getElementById("filterCatDesk");
-  const searchDesk = document.getElementById("searchDesk");
-  const resetDesk = document.getElementById("resetDesk");
-  const addDesk = document.getElementById("addDesk");
-  const delDesk = document.getElementById("delDesk");
-
-  const fabBack = document.getElementById("fabBack");
-  const fabAdjust = document.getElementById("fabAdjust");
-  const fabSync = document.getElementById("fabSync");
-
-  /* ========= Variablen ========= */
-  let data = [];
-  let filtered = [];
-  let currentPage = 1;
-  const perPage = 15;
-  let mode = "list"; // list | grid
-  let anpassen = false;
-
-  /* ========= Hilfsfunktionen ========= */
-  const el = (tag, cls, html) => {
-    const e = document.createElement(tag);
-    if (cls) e.className = cls;
-    if (html) e.innerHTML = html;
-    return e;
+  const CATEGORY_NAMES = {
+    Gelb:"Grundwerkzeuge Metallverarbeitung",
+    Pink:"Werkzeugkasten Mechaniker",
+    Blau:"Blech- / Kunststoffarbeiten",
+    Gruen:"Drehen / Fräsen",
+    HellesPink:"Hydraulik / Pneumatik",
+    Orange:"Elektrotechnik",
+    Dunkelgruen:"Fluggerätemechanik allgemein"
+  };
+  const CAT_COLOR = {
+    Gelb:"var(--cat-Gelb)",
+    Pink:"var(--cat-Pink)",
+    Blau:"var(--cat-Blau)",
+    Gruen:"var(--cat-Gruen)",
+    HellesPink:"var(--cat-HellesPink)",
+    Orange:"var(--cat-Orange)",
+    Dunkelgruen:"var(--cat-Dunkelgruen)"
   };
 
-  const truncate = (s, n=60) => s.length>n ? s.slice(0,n)+"…" : s;
+  /* ---------- DOM ---------- */
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
 
-  /* ========= Daten laden ========= */
-  async function loadData() {
-    try {
-      const res = await fetch("vokabeln.json");
-      data = await res.json();
-      filtered = data.slice();
-      renderCategories();
-      render();
-    } catch (e) {
-      console.error("Fehler beim Laden der Daten:", e);
-    }
-  }
+  const filterSelect = $("#filterSelect");
+  const searchInput  = $("#searchInput");
+  const btnReset     = $("#btnReset");
+  const btnAdd       = $("#btnAdd");
+  const btnDelete    = $("#btnDelete");
+  const btnSync      = $("#btnSync");
 
-  /* ========= Kategorien füllen ========= */
-  function renderCategories() {
-    const cats = Array.from(new Set(data.map(v=>v[2]).filter(Boolean))).sort();
-    filterCatDesk.innerHTML = `<option value="Alle">Alle (bunt gemischt)</option>
-      <option value="confuse">⚠️ Verwechslungsgefahr</option>` +
-      cats.map(c=>`<option value="${c}">${c}</option>`).join("");
-  }
+  const btnList      = $("#btnList");
+  const btnCards     = $("#btnCards");
+  const btnTheme     = $("#btnTheme");
 
-  /* ========= Filter + Suche ========= */
-  function applyFilter() {
-    const cat = filterCatDesk.value;
-    const term = searchDesk.value.trim().toLowerCase();
+  const countBadge   = $("#countBadge");
 
-    filtered = data.filter(v => {
-      const matchCat = cat === "Alle" ? true :
-                       cat === "confuse" ? !!v[6] :
-                       v[2] === cat;
-      const matchSearch = !term ||
-        v[0].toLowerCase().includes(term) ||
-        v[1].toLowerCase().includes(term);
-      return matchCat && matchSearch;
-    });
+  const listView     = $("#listView");
+  const cardView     = $("#cardView");
+  const tbody        = $("#tbody");
 
-    currentPage = 1;
-    render();
-  }
+  const pagePrev     = $("#pagePrev");
+  const pageNext     = $("#pageNext");
+  const pageInfo     = $("#pageInfo");
 
-  /* ========= Reset-Button ========= */
-  resetDesk.addEventListener("click", () => {
-    filterCatDesk.value = "Alle";
-    searchDesk.value = "";
-    filtered = data.slice();
-    currentPage = 1;
-    render();
-  });
+  const fabbar       = $("#fabbar");
+  const fabBack      = $("#fabBack");
+  const fabAdjust    = $("#fabAdjust");
+  const fabSync      = $("#fabSync");
+  const fabs         = $("#fabs");
 
-  filterCatDesk.addEventListener("change", applyFilter);
-  searchDesk.addEventListener("input", applyFilter);
+  /* Modal */
+  const modal        = $("#modal");
+  const mEn          = $("#mEn");
+  const mDe          = $("#mDe");
+  const mCat         = $("#mCat");
+  const mConfuse     = $("#mConfuse");
+  const mGroup       = $("#mGroup");
+  const mHint        = $("#mHint");
+  const mDate        = $("#mDate");
+  const mCancel      = $("#mCancel");
+  const mSave        = $("#mSave");
+  const modalTitle   = $("#modalTitle");
 
-  /* ========= Pagination ========= */
-  function totalPages() {
-    return Math.max(1, Math.ceil(filtered.length / perPage));
-  }
-
-  function renderPagination() {
-    const pages = totalPages();
-    pageInfo.textContent = `Seite ${currentPage} von ${pages}`;
-    pgPrev.disabled = currentPage <= 1;
-    pgNext.disabled = currentPage >= pages;
-  }
-
-  pgPrev.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      render();
-    }
-  });
-  pgNext.addEventListener("click", () => {
-    if (currentPage < totalPages()) {
-      currentPage++;
-      render();
-    }
-  });
-
-  /* ========= Rendering: Tabelle ========= */
-  function renderTable() {
-    tblBody.innerHTML = "";
-    const start = (currentPage - 1) * perPage;
-    const items = filtered.slice(start, start + perPage);
-
-    items.forEach((v, idx) => {
-      const [en, de, cat, group, hint, , confuse] = v;
-      const tr = el("tr");
-      if (anpassen) tr.classList.add("anpassen--on");
-
-      // Checkbox (nur im Anpassen-Modus)
-      const tdCheck = el("td","col-check");
-      const cb = el("input");
-      cb.type = "checkbox";
-      cb.checked = false;
-      tdCheck.appendChild(cb);
-
-      // Englisch mit Warnsymbol falls Verwechslungsgefahr
-      const tdEn = el("td","col-en");
-      tdEn.innerHTML = `<b>${en}</b>${confuse ? '<span class="flag"></span>' : ''}`;
-
-      // Deutsch + Kategorie-Badge bündig
-      const tdDe = el("td","col-de de-with-chip");
-      const catBadge = `<span class="cat-badge"><span class="cat-dot"></span>${cat||'–'}</span>`;
-      tdDe.innerHTML = `<b>${de}</b> ${catBadge}`;
-
-      // Kategorie separat (Desktop)
-      const tdCat = el("td","col-cat",cat||"–");
-      const tdGrp = el("td","col-grp",group||"–");
-      const tdHint = el("td","col-hint",truncate(hint||"–"));
-
-      // Aktionen (nur im Anpassen-Modus sichtbar)
-      const tdAct = el("td","col-act");
-      const rowBtns = el("div","btn-row");
-      const btnE = el("button","btn ghost","✏️ Bearbeiten");
-      btnE.classList.add("btn-edit");
-      btnE.addEventListener("click",()=>openModal(v,idx));
-      rowBtns.appendChild(btnE);
-      tdAct.appendChild(rowBtns);
-
-      tr.append(tdCheck, tdEn, tdDe, tdCat, tdGrp, tdHint, tdAct);
-      tblBody.appendChild(tr);
-    });
-  }
-
-  /* ========= Rendering: Kacheln ========= */
-  function renderGrid() {
-    gridView.innerHTML = "";
-    const start = (currentPage - 1) * perPage;
-    const items = filtered.slice(start, start + perPage);
-
-    items.forEach((v, idx) => {
-      const [en, de, cat, group, hint, , confuse] = v;
-      const card = el("div","card");
-
-      const head = el("div","card-head");
-      const title = el("div","term-en",en);
-      if (confuse) {
-        const warn = el("span","confuse-chip","Verwechslungsgefahr");
-        head.append(title, warn);
-      } else {
-        head.append(title);
-      }
-
-      const deTxt = el("div","term-de",de);
-      const meta = el("div","meta-row");
-      meta.innerHTML = `
-        <span class="badge-mini"><span class="mini-dot"></span>${cat || "–"}</span>
-      `;
-
-      const hintTxt = hint ? `<div style="font-size:.85rem;color:var(--muted);margin-top:4px">${truncate(hint,60)}</div>` : "";
-
-      const actions = el("div","card-actions");
-      const btnEdit = el("button","btn-edit","Bearbeiten");
-      btnEdit.addEventListener("click",()=>openModal(v,idx));
-      actions.appendChild(btnEdit);
-
-      card.append(head,deTxt,meta);
-      if(hintTxt) card.insertAdjacentHTML("beforeend",hintTxt);
-      card.append(actions);
-      gridView.appendChild(card);
-    });
-  }
-
-  /* ========= Gesamtrendering ========= */
-  function render() {
-    const total = filtered.length;
-    countDesk.textContent = `${total} Vokabel${total!==1?"n":""} gefunden`;
-    renderPagination();
-
-    if (mode === "list") {
-      listView.classList.remove("hidden");
-      gridView.classList.add("hidden");
-      renderTable();
-    } else {
-      gridView.classList.remove("hidden");
-      listView.classList.add("hidden");
-      renderGrid();
-    }
-  }
-
-  /* ========= Umschalter Liste/Kachel ========= */
-  modeSwitch.querySelectorAll(".seg").forEach(seg=>{
-    seg.addEventListener("click",()=>{
-      modeSwitch.querySelectorAll(".seg").forEach(s=>s.classList.remove("active"));
-      seg.classList.add("active");
-      mode = seg.dataset.mode;
-      render();
-    });
-  });
-
-  /* ========= Mobile FABs ========= */
-  fabBack.addEventListener("click",()=>history.back());
-  fabAdjust.addEventListener("click",()=>{
-    anpassen = !anpassen;
-    fabAdjust.textContent = anpassen ? "Fertig" : "Anpassen";
-    document.body.classList.toggle("anpassen--on",anpassen);
-    render();
-  });
-  fabSync.addEventListener("click",()=>alert("Sync-Funktion folgt"));
-
-  /* ========= Initialisieren ========= */
-  loadData();
-  /* ==============================
-     TEIL 4/4 – Modal & Dark Mode
-     ============================== */
-
-  /* ===== Modal ===== */
-  const modal = document.getElementById("modal");
-  const mEn = document.getElementById("mEn");
-  const mDe = document.getElementById("mDe");
-  const mCat = document.getElementById("mCat");
-  const mConfuse = document.getElementById("mConfuse");
-  const mGroup = document.getElementById("mGroup");
-  const mHint = document.getElementById("mHint");
-  const mCancel = document.getElementById("mCancel");
-  const mSave = document.getElementById("mSave");
-  const modalTitle = document.getElementById("modalTitle");
-
+  /* ---------- State ---------- */
+  let list = [];          // gesamte Daten (Array<[en,de,cat,group,hint,date,confuse,id]>)
+  let currentPage = 1;
+  let viewMode = "list";  // 'list' | 'cards'
+  let adjustMode = false; // Auswahlmodus
+  let selected = new Set();
   let editIndex = null;
 
-  /* ===== Modal füllen ===== */
-  function fillModalSelects() {
-    mCat.innerHTML = "";
-    const cats = Array.from(new Set(data.map(v=>v[2]).filter(Boolean))).sort();
-    cats.forEach(c=>{
-      const o = document.createElement("option");
-      o.value = c;
-      o.textContent = c;
+  /* ---------- Utils ---------- */
+  const normalize = v => [
+    v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"",
+    v[5]||new Date().toISOString(),
+    typeof v[6]==="number" ? v[6] : (v[6]===true?1:0),
+    v[7]|| (crypto && crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).slice(2)))
+  ];
+
+  const saveLocal = d => localStorage.setItem("vokabeln", JSON.stringify(d));
+  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
+
+  const isMobile = () => matchMedia("(max-width:900px)").matches;
+
+  function currentFilter(){
+    const cat = filterSelect.value || "Alle";
+    const q = (searchInput.value||"").trim().toLowerCase();
+    return { cat, q };
+  }
+
+  function filtered(){
+    const {cat, q} = currentFilter();
+    return list.filter(v=>{
+      const matchCat = cat==="Alle" || v[2]===cat || (cat==="confuse" && (v[6]==1));
+      const matchQ   = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q) || (v[3]||"").toLowerCase().includes(q) || (v[4]||"").toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+  }
+
+  function paginated(){
+    const data = filtered();
+    const start = (currentPage-1)*PAGE_SIZE;
+    return data.slice(start, start+PAGE_SIZE);
+  }
+
+  function totalPages(){
+    return Math.max(1, Math.ceil(filtered().length / PAGE_SIZE));
+  }
+
+  function setCount(){
+    const n = filtered().length;
+    countBadge.textContent = `📘 ${n} Vokabel${n!==1?"n":""} gefunden`;
+  }
+
+  function updatePagination(){
+    const pages = totalPages();
+    if(currentPage>pages) currentPage=pages;
+    pageInfo.textContent = `Seite ${currentPage} / ${pages}`;
+    pagePrev.disabled = (currentPage<=1);
+    pageNext.disabled = (currentPage>=pages);
+  }
+
+  function setView(mode){
+    viewMode = mode;
+    btnList.classList.toggle("toggle-active", mode==="list");
+    btnCards.classList.toggle("toggle-active", mode==="cards");
+    listView.classList.toggle("hidden", mode!=="list");
+    cardView.classList.toggle("hidden", mode!=="cards");
+    renderAll();
+  }
+
+  function enterAdjust(on){
+    adjustMode = on;
+    selected.clear();
+    // Buttons oben/unten
+    btnDelete.classList.toggle("hidden", !on);
+    btnAdd.classList.toggle("hidden", !on && isMobile()); // am Handy im Adjust über FAB "Neu"
+    // FAB anpassen
+    if(isMobile()){
+      fabbar.style.display = "block";
+      if(on){
+        fabs.innerHTML = `
+          <button class="btn soft" id="fabDone">Fertig</button>
+          <button class="btn warn" id="fabDelete">Löschen</button>
+          <button class="btn primary" id="fabNew">Neue</button>
+        `;
+        $("#fabDone").onclick = ()=> enterAdjust(false);
+        $("#fabDelete").onclick = handleDelete;
+        $("#fabNew").onclick = ()=> openEdit(null);
+      }else{
+        fabs.innerHTML = `
+          <button class="btn soft" id="fabBack">Zurück</button>
+          <button class="btn primary" id="fabAdjust">Anpassen</button>
+          <button class="btn soft" id="fabSync">Sync</button>
+        `;
+        $("#fabBack").onclick = ()=> location.href="index.html";
+        $("#fabAdjust").onclick = ()=> enterAdjust(true);
+        $("#fabSync").onclick = githubSync;
+      }
+    }else{
+      // Desktop: FAB nicht nötig
+      fabbar.style.display = "none";
+    }
+    renderAll();
+  }
+
+  /* ---------- Rendering: LISTE ---------- */
+  function renderTable(){
+    const rows = paginated();
+    const showChecks = adjustMode; // nur im Anpassen-Modus
+    const mob = isMobile();
+
+    tbody.innerHTML = rows.map((v)=>{
+      const [en,de,cat,grp,hint,dt,confuse,id] = v;
+      const idx = list.findIndex(x=>x[7]===id);
+      const sel = selected.has(idx);
+
+      const catDot = `<span class="cat-dot dot-${cat}"></span>`;
+      const catChip = `<span class="cat-badge">${catDot}<span>${CATEGORY_NAMES[cat]||cat}</span></span>`;
+      const confuseMini = (confuse==1)
+        ? `<span class="confuse-flag" title="Verwechslungsgefahr">⚠️</span>`
+        : ``;
+
+      // Mobile: nur 3 Spalten sichtbar (Checkbox/Group/Hint/Action per CSS weg)
+      const rowCls = (adjustMode ? "row-selectable " : "") + (sel ? "row-selected":"");
+
+      return `
+      <tr class="${rowCls}" data-idx="${idx}">
+        <td class="col-check" style="${showChecks? "":"display:none"}">
+          <input type="checkbox" ${sel?"checked":""} />
+        </td>
+        <td class="cell-english"><a href="#" data-open="${idx}">${en}</a></td>
+        <td>${de} ${confuseMini}</td>
+        <td class="col-cat">${catChip}</td>
+        <td class="col-group">${grp||"–"}</td>
+        <td class="col-hint">${hint||"–"}</td>
+        <td class="col-action">
+          <button class="btn small soft" data-edit="${idx}">Bearbeiten</button>
+        </td>
+      </tr>`;
+    }).join("");
+
+    // Row interactions
+    $$("#tbody tr").forEach(tr=>{
+      const idx = +tr.dataset.idx;
+      // Zeilen-Tap selektiert NUR im Anpassen-Modus
+      tr.onclick = (e)=>{
+        const tag = e.target?.tagName?.toLowerCase();
+        const isLink = e.target?.hasAttribute?.("data-open");
+        const isEdit = e.target?.hasAttribute?.("data-edit");
+        // Edit/Link behandelt separat
+        if(isEdit){ openEdit(+e.target.getAttribute("data-edit")); e.stopPropagation(); return; }
+        if(isLink){
+          if(adjustMode){ toggleSel(idx, tr); }
+          else{ openEdit(idx); }
+          e.preventDefault(); return;
+        }
+        if(adjustMode){ toggleSel(idx, tr); }
+      };
+      // Checkbox klick
+      const cb = tr.querySelector('input[type="checkbox"]');
+      if(cb){
+        cb.onclick = (e)=>{ toggleSel(idx, tr, e.target.checked); e.stopPropagation(); };
+      }
+      // Bearbeiten
+      const editBtn = tr.querySelector('button[data-edit]');
+      if(editBtn){ editBtn.onclick = (e)=>{ e.stopPropagation(); openEdit(+editBtn.dataset.edit);} }
+      // Link (Englisch)
+      const link = tr.querySelector('a[data-open]');
+      if(link){ link.onclick = (e)=>{ e.preventDefault(); (adjustMode? toggleSel(idx,tr) : openEdit(idx)); }; }
+    });
+  }
+
+  function toggleSel(idx, tr, forced){
+    if(!adjustMode) return;
+    if(typeof forced==="boolean"){
+      if(forced) selected.add(idx); else selected.delete(idx);
+    }else{
+      if(selected.has(idx)) selected.delete(idx); else selected.add(idx);
+    }
+    tr.classList.toggle("row-selected", selected.has(idx));
+  }
+
+  /* ---------- Rendering: KACHELN ---------- */
+  function renderCards(){
+    const items = paginated();
+    cardView.innerHTML = items.map(v=>{
+      const [en,de,cat,grp,hint,dt,confuse,id] = v;
+      const idx = list.findIndex(x=>x[7]===id);
+      const chip = `
+        <span class="cat-badge">
+          <span class="cat-dot dot-${cat}"></span>
+          <span>${CATEGORY_NAMES[cat]||cat}</span>
+        </span>`;
+      const confuseMini = (confuse==1) ? `<span class="confuse-flag">⚠️</span>` : ``;
+
+      return `<div class="card" data-idx="${idx}">
+        <div class="card-main">
+          <div class="card-title">${en}</div>
+          <div class="card-sub">${de}</div>
+          <div class="card-meta">
+            ${chip}
+            ${confuseMini}
+            ${grp? `<span class="badge">Gruppe: ${grp}</span>`:""}
+            ${hint? `<span class="badge">Hinweis: ${hint}</span>`:""}
+          </div>
+        </div>
+        <div>
+          <button class="btn small soft" data-edit="${idx}">Bearbeiten</button>
+        </div>
+      </div>`;
+    }).join("");
+
+    $$("#cardView .card").forEach(card=>{
+      const idx = +card.dataset.idx;
+      const editBtn = card.querySelector('button[data-edit]');
+      editBtn.onclick = (e)=>{ e.stopPropagation(); openEdit(idx); };
+      // Im Anpassungsmodus: Card tippen -> select
+      if(adjustMode){
+        card.classList.add("row-selectable");
+        card.onclick = ()=> {
+          if(selected.has(idx)) selected.delete(idx); else selected.add(idx);
+          card.classList.toggle("row-selected", selected.has(idx));
+        };
+      }else{
+        card.classList.remove("row-selectable");
+        card.onclick = ()=> openEdit(idx);
+      }
+    });
+  }
+
+  function renderAll(){
+    setCount();
+    updatePagination();
+    if(viewMode==="list") renderTable();
+    else renderCards();
+    // Checkbox-Spalte nur im Anpassen-Modus sichtbar (Desktop), mobil steuert CSS zusätzlich
+    $$(".col-check").forEach(th=> {
+      if(th.tagName==="TH"){
+        th.style.display = adjustMode? "table-cell":"none";
+      }
+    });
+  }
+
+  /* ---------- Modal ---------- */
+  function openEdit(i){
+    editIndex = i;
+    if(i==null){
+      modalTitle.textContent = "Neue Vokabel";
+      mEn.value = ""; mDe.value = ""; mGroup.value = ""; mHint.value="";
+      mCat.value = Object.keys(CATEGORY_NAMES)[0];
+      mConfuse.checked = false;
+      mDate.value = new Date().toISOString().slice(0,10);
+    }else{
+      modalTitle.textContent = "Vokabel bearbeiten";
+      const [en,de,cat,grp,hint,dt,conf,id] = list[i];
+      mEn.value=en; mDe.value=de; mGroup.value=grp||""; mHint.value=hint||"";
+      mCat.value=cat; mConfuse.checked = (conf==1);
+      mDate.value = new Date(dt).toISOString().slice(0,10);
+    }
+    modal.style.display="flex";
+  }
+  function closeModal(){ modal.style.display="none"; }
+  mCancel.onclick = closeModal;
+  modal.addEventListener("click", e=>{ if(e.target===modal) closeModal(); });
+
+  mSave.onclick = ()=>{
+    const en = mEn.value.trim(), de=mDe.value.trim();
+    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
+    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim(), confuse=mConfuse.checked?1:0;
+
+    if(editIndex==null){
+      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse, crypto.randomUUID()]);
+    }else{
+      const old = list[editIndex];
+      list[editIndex] = [en,de,cat,grp,hint, old[5], confuse, old[7]];
+    }
+    saveLocal(list);
+    closeModal();
+    renderAll();
+  };
+
+  /* ---------- Filter/Select aufbauen ---------- */
+  function fillCategorySelects(){
+    // Top Select (Filter)
+    filterSelect.innerHTML = `<option value="Alle">Alle (bunt gemischt)</option>`;
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k; o.textContent=CATEGORY_NAMES[k];
+      o.style.background = "var(--card)";
+      filterSelect.appendChild(o);
+    });
+    const o=document.createElement("option");
+    o.value="confuse"; o.textContent="⚠️ Verwechslungsgefahr";
+    filterSelect.appendChild(o);
+
+    // Modal Kategorie
+    mCat.innerHTML = ``;
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k; o.textContent=CATEGORY_NAMES[k];
       mCat.appendChild(o);
     });
   }
 
-  function openModal(v, idx) {
-    editIndex = idx;
-    fillModalSelects();
-    modalTitle.textContent = "Vokabel bearbeiten";
-    [mEn.value, mDe.value, mCat.value, mGroup.value, mHint.value] = [v[0],v[1],v[2]||"",v[3]||"",v[4]||""];
-    mConfuse.checked = !!v[6];
-    modal.style.display = "block";
+  /* ---------- Actions ---------- */
+  btnReset.onclick = ()=>{
+    filterSelect.value="Alle";
+    searchInput.value="";
+    currentPage=1;
+    renderAll();
+  };
+  filterSelect.onchange = ()=>{ currentPage=1; renderAll(); };
+  searchInput.oninput = ()=>{ currentPage=1; renderAll(); };
+
+  btnAdd.onclick = ()=> openEdit(null);
+
+  function handleDelete(){
+    if(!selected.size){ alert("Keine Auswahl."); return; }
+    if(!confirm(`${selected.size} Vokabel(n) löschen?`)) return;
+    const keep = [];
+    list.forEach((v,idx)=>{ if(!selected.has(idx)) keep.push(v); });
+    list = keep;
+    selected.clear();
+    saveLocal(list);
+    renderAll();
+  }
+  btnDelete.onclick = handleDelete;
+
+  pagePrev.onclick = ()=>{ if(currentPage>1){ currentPage--; renderAll(); } };
+  pageNext.onclick = ()=>{ if(currentPage<totalPages()){ currentPage++; renderAll(); } };
+
+  btnList.onclick  = ()=> setView("list");
+  btnCards.onclick = ()=> setView("cards");
+
+  // Dark Mode Toggle (mit Fade – CSS transition)
+  btnTheme.onclick = ()=>{
+    document.documentElement.classList.toggle("force-dark");
+    document.body.classList.toggle("dark");
+    // Speichern
+    const dark = document.body.classList.contains("dark");
+    localStorage.setItem("vok_view_dark", dark ? "1":"0");
+    btnTheme.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode";
+  };
+
+  // FAB Defaults
+  fabBack.onclick   = ()=> location.href="index.html";
+  fabAdjust.onclick = ()=> enterAdjust(true);
+  fabSync.onclick   = githubSync;
+
+  // Klick außerhalb Anpassen: keine Auswahl möglich (JS-seitig schon berücksichtigt)
+
+  // Sync (Dummy – wie gehabt)
+  async function githubSync(){
+    alert("Sync: Bitte GitHub-Token Workflow wie gehabt nutzen (UI unverändert).");
   }
 
-  addDesk.addEventListener("click", ()=>{
-    editIndex = null;
-    fillModalSelects();
-    modalTitle.textContent = "Neue Vokabel";
-    mEn.value = "";
-    mDe.value = "";
-    mCat.value = "";
-    mGroup.value = "";
-    mHint.value = "";
-    mConfuse.checked = false;
-    modal.style.display = "block";
-  });
-
-  mCancel.addEventListener("click", ()=> modal.style.display="none");
-
-  /* ===== Speichern ===== */
-  mSave.addEventListener("click", ()=>{
-    const newItem = [
-      mEn.value.trim(),
-      mDe.value.trim(),
-      mCat.value,
-      mGroup.value,
-      mHint.value,
-      "",           // reserviert (z.B. timestamp)
-      mConfuse.checked
-    ];
-    if(!newItem[0] || !newItem[1]){
-      alert("Bitte Englisch und Deutsch ausfüllen!");
-      return;
-    }
-
-    if (editIndex != null && filtered[editIndex]) {
-      // Bearbeiten
-      const original = filtered[editIndex];
-      const indexInData = data.indexOf(original);
-      if (indexInData > -1) data[indexInData] = newItem;
-    } else {
-      // Neu hinzufügen
-      data.push(newItem);
-    }
-
-    saveLocal();
-    modal.style.display="none";
-    applyFilter();
-  });
-
-  /* ===== Löschen ===== */
-  delDesk.addEventListener("click", ()=>{
-    const checked = Array.from(tblBody.querySelectorAll("input[type=checkbox]:checked"));
-    if(!checked.length){alert("Keine Vokabeln markiert.");return;}
-    if(!confirm(`${checked.length} Vokabel(n) wirklich löschen?`)) return;
-    const names = checked.map(cb=>{
-      const en = cb.closest("tr").querySelector(".col-en").textContent.trim();
-      return en;
-    });
-    data = data.filter(v=>!names.includes(v[0]));
-    saveLocal();
-    applyFilter();
-  });
-
-  /* ===== Speicherung in localStorage ===== */
-  function saveLocal(){
-    localStorage.setItem("vokabelnData", JSON.stringify(data));
-  }
-  function loadLocal(){
-    const d = localStorage.getItem("vokabelnData");
-    if(d){
-      try{ data = JSON.parse(d); }
-      catch(e){ console.warn("LocalStorage konnte nicht gelesen werden"); }
+  /* ---------- Daten laden ---------- */
+  async function loadData(){
+    // 1) Versuche Online
+    try{
+      const r = await fetch(RAW_URL, {cache:"no-store"});
+      if(!r.ok) throw new Error("fetch failed");
+      const j = await r.json();
+      list = j.map(normalize);
+      saveLocal(list);
+    }catch(e){
+      // 2) Offline: lokal
+      list = loadLocal();
     }
   }
 
-  /* ===== Dark Mode ===== */
-  const darkToggle = document.getElementById("darkModeToggle");
-  function setDarkMode(active){
-    document.body.classList.toggle("dark", active);
-    localStorage.setItem("darkMode", active ? "1":"0");
-    darkToggle.textContent = active ? "☀️ Light Mode" : "🌙 Dark Mode";
+  /* ---------- Init ---------- */
+  async function init(){
+    fillCategorySelects();
+    await loadData();
+    setView("list"); // default
+    // Dark aus Storage
+    const dark = localStorage.getItem("vok_view_dark")==="1";
+    document.body.classList.toggle("dark", dark);
+    btnTheme.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode";
+
+    // Mobile-Footer sichtbar (nur mobile)
+    if(isMobile()){ fabbar.style.display = "block"; }
+
+    renderAll();
   }
-  darkToggle.addEventListener("click", ()=>{
-    const newMode = !document.body.classList.contains("dark");
-    setDarkMode(newMode);
-  });
 
-  /* ===== Initial Load ===== */
-  loadLocal();
-  if(localStorage.getItem("darkMode")==="1") setDarkMode(true);
-
-});
+  init();
+})();
 </script>
 </body>
 </html>
-
-
