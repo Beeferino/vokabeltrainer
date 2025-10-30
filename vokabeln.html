@@ -9,16 +9,15 @@
 
 <style>
 /* =========================================================
-   VOKABELN – LAYOUT & THEME (Light/Dark mit sanftem Fade)
+   VOKABELN – LAYOUT & THEME (verbessert, responsive)
    ========================================================= */
-:root{
+:root {
   --bg: #f4f7ff;
   --card: #ffffff;
   --ink: #0f172a;
   --muted: #6b7280;
   --border: #dbe3ff;
   --shade: 0 10px 28px rgba(15, 23, 42, .08);
-
   --blue: #2563eb;
   --blue-2: #1d4ed8;
   --green: #16a34a;
@@ -36,858 +35,720 @@
   --cat-Orange: #E67E22;
   --cat-Dunkelgruen: #117A65;
 
-  --text-on-bright: #000;
-  --text-on-dark: #fff;
-
   --fade-ms: 280ms;
 }
-@media (prefers-color-scheme: dark) {
-  :root{
-    --bg: #0f172a;
-    --card: #111827;
-    --ink: #e5e7eb;
-    --muted: #9aa4b2;
-    --border: #233144;
-    --shade: 0 10px 30px rgba(0, 0, 0, .35);
-    --chip-bg:#172036;
-    --chip-ink:#93c5fd;
-  }
+
+/* ==================== Dark Mode verbessert ==================== */
+body.dark {
+  --bg: #0d1424;
+  --card: #111827;
+  --ink: #f3f4f6;
+  --muted: #9aa4b2;
+  --border: #1e293b;
+  --shade: 0 10px 30px rgba(0, 0, 0, .45);
+  --chip-bg: #1e293b;
+  --chip-ink: #dbeafe;
+  background: radial-gradient(1200px 600px at 50% -100px, #0f172a 0%, #0a1120 60%), var(--bg);
+  color: var(--ink);
 }
-*{box-sizing:border-box}
-html, body{
-  margin:0;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol", sans-serif;
-  color:var(--ink);
-  background: radial-gradient(1200px 600px at 50% -100px, #dbeafe 0%, transparent 60%) , var(--bg);
-  transition: background-color var(--fade-ms) ease, color var(--fade-ms) ease, background var(--fade-ms) ease;
+
+* {
+  box-sizing: border-box;
 }
-.app{
+html, body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  transition: background-color var(--fade-ms) ease, color var(--fade-ms) ease;
+  background: radial-gradient(1200px 600px at 50% -100px, #dbeafe 0%, transparent 60%), var(--bg);
+}
+
+/* =========================================================
+   Hauptcontainer
+   ========================================================= */
+.app {
   max-width: 1200px;
   margin: 22px auto 40px;
   padding: 10px 16px 40px;
 }
 
-/* ---------------------------------------------------------
+/* =========================================================
    Header
-   --------------------------------------------------------- */
-.h1{
-  display:flex; align-items:center; gap:14px; justify-content:center;
-  font-weight:800; font-size: clamp(1.6rem, 2.3vw, 2.4rem);
-  letter-spacing:.2px;
+   ========================================================= */
+.h1 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  justify-content: center;
+  font-weight: 800;
+  font-size: clamp(1.6rem, 2.3vw, 2.4rem);
+  letter-spacing: .2px;
 }
-.h1 .icon{font-size:1.8em}
-.subbar{
-  width: 220px; height: 6px; border-radius:999px; margin: 8px auto 12px;
+.h1 .icon {
+  font-size: 1.8em;
+}
+.subbar {
+  width: 220px;
+  height: 6px;
+  border-radius: 999px;
+  margin: 8px auto 12px;
   background: linear-gradient(90deg, #60a5fa, #2563eb, #60a5fa);
-  opacity:.9;
+  opacity: .9;
 }
 
-/* ---------------------------------------------------------
-   Toolbar
-   --------------------------------------------------------- */
-.toolbar{
-  display:grid;
+/* =========================================================
+   Toolbar (inkl. schmalerer Sync-Button)
+   ========================================================= */
+.toolbar {
+  display: grid;
   grid-template-columns: 1fr auto auto auto auto;
-  gap:10px;
-  align-items:center;
+  gap: 10px;
+  align-items: center;
   margin: 8px 0 14px;
 }
-@media (max-width: 900px){
-  .toolbar{
+@media (max-width: 900px) {
+  .toolbar {
     grid-template-columns: 1fr 1fr;
   }
 }
 
-select, input[type="text"]{
-  width:100%;
-  padding:10px 12px;
-  border:1px solid var(--border);
-  border-radius:12px;
+select, input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   background: var(--card);
   color: var(--ink);
   transition: border-color .2s ease, background-color var(--fade-ms) ease, color var(--fade-ms) ease;
 }
-input[type="text"]::placeholder{ color:var(--muted); }
+input[type="text"]::placeholder { color: var(--muted); }
 
-.btn{
-  display:inline-flex; align-items:center; gap:8px;
-  border:1px solid var(--border); background: var(--card);
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
   color: var(--ink);
-  padding:10px 14px; border-radius:12px; font-weight:800; cursor:pointer;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  cursor: pointer;
   box-shadow: var(--shade);
   transition: transform .08s ease, background-color var(--fade-ms), color var(--fade-ms), border-color var(--fade-ms);
-  user-select:none;
+  user-select: none;
 }
-.btn:active{ transform: translateY(1px); }
-.btn.primary{ background: linear-gradient(135deg, #3b82f6, #2563eb); color:#fff; border-color:transparent; }
-.btn.warn{ background: linear-gradient(135deg, #f87171, #ef4444); color:#fff; border-color:transparent; }
-.btn.soft{ background: linear-gradient(135deg, #eef2ff, #f8faff); }
-.btn.toggle-active{ outline: 2px solid #60a5fa; }
-.btn.small{ padding:8px 12px; border-radius:10px; font-weight:700; }
-.btn.block{ width:100%; justify-content:center; }
+.btn:active { transform: translateY(1px); }
+.btn.primary {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  border-color: transparent;
+}
+.btn.warn {
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  color: #fff;
+  border-color: transparent;
+}
+.btn.soft {
+  background: linear-gradient(135deg, #eef2ff, #f8faff);
+}
+body.dark .btn.soft {
+  background: #1e293b;
+  color: #f3f4f6;
+  border-color: #334155;
+}
+.btn.toggle-active { outline: 2px solid #60a5fa; }
+.btn.small { padding: 8px 12px; border-radius: 10px; font-weight: 700; }
+.btn.block { width: 100%; justify-content: center; }
 
-/* ---------------------------------------------------------
-   Count + view toggle row
-   --------------------------------------------------------- */
-.count-row{
-  display:flex; align-items:center; justify-content:space-between;
-  flex-wrap:wrap; gap:10px; margin: 8px 0 12px;
+/* --- kleinerer Sync-Button --- */
+#btnSync {
+  max-width: 220px;
+  justify-self: end;
 }
-.badge{
-  display:inline-flex; align-items:center; gap:8px;
-  background: var(--chip-bg); color: var(--chip-ink);
-  padding:8px 12px; border-radius:12px; font-weight:800;
+body.dark #btnSync {
+  background: #1e293b;
+  color: #e5e7eb;
+  border-color: #334155;
 }
 
-/* ---------------------------------------------------------
-   Table (Desktop) – mobile Anpassungen folgen weiter unten
-   --------------------------------------------------------- */
-.table-wrap{
+/* =========================================================
+   Zähler (zentriert)
+   ========================================================= */
+.count-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 8px 0 12px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--chip-bg);
+  color: var(--chip-ink);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   Tabellen-Layout
+   ========================================================= */
+.table-wrap {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: var(--shade);
   overflow: hidden;
 }
-table{ width:100%; border-collapse: collapse; }
-thead th{
-  text-align:left; font-weight:800; padding:14px 14px; background: linear-gradient(180deg, rgba(99,102,241,.06), transparent 60%);
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  text-align: left;
+  font-weight: 800;
+  padding: 14px 14px;
+  background: linear-gradient(180deg, rgba(99,102,241,.06), transparent 60%);
   border-bottom: 1px solid var(--border);
 }
-tbody td{
-  padding:16px 14px; border-bottom: 1px solid var(--border);
+tbody td {
+  padding: 16px 14px;
+  border-bottom: 1px solid var(--border);
 }
-tbody tr:hover{ background: rgba(99,102,241,.05); }
+tbody tr:hover { background: rgba(99,102,241,.05); }
 
-.cell-english a{ font-weight:800; color:#2563eb; text-decoration:none; }
-.cell-english a:hover{ text-decoration:underline; }
+.cell-english a {
+  font-weight: 800;
+  color: #2563eb;
+  text-decoration: none;
+}
+.cell-english a:hover { text-decoration: underline; }
 
-.cat-badge{
-  display:inline-flex; align-items:center; gap:6px;
-  padding:6px 10px; border-radius:999px; font-weight:800; font-size:.9rem;
-  background: var(--chip-bg); color: var(--chip-ink);
+.cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .9rem;
+  background: var(--chip-bg);
+  color: var(--chip-ink);
   border: 1px solid var(--border);
 }
-.cat-dot{
-  width:10px; height:10px; border-radius:50%;
-  background:#94a3b8;
+body.dark .cat-badge {
+  background: #1e293b;
+  color: #dbeafe;
+  border-color: #334155;
 }
+.cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+.dot-Gelb { background: var(--cat-Gelb) }
+.dot-Pink { background: var(--cat-Pink) }
+.dot-Blau { background: var(--cat-Blau) }
+.dot-Gruen { background: var(--cat-Gruen) }
+.dot-HellesPink { background: var(--cat-HellesPink) }
+.dot-Orange { background: var(--cat-Orange) }
+.dot-Dunkelgruen { background: var(--cat-Dunkelgruen) }
 
-/* kompakte Punkt-Farbe für Kategorien */
-.dot-Gelb{background:var(--cat-Gelb)}
-.dot-Pink{background:var(--cat-Pink)}
-.dot-Blau{background:var(--cat-Blau)}
-.dot-Gruen{background:var(--cat-Gruen)}
-.dot-HellesPink{background:var(--cat-HellesPink)}
-.dot-Orange{background:var(--cat-Orange)}
-.dot-Dunkelgruen{background:var(--cat-Dunkelgruen)}
-
-/* Verwechslungsgefahr mini-indikator */
-.confuse-flag{
-  display:inline-flex; align-items:center; gap:6px; margin-left:10px;
-  padding:2px 8px; border-radius:999px; font-weight:800; font-size:.78rem;
-  background: rgba(239,68,68,.10); color:#ef4444; border:1px solid rgba(239,68,68,.25);
+.confuse-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: .78rem;
+  background: rgba(239,68,68,.10);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,.25);
 }
-
-/* ---------------------------------------------------------
-   Pagination
-   --------------------------------------------------------- */
-.pagination{
-  display:flex; align-items:center; justify-content:center; gap:10px; margin: 14px 0 0;
+body.dark .confuse-flag {
+  background: rgba(239,68,68,.2);
+  border-color: rgba(239,68,68,.3);
+  color: #fca5a5;
 }
-.pagination .btn[disabled]{ opacity:.55; pointer-events:none; }
-
-/* ---------------------------------------------------------
-   Kachelansicht
-   --------------------------------------------------------- */
-.grid{
-  display:grid; gap:12px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+/* =========================================================
+   Karten-Grid (Desktop-Kachelansicht)
+   ========================================================= */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 Spalten Desktop */
+  gap: 14px;
 }
-@media (max-width: 900px){
-  .grid{ grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: 1fr; }          /* 1 Spalte bei kleiner Breite */
 }
-.card{
-  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   box-shadow: var(--shade);
-  padding: 14px 14px 12px;
-  display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+  padding: 16px;
+  position: relative;
 }
-.card-main{ min-width:0; }
-.card-title{ font-weight:800; font-size:1.05rem; margin:0 0 4px; }
-.card-sub{ color:var(--muted); margin-bottom:8px; }
-.card-meta{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-.card .confuse-flag{ margin-left:0; padding:2px 6px; }
+.card h3 {
+  margin: 0 0 6px;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+.card .sub {
+  margin: 0 0 10px;
+  color: var(--muted);
+}
+.card .row {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.card .chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 999px;
+  background: var(--chip-bg); color: var(--chip-ink);
+  border: 1px solid var(--border); font-weight: 800;
+}
+.card .hint { color: var(--muted); }
 
-/* klickbare Zeilen im Anpassungsmodus */
-.row-selectable{ cursor: pointer; }
-.row-selected{ background: rgba(37,99,235,.09); outline: 3px solid rgba(37,99,235,.25); }
-
-/* ---------------------------------------------------------
-   Mobile Table – nur 3 Spalten sichtbar
-   --------------------------------------------------------- */
-@media (max-width: 900px){
-  /* Checkbox-Spalte grundsätzlich verstecken (außer im Anpassen-Modus via JS) */
-  td.col-check, th.col-check{ display:none; }
-  /* Gruppe/Hinweis/Aktion ausblenden */
-  td.col-group, th.col-group,
-  td.col-hint, th.col-hint,
-  td.col-action, th.col-action{ display:none; }
-  /* kompaktere Zellen */
-  tbody td{ padding:14px 12px; }
+/* „Bearbeiten“-Button rechts oben in der Karte */
+.card .edit {
+  position: absolute; top: 10px; right: 10px;
+  opacity: .9;
 }
 
-/* ---------------------------------------------------------
-   FAB Fußleiste (nur mobile sichtbar)
-   --------------------------------------------------------- */
-.fabbar{
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
-  display:none;
-  padding:10px; background: color-mix(in oklab, var(--card) 88%, transparent);
-  border-top: 1px solid var(--border);
-  backdrop-filter: blur(6px);
+/* =========================================================
+   Pagination (zentriert, 15/Seite)
+   ========================================================= */
+.pagination {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin: 14px 0 6px;
 }
-.fabs{
-  display:flex; gap:8px;
-}
-.fabs .btn{ flex:1 1 0; }
+.pagination .btn { min-width: 100px; }
+.page-info { font-weight: 800; color: var(--muted); }
 
-/* ---------------------------------------------------------
-   Modal (Bearbeiten / Vokabel View)
-   --------------------------------------------------------- */
-.modal{
-  position: fixed; inset:0; display:none; align-items:center; justify-content:center; z-index: 60;
-  background: rgba(15,23,42,.55);
+/* =========================================================
+   Bottom Action Bar (Mobil)
+   ========================================================= */
+.fab-row {
+  display: none; /* mobil-only; Desktop keine FAB-Leiste */
 }
-.panel{
-  width:min(560px, 96vw); background: var(--card); color: var(--ink);
-  border:1px solid var(--border); border-radius: 16px; box-shadow: var(--shade);
-  padding: 16px 16px 14px;
+@media (max-width: 900px) {
+  .fab-row {
+    display: block;
+    position: sticky; bottom: 0; z-index: 5;
+    background: color-mix(in oklab, var(--card) 92%, transparent);
+    border-top: 1px solid var(--border);
+    padding: 10px;
+    backdrop-filter: blur(6px);
+  }
+  .fabs { display: flex; gap: 8px; }
+  .fab { flex: 1; }
 }
-.panel h3{ margin: 0 0 10px; font-size:1.25rem; font-weight:800; }
-.form-grid{ display:grid; gap:10px; }
-.form-grid input, .form-grid select, .form-grid textarea{
-  width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:12px;
+
+/* =========================================================
+   Modal (Bearbeiten)
+   ========================================================= */
+.modal {
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(2,6,23,.45);
+  z-index: 50;
+}
+.panel {
+  width: min(560px, 94vw);
   background: var(--card); color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shade);
+  padding: 16px;
 }
-.modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top: 12px; }
+.panel h3 { margin: 0 0 10px; }
+.form-grid { display: grid; gap: 10px; }
+.form-grid input, .form-grid select, .form-grid textarea {
+  width: 100%; padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px; background: var(--card); color: var(--ink);
+}
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
 
-/* Confuse SWITCH (optisch) */
-.switch{
-  position:relative; display:inline-block; width: 52px; height: 28px;
-  vertical-align:middle;
-}
-.switch input{ opacity:0; width:0; height:0; }
-.slider{
-  position:absolute; inset:0; border-radius:999px; background:#cbd5e1; transition: all .2s ease;
-}
-.slider:before{
-  content:""; position:absolute; height:20px; width:20px; left:4px; top:4px; border-radius:50%; background:#fff; transition: transform .2s ease;
-  box-shadow:0 1px 2px rgba(0,0,0,.2);
-}
-.switch input:checked + .slider{ background:#ef4444; }
-.switch input:checked + .slider:before{ transform: translateX(24px); }
+/* =========================================================
+   Kleinkram
+   ========================================================= */
+a { color: #2563eb; }
+a:hover { text-decoration: underline; }
 
-/* ---------------------------------------------------------
-   Dark toggle indicator
-   --------------------------------------------------------- */
-.theme-indicator{ opacity:.85 }
-
-/* ---------------------------------------------------------
-   Helpers
-   --------------------------------------------------------- */
-.hidden{ display:none !important; }
-.sep{ height:1px; background:var(--border); margin:8px 0; }
-.center{ text-align:center; }
-.nowrap{ white-space:nowrap; }
+/* Fader für Dark/Light Umschalter */
+.fade-x {
+  transition: background-color var(--fade-ms) ease, color var(--fade-ms) ease, border-color var(--fade-ms) ease;
+}
 </style>
 </head>
 <body>
-<div class="app" id="app">
-  <!-- ====================== Header ====================== -->
+<div class="app fade-x">
+
+  <!-- ===========================
+       HEADER
+       =========================== -->
   <div class="h1">
     <span class="icon">📘</span>
-    <div>Vokabelübersicht</div>
+    <span>Vokabelübersicht</span>
   </div>
   <div class="subbar"></div>
 
-  <!-- ====================== Toolbar ====================== -->
-  <div class="toolbar" id="toolbar">
-    <select id="filterSelect" aria-label="Kategorie filtern">
-      <!-- dynamisch befüllt; enthält auch 'Alle' & 'Verwechslungsgefahr' -->
+  <!-- ===========================
+       ZÄHLER (zentriert)
+       =========================== -->
+  <div class="count-row">
+    <span class="badge" id="countBadge">📘 0 Vokabeln gefunden</span>
+  </div>
+
+  <!-- ===========================
+       TOOLBAR (Desktop)
+       =========================== -->
+  <div class="toolbar">
+    <select id="filterCatDesk" class="fade-x">
+      <option value="Alle">Alle (bunt gemischt)</option>
+      <!-- Kategorien werden per JS ergänzt -->
     </select>
 
-    <input id="searchInput" type="text" placeholder="Suchen…" aria-label="Suche">
+    <input id="searchDesk" type="text" placeholder="Suchen…" class="fade-x">
 
-    <button class="btn soft" id="btnReset">Reset</button>
+    <button id="resetDesk" class="btn soft">Reset</button>
 
-    <button class="btn primary" id="btnAdd">
-      <span>➕</span><span>Neue</span>
-    </button>
+    <button id="addDesk" class="btn primary">➕ Neue</button>
 
-    <button class="btn warn hidden" id="btnDelete">
-      <span>🗑️</span><span>Löschen</span>
-    </button>
-
-    <button class="btn soft" id="btnSync" style="grid-column: 1 / -1;">
-      <span>🔁</span><span>Sync</span>
-    </button>
+    <button id="btnSync" class="btn soft small">🧾 Sync</button>
   </div>
 
-  <!-- Count + View toggles -->
-  <div class="count-row">
-    <div class="badge" id="countBadge">📘 0 Vokabeln gefunden</div>
-    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-      <button id="btnList" class="btn soft small toggle-active">📋 Liste</button>
-      <button id="btnCards" class="btn soft small">🧩 Kacheln</button>
-      <button id="btnTheme" class="btn soft small theme-indicator">🌙 Dark Mode</button>
-    </div>
+  <!-- Ansichtsschalter -->
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+    <button id="btnList"   class="btn soft">📋 Liste</button>
+    <button id="btnCards"  class="btn soft toggle-active">🧩 Kacheln</button>
+    <button id="btnDark"   class="btn soft">🌙 Dark Mode</button>
   </div>
 
-  <!-- ====================== LISTENANSICHT ====================== -->
-  <div id="listView" class="table-wrap" role="region" aria-label="Vokabel-Liste">
+  <!-- ===========================
+       LISTEN-ANSICHT (TABLE) – Desktop
+       =========================== -->
+  <div id="listView" class="table-wrap" style="display:none;">
     <table>
       <thead>
         <tr>
-          <th class="col-check">⟲</th>
           <th>Englisch</th>
           <th>Deutsch</th>
-          <th class="col-cat">Kategorie</th>
-          <th class="col-group">Gruppe</th>
-          <th class="col-hint">Hinweis</th>
-          <th class="col-action">Aktion</th>
+          <th>Kategorie</th>
+          <th class="th-group">Gruppe</th>
+          <th class="th-hint">Hinweis</th>
+          <th>Aktion</th>
         </tr>
       </thead>
-      <tbody id="tbody">
-        <!-- Rows dynamically -->
+      <tbody id="tblBody">
+        <!-- Zeilen via JS -->
       </tbody>
     </table>
   </div>
 
-  <!-- ====================== KACHELANSICHT ====================== -->
-  <div id="cardView" class="grid hidden" aria-live="polite" aria-label="Vokabel-Kacheln">
-    <!-- Cards dynamically -->
+  <!-- Pagination (List) -->
+  <div id="pagination" class="pagination" style="display:none;">
+    <button id="pgPrev" class="btn soft small">⬅️ Zurück</button>
+    <span class="page-info" id="pgInfo">Seite 1 / 1</span>
+    <button id="pgNext" class="btn soft small">Weiter ➡️</button>
   </div>
 
-  <!-- Pagination (für beide Ansichten, identische Instanz) -->
-  <div class="pagination" id="pagination">
-    <button class="btn small" id="pagePrev">⬅️ Zurück</button>
-    <div id="pageInfo" class="badge">Seite 1 / 1</div>
-    <button class="btn small" id="pageNext">Weiter ➡️</button>
+  <!-- ===========================
+       KACHEL-ANSICHT – Desktop
+       =========================== -->
+  <div id="cardView" class="grid">
+    <!-- Karten via JS -->
   </div>
 
-  <!-- ====================== FAB (nur Mobile sichtbar) ====================== -->
-  <div class="fabbar" id="fabbar">
-    <div class="fabs" id="fabs">
-      <button class="btn soft" id="fabBack">Zurück</button>
-      <button class="btn primary" id="fabAdjust">Anpassen</button>
-      <button class="btn soft" id="fabSync">Sync</button>
+  <!-- ===========================
+       MOBILE-FAB (bleibt wie vorher)
+       =========================== -->
+  <div class="fab-row" id="fabRow">
+    <div class="fabs">
+      <button class="btn soft fab" id="fabBack">Zurück</button>
+      <button class="btn primary fab" id="fabAdjust">Anpassen</button>
+      <button class="btn soft fab" id="fabSync">Sync</button>
     </div>
   </div>
-</div>
 
-<!-- ====================== MODAL: Vokabel bearbeiten ====================== -->
-<div class="modal" id="modal">
-  <div class="panel">
-    <h3 id="modalTitle">Vokabel</h3>
-    <div class="form-grid">
-      <label>Englisch
-        <input id="mEn" type="text">
-      </label>
-      <label>Deutsch
-        <input id="mDe" type="text">
-      </label>
-      <label>Kategorie
-        <select id="mCat"></select>
-      </label>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding: 10px 12px; border:1px solid var(--border); border-radius:12px; background:var(--card);">
-        <span style="font-weight:800;">Verwechslungsgefahr</span>
-        <label class="switch" title="Verwechslungsgefahr">
-          <input type="checkbox" id="mConfuse">
-          <span class="slider"></span>
+  <!-- ===========================
+       MODAL – Bearbeiten
+       =========================== -->
+  <div class="modal" id="modal">
+    <div class="panel fade-x">
+      <h3 id="modalTitle">Vokabel</h3>
+      <div class="form-grid">
+        <label>Englisch
+          <input id="mEn" type="text">
+        </label>
+        <label>Deutsch
+          <input id="mDe" type="text">
+        </label>
+        <label>Kategorie
+          <select id="mCat"></select>
+        </label>
+        <div class="confuse-toggle" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--chip-bg);color:var(--ink)">
+          <span style="font-weight:800;">Verwechslungsgefahr</span>
+          <!-- schöner Toggle -->
+          <label class="switch" style="position:relative;display:inline-block;width:52px;height:28px;">
+            <input type="checkbox" id="mConfuse" style="opacity:0;width:0;height:0;">
+            <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#c7d2fe;border-radius:26px;transition:.25s;"></span>
+            <span class="knob" style="position:absolute;content:'';height:22px;width:22px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.25s;"></span>
+          </label>
+        </div>
+        <label>Gruppe / Variante
+          <input id="mGroup" type="text">
+        </label>
+        <label>Hinweis
+          <textarea id="mHint" rows="2"></textarea>
         </label>
       </div>
-
-      <label>Gruppe / Variante
-        <input id="mGroup" type="text">
-      </label>
-      <label>Hinweis
-        <textarea id="mHint" rows="2"></textarea>
-      </label>
-      <label>Erstellt
-        <input id="mDate" type="date" readonly style="background: #f3f4f6">
-      </label>
-    </div>
-
-    <div class="modal-actions">
-      <button class="btn soft" id="mCancel">Abbrechen</button>
-      <button class="btn primary" id="mSave">Speichern</button>
+      <div class="modal-actions">
+        <button class="btn soft" id="mCancel">Abbrechen</button>
+        <button class="btn primary" id="mSave">Speichern</button>
+      </div>
     </div>
   </div>
-</div>
-
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
 <script>
-/* =========================================================
-   VOKABELN – LOGIK
-   ========================================================= */
 (function(){
-  /* ---------- Konstanten & Maps ---------- */
-  const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  const PAGE_SIZE = 15;
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+  const isMobile = () => matchMedia("(max-width:900px)").matches;
 
+  /* =========================================================
+     VARIABLEN & KONSTANTEN
+     ========================================================= */
   const CATEGORY_NAMES = {
     Gelb:"Grundwerkzeuge Metallverarbeitung",
     Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech- / Kunststoffarbeiten",
-    Gruen:"Drehen / Fräsen",
-    HellesPink:"Hydraulik / Pneumatik",
+    Blau:"Blech-/Kunststoffarbeiten",
+    Gruen:"Drehen/Fräsen",
+    HellesPink:"Hydraulik/Pneumatik",
     Orange:"Elektrotechnik",
     Dunkelgruen:"Fluggerätemechanik allgemein"
   };
-  const CAT_COLOR = {
-    Gelb:"var(--cat-Gelb)",
-    Pink:"var(--cat-Pink)",
-    Blau:"var(--cat-Blau)",
-    Gruen:"var(--cat-Gruen)",
-    HellesPink:"var(--cat-HellesPink)",
-    Orange:"var(--cat-Orange)",
-    Dunkelgruen:"var(--cat-Dunkelgruen)"
+  const COLOR_MAP = {
+    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2",
+    Gruen:"#1E8449", HellesPink:"#F54927",
+    Orange:"#E67E22", Dunkelgruen:"#117A65"
   };
+  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
 
-  /* ---------- DOM ---------- */
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-
-  const filterSelect = $("#filterSelect");
-  const searchInput  = $("#searchInput");
-  const btnReset     = $("#btnReset");
-  const btnAdd       = $("#btnAdd");
-  const btnDelete    = $("#btnDelete");
-  const btnSync      = $("#btnSync");
-
-  const btnList      = $("#btnList");
-  const btnCards     = $("#btnCards");
-  const btnTheme     = $("#btnTheme");
-
-  const countBadge   = $("#countBadge");
-
-  const listView     = $("#listView");
-  const cardView     = $("#cardView");
-  const tbody        = $("#tbody");
-
-  const pagePrev     = $("#pagePrev");
-  const pageNext     = $("#pageNext");
-  const pageInfo     = $("#pageInfo");
-
-  const fabbar       = $("#fabbar");
-  const fabBack      = $("#fabBack");
-  const fabAdjust    = $("#fabAdjust");
-  const fabSync      = $("#fabSync");
-  const fabs         = $("#fabs");
-
-  /* Modal */
-  const modal        = $("#modal");
-  const mEn          = $("#mEn");
-  const mDe          = $("#mDe");
-  const mCat         = $("#mCat");
-  const mConfuse     = $("#mConfuse");
-  const mGroup       = $("#mGroup");
-  const mHint        = $("#mHint");
-  const mDate        = $("#mDate");
-  const mCancel      = $("#mCancel");
-  const mSave        = $("#mSave");
-  const modalTitle   = $("#modalTitle");
-
-  /* ---------- State ---------- */
-  let list = [];          // gesamte Daten (Array<[en,de,cat,group,hint,date,confuse,id]>)
+  let list = [];
   let currentPage = 1;
-  let viewMode = "list";  // 'list' | 'cards'
-  let adjustMode = false; // Auswahlmodus
-  let selected = new Set();
-  let editIndex = null;
+  const PAGE_SIZE = 15;
+  let adjustMode = false;
 
-  /* ---------- Utils ---------- */
-  const normalize = v => [
-    v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"",
-    v[5]||new Date().toISOString(),
-    typeof v[6]==="number" ? v[6] : (v[6]===true?1:0),
-    v[7]|| (crypto && crypto.randomUUID ? crypto.randomUUID() : (Math.random().toString(36).slice(2)))
-  ];
+  /* =========================================================
+     DATENLADEN
+     ========================================================= */
+  async function loadData(){
+    try {
+      const r = await fetch(RAW_URL,{cache:"no-store"});
+      list = await r.json();
+    } catch(e) {
+      console.warn("Laden aus LocalStorage",e);
+      list = JSON.parse(localStorage.getItem("vokabeln")||"[]");
+    }
+    renderAll();
+  }
 
-  const saveLocal = d => localStorage.setItem("vokabeln", JSON.stringify(d));
-  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln")||"[]").map(normalize);
-
-  const isMobile = () => matchMedia("(max-width:900px)").matches;
-
+  /* =========================================================
+     FILTERN & PAGINATION
+     ========================================================= */
   function currentFilter(){
-    const cat = filterSelect.value || "Alle";
-    const q = (searchInput.value||"").trim().toLowerCase();
-    return { cat, q };
+    const cat = $("#filterCatDesk").value;
+    const q = $("#searchDesk").value.toLowerCase();
+    return {cat,q};
   }
 
   function filtered(){
-    const {cat, q} = currentFilter();
+    const {cat,q}=currentFilter();
     return list.filter(v=>{
-      const matchCat = cat==="Alle" || v[2]===cat || (cat==="confuse" && (v[6]==1));
-      const matchQ   = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q) || (v[3]||"").toLowerCase().includes(q) || (v[4]||"").toLowerCase().includes(q);
-      return matchCat && matchQ;
+      const matchCat=cat==="Alle"||v[2]===cat||(cat==="confuse"&&v[6]==1);
+      const matchQ=!q||(v[0]&&v[0].toLowerCase().includes(q))||(v[1]&&v[1].toLowerCase().includes(q));
+      return matchCat&&matchQ;
     });
   }
 
   function paginated(){
-    const data = filtered();
-    const start = (currentPage-1)*PAGE_SIZE;
-    return data.slice(start, start+PAGE_SIZE);
+    const data=filtered();
+    const start=(currentPage-1)*PAGE_SIZE;
+    return data.slice(start,start+PAGE_SIZE);
   }
 
-  function totalPages(){
-    return Math.max(1, Math.ceil(filtered().length / PAGE_SIZE));
-  }
+  function totalPages(){return Math.ceil(filtered().length/PAGE_SIZE)||1;}
 
-  function setCount(){
-    const n = filtered().length;
-    countBadge.textContent = `📘 ${n} Vokabel${n!==1?"n":""} gefunden`;
-  }
-
-  function updatePagination(){
-    const pages = totalPages();
-    if(currentPage>pages) currentPage=pages;
-    pageInfo.textContent = `Seite ${currentPage} / ${pages}`;
-    pagePrev.disabled = (currentPage<=1);
-    pageNext.disabled = (currentPage>=pages);
-  }
-
-  function setView(mode){
-    viewMode = mode;
-    btnList.classList.toggle("toggle-active", mode==="list");
-    btnCards.classList.toggle("toggle-active", mode==="cards");
-    listView.classList.toggle("hidden", mode!=="list");
-    cardView.classList.toggle("hidden", mode!=="cards");
+  function changePage(d){
+    const max=totalPages();
+    currentPage=Math.min(Math.max(currentPage+d,1),max);
     renderAll();
   }
 
-  function enterAdjust(on){
-    adjustMode = on;
-    selected.clear();
-    // Buttons oben/unten
-    btnDelete.classList.toggle("hidden", !on);
-    btnAdd.classList.toggle("hidden", !on && isMobile()); // am Handy im Adjust über FAB "Neu"
-    // FAB anpassen
-    if(isMobile()){
-      fabbar.style.display = "block";
-      if(on){
-        fabs.innerHTML = `
-          <button class="btn soft" id="fabDone">Fertig</button>
-          <button class="btn warn" id="fabDelete">Löschen</button>
-          <button class="btn primary" id="fabNew">Neue</button>
-        `;
-        $("#fabDone").onclick = ()=> enterAdjust(false);
-        $("#fabDelete").onclick = handleDelete;
-        $("#fabNew").onclick = ()=> openEdit(null);
-      }else{
-        fabs.innerHTML = `
-          <button class="btn soft" id="fabBack">Zurück</button>
-          <button class="btn primary" id="fabAdjust">Anpassen</button>
-          <button class="btn soft" id="fabSync">Sync</button>
-        `;
-        $("#fabBack").onclick = ()=> location.href="index.html";
-        $("#fabAdjust").onclick = ()=> enterAdjust(true);
-        $("#fabSync").onclick = githubSync;
-      }
-    }else{
-      // Desktop: FAB nicht nötig
-      fabbar.style.display = "none";
-    }
-    renderAll();
-  }
-
-  /* ---------- Rendering: LISTE ---------- */
-  function renderTable(){
-    const rows = paginated();
-    const showChecks = adjustMode; // nur im Anpassen-Modus
-    const mob = isMobile();
-
-    tbody.innerHTML = rows.map((v)=>{
-      const [en,de,cat,grp,hint,dt,confuse,id] = v;
-      const idx = list.findIndex(x=>x[7]===id);
-      const sel = selected.has(idx);
-
-      const catDot = `<span class="cat-dot dot-${cat}"></span>`;
-      const catChip = `<span class="cat-badge">${catDot}<span>${CATEGORY_NAMES[cat]||cat}</span></span>`;
-      const confuseMini = (confuse==1)
-        ? `<span class="confuse-flag" title="Verwechslungsgefahr">⚠️</span>`
-        : ``;
-
-      // Mobile: nur 3 Spalten sichtbar (Checkbox/Group/Hint/Action per CSS weg)
-      const rowCls = (adjustMode ? "row-selectable " : "") + (sel ? "row-selected":"");
-
-      return `
-      <tr class="${rowCls}" data-idx="${idx}">
-        <td class="col-check" style="${showChecks? "":"display:none"}">
-          <input type="checkbox" ${sel?"checked":""} />
-        </td>
-        <td class="cell-english"><a href="#" data-open="${idx}">${en}</a></td>
-        <td>${de} ${confuseMini}</td>
-        <td class="col-cat">${catChip}</td>
-        <td class="col-group">${grp||"–"}</td>
-        <td class="col-hint">${hint||"–"}</td>
-        <td class="col-action">
-          <button class="btn small soft" data-edit="${idx}">Bearbeiten</button>
-        </td>
+  /* =========================================================
+     RENDERING – LIST
+     ========================================================= */
+  function renderList(){
+    const tbody=$("#tblBody");
+    const data=paginated();
+    tbody.innerHTML=data.map(v=>{
+      const danger=v[6]==1?`<span class="confuse-flag">⚠️</span>`:"";
+      const colorDot=`<span class="cat-badge"><span class="cat-dot dot-${v[2]}"></span>${v[2]}</span>`;
+      return `<tr>
+        <td class="cell-english">${v[0]} ${danger}</td>
+        <td>${v[1]}</td>
+        <td>${colorDot}</td>
+        <td>${v[3]||""}</td>
+        <td>${v[4]||""}</td>
+        <td><button class="btn small soft editRow" data-id="${v[7]}">✏️ Bearbeiten</button></td>
       </tr>`;
     }).join("");
 
-    // Row interactions
-    $$("#tbody tr").forEach(tr=>{
-      const idx = +tr.dataset.idx;
-      // Zeilen-Tap selektiert NUR im Anpassen-Modus
-      tr.onclick = (e)=>{
-        const tag = e.target?.tagName?.toLowerCase();
-        const isLink = e.target?.hasAttribute?.("data-open");
-        const isEdit = e.target?.hasAttribute?.("data-edit");
-        // Edit/Link behandelt separat
-        if(isEdit){ openEdit(+e.target.getAttribute("data-edit")); e.stopPropagation(); return; }
-        if(isLink){
-          if(adjustMode){ toggleSel(idx, tr); }
-          else{ openEdit(idx); }
-          e.preventDefault(); return;
-        }
-        if(adjustMode){ toggleSel(idx, tr); }
-      };
-      // Checkbox klick
-      const cb = tr.querySelector('input[type="checkbox"]');
-      if(cb){
-        cb.onclick = (e)=>{ toggleSel(idx, tr, e.target.checked); e.stopPropagation(); };
-      }
-      // Bearbeiten
-      const editBtn = tr.querySelector('button[data-edit]');
-      if(editBtn){ editBtn.onclick = (e)=>{ e.stopPropagation(); openEdit(+editBtn.dataset.edit);} }
-      // Link (Englisch)
-      const link = tr.querySelector('a[data-open]');
-      if(link){ link.onclick = (e)=>{ e.preventDefault(); (adjustMode? toggleSel(idx,tr) : openEdit(idx)); }; }
-    });
+    $$("#pgPrev").forEach(b=>b.onclick=()=>changePage(-1));
+    $$("#pgNext").forEach(b=>b.onclick=()=>changePage(1));
+    $("#pgInfo").textContent=`Seite ${currentPage} / ${totalPages()}`;
   }
 
-  function toggleSel(idx, tr, forced){
-    if(!adjustMode) return;
-    if(typeof forced==="boolean"){
-      if(forced) selected.add(idx); else selected.delete(idx);
-    }else{
-      if(selected.has(idx)) selected.delete(idx); else selected.add(idx);
-    }
-    tr.classList.toggle("row-selected", selected.has(idx));
-  }
-
-  /* ---------- Rendering: KACHELN ---------- */
+  /* =========================================================
+     RENDERING – KACHELN
+     ========================================================= */
   function renderCards(){
-    const items = paginated();
-    cardView.innerHTML = items.map(v=>{
-      const [en,de,cat,grp,hint,dt,confuse,id] = v;
-      const idx = list.findIndex(x=>x[7]===id);
-      const chip = `
-        <span class="cat-badge">
-          <span class="cat-dot dot-${cat}"></span>
-          <span>${CATEGORY_NAMES[cat]||cat}</span>
-        </span>`;
-      const confuseMini = (confuse==1) ? `<span class="confuse-flag">⚠️</span>` : ``;
-
-      return `<div class="card" data-idx="${idx}">
-        <div class="card-main">
-          <div class="card-title">${en}</div>
-          <div class="card-sub">${de}</div>
-          <div class="card-meta">
-            ${chip}
-            ${confuseMini}
-            ${grp? `<span class="badge">Gruppe: ${grp}</span>`:""}
-            ${hint? `<span class="badge">Hinweis: ${hint}</span>`:""}
-          </div>
+    const grid=$("#cardView");
+    const data=paginated();
+    grid.innerHTML=data.map(v=>{
+      const danger=v[6]==1?`<span class="confuse-flag">⚠️</span>`:"";
+      const group=v[3]?`<div class="chip">Gruppe: ${v[3]}</div>`:"";
+      const hint=v[4]?`<div class="hint">${v[4]}</div>`:"";
+      return `<div class="card">
+        <h3>${v[0]} ${danger}</h3>
+        <div class="sub">${v[1]}</div>
+        <div class="row">
+          <div class="chip"><span class="cat-dot dot-${v[2]}"></span>${CATEGORY_NAMES[v[2]]}</div>
         </div>
-        <div>
-          <button class="btn small soft" data-edit="${idx}">Bearbeiten</button>
-        </div>
+        ${group}
+        ${hint}
+        <button class="btn soft small edit editCard" data-id="${v[7]}">Bearbeiten</button>
       </div>`;
     }).join("");
-
-    $$("#cardView .card").forEach(card=>{
-      const idx = +card.dataset.idx;
-      const editBtn = card.querySelector('button[data-edit]');
-      editBtn.onclick = (e)=>{ e.stopPropagation(); openEdit(idx); };
-      // Im Anpassungsmodus: Card tippen -> select
-      if(adjustMode){
-        card.classList.add("row-selectable");
-        card.onclick = ()=> {
-          if(selected.has(idx)) selected.delete(idx); else selected.add(idx);
-          card.classList.toggle("row-selected", selected.has(idx));
-        };
-      }else{
-        card.classList.remove("row-selectable");
-        card.onclick = ()=> openEdit(idx);
-      }
-    });
   }
 
+  /* =========================================================
+     RENDER ALL
+     ========================================================= */
   function renderAll(){
-    setCount();
-    updatePagination();
-    if(viewMode==="list") renderTable();
-    else renderCards();
-    // Checkbox-Spalte nur im Anpassen-Modus sichtbar (Desktop), mobil steuert CSS zusätzlich
-    $$(".col-check").forEach(th=> {
-      if(th.tagName==="TH"){
-        th.style.display = adjustMode? "table-cell":"none";
-      }
-    });
+    $("#countBadge").textContent=`📘 ${filtered().length} Vokabel${filtered().length!==1?"n":""} gefunden`;
+    if(viewMode==="list"){
+      $("#listView").style.display="block";
+      $("#pagination").style.display="flex";
+      $("#cardView").style.display="none";
+      renderList();
+    } else {
+      $("#listView").style.display="none";
+      $("#pagination").style.display="none";
+      $("#cardView").style.display="grid";
+      renderCards();
+    }
   }
 
-  /* ---------- Modal ---------- */
-  function openEdit(i){
-    editIndex = i;
-    if(i==null){
-      modalTitle.textContent = "Neue Vokabel";
-      mEn.value = ""; mDe.value = ""; mGroup.value = ""; mHint.value="";
-      mCat.value = Object.keys(CATEGORY_NAMES)[0];
-      mConfuse.checked = false;
-      mDate.value = new Date().toISOString().slice(0,10);
-    }else{
-      modalTitle.textContent = "Vokabel bearbeiten";
-      const [en,de,cat,grp,hint,dt,conf,id] = list[i];
-      mEn.value=en; mDe.value=de; mGroup.value=grp||""; mHint.value=hint||"";
-      mCat.value=cat; mConfuse.checked = (conf==1);
-      mDate.value = new Date(dt).toISOString().slice(0,10);
-    }
-    modal.style.display="flex";
-  }
-  function closeModal(){ modal.style.display="none"; }
-  mCancel.onclick = closeModal;
-  modal.addEventListener("click", e=>{ if(e.target===modal) closeModal(); });
+  /* =========================================================
+     MODAL-FUNKTIONALITÄT
+     ========================================================= */
+  const modal=$("#modal");
+  const mEn=$("#mEn"),mDe=$("#mDe"),mCat=$("#mCat"),mGroup=$("#mGroup"),mHint=$("#mHint"),mConfuse=$("#mConfuse");
+  let editId=null;
 
-  mSave.onclick = ()=>{
-    const en = mEn.value.trim(), de=mDe.value.trim();
-    if(!en || !de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
-    const cat=mCat.value, grp=mGroup.value.trim(), hint=mHint.value.trim(), confuse=mConfuse.checked?1:0;
+  $("#mCancel").onclick=()=>modal.style.display="none";
+  modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
 
-    if(editIndex==null){
-      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse, crypto.randomUUID()]);
-    }else{
-      const old = list[editIndex];
-      list[editIndex] = [en,de,cat,grp,hint, old[5], confuse, old[7]];
+  $("#mSave").onclick=()=>{
+    const en=mEn.value.trim(),de=mDe.value.trim();
+    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
+    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim(),confuse=mConfuse.checked?1:0;
+    if(editId){
+      const idx=list.findIndex(x=>x[7]===editId);
+      if(idx>-1){list[idx][0]=en;list[idx][1]=de;list[idx][2]=cat;list[idx][3]=grp;list[idx][4]=hint;list[idx][6]=confuse;}
+    } else {
+      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);
     }
-    saveLocal(list);
-    closeModal();
+    localStorage.setItem("vokabeln",JSON.stringify(list));
+    modal.style.display="none";
     renderAll();
   };
 
-  /* ---------- Filter/Select aufbauen ---------- */
-  function fillCategorySelects(){
-    // Top Select (Filter)
-    filterSelect.innerHTML = `<option value="Alle">Alle (bunt gemischt)</option>`;
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
-      o.style.background = "var(--card)";
-      filterSelect.appendChild(o);
-    });
-    const o=document.createElement("option");
-    o.value="confuse"; o.textContent="⚠️ Verwechslungsgefahr";
-    filterSelect.appendChild(o);
-
-    // Modal Kategorie
-    mCat.innerHTML = ``;
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k; o.textContent=CATEGORY_NAMES[k];
-      mCat.appendChild(o);
-    });
+  function openEdit(id){
+    const v=list.find(x=>x[7]===id);
+    if(!v)return;
+    editId=id;
+    mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mGroup.value=v[3]||"";mHint.value=v[4]||"";mConfuse.checked=v[6]==1;
+    modal.style.display="flex";
   }
 
-  /* ---------- Actions ---------- */
-  btnReset.onclick = ()=>{
-    filterSelect.value="Alle";
-    searchInput.value="";
+  document.addEventListener("click",e=>{
+    if(e.target.classList.contains("editRow")||e.target.classList.contains("editCard")){
+      openEdit(e.target.dataset.id);
+    }
+  });
+
+  /* =========================================================
+     ANSICHTSSCHALTER & DARKMODE
+     ========================================================= */
+  let viewMode="card";
+  $("#btnList").onclick=()=>{viewMode="list";$("#btnList").classList.add("toggle-active");$("#btnCards").classList.remove("toggle-active");renderAll();};
+  $("#btnCards").onclick=()=>{viewMode="card";$("#btnCards").classList.add("toggle-active");$("#btnList").classList.remove("toggle-active");renderAll();};
+
+  const root=document.body;
+  $("#btnDark").onclick=()=>{
+    root.classList.toggle("dark");
+    $("#btnDark").innerHTML=root.classList.contains("dark")?"🌞 Light Mode":"🌙 Dark Mode";
+  };
+
+  /* =========================================================
+     FILTER & RESET
+     ========================================================= */
+  $("#resetDesk").onclick=()=>{
+    $("#filterCatDesk").value="Alle";
+    $("#searchDesk").value="";
     currentPage=1;
     renderAll();
   };
-  filterSelect.onchange = ()=>{ currentPage=1; renderAll(); };
-  searchInput.oninput = ()=>{ currentPage=1; renderAll(); };
+  $("#filterCatDesk").onchange=()=>{currentPage=1;renderAll();};
+  $("#searchDesk").oninput=()=>{currentPage=1;renderAll();};
 
-  btnAdd.onclick = ()=> openEdit(null);
-
-  function handleDelete(){
-    if(!selected.size){ alert("Keine Auswahl."); return; }
-    if(!confirm(`${selected.size} Vokabel(n) löschen?`)) return;
-    const keep = [];
-    list.forEach((v,idx)=>{ if(!selected.has(idx)) keep.push(v); });
-    list = keep;
-    selected.clear();
-    saveLocal(list);
-    renderAll();
-  }
-  btnDelete.onclick = handleDelete;
-
-  pagePrev.onclick = ()=>{ if(currentPage>1){ currentPage--; renderAll(); } };
-  pageNext.onclick = ()=>{ if(currentPage<totalPages()){ currentPage++; renderAll(); } };
-
-  btnList.onclick  = ()=> setView("list");
-  btnCards.onclick = ()=> setView("cards");
-
-  // Dark Mode Toggle (mit Fade – CSS transition)
-  btnTheme.onclick = ()=>{
-    document.documentElement.classList.toggle("force-dark");
-    document.body.classList.toggle("dark");
-    // Speichern
-    const dark = document.body.classList.contains("dark");
-    localStorage.setItem("vok_view_dark", dark ? "1":"0");
-    btnTheme.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode";
+  $("#addDesk").onclick=()=>{
+    editId=null;
+    mEn.value=mDe.value=mGroup.value=mHint.value="";
+    mCat.value="Gelb";mConfuse.checked=false;
+    modal.style.display="flex";
   };
 
-  // FAB Defaults
-  fabBack.onclick   = ()=> location.href="index.html";
-  fabAdjust.onclick = ()=> enterAdjust(true);
-  fabSync.onclick   = githubSync;
-
-  // Klick außerhalb Anpassen: keine Auswahl möglich (JS-seitig schon berücksichtigt)
-
-  // Sync (Dummy – wie gehabt)
-  async function githubSync(){
-    alert("Sync: Bitte GitHub-Token Workflow wie gehabt nutzen (UI unverändert).");
+  /* =========================================================
+     INIT-KATEGORIEN
+     ========================================================= */
+  function fillCategories(){
+    const sel=$("#filterCatDesk"),mSel=$("#mCat");
+    Object.keys(CATEGORY_NAMES).forEach(k=>{
+      const o=document.createElement("option");
+      o.value=k;o.textContent=CATEGORY_NAMES[k];
+      sel.appendChild(o.cloneNode(true));
+      mSel.appendChild(o);
+    });
+    const confuse=document.createElement("option");
+    confuse.value="confuse";
+    confuse.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
+    sel.appendChild(confuse);
   }
 
-  /* ---------- Daten laden ---------- */
-  async function loadData(){
-    // 1) Versuche Online
-    try{
-      const r = await fetch(RAW_URL, {cache:"no-store"});
-      if(!r.ok) throw new Error("fetch failed");
-      const j = await r.json();
-      list = j.map(normalize);
-      saveLocal(list);
-    }catch(e){
-      // 2) Offline: lokal
-      list = loadLocal();
-    }
-  }
-
-  /* ---------- Init ---------- */
-  async function init(){
-    fillCategorySelects();
-    await loadData();
-    setView("list"); // default
-    // Dark aus Storage
-    const dark = localStorage.getItem("vok_view_dark")==="1";
-    document.body.classList.toggle("dark", dark);
-    btnTheme.textContent = dark ? "☀️ Light Mode" : "🌙 Dark Mode";
-
-    // Mobile-Footer sichtbar (nur mobile)
-    if(isMobile()){ fabbar.style.display = "block"; }
-
-    renderAll();
-  }
-
-  init();
+  fillCategories();
+  loadData();
 })();
 </script>
+</div>
 </body>
 </html>
