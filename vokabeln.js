@@ -459,10 +459,8 @@ window.addEventListener("DOMContentLoaded", () => {
       .filter(v => currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter))
       .map(
         (v, i) => `
-        <div class="mob-card" data-idx="${i}">
-          <div class="mob-card-top" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
-            ${CATEGORY_NAMES[v[2]]}
-          </div>
+        <div class="mob-card" data-idx="${i}" data-cat="${v[2]}">
+          <div class="mob-card-top"></div>
           <div class="mob-card-content">
             <div class="mob-en">${v[0]}${v[6]===1?` <span title="Verwechslungsgefahr">⚠️</span>`:""}</div>
             <div class="mob-de">${v[1]}</div>
