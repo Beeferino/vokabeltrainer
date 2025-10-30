@@ -1,583 +1,359 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>📘 Vokabelübersicht</title>
 
-<!-- Inter-Font -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-/* ========= Farb- und Designvariablen ========= */
-:root{
-  --ink:#0f172a;             /* Primärschriftfarbe (Light) */
-  --muted:#64748b;
-  --bg:#f8fafc;
-  --card:#ffffff;
-  --border:#e2e8f0;
-  --shadow:0 8px 26px rgba(0,0,0,.08);
-  --blue:#2563eb;
-  --bad:#ef4444;
-  --ok:#16a34a;
-}
-
-/* ========= Grundlayout ========= */
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:Inter,system-ui,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-  min-height:100vh;
-  transition:background-color .4s,color .4s;
-}
-h1{text-align:center;font-weight:800;margin:10px 0 4px;color:#1e3a8a}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:8px auto 16px}
-
-/* ========= Toolbar oben ========= */
-.toolbar{
-  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px auto 16px;
-  max-width:1100px;
-}
-.toolbar select,
-.toolbar input{
-  padding:8px 12px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  font-size:.95rem;
-}
-.toolbar button{
-  background:var(--blue);
-  color:#fff;
-  border:none;
-  border-radius:10px;
-  padding:8px 14px;
-  font-weight:700;
-  cursor:pointer;
-}
-.toolbar button.warn{background:var(--bad)}
-.toolbar button.outline{
-  background:transparent;
-  color:var(--ink);
-  border:1px solid var(--border);
-}
-.toolbar button.small{padding:6px 10px;font-size:.9rem}
-.toolbar button.active{box-shadow:0 0 0 2px var(--blue) inset}
-
-/* ========= Tabellenbereich ========= */
-.table-wrap{
-  background:var(--card);
-  border-radius:16px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  margin:auto;
-  max-width:1100px;
-}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
-th{font-weight:700;background:#f1f5f9}
-tr:hover{background:#f8fafc}
-.category-chip{
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:600;
-  font-size:.9rem;
-  color:#fff;
-}
-.red-flag{color:var(--bad);margin-left:4px}
-
-/* ========= Grid (Kachelansicht) ========= */
-.grid{
-  display:none;
-  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-  gap:16px;
-  padding:10px;
-  max-width:1100px;
-  margin:auto;
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:14px;
-  box-shadow:var(--shadow);
-  transition:.25s;
-  cursor:pointer;
-}
-.card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1);}
-.card.selected{outline:3px solid var(--blue);}
-.card-title{font-weight:800;font-size:1.05rem;margin-bottom:6px;}
-.card-sub{color:var(--muted);margin-bottom:8px;}
-.card-cat{
-  display:inline-block;
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:700;
-  font-size:.9rem;
-}
-.confuse{color:#ef4444;font-weight:700;margin-left:6px;}
-
-/* ========= Mobile Footer-Buttons (wird in Teil 4 aktiviert) ========= */
-.mobile-bar{
-  position:fixed;
-  left:0;right:0;bottom:0;
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  background:rgba(255,255,255,.9);
-  padding:10px;
-  border-top:1px solid var(--border);
-  backdrop-filter:blur(10px);
-  z-index:40;
-}
-.mobile-bar button{
-  flex:1;
-  border:none;
-  border-radius:12px;
-  font-weight:700;
-  padding:12px;
-  cursor:pointer;
-  transition:.25s;
-}
-.mobile-bar button.primary{background:var(--blue);color:#fff}
-.mobile-bar button.outline{background:#fff;border:1px solid var(--border)}
-.mobile-bar button.danger{background:var(--bad);color:#fff}
-
-/* ========= Dark Mode ========= */
-body.dark{
-  --bg:#0f172a;
-  --card:#1e293b;
-  --ink:#f1f5f9;
-  --border:#334155;
-  --muted:#94a3b8;
-  background:linear-gradient(145deg,#1e293b,#0f172a);
-  color:var(--ink);
-}
-body.dark table th{background:#1e293b}
-body.dark .table-wrap,
-body.dark .card{background:#1e293b;border-color:#334155;}
-body.dark .mobile-bar{background:rgba(30,41,59,.9);}
-body.dark .toolbar button.outline{border-color:#475569;color:#f1f5f9;}
-body.dark .toolbar select,
-body.dark .toolbar input{background:#1e293b;color:#f1f5f9;border-color:#475569;}
-
-/* ========= Responsivität ========= */
-@media(max-width:900px){
-  .toolbar,#tableContainer{display:none}
-  .grid{display:grid;grid-template-columns:1fr 1fr;}
-}
-@media(min-width:901px){
-  .mobile-bar{display:none}
-}
-</style>
+  <style>
+    body { font-family: sans-serif; background: #f7f9fb; margin: 0; padding: 20px; text-align: center; }
+    .app { max-width: 1100px; margin: auto; }
+    h1 { font-size: 1.8rem; margin-bottom: 0.3rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #eef2f7; cursor: pointer; user-select: none; }
+    th.sort-asc::after { content: " ↑"; color: #666; }
+    th.sort-desc::after { content: " ↓"; color: #666; }
+    tr:hover { background: #f0f7ff; }
+    .category-chip { display: inline-block; padding: 5px 10px; border-radius: 10px; color: #fff; }
+    input, select, button { padding: 8px 10px; font-size: 1rem; border-radius: 6px; border: 1px solid #cfd6e4; margin: 5px; }
+    button { cursor: pointer; background: #2980b9; color: #fff; border: none; }
+    button:hover { background: #3498db; }
+    a.linkbtn { display: inline-block; padding: 10px 16px; border-radius: 8px; background: #74b9ff; color: #000; text-decoration: none; font-weight: 600; }
+    a.linkbtn:hover { background: #a6d4ff; }
+    .info-footer { margin-top: 16px; font-size: 0.95rem; color: #555; }
+    .lexica { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+    .lexica button { background: #ecf0f1; color: #333; border: 1px solid #ccc; font-weight: 600; padding: 6px 9px; }
+    .lexica button.active { background: #2980b9; color: #fff; }
+    .filter-bar { margin-top: 10px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .searchbox { min-width: 260px; }
+    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+    .pagination button { background: #ecf0f1; color: #333; border: 1px solid #ccc; padding: 6px 10px; }
+    .pagination button.active { background: #2980b9; color: #fff; }
+    .section-divider { margin: 24px 0; border-top: 3px solid #e3e7ef; }
+    .new-entry { margin-top: 10px; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2ecc71; color: #fff; padding: 10px 16px; border-radius: 8px; display: none; z-index: 999; }
+    .edit-btn { background: #f39c12; }
+    .save-btn { background: #27ae60; }
+    .save-btn:hover { background: #2ecc71; }
+    .colored { transition: background 0.4s ease; }
+    footer { margin-top: 30px; }
+    #datasourceStatus{position:fixed;right:12px;bottom:10px;font-size:.8rem;opacity:.75;color:#555;pointer-events:none;}
+  </style>
 </head>
 
 <body>
-<div class="app">
-  <h1>📘 Vokabelübersicht</h1>
-  <div class="hr"></div>
+  <div class="app">
+    <h1>📘 Vokabelübersicht</h1>
 
-  <!-- ===== Toolbar mit Dark-Mode-Schalter ===== -->
-  <div class="toolbar">
-    <select id="filterCat">
-      <option value="Alle">Alle (bunt gemischt)</option>
-    </select>
-    <input id="searchInput" type="text" placeholder="Suchen…">
-    <button id="btnReset" class="outline">Reset</button>
-    <button id="btnList" class="outline active">Liste</button>
-    <button id="btnCards" class="outline">Kacheln</button>
-    <button id="btnDark" class="outline">🌙 Dark Mode</button>
-    <button id="btnSync" class="outline small">📤 Sync</button>
-    <button id="btnBack" class="outline small" onclick="location.href='index.html'">⬅️ Trainer</button>
-  </div>
+    <div id="lexica" class="lexica"></div>
 
-  <!-- ===== Zähler ===== -->
-  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a">
-    📘 <span id="countNum">0</span> Vokabeln gefunden
-  </div>
+    <div class="filter-bar">
+      <label>Kategorie:
+        <select id="filterCategory" class="colored"></select>
+      </label>
+      <label>Gruppe / Variante:
+        <select id="filterGroup"></select>
+      </label>
+      <input id="searchInput" class="searchbox" type="text" placeholder="🔎 Suchen (EN / DE / Gruppe / Hinweis)">
+      <button id="resetFilter">🔄 Filter zurücksetzen</button>
+    </div>
 
-  <!-- ===== Tabellenansicht ===== -->
-  <div class="table-wrap" id="tableContainer">
-    <table>
+    <table id="vocabTable">
       <thead>
         <tr>
-          <th></th>
-          <th>Englisch</th>
-          <th>Deutsch</th>
-          <th>Kategorie</th>
+          <th style="width:36px;">&nbsp;</th>
+          <th data-key="en">Englisch</th>
+          <th data-key="de">Deutsch</th>
+          <th data-key="cat">Kategorie</th>
+          <th data-key="grp">Gruppe / Variante</th>
+          <th data-key="hint">Hinweis</th>
+          <th style="width:80px;">Aktion</th>
         </tr>
       </thead>
-      <tbody id="tblBody"></tbody>
+      <tbody></tbody>
     </table>
-  </div>
 
-  <!-- ===== Kachelansicht (wird dynamisch gefüllt) ===== -->
-  <div class="grid" id="grid"></div>
+    <div id="pagination" class="pagination"></div>
+    <div id="infoFooter" class="info-footer"></div>
 
-  <!-- Platzhalter für Pagination -->
-  <div id="pagination"></div>
-</div>
-<!-- ========= Modal zum Bearbeiten / Neu anlegen ========= -->
-<div class="modal" id="modal" style="display:none;align-items:center;justify-content:center;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;">
-  <div class="panel" style="background:var(--card);border-radius:16px;padding:20px;width:92%;max-width:520px;box-shadow:var(--shadow);">
-    <h3 style="margin-top:0;font-weight:800;color:var(--ink);">Vokabel bearbeiten</h3>
-    <div class="form-grid" style="display:grid;gap:12px;">
-      <label>Englisch
-        <input id="mEn" type="text" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;">
-      </label>
-      <label>Deutsch
-        <input id="mDe" type="text" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;">
-      </label>
-      <label>Kategorie
-        <select id="mCat" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;"></select>
-      </label>
-      <label>Gruppe / Variante
-        <input id="mGroup" type="text" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;">
-      </label>
-      <label>Hinweis
-        <textarea id="mHint" rows="2" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;"></textarea>
-      </label>
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <label>Erstellt:
-          <input id="mDate" type="date" readonly style="background:#f3f4f6;border:1px solid var(--border);border-radius:10px;padding:8px 10px;">
-        </label>
-        <!-- schöner Toggle-Schalter -->
-        <div class="confuse-toggle" style="display:flex;align-items:center;gap:8px;">
-          <span>Verwechslungsgefahr</span>
-          <label class="switch" style="position:relative;display:inline-block;width:48px;height:26px;">
-            <input type="checkbox" id="mConfuse" style="opacity:0;width:0;height:0;">
-            <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#ccc;transition:.3s;border-radius:34px;">
-              <span style="position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:white;transition:.3s;border-radius:50%;"></span>
-            </span>
-          </label>
-        </div>
+    <div class="section-divider"></div>
+
+    <div class="new-entry">
+      <h3>➕ Neue Vokabel hinzufügen</h3>
+      <div>
+        <input id="newEnglish" type="text" placeholder="Englisch" disabled>
+        <input id="newGerman" type="text" placeholder="Deutsch" disabled>
+        <select id="newCategory" class="colored" disabled></select>
+        <input id="newGroup" type="text" placeholder="Gruppe / Variante" disabled>
+        <input id="newHint" type="text" placeholder="Hinweis" disabled>
+        <button id="addBtn" disabled>Hinzufügen</button>
+      </div>
+      <div style="margin-top:8px;">
+        <button id="toggleAdd">✏️ Eingabe aktivieren</button>
+        <button id="deleteSelected">🗑️ Ausgewählte löschen</button>
       </div>
     </div>
-    <div class="modal-actions" style="display:flex;gap:16px;justify-content:flex-end;margin-top:18px;">
-      <button id="btnCancel" class="outline">Abbrechen</button>
-      <button id="btnSave" class="primary">Speichern</button>
-    </div>
+
+    <footer>
+      <div style="margin-top:18px;">
+        <button id="exportBtn">📤 Exportieren</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;">
+        <button id="importBtn">📥 Importieren</button>
+      </div>
+      <div style="margin-top:22px;">
+        <a href="index.html" class="linkbtn">⬅️ Zurück zum Trainer</a>
+      </div>
+    </footer>
   </div>
-</div>
 
-<!-- ========= Script: Datenstruktur, Kategorien, LocalStorage ========= -->
-<script>
-(function(){
+  <div id="toast" class="toast">💾 Gespeichert</div>
+  <div id="datasourceStatus" aria-live="polite"></div>
 
-/* ===== Kategorien definieren (Name, Hintergrund, Schriftfarbe) ===== */
-const CATS={
-  Gelb:["Grundwerkzeuge Metallverarbeitung","#F4D03F","#000"],
-  Pink:["Werkzeugkasten Mechaniker","#E91E63","#fff"],
-  Blau:["Blech- / Kunststoffarbeiten","#1976D2","#fff"],
-  Gruen:["Drehen / Fräsen","#1E8449","#fff"],
-  HellesPink:["Hydraulik / Pneumatik","#F54927","#fff"],
-  Orange:["Elektrotechnik","#E67E22","#fff"],
-  Dunkelgruen:["Fluggerätemechanik allgemein","#117A65","#fff"]
-};
+  <script>
+  (() => {
+    const CATEGORY_NAMES = { Gelb:"Grundwerkzeuge Metallverarbeitung", Pink:"Werkzeugkasten Mechaniker", Blau:"Blech- / Kunststoffarbeiten", Gruen:"Drehen / Fräsen", HellesPink:"Hydraulik / Pneumatik", Orange:"Elektrotechnik", Dunkelgruen:"Fluggerätemechanik allgemein", Rot:"Verwechslungsgefahr" };
+    const COLOR_MAP = { Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2", Gruen:"#1E8449", HellesPink:"#F54927", Orange:"#E67E22", Dunkelgruen:"#117A65", Rot:"#C0392B" };
+    const CATEGORY_EMOJI = { Gelb:"🟡", Pink:"🟣", Blau:"🔵", Gruen:"🟢", HellesPink:"🟥", Orange:"🟧", Dunkelgruen:"🟩", Rot:"🔴" };
+    const labelForCategory = k => `${CATEGORY_EMOJI[k] || "•"} ${CATEGORY_NAMES[k]}`;
 
-/* ===== DOM-Referenzen ===== */
-const modal=document.getElementById("modal");
-const mEn=document.getElementById("mEn");
-const mDe=document.getElementById("mDe");
-const mCat=document.getElementById("mCat");
-const mGroup=document.getElementById("mGroup");
-const mHint=document.getElementById("mHint");
-const mDate=document.getElementById("mDate");
-const mConfuse=document.getElementById("mConfuse");
-const btnSave=document.getElementById("btnSave");
-const btnCancel=document.getElementById("btnCancel");
-const tblBody=document.getElementById("tblBody");
-const grid=document.getElementById("grid");
-const selectCat=document.getElementById("filterCat");
-const searchInput=document.getElementById("searchInput");
-const countLabel=document.getElementById("countNum");
-const btnList=document.getElementById("btnList");
-const btnCards=document.getElementById("btnCards");
-const btnDark=document.getElementById("btnDark");
-const btnSync=document.getElementById("btnSync");
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const toast = m => { const t=$("#toast"); t.textContent=m; t.style.display="block"; setTimeout(()=>t.style.display="none",1500); };
 
-/* ===== Globale Zustände ===== */
-let vocabData=[];
-let selectedRows=new Set();
+    const normalize = v => [v[0]||"", v[1]||"", v[2]||"Gelb", v[3]||"", v[4]||"", v[5]||new Date().toISOString()];
+    const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
+    const saveLocal = v => { localStorage.setItem("vokabeln", JSON.stringify(v)); localStorage.setItem("vokabeln_updated", new Date().toISOString()); };
 
-/* ===== Hilfsfunktionen zum LocalStorage ===== */
-function saveLocal(){
-  localStorage.setItem("vokabeln",JSON.stringify(vocabData));
-}
-function loadLocal(){
-  const d=localStorage.getItem("vokabeln");
-  return d?JSON.parse(d):[];
-}
+    // JSON Sync + Statusanzeige
+    async function trySyncFromJson(){
+      const status=document.getElementById('datasourceStatus');
+      try{
+        const r=await fetch('vokabeln.json',{cache:'no-store'});
+        if(!r.ok) throw new Error('http '+r.status);
+        const data=await r.json();
+        if(Array.isArray(data)){ saveLocal(data.map(normalize)); status.textContent='📂 Datenquelle: JSON-Datei (Online)'; return; }
+        throw new Error('format');
+      }catch(e){
+        if(localStorage.getItem('vokabeln')) status.textContent='💾 Datenquelle: Lokaler Speicher';
+        else { const def = [ ["hammer","Hammer","Pink","","","2025-10-26T12:00:00Z"] ]; saveLocal(def); status.textContent='✨ Standardliste verwendet'; }
+      }
+    }
 
-/* ===== Kategorie-Selects füllen ===== */
-function populateCategoryFilter(){
-  selectCat.innerHTML='<option value="Alle">Alle (bunt gemischt)</option><option value="confuse">⚠️ Verwechslungsgefahr</option>';
-  for(const k in CATS){
-    const [name,bg,fg]=CATS[k];
-    const opt=document.createElement("option");
-    opt.value=k;opt.textContent=name;
-    opt.style.background=bg;opt.style.color=fg;
-    selectCat.appendChild(opt);
-  }
-}
-function populateEditCategorySelect(){
-  mCat.innerHTML="";
-  for(const k in CATS){
-    const [name,bg,fg]=CATS[k];
-    const opt=document.createElement("option");
-    opt.value=k;opt.textContent=name;
-    opt.style.background=bg;opt.style.color=fg;
-    mCat.appendChild(opt);
-  }
-}
+    let list = [];
+    let currentLetter = "Alle";
+    let filterCat = "Alle";
+    let filterGrp = "Alle";
+    let searchTerm = "";
+    let currentPage = 1;
+    const perPage = 15;
+    let sortKey = "en", sortDir = "asc";
 
-/* ===== Neuerstellungsvorlage ===== */
-function newVocab(){
-  return ["","",Object.keys(CATS)[0],"","",new Date().toISOString(),0];
-}
+    function renderCategorySelect(sel, setColor = false) {
+      sel.innerHTML = "";
+      Object.keys(CATEGORY_NAMES).forEach(k => {
+        const o = document.createElement("option"); o.value = k; o.textContent = labelForCategory(k); sel.appendChild(o);
+      });
+      if (setColor) setSelectColor(sel, sel.value);
+      sel.onchange = () => setSelectColor(sel, sel.value);
+    }
 
-/* ===== Eventlistener für Modal ===== */
-mCat.onchange=()=>{
-  const [_,bg,fg]=CATS[mCat.value];
-  mCat.style.background=bg;mCat.style.color=fg;
-};
+    function setSelectColor(sel, val){
+      if (!val || val === "Alle") { sel.style.background="#fff"; sel.style.color="#111"; sel.style.border="1px solid #cfd6e4"; return; }
+      const c = COLOR_MAP[val] || "#fff"; sel.style.background=c; sel.style.color="#fff"; sel.style.border="1px solid #999";
+    }
 
-/* ===== Startdaten vorbereiten ===== */
-populateCategoryFilter();
-populateEditCategorySelect();
-vocabData=loadLocal();
+    function renderFilterCategory() {
+      const sel = $("#filterCategory");
+      sel.innerHTML = "<option value='Alle'>Alle (bunt gemischt)</option>";
+      Object.keys(CATEGORY_NAMES).forEach(k => {
+        const o = document.createElement("option"); o.value = k; o.textContent = labelForCategory(k); sel.appendChild(o);
+      });
+      setSelectColor(sel, "Alle");
+      sel.onchange = e => { filterCat = e.target.value; setSelectColor(sel, filterCat); currentPage = 1; renderTable(); };
+    }
 
-/* ===== Nächster Teil bringt Rendering und Logik ===== */
-/* ==================== Rendering ==================== */
-let viewMode="list";           // „list“ oder „cards“
-let currentPage=1;
-const PAGE_SIZE=15;
-let adjustMode=false;
+    function renderFilterGroup() {
+      const groups = [...new Set(list.map(v => v[3]).filter(Boolean))].sort((a, b) => a.localeCompare(b, "de"));
+      const sel = $("#filterGroup");
+      sel.innerHTML = "<option value='Alle'>Alle</option>" + groups.map(g => `<option>${g}</option>`).join("");
+      sel.onchange = e => { filterGrp = e.target.value; currentPage = 1; renderTable(); };
+    }
 
-/* === Haupt-Renderfunktion === */
-function render(){
-  const q=searchInput.value.toLowerCase().trim();
-  const cat=selectCat.value;
-  let filtered=vocabData.filter(v=>{
-    const matchCat=cat==="Alle"||(cat==="confuse"&&v[6])||(v[2]===cat);
-    const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
-    return matchCat&&matchQ;
-  });
-  const pages=Math.ceil(filtered.length/PAGE_SIZE)||1;
-  if(currentPage>pages)currentPage=pages;
-  const start=(currentPage-1)*PAGE_SIZE;
-  const data=filtered.slice(start,start+PAGE_SIZE);
-  countLabel.textContent=`${filtered.length}`;
+    function renderLexica() {
+      const letters = ["Alle", ...Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")];
+      const lx = $("#lexica"); lx.innerHTML = "";
+      letters.forEach(l => { const b=document.createElement("button"); b.textContent=l; if(l===currentLetter)b.classList.add("active"); b.onclick=()=>{ currentLetter=l; currentPage=1; renderTable(); renderLexica(); }; lx.appendChild(b); });
+    }
 
-  if(viewMode==="list"){
-    renderTable(data);
-    grid.style.display="none";
-    document.getElementById("tableContainer").style.display="block";
-  }else{
-    renderCards(data);
-    grid.style.display="grid";
-    document.getElementById("tableContainer").style.display="none";
-  }
-  renderPagination(pages);
-}
+    function filtered() {
+      return list.filter(([en, de, cat, grp, hint]) => {
+        if (currentLetter !== "Alle" && !en.toUpperCase().startsWith(currentLetter)) return false;
+        if (filterCat !== "Alle" && cat !== filterCat) return false;
+        if (filterGrp !== "Alle" && grp !== filterGrp) return false;
+        if (searchTerm) { const hay=(en+" "+de+" "+(grp||"")+" "+(hint||"")).toLowerCase(); if(!hay.includes(searchTerm)) return false; }
+        return true;
+      });
+    }
 
-/* ==================== Tabellenansicht ==================== */
-function renderTable(data){
-  tblBody.innerHTML=data.map((v,i)=>{
-    const confuse=v[6]?'<span class="red-flag" title="Verwechslungsgefahr">⚠️</span>':'';
-    const [label,bg,fg]=CATS[v[2]];
-    return `
-      <tr data-idx="${i}" class="row">
-        <td style="width:32px;text-align:center;"><span style="opacity:.6;">✏️</span></td>
-        <td>${v[0]} ${confuse}</td>
-        <td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${bg};color:${fg}">${label}</span></td>
-      </tr>`;
-  }).join("");
+    function sortList(arr) {
+      const map = { en: 0, de: 1, cat: 2, grp: 3, hint: 4, date: 5 };
+      const i = map[sortKey];
+      return arr.sort((a, b) => {
+        let A = a[i] || "", B = b[i] || "";
+        if (sortKey === "date") { A = new Date(A).getTime(); B = new Date(B).getTime(); }
+        else { A = A.toString().toLowerCase(); B = B.toString().toLowerCase(); }
+        if (A < B) return sortDir === "asc" ? -1 : 1;
+        if (A > B) return sortDir === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
 
-  Array.from(tblBody.querySelectorAll(".row")).forEach(row=>{
-    row.onclick=()=>openEdit(parseInt(row.dataset.idx));
-  });
-}
+    function renderTable() {
+      const all = sortList(filtered());
+      const pages = Math.max(1, Math.ceil(all.length / perPage));
+      if (currentPage > pages) currentPage = pages;
+      const start = (currentPage - 1) * perPage;
+      const rows = all.slice(start, start + perPage);
 
-/* ==================== Kachelansicht ==================== */
-function renderCards(data){
-  grid.innerHTML=data.map((v,i)=>{
-    const confuse=v[6]?'⚠️':'';
-    const [label,bg,fg]=CATS[v[2]];
-    const sel=selectedRows.has(i)?"selected":"";
-    return `
-      <div class="card ${sel}" data-idx="${i}">
-        <div class="card-title">${v[0]} <span class="confuse">${confuse}</span></div>
-        <div class="card-sub">DE: ${v[1]}</div>
-        <div class="card-cat" style="background:${bg};color:${fg}">${label}</div>
-      </div>`;
-  }).join("");
+      const tbody = $("#vocabTable tbody"); tbody.innerHTML = "";
+      rows.forEach(v => {
+        const [en, de, cat, grp, hint, date] = v;
+        const i = list.indexOf(v);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td><input type="checkbox" data-index="${i}"></td>
+          <td>${en}</td><td>${de}</td>
+          <td><span class="category-chip" style="background:${COLOR_MAP[cat]}">${CATEGORY_NAMES[cat]}</span></td>
+          <td>${grp || ""}</td><td>${hint || ""}</td>
+          <td><button class="edit-btn" data-index="${i}">✏️</button></td>`;
+        tbody.appendChild(tr);
+      });
 
-  Array.from(grid.querySelectorAll(".card")).forEach(card=>{
-    card.onclick=()=>{
-      const idx=parseInt(card.dataset.idx);
-      if(!adjustMode){openEdit(idx);return;}
-      if(selectedRows.has(idx))selectedRows.delete(idx);else selectedRows.add(idx);
-      card.classList.toggle("selected");
-    };
-  });
-}
+      const pagination = $("#pagination"); pagination.innerHTML = "";
+      for (let p = 1; p <= pages; p++) { const b=document.createElement("button"); b.textContent=p; if(p===currentPage)b.classList.add("active"); b.onclick=()=>{ currentPage=p; renderTable(); }; pagination.appendChild(b); }
 
-/* ==================== Pagination ==================== */
-function renderPagination(total){
-  const cont=document.getElementById("pagination");
-  if(total<=1){cont.innerHTML="";return;}
-  cont.innerHTML=`
-    <button class="outline" id="prevPg" ${currentPage===1?"disabled":""}>⬅️</button>
-    <span style="margin:0 10px;">Seite ${currentPage} / ${total}</span>
-    <button class="outline" id="nextPg" ${currentPage===total?"disabled":""}>➡️</button>
-  `;
-  document.getElementById("prevPg").onclick=()=>{if(currentPage>1){currentPage--;render();}};
-  document.getElementById("nextPg").onclick=()=>{currentPage++;render();};
-}
+      const upd = localStorage.getItem("vokabeln_updated");
+      $("#infoFooter").textContent = `📅 Letzte Änderung: ${upd ? new Date(upd).toLocaleString("de-DE") : "–"} | 📚 Gesamt: ${list.length} | 🔤 Angezeigt: ${all.length}`;
 
-/* ==================== Modal-Logik ==================== */
-function openEdit(i){
-  const v=vocabData[i];
-  modal.style.display="flex";
-  mEn.value=v[0];
-  mDe.value=v[1];
-  mCat.value=v[2];
-  mGroup.value=v[3];
-  mHint.value=v[4];
-  mDate.value=new Date(v[5]).toISOString().slice(0,10);
-  mConfuse.checked=v[6];
-  btnSave.onclick=()=>saveEdit(i);
-}
-function closeModal(){modal.style.display="none";}
-btnCancel.onclick=closeModal;
-modal.onclick=e=>{if(e.target===modal)closeModal();};
+      $$(".edit-btn").forEach(b => b.onclick = () => editRow(parseInt(b.dataset.index)));
+    }
 
-function saveEdit(i){
-  const updated=[
-    mEn.value.trim(),
-    mDe.value.trim(),
-    mCat.value,
-    mGroup.value.trim(),
-    mHint.value.trim(),
-    vocabData[i][5],
-    mConfuse.checked?1:0
-  ];
-  vocabData[i]=updated;
-  saveLocal();
-  closeModal();
-  render();
-}
+    function bindSort() {
+      $$("#vocabTable thead th").forEach(th => {
+        const k = th.dataset.key; if (!k) return;
+        th.onclick = () => {
+          if (sortKey === k) sortDir = (sortDir === "asc" ? "desc" : "asc");
+          else { sortKey = k; sortDir = "asc"; }
+          $$("#vocabTable thead th").forEach(t => t.classList.remove("sort-asc", "sort-desc"));
+          th.classList.add(sortDir === "asc" ? "sort-asc" : "sort-desc");
+          renderTable();
+        };
+      });
+    }
 
-/* ==================== Neu / Löschen ==================== */
-function addNew(){
-  vocabData.push(newVocab());
-  saveLocal();
-  render();
-}
-function deleteSelected(){
-  if(!selectedRows.size)return alert("Keine Auswahl");
-  if(!confirm(`${selectedRows.size} Einträge löschen?`))return;
-  vocabData=vocabData.filter((_,i)=>!selectedRows.has(i));
-  selectedRows.clear();
-  saveLocal();
-  render();
-}
+    function editRow(i) {
+      const [en, de, cat, grp, hint, date] = list[i];
+      const tr = $$("#vocabTable tbody tr").find(r => parseInt(r.querySelector("input").dataset.index) === i);
+      tr.innerHTML = `<td></td>
+        <td><input id="eEn" value="${en}"></td>
+        <td><input id="eDe" value="${de}"></td>
+        <td><select id="eCat" class="colored">
+          ${Object.keys(CATEGORY_NAMES).map(k => `<option value="${k}" ${k === cat ? "selected" : ""}>${labelForCategory(k)}</option>`).join("")}
+        </select></td>
+        <td><input id="eGrp" value="${grp || ""}"></td>
+        <td><input id="eHint" value="${hint || ""}"></td>
+        <td><button class="save-btn">💾</button></td>`;
 
-/* ==================== Filter / Suche ==================== */
-selectCat.onchange=()=>{currentPage=1;render();};
-searchInput.oninput=()=>{currentPage=1;render();};
-document.getElementById("btnReset").onclick=()=>{
-  searchInput.value="";
-  selectCat.value="Alle";
-  currentPage=1;
-  render();
-};
+      const eCat = tr.querySelector("#eCat");
+      setSelectColor(eCat, eCat.value);
+      eCat.onchange = () => setSelectColor(eCat, eCat.value);
 
-/* ==================== Ansichtsschalter ==================== */
-btnList.onclick=()=>{viewMode="list";btnList.classList.add("active");btnCards.classList.remove("active");render();}
-btnCards.onclick=()=>{viewMode="cards";btnCards.classList.add("active");btnList.classList.remove("active");render();}
-/* ==================== Mobile-Bar und Aktionen ==================== */
-const mobileBar=document.createElement("div");
-mobileBar.className="mobile-bar";
-mobileBar.innerHTML=`
-  <button id="mbTrainer" class="outline">🎯 Trainer</button>
-  <button id="mbAdjust" class="primary">✏️ Anpassen</button>
-  <button id="mbSync" class="outline">🔄 Sync</button>
-`;
-document.body.appendChild(mobileBar);
+      tr.querySelector(".save-btn").onclick = () => {
+        const newEn = $("#eEn").value.trim(),
+              newDe = $("#eDe").value.trim(),
+              newCat = eCat.value,
+              newGrp = $("#eGrp").value.trim(),
+              newHint = $("#eHint").value.trim();
+        if (!newEn || !newDe) return alert("Bitte ausfüllen!");
+        list[i] = [newEn, newDe, newCat, newGrp, newHint, date];
+        saveLocal(list);
+        renderFilterGroup();
+        renderTable();
+        toast("💾 Gespeichert");
+      };
+    }
 
-const mbTrainer=document.getElementById("mbTrainer");
-const mbAdjust=document.getElementById("mbAdjust");
-const mbSync=document.getElementById("mbSync");
+    // INIT
+    (async function init(){
+      const status=document.getElementById('datasourceStatus');
+      await trySyncFromJson();
+      list = loadLocal();
+      renderCategorySelect(document.getElementById("newCategory"), true);
+      renderFilterCategory();
+      renderFilterGroup();
+      renderLexica();
+      renderTable();
+      bindSort();
 
-/* === mobile Bar Funktionalität === */
-mbTrainer.onclick=()=>location.href="index.html";
-mbAdjust.onclick=()=>{
-  adjustMode=!adjustMode;
-  selectedRows.clear();
-  Array.from(document.querySelectorAll(".card")).forEach(c=>c.classList.remove("selected"));
-  if(adjustMode){
-    mbAdjust.textContent="✅ Fertig";
-    mbSync.textContent="🗑️ Löschen";
-    mbSync.classList.add("danger");
-    mbSync.onclick=deleteSelected;
-  }else{
-    mbAdjust.textContent="✏️ Anpassen";
-    mbSync.textContent="🔄 Sync";
-    mbSync.classList.remove("danger");
-    mbSync.onclick=syncNow;
-  }
-};
-mbSync.onclick=syncNow;
+      document.getElementById("resetFilter").onclick = () => {
+        filterCat = "Alle"; filterGrp = "Alle"; currentLetter = "Alle"; searchTerm = "";
+        renderFilterCategory(); renderFilterGroup(); renderLexica(); document.getElementById("searchInput").value = ""; renderTable();
+      };
+      document.getElementById("searchInput").addEventListener("input", e => { searchTerm = e.target.value.trim().toLowerCase(); currentPage = 1; renderTable(); });
 
-/* ==================== Dark-Mode-Toggle ==================== */
-function applyDarkMode(on){
-  document.body.classList.toggle("dark",on);
-  localStorage.setItem("darkMode",on?"1":"0");
-}
-function toggleDarkMode(){
-  const on=!document.body.classList.contains("dark");
-  applyDarkMode(on);
-  btnDark.textContent=on?"☀️ Light Mode":"🌙 Dark Mode";
-}
-/* restore last mode */
-applyDarkMode(localStorage.getItem("darkMode")==="1");
-btnDark.textContent=document.body.classList.contains("dark")?"☀️ Light Mode":"🌙 Dark Mode";
-btnDark.onclick=toggleDarkMode;
+      // Add controls
+      document.getElementById("toggleAdd").onclick = () => {
+        const d = document.getElementById("newEnglish").disabled;
+        ["newEnglish","newGerman","newCategory","newGroup","newHint","addBtn"].forEach(id=>{ document.getElementById(id).disabled = !d; });
+        document.getElementById("toggleAdd").textContent = d ? "🔒 Eingabe sperren" : "✏️ Eingabe aktivieren";
+        if (d) document.getElementById("newEnglish").focus();
+      };
 
-/* sanftes Fading bei Mode-Wechsel */
-const cssFade=document.createElement("style");
-cssFade.textContent=`body{transition:background-color .4s ease,color .4s ease;}`;
-document.head.appendChild(cssFade);
+      document.getElementById("addBtn").onclick = () => {
+        const en = document.getElementById("newEnglish").value.trim(),
+              de = document.getElementById("newGerman").value.trim(),
+              cat = document.getElementById("newCategory").value,
+              grp = document.getElementById("newGroup").value.trim(),
+              hint = document.getElementById("newHint").value.trim();
+        if (!en || !de) return alert("Bitte ausfüllen!");
+        list.push([en, de, cat, grp, hint, new Date().toISOString()]);
+        saveLocal(list);
+        document.getElementById("newEnglish").value = "";
+        document.getElementById("newGerman").value = "";
+        document.getElementById("newGroup").value = "";
+        document.getElementById("newHint").value = "";
+        renderFilterGroup(); renderTable(); toast("➕ Hinzugefügt");
+      };
 
-/* ==================== GitHub-/Sync-Simulation ==================== */
-async function syncNow(){
-  try{
-    btnSync.textContent="⏳ Sync läuft…";
-    await new Promise(r=>setTimeout(r,1200)); // simulierte Netzwartezeit
-    btnSync.textContent="✅ Synchronisiert";
-    setTimeout(()=>btnSync.textContent="📤 Sync",1500);
-  }catch(e){
-    console.warn("Sync-Fehler",e);
-    btnSync.textContent="❌ Fehler";
-  }
-}
+      document.getElementById("deleteSelected").onclick = () => {
+        const sel = Array.from(document.querySelectorAll("input[type=checkbox]:checked"));
+        if (!sel.length) return alert("Bitte auswählen!");
+        if (!confirm("Ausgewählte Vokabel(n) löschen?")) return;
+        const ids = sel.map(c => parseInt(c.dataset.index)).sort((a, b) => b - a);
+        ids.forEach(i => list.splice(i, 1));
+        saveLocal(list); renderTable(); toast("🗑️ Gelöscht");
+      };
 
-/* ==================== Startlogik ==================== */
-render();
+      document.getElementById("exportBtn").onclick = () => {
+        const blob = new Blob([JSON.stringify(list, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href = url; a.download = "vokabeln.json"; a.click(); URL.revokeObjectURL(url);
+        toast("📤 Exportiert");
+      };
 
-/* --- Public API optional für externe Nutzung --- */
-window.vocabApp={
-  add:addNew,
-  delete:deleteSelected,
-  render,
-  syncNow,
-  toggleDarkMode
-};
-
-})(); // Ende IIFE
-</script>
+      document.getElementById("importBtn").onclick = () => document.getElementById("importFile").click();
+      document.getElementById("importFile").onchange = e => {
+        const f = e.target.files[0]; if (!f) return;
+        const r = new FileReader();
+        r.onload = () => {
+          try { const d = JSON.parse(r.result).map(normalize);
+            if (confirm("Bestehende überschreiben? (Abbrechen = Anhängen)")) list = d; else list = list.concat(d);
+            saveLocal(list); renderFilterGroup(); renderTable(); toast("📥 Importiert");
+          } catch { alert("Fehler beim Import."); }
+        }; r.readAsText(f);
+      };
+    })();
+  })();
+  </script>
 </body>
 </html>
