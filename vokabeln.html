@@ -1,29 +1,22 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>📘 Vokabelübersicht – Beeferino</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="vokabeln.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
 </head>
 <body>
-  
   <div id="app"></div>
 
-  <!-- === Haupt-Modal (Add/Edit) === -->
   <div class="modal" id="modal" style="display:none;">
     <div class="panel">
-      <h3 id="modalTitle" style="margin-top:0">Vokabel bearbeiten</h3>
+      <h3 style="margin:0 0 10px 0;">Vokabel</h3>
       <div class="form-grid">
         <label>Englisch<input id="mEn" type="text" /></label>
         <label>Deutsch<input id="mDe" type="text" /></label>
-        <label>Kategorie
-          <select id="mCat"></select>
-        </label>
-        <label>Gruppe / Variante<input id="mGroup" type="text" /></label>
-        <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
-
+        <label>Kategorie<select id="mCat"></select></label>
         <div class="confuse-toggle">
           <span>Verwechslungsgefahr</span>
           <label class="switch">
@@ -31,29 +24,22 @@
             <span class="slider"></span>
           </label>
         </div>
+        <label>Hinweis<textarea id="mHint" rows="3"></textarea></label>
+        <label>Erstellt am
+  <input id="mCreated" type="text" readonly />
+</label>
 
-        <label>Erstellt am<input id="mDate" type="date" readonly style="background:#f3f4f6" /></label>
       </div>
-
       <div class="modal-actions">
+        <button class="btn ghost" id="mDelete">Löschen</button>
+        <div style="flex:1"></div>
         <button class="btn ghost" id="mCancel">Abbrechen</button>
         <button class="btn primary" id="mSave">Speichern</button>
       </div>
     </div>
   </div>
 
-  <!-- === Delete Confirmation Modal === -->
-  <div class="modal" id="confirmModal" style="display:none;">
-    <div class="panel" style="max-width:400px;">
-      <h3 style="margin-top:0;color:#b91c1c;">❌ Löschen bestätigen</h3>
-      <p id="confirmText" style="font-weight:600;">Bist du sicher, dass du diese Vokabel löschen möchtest?</p>
-      <div class="modal-actions">
-        <button class="btn ghost" id="confirmCancel">Abbrechen</button>
-        <button class="btn primary" style="background:#ef4444;" id="confirmYes">Löschen</button>
-      </div>
-    </div>
-  </div>
-
+  <button id="themeToggle" class="theme-toggle">🌙</button>
   <script src="vokabeln.js"></script>
 </body>
 </html>

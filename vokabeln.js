@@ -1,9 +1,10 @@
+// ==============================
+// Beeferino – vokabeln.js
+// ==============================
 window.addEventListener("DOMContentLoaded", () => {
-
   const app = document.getElementById("app");
-  const isMobile = window.matchMedia("(max-width: 900px)").matches;
 
-  // === Kategorien ===
+  // Categories
   const CATEGORY_NAMES = {
     Gelb: "Grundwerkzeuge Metallverarbeitung",
     Pink: "Werkzeugkasten Mechaniker",
@@ -32,16 +33,21 @@ window.addEventListener("DOMContentLoaded", () => {
     Dunkelgruen: "#fff",
   };
 
-  // === GitHub Ziel ===
+  // Data endpoints
   const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-  const GH_OWNER = "beeferino";
-  const GH_REPO = "vokabeltrainer";
-  const GH_PATH = "vokabeln.json";
+  const GH_OWNER = "beeferino",
+    GH_REPO = "vokabeltrainer",
+    GH_PATH = "vokabeln.json";
 
+  // State
   let list = [];
   let currentPage = 1;
   const PAGE_SIZE = 20;
+  let sortState = { col: null, dir: 1 };
+  let currentLetter = "Alle";
+  let editIndex = null; // index in list for modal edit
 
+  // Helpers
   const normalize = (v) => [
     v[0] || "",
     v[1] || "",
@@ -52,8 +58,8 @@ window.addEventListener("DOMContentLoaded", () => {
     typeof v[6] === "number" ? v[6] : 0,
     v[7] || crypto.randomUUID(),
   ];
-
-  const loadLocal = () => JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
+  const loadLocal = () =>
+    JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
   const saveLocal = (d) => localStorage.setItem("vokabeln", JSON.stringify(d));
 
   async function loadData() {
@@ -64,53 +70,37 @@ window.addEventListener("DOMContentLoaded", () => {
     } catch {
       list = loadLocal();
     }
+    renderApp();
+    renderABCOverlay();
+    initTheme();
   }
 
-  // === Kategorieauswahl füllen ===
-  function fillCategorySelect(el, withAll = false) {
-    el.innerHTML = withAll ? '<option value="Alle">Alle (bunt gemischt)</option>' : "";
-    Object.keys(CATEGORY_NAMES).forEach((k) => {
-      const o = document.createElement("option");
-      o.value = k;
-      o.textContent = CATEGORY_NAMES[k];
-      o.style.background = COLOR_MAP[k];
-      o.style.color = TEXT_ON[k];
-      el.appendChild(o);
-    });
-  }
-
-  // === Filterfunktion ===
-  function filtered(cat, q) {
-    q = q.toLowerCase();
-    return list.filter((v) => {
-      const matchCat = cat === "Alle" || v[2] === cat;
-      const matchQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
-      return matchCat && matchQ;
-    });
-  }
-
-  // === Desktop-Ansicht ===
-  function renderDesktopView() {
+  // Render main UI
+  function renderApp() {
     app.innerHTML = `
       <div class="desktop-app">
         <h1>📘 Vokabelübersicht</h1>
         <div class="hr"></div>
         <div class="toolbar">
-  <button id="backToTrainer" class="btn ghost" title="Zurück zum Trainer">🏠 Trainer</button>
-  <input id="searchDesk" placeholder="Suchen…" />
-  <select id="filterCatDesk"></select>
-  <button id="resetDesk" class="btn">Reset</button>
-  <button id="addDesk" class="btn">➕ Neue</button>
-  <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-  <button id="syncDesk" class="btn">📤 Sync</button>
-</div>
-
-
+          <button id="homeBtn" class="btn ghost" title="Zurück zum Trainer">🏠</button>
+          <input id="searchDesk" placeholder="Suchen…" />
+          <select id="filterCatDesk"></select>
+          <button id="resetDesk" class="btn">Reset</button>
+          <button id="addDesk" class="btn">➕ Neue</button>
+          <button id="delDesk" class="btn warn">🗑️ Löschen</button>
+          <button id="syncDesk" class="btn">📤 Sync</button>
+        </div>
         <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
         <div class="table-wrap">
           <table id="tbl">
             <thead>
-              <tr><th></th><th>Englisch</th><th>Deutsch</th><th>Kategorie</th><th>Aktion</th></tr>
+              <tr>
+                <th class="select-col"></th>
+                <th class="sortable" data-sort="0">Englisch ⬍</th>
+                <th class="sortable" data-sort="1">Deutsch ⬍</th>
+                <th>Kategorie</th>
+                <th>Aktion</th>
+              </tr>
             </thead>
             <tbody></tbody>
           </table>
@@ -118,267 +108,360 @@ window.addEventListener("DOMContentLoaded", () => {
         <div id="pagination" style="text-align:center;margin:16px 0;"></div>
       </div>
     `;
-    fillCategorySelect(document.getElementById("filterCatDesk"), true);
-    renderTable();
-    addDesktopListeners();
-  }
 
-  function renderTable() {
-    const filterCat = document.getElementById("filterCatDesk").value || "Alle";
-    const search = document.getElementById("searchDesk").value || "";
-    const data = filtered(filterCat, search);
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const pageData = data.slice(start, start + PAGE_SIZE);
-
-    const tbody = document.querySelector("#tbl tbody");
-    tbody.innerHTML = pageData
-      .map(
-        (v, i) => `
-      <tr>
-        <td><input type="checkbox" data-idx="${i}" /></td>
-        <td>${v[0]}${v[6] === 1 ? ' <span style="color:#ef4444;font-weight:700;">⚠️</span>' : ''}</td>
-        <td>${v[1]}</td>
-        <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-        <td><button class="btn editBtn" data-edit="${i}">✏️ Bearbeiten</button></td>
-      </tr>`
-      )
-      .join("");
-
-    document.getElementById("countDesk").textContent = `📘 ${data.length} Vokabel${data.length !== 1 ? "n" : ""} gefunden`;
-
-    const pages = Math.ceil(data.length / PAGE_SIZE) || 1;
-    const pagination = document.getElementById("pagination");
-    pagination.innerHTML = `
-      <button class="btn" ${currentPage === 1 ? "disabled" : ""} id="prevPage">⬅️ Zurück</button>
-      <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
-      <button class="btn" ${currentPage === pages ? "disabled" : ""} id="nextPage">Weiter ➡️</button>
-    `;
-
-    document.getElementById("prevPage").onclick = () => {
-      if (currentPage > 1) { currentPage--; renderTable(); }
-    };
-    document.getElementById("nextPage").onclick = () => {
-      if (currentPage < pages) { currentPage++; renderTable(); }
-    };
-
-    document.querySelectorAll(".editBtn").forEach((btn, i) => {
-      btn.onclick = () => openEditModal(pageData[i]);
-    });
-  }
-
-  function addDesktopListeners() {
-    document.getElementById("backToTrainer").onclick = () => {
-  window.location.href = "index.html";
-};
-document.getElementById("filterCatDesk").onchange = renderTable;
-    document.getElementById("searchDesk").oninput = renderTable;
-    document.getElementById("resetDesk").onclick = () => {
-      document.getElementById("filterCatDesk").value = "Alle";
-      document.getElementById("searchDesk").value = "";
-      currentPage = 1;
-      renderTable();
-    };
-    document.getElementById("addDesk").onclick = () => openEditModal();
-    document.getElementById("syncDesk").onclick = githubSync;
-    document.getElementById("delDesk").onclick = openDeleteConfirm;
-  }
-
-  // === Mobile Ansicht ===
-  function renderMobileView() {
-    app.innerHTML = `
-      <div class="mobile-app">
-        <div class="mob-header">
-          <h2>Vokabeln</h2>
-          <div style="display:flex;gap:10px;">
-            <button class="iconbtn" id="addMob">➕</button>
-            <button class="iconbtn" id="syncMob">🔄</button>
-          </div>
-        </div>
-        <div class="mob-list"></div>
-      </div>
-    `;
-    renderMobileList();
-    document.getElementById("syncMob").onclick = githubSync;
-    document.getElementById("addMob").onclick = () => openEditModal();
-  }
-
-  function renderMobileList() {
-    const container = document.querySelector(".mob-list");
-    container.innerHTML = list
-      .map(
-        (v) => `
-      <div class="card" data-id="${v[7]}">
-        <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-        <div class="card-title">${v[0]}</div>
-        <div class="card-sub">DE: ${v[1]}</div>
-      </div>`
-      )
-      .join("");
-
-    // Karte klickbar zum Bearbeiten
-    document.querySelectorAll(".card").forEach((card) => {
-      card.addEventListener("click", () => {
-        const id = card.getAttribute("data-id");
-        const entry = list.find((v) => v[7] === id);
-        if (entry) openEditModal(entry);
-      });
-    });
-  }
-
-  // === Modal Handling ===
-  let editIndex = null;
-  const modal = document.getElementById("modal");
-  const mEn = document.getElementById("mEn");
-  const mDe = document.getElementById("mDe");
-  const mCat = document.getElementById("mCat");
-  const mGroup = document.getElementById("mGroup");
-  const mHint = document.getElementById("mHint");
-  const mConfuse = document.getElementById("mConfuse");
-  const mDate = document.getElementById("mDate");
-  const mCancel = document.getElementById("mCancel");
-  const mSave = document.getElementById("mSave");
-
-  function fillModalCategories() {
-    mCat.innerHTML = "";
+    // fill categories for filter
+    const sel = document.getElementById("filterCatDesk");
+    sel.innerHTML = '<option value="Alle">Alle (bunt gemischt)</option>';
     Object.keys(CATEGORY_NAMES).forEach((k) => {
       const o = document.createElement("option");
       o.value = k;
       o.textContent = CATEGORY_NAMES[k];
       o.style.background = COLOR_MAP[k];
       o.style.color = TEXT_ON[k];
-      mCat.appendChild(o);
+      sel.appendChild(o);
+    });
+
+    addDesktopListeners();
+    enableSorting();
+    renderTable();
+  }
+
+  function currentFilter() {
+    const cat = document.getElementById("filterCatDesk").value || "Alle";
+    const q = (document.getElementById("searchDesk").value || "")
+      .trim()
+      .toLowerCase();
+    return { cat, q };
+  }
+
+  function filtered() {
+    const { cat, q } = currentFilter();
+    return list.filter((v) => {
+      const matchCat = cat === "Alle" || v[2] === cat;
+      const matchQ =
+        !q ||
+        v[0].toLowerCase().includes(q) ||
+        v[1].toLowerCase().includes(q);
+      const matchLetter =
+        currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter);
+      return matchCat && matchQ && matchLetter;
     });
   }
 
-  function openEditModal(entry) {
-    fillModalCategories();
-    if (entry) {
-      editIndex = list.findIndex((x) => x[7] === entry[7]);
-      mEn.value = entry[0];
-      mDe.value = entry[1];
-      mCat.value = entry[2];
-      mGroup.value = entry[3] || "";
-      mHint.value = entry[4] || "";
-      mDate.value = new Date(entry[5]).toISOString().slice(0, 10);
-      mConfuse.checked = entry[6] === 1;
-    } else {
-      editIndex = null;
-      mEn.value = "";
-      mDe.value = "";
-      mCat.value = "Gelb";
-      mGroup.value = "";
-      mHint.value = "";
-      mDate.value = new Date().toISOString().slice(0, 10);
-      mConfuse.checked = false;
-    }
-    
-    // === Kategoriefarbe initial setzen ===
-mCat.style.background = COLOR_MAP[mCat.value];
-mCat.style.color = TEXT_ON[mCat.value];
+  function renderTable() {
+    const data = filtered();
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageData = data.slice(start, start + PAGE_SIZE);
 
-// Wenn sich die Auswahl ändert → Farbe live anpassen
-mCat.onchange = () => {
-  mCat.style.background = COLOR_MAP[mCat.value];
-  mCat.style.color = TEXT_ON[mCat.value];
+    const tbody = document.querySelector("#tbl tbody");
+    tbody.innerHTML = pageData
+      .map((v) => {
+        const idx = list.findIndex((x) => x[7] === v[7]);
+        return `<tr>
+          <td><input type="checkbox" class="rowcheck" data-idx="${idx}"></td>
+          <td>${v[0]}${v[6]===1?` <span title="Verwechslungsgefahr" style="color:#ef4444">⚠️</span>`:""}</td>
+          <td>${v[1]}</td>
+          <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+          <td><button class="btn" data-edit="${idx}">✏️ Bearbeiten</button></td>
+        </tr>`;
+      })
+      .join("");
+
+    document.querySelectorAll('button[data-edit]').forEach((b)=>{
+      b.onclick=()=>openEdit(+b.dataset.edit);
+    });
+
+    // count
+    document.getElementById("countDesk").textContent = `📘 ${data.length} Vokabel${data.length !== 1 ? "n" : ""} gefunden`;
+
+    // pagination
+    const pages = Math.ceil(data.length / PAGE_SIZE) || 1;
+    const pagination = document.getElementById("pagination");
+    pagination.innerHTML = `
+      <button class="btn" ${currentPage===1?"disabled":""} id="prevPage">⬅️ Zurück</button>
+      <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
+      <button class="btn" ${currentPage===pages?"disabled":""} id="nextPage">Weiter ➡️</button>
+    `;
+    document.getElementById("prevPage").onclick = () => {
+      if (currentPage>1){ currentPage--; renderTable(); }
+    };
+    document.getElementById("nextPage").onclick = () => {
+      if (currentPage<pages){ currentPage++; renderTable(); }
+    };
+  }
+
+  function addDesktopListeners() {
+    // Farbanpassung für Toolbar-Select
+const fDesk = document.getElementById("filterCatDesk");
+if (fDesk) {
+  const updateFilterColor = () => {
+    const val = fDesk.value;
+    if (val && COLOR_MAP[val]) {
+      fDesk.style.background = COLOR_MAP[val];
+      fDesk.style.color = TEXT_ON[val];
+    } else {
+      fDesk.style.background = "";
+      fDesk.style.color = "";
+    }
+  };
+  fDesk.addEventListener("change", updateFilterColor);
+  updateFilterColor();
+}
+document.getElementById("filterCatDesk").onchange = () => { currentPage=1; renderTable(); };
+    document.getElementById("searchDesk").oninput = () => { currentPage=1; renderTable(); };
+    document.getElementById("resetDesk").onclick = () => {
+      document.getElementById("filterCatDesk").value = "Alle";
+      document.getElementById("searchDesk").value = "";
+      currentPage = 1; currentLetter = "Alle";
+      renderTable();
+    };
+    document.getElementById("addDesk").onclick = () => openEdit(null);
+    document.getElementById("delDesk").onclick = () => bulkDelete();
+    document.getElementById("syncDesk").onclick = githubSync;
+  document.getElementById("homeBtn").onclick = () => {
+  window.location.href = "index.html";
 };
 
-    
+  }
+
+  function enableSorting() {
+    document.querySelectorAll("th.sortable").forEach((th) => {
+      th.onclick = () => {
+        const col = parseInt(th.dataset.sort);
+        if (sortState.col === col) sortState.dir *= -1;
+        else { sortState.col = col; sortState.dir = 1; }
+        list.sort((a, b) => (a[col] || "").toLowerCase().localeCompare((b[col] || "").toLowerCase()) * sortState.dir);
+        saveLocal(list);
+        renderTable();
+      };
+    });
+  }
+
+  // ===== Modal logic
+  const modal = document.getElementById("modal");
+  const mEn = document.getElementById("mEn");
+  const mDe = document.getElementById("mDe");
+  const mCat = document.getElementById("mCat");
+  const mHint = document.getElementById("mHint");
+  const mConfuse = document.getElementById("mConfuse");
+  const mCancel = document.getElementById("mCancel");
+  const mSave = document.getElementById("mSave");
+  const mDelete = document.getElementById("mDelete");
+
+  function fillModalCategories() {
+    mCat.innerHTML = "";
+    Object.keys(CATEGORY_NAMES).forEach((k) => {
+      const o = document.createElement("option");
+      o.value = k; o.textContent = CATEGORY_NAMES[k];
+      o.style.background = COLOR_MAP[k]; o.style.color = TEXT_ON[k];
+      mCat.appendChild(o);
+    });
+    // Nach dem Aufbau der Liste:
+if (mCat.value) {
+  mCat.style.background = COLOR_MAP[mCat.value];
+  mCat.style.color = TEXT_ON[mCat.value];
+}
+
+// Bei jeder Änderung sofort die Farbe aktualisieren:
+mCat.addEventListener("change", () => {
+  const sel = mCat.value;
+  mCat.style.background = COLOR_MAP[sel];
+  mCat.style.color = TEXT_ON[sel];
+});
+
+  }
+
+  function openEdit(i) {
+    fillModalCategories();
+    editIndex = i;
+    if (i === null || i === undefined) {
+  // Neu
+  mEn.value = "";
+  mDe.value = "";
+  mCat.value = "Gelb";
+  mHint.value = "";
+  mConfuse.checked = false;
+  document.getElementById("mCreated").value = new Date().toLocaleDateString();
+} else {
+  const v = list[i];
+  mEn.value = v[0];
+  mDe.value = v[1];
+  mCat.value = v[2];
+  mHint.value = v[4] || "";
+  mConfuse.checked = v[6] === 1;
+  document.getElementById("mCreated").value = new Date(v[5]).toLocaleDateString();
+}
+
+    // set color on select
+    mCat.style.background = COLOR_MAP[mCat.value];
+    mCat.style.color = TEXT_ON[mCat.value];
+    mCat.onchange = () => {
+      mCat.style.background = COLOR_MAP[mCat.value];
+      mCat.style.color = TEXT_ON[mCat.value];
+    };
     modal.style.display = "flex";
   }
-// === Kategoriefarbe aktiv anzeigen ===
-mCat.style.background = COLOR_MAP[mCat.value];
-mCat.style.color = TEXT_ON[mCat.value];
 
-mCat.onchange = () => {
-  mCat.style.background = COLOR_MAP[mCat.value];
-  mCat.style.color = TEXT_ON[mCat.value];
-};
-
-  function closeModal() { modal.style.display = "none"; }
-  mCancel.onclick = closeModal;
-  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+  mCancel.onclick = () => modal.style.display = "none";
+  modal.addEventListener("click",(e)=>{ if(e.target===modal) modal.style.display="none"; });
 
   mSave.onclick = () => {
     const en = mEn.value.trim();
     const de = mDe.value.trim();
     const cat = mCat.value;
-    const grp = mGroup.value.trim();
     const hint = mHint.value.trim();
     const confuse = mConfuse.checked ? 1 : 0;
-    const date = mDate.value ? new Date(mDate.value).toISOString() : new Date().toISOString();
-
     if (!en || !de) { alert("Bitte Englisch & Deutsch ausfüllen."); return; }
-
-    const newEntry = [en, de, cat, grp, hint, date, confuse, crypto.randomUUID()];
-    if (editIndex !== null) {
+    const newEntry = [en, de, cat, "", hint, new Date().toISOString(), confuse, crypto.randomUUID()];
+    if (editIndex !== null && editIndex !== undefined) {
+      // keep original id/date
       const old = list[editIndex];
-      list[editIndex] = [en, de, cat, grp, hint, old[5], confuse, old[7]];
+      list[editIndex] = [en, de, cat, "", hint, old[5], confuse, old[7]];
     } else {
       list.push(newEntry);
     }
-
     saveLocal(list);
-    closeModal();
-    if (isMobile) renderMobileList();
-    else renderTable();
+    modal.style.display = "none";
+    renderTable();
   };
 
-  // === Lösch-Modal ===
-  function openDeleteConfirm() {
-    const checked = [...document.querySelectorAll("#tbl input[type='checkbox']:checked")];
-    if (!checked.length) {
-      alert("Bitte mindestens eine Zeile markieren.");
-      return;
-    }
+  mDelete.onclick = () => {
+    if (editIndex === null || editIndex === undefined) { alert("Nichts zum Löschen ausgewählt."); return; }
+    if (!confirm("Eintrag wirklich löschen?")) return;
+    list.splice(editIndex, 1);
+    saveLocal(list);
+    modal.style.display = "none";
+    renderTable();
+  };
 
-    const confirmModal = document.getElementById("confirmModal");
-    const confirmText = document.getElementById("confirmText");
-    confirmText.textContent = `Möchtest du wirklich ${checked.length} Vokabel${checked.length !== 1 ? "n" : ""} löschen?`;
-    confirmModal.style.display = "flex";
-
-    const cancelBtn = document.getElementById("confirmCancel");
-    const yesBtn = document.getElementById("confirmYes");
-
-    cancelBtn.onclick = () => { confirmModal.style.display = "none"; };
-    yesBtn.onclick = () => {
-      const indexes = checked.map((x) => parseInt(x.dataset.idx));
-      list = list.filter((_, i) => !indexes.includes(i));
-      saveLocal(list);
-      confirmModal.style.display = "none";
-      renderTable();
-    };
+  function bulkDelete(){
+    const checks = Array.from(document.querySelectorAll(".rowcheck:checked")).map(x=>+x.dataset.idx);
+    if(!checks.length){ alert("Bitte Zeilen auswählen."); return; }
+    if(!confirm(`${checks.length} Einträge löschen?`)) return;
+    list = list.filter((_,i)=>!checks.includes(i));
+    saveLocal(list);
+    renderTable();
   }
 
-  // === GitHub Sync ===
-  async function githubSync() {
-    const token = localStorage.getItem("gh_token") || prompt("GitHub Token (repo-Scope):", "");
-    if (!token) return;
-    localStorage.setItem("gh_token", token);
-    try {
+  // ===== A–Z Overlay (right)
+  function renderABCOverlay(){
+    const overlayHTML = `
+      <button id="abcToggle" class="abc-toggle">A–Z</button>
+      <div class="abc-overlay" id="abcOverlay">
+        <div class="abc-panel">
+          <div class="abc-header">
+            <span class="abc-title">Wähle Buchstabe</span>
+            <button id="abcClose" class="abc-close">✕</button>
+          </div>
+          <div class="abc-list" id="abcFilter"></div>
+        </div>
+      </div>`;
+    if(!document.getElementById("abcOverlay")){
+      document.body.insertAdjacentHTML("beforeend", overlayHTML);
+    }
+    const btn = document.getElementById("abcToggle");
+    const overlay = document.getElementById("abcOverlay");
+    const close = document.getElementById("abcClose");
+
+    btn.onclick = () => {
+  overlay.classList.add("show");
+  setTimeout(() => renderABCFilter(), 40);
+};
+
+// Schließen-Button
+close.onclick = () => overlay.classList.remove("show");
+
+  }
+
+  function renderABCFilter() {
+  const container = document.getElementById("abcFilter");
+  if (!container) return;
+  const letters = ["Alle", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+  container.innerHTML = letters
+    .map(
+      (l) => `
+      <button class="abc-btn${l === currentLetter ? " active" : ""}" data-letter="${l}">
+        ${l}
+      </button>`
+    )
+    .join("");
+
+  container.querySelectorAll(".abc-btn").forEach((btn) => {
+    btn.onclick = () => {
+      currentLetter = btn.dataset.letter;
+      currentPage = 1;
+      renderABCFilter();
+      renderTable();
+
+      // Overlay schließen
+      const overlay = document.getElementById("abcOverlay");
+      if (overlay) overlay.classList.remove("show");
+
+      // Buttontext aktualisieren
+      const toggle = document.getElementById("abcToggle");
+      if (toggle) {
+        if (currentLetter === "Alle") {
+          toggle.textContent = "A–Z";
+          toggle.title = "Alphabet-Filter öffnen";
+          toggle.style.background = "var(--blue)";
+        } else {
+          toggle.textContent = `${currentLetter}`;
+          toggle.title = `Gefiltert nach "${currentLetter}"`;
+          toggle.style.background = "#e67e22"; // orange als Warnfarbe
+        }
+      }
+    };
+  });
+}
+
+  
+  // ===== GitHub Sync
+  function getToken(){
+    let t = localStorage.getItem("gh_token") || "";
+    if(!t){
+      t = prompt("GitHub Token (repo-Scope):","");
+      if(t){ localStorage.setItem("gh_token", t); alert("Token gespeichert."); }
+    }
+    return t;
+  }
+
+  async function githubSync(){
+    const token = getToken(); if(!token) return;
+    try{
       const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
       const get = await fetch(api, { headers: { Authorization: `token ${token}` } });
-      const meta = await get.json();
-      const sha = meta.sha;
+      const meta = await get.json(); const sha = meta.sha;
       const content = btoa(unescape(encodeURIComponent(JSON.stringify(list, null, 2))));
       const res = await fetch(api, {
         method: "PUT",
-        headers: {
-          Authorization: `token ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: "Update via Vokabel-UI", content, sha }),
+        headers: { Authorization: `token ${token}`, "Content-Type":"application/json" },
+        body: JSON.stringify({ message: "Update via Vokabel-UI", content, sha })
       });
-      if (!res.ok) throw new Error(await res.text());
+      if(!res.ok) throw new Error(await res.text());
       alert("✅ Erfolgreich in Datenbank eingetragen.");
-    } catch (e) {
+    }catch(e){
       alert("❌ Sync fehlgeschlagen.");
     }
   }
 
-  // === Init ===
-  loadData().then(() => {
-    if (isMobile) renderMobileView();
-    else renderDesktopView();
-  });
+  // ===== Theme
+  function applyTheme(mode){
+    document.documentElement.setAttribute("data-theme", mode);
+    localStorage.setItem("theme", mode);
+    const btn = document.getElementById("themeToggle");
+    if(btn) btn.textContent = mode === "dark" ? "☀️" : "🌙";
+  }
+  function toggleTheme(){
+    const current = localStorage.getItem("theme") || "light";
+    applyTheme(current === "dark" ? "light" : "dark");
+  }
+  function initTheme(){
+    const saved = localStorage.getItem("theme") || "light";
+    applyTheme(saved);
+    const tbtn = document.getElementById("themeToggle");
+    if(tbtn) tbtn.addEventListener("click", toggleTheme);
+  }
 
+  // Start
+  loadData();
 });
