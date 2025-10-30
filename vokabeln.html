@@ -1,371 +1,954 @@
-<!DOCTYPE html>
+<!-- =========================
+  vokabeln.html — TEIL 1/4
+  Head + CSS (Dark Mode, Mobile, Anpassen)
+  ========================= -->
+<!doctype html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#0f172a;--muted:#6b7280;--bg:#f7f9fb;--card:#ffffff;
-  --blue:#2563eb;--ok:#16a34a;--bad:#ef4444;
-  --border:#e5ebf3;--shadow:0 8px 26px rgba(0,0,0,.1)
-}
-body.dark{
-  --ink:#e2e8f0;--muted:#94a3b8;--bg:#0f172a;--card:#1e293b;
-  --border:#334155;--shadow:0 8px 26px rgba(0,0,0,.5)
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);transition:background .4s,color .4s}
-a{color:var(--blue);text-decoration:none}
-.app{max-width:1100px;margin:20px auto;padding:16px}
-h1{text-align:center;font-weight:800;color:var(--blue)}
-.hr{width:160px;height:4px;background:var(--blue);border-radius:4px;margin:10px auto 20px}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
-.toolbar select,.toolbar input{padding:8px 12px;border:1px solid #cfd6e4;border-radius:10px}
-.toolbar .btn{background:var(--blue);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
-.toolbar .warn{background:var(--bad)}
-.table-wrap{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
-tr:hover{background:rgba(37,99,235,.05)}
-.category-chip{padding:4px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:.9rem}
-.red-flag{color:var(--bad);font-weight:700;margin-left:6px}
-.mob-list{display:none;padding:10px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
-.fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);padding:10px;border-top:1px solid var(--border)}
-.fabs{display:flex;gap:8px}
-.fab{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;color:#fff}
-.fab.gray{background:#6b7280}.fab.warn{background:var(--bad)}.fab.blue{background:var(--blue)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:50}
-.panel{background:var(--card);border-radius:14px;padding:18px;width:92%;max-width:520px;box-shadow:var(--shadow)}
-.form-grid{display:grid;gap:10px}
-.form-grid input,.form-grid select,.form-grid textarea{width:100%;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink)}
-.confuse-toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-weight:600;color:var(--ink)}
-.confuse-toggle .switch{position:relative;display:inline-block;width:48px;height:26px}
-.confuse-toggle .switch input{opacity:0;width:0;height:0}
-.confuse-toggle .slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;transition:0.3s;border-radius:34px}
-.confuse-toggle .slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background-color:white;transition:0.3s;border-radius:50%}
-.confuse-toggle input:checked + .slider{background-color:var(--bad);box-shadow:0 0 5px rgba(239,68,68,0.6)}
-.confuse-toggle input:checked + .slider:before{transform:translateX(22px)}
-/* Checkbox-Sperre */
-input[type="checkbox"][data-id]{cursor:pointer;transition:opacity .2s ease}
-body:not(.adjusting) input[type="checkbox"][data-id]{pointer-events:none;opacity:.4;cursor:not-allowed}
-/* Mobile Optimierung */
-@media(max-width:900px){
-  table th:nth-child(5), table td:nth-child(5),
-  table th:nth-child(6), table td:nth-child(6),
-  table th:nth-child(7), table td:nth-child(7){display:none!important}
-  td:nth-child(2){cursor:pointer;color:var(--blue);font-weight:600}
-  td:nth-child(2):hover{text-decoration:underline}
-  body{font-size:.9rem}
-  table{display:block;width:100%;overflow-x:auto}
-  th,td{padding:6px 8px;font-size:.85rem}
-  .category-chip{font-size:.75rem;padding:3px 8px}
-  .toolbar .btn,.fab{padding:8px 10px;font-size:.9rem;border-radius:8px}
-  h1{font-size:1.4rem}
-  .hr{width:120px;height:3px}
-  .panel{padding:14px;width:94%}
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>📘 Vokabelübersicht – Beeferino</title>
+
+  <!-- Systemschrift + Inter (nur für feinere Typo) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    /* ---------------------------
+       DESIGN-TOKENS / VARIABLEN
+       --------------------------- */
+    :root{
+      --ink:#0f172a;            /* Primärtext hell */
+      --ink-weak:#334155;       /* Sekundärtext hell */
+      --muted:#64748b;          /* Tertiärtext hell */
+      --bg:#eef4ff;             /* Seitenhintergrund hell */
+      --bg2:#dbeafe;            /* Verlauf hell */
+      --card:#ffffff;           /* Karten/Table hell */
+      --stroke:#e5ebf3;         /* Rahmen hell */
+
+      --blue:#2563eb;           /* Primärfarbe */
+      --blue-2:#1d4ed8;         /* Hover */
+      --accent:#60a5fa;         /* Akzent */
+      --ok:#16a34a;             /* Positiv */
+      --bad:#ef4444;            /* Warn/Löschen */
+      --orange:#f59e0b;         /* Hinweis */
+
+      --chip-bg:#eef2ff;        /* Badge-hell */
+      --chip-stroke:#c7d2fe;
+
+      --shadow: 0 10px 28px rgba(0,0,0,.10);
+
+      /* Dark-Mode Farben */
+      --ink-d:#e5e7eb;          /* Primärtext dunkel */
+      --ink-weak-d:#cbd5e1;
+      --muted-d:#94a3b8;
+      --bg-d:#0b1220;
+      --bg2-d:#0e1628;
+      --card-d:#121a2b;
+      --stroke-d:#1f2a3b;
+
+      --chip-bg-d:#0f1a30;
+      --chip-stroke-d:#233454;
+
+      /* Übergang für Dark-Mode Fade */
+      --fade: .28s ease;
+    }
+
+    /* ---------------------------
+       GRUNDLAYOUT
+       --------------------------- */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji", sans-serif;
+      background: radial-gradient(1200px 600px at 50% -100px, var(--bg), var(--bg2)) fixed;
+      color: var(--ink);
+      transition: background var(--fade), color var(--fade);
+    }
+    .app{
+      max-width: 1180px;
+      margin: 22px auto 48px;
+      padding: 0 14px 40px;
+    }
+
+    /* Titelblock */
+    .title{
+      text-align:center;
+      color:#1e3a8a;
+      margin: 8px 0 18px;
+      transition: color var(--fade);
+    }
+    .title h1{
+      margin:0;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 2.8vw + 1rem, 2.6rem);
+      letter-spacing:.2px;
+    }
+    .hr{
+      width: min(260px, 60%);
+      height: 6px;
+      margin: 12px auto 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity:.9;
+    }
+
+    /* Info-Zeile */
+    .meta{
+      text-align:center;
+      font-weight:700;
+      color:#1f2937;
+      margin: 4px 0 16px;
+    }
+
+    /* ---------------------------
+       TOOLBAR (Desktop/Mobile)
+       --------------------------- */
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      margin: 12px auto 16px;
+    }
+    .toolbar select,
+    .toolbar input[type="text"]{
+      padding: 10px 14px;
+      border: 1px solid var(--stroke);
+      border-radius: 12px;
+      background:#fff;
+      font-size: 1rem;
+      min-height: 44px;
+      min-width: 220px;
+      transition: border-color var(--fade), background var(--fade), color var(--fade);
+    }
+    .toolbar input[type="text"]{min-width:260px}
+
+    .btn{
+      border:none;
+      border-radius:12px;
+      padding: 10px 16px;
+      font-weight:800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform .06s ease, background var(--fade), color var(--fade), border-color var(--fade);
+      min-height:44px;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background:var(--blue); color:#fff}
+    .btn.primary:hover{background:var(--blue-2)}
+    .btn.ghost{
+      background: linear-gradient(135deg,#f1f5ff,#f8faff);
+      border: 1px solid var(--chip-stroke);
+      color:#1f2937;
+    }
+    .btn.warn{background:var(--bad); color:#fff}
+    .btn.neu{
+      background:linear-gradient(135deg,#3b82f6,#2563eb);
+      color:#fff;
+    }
+    .btn.switch{
+      background:linear-gradient(135deg,#eaf0ff,#f7faff);
+      border:1px solid var(--chip-stroke);
+      color:#1f2937;
+    }
+
+    /* Umschalter List/Kachel */
+    .mode-toggle{
+      border:1px solid var(--chip-stroke);
+      background:linear-gradient(135deg,#f8fbff,#ffffff);
+      border-radius:12px;
+      padding:8px;
+      display:flex;
+      gap:6px;
+    }
+    .seg{
+      padding:8px 12px;
+      border-radius:8px;
+      font-weight:800;
+      cursor:pointer;
+      user-select:none;
+    }
+    .seg.active{
+      background:var(--blue);
+      color:#fff;
+    }
+
+    /* ---------------------------
+       TABELLE (Desktop first)
+       --------------------------- */
+    .table-wrap{
+      background: var(--card);
+      border: 1px solid var(--stroke);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: background var(--fade), border-color var(--fade);
+    }
+    table{
+      width:100%;
+      border-collapse: collapse;
+    }
+    thead th{
+      text-align:left;
+      padding: 16px 14px;
+      background: linear-gradient(180deg, rgba(99,102,241,.08), rgba(99,102,241,.02));
+      border-bottom: 1px solid var(--stroke);
+      font-weight: 800;
+      letter-spacing:.3px;
+      position: sticky;
+      top:0; z-index:5;
+    }
+    tbody td{
+      border-bottom: 1px solid var(--stroke);
+      padding: 14px;
+      vertical-align: middle;
+      line-height: 1.35;
+    }
+    tbody tr:hover{ background: rgba(37, 99, 235, .04) }
+
+    /* Spaltenbreiten */
+    .col-check{ width: 64px; }
+    .col-en{ width: 28%; }
+    .col-de{ width: 34%; }
+    .col-cat{ width: 24%; }
+    .col-grp{ width: 12%; }
+    .col-hint{ width: 16%; }
+    .col-act{ width: 140px; text-align:right; }
+
+    /* Edit-Button in Desktopliste */
+    .btn-row{
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+    }
+
+    /* Kategorie-Badge – kompakt & bündig */
+    .cat-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--chip-stroke);
+      background: var(--chip-bg);
+      font-weight: 800;
+      white-space: nowrap;
+      line-height:1;
+    }
+    .cat-dot{
+      width:10px;height:10px;border-radius:50%;
+      background:#94a3b8;
+      outline:1px solid rgba(0,0,0,.05);
+    }
+
+    /* Verwechslungsgefahr in Liste – kleines Icon neben Englisch */
+    .flag{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width: 20px; height:20px;
+      border-radius:4px;
+      background: rgba(239,68,68,.08);
+      border:1px solid rgba(239,68,68,.35);
+      color:#b91c1c;
+      font-size:.78rem;
+      font-weight: 800;
+      margin-left: 8px;
+    }
+    .flag::before{content:"!"}
+
+    /* ---------------------------
+       KACHEL-ANSICHT (Grid)
+       --------------------------- */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .card{
+      background: var(--card);
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      padding:14px;
+      box-shadow: var(--shadow);
+      transition: transform .08s ease, border-color var(--fade), background var(--fade);
+    }
+    .card:hover{ transform: translateY(-1px); }
+    .card-head{
+      display:flex; align-items:center; gap:10px; margin-bottom:6px;
+    }
+    .term-en{
+      font-weight:800; font-size:1.05rem; color: var(--blue);
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    .term-de{
+      font-weight:700; color: var(--ink);
+      margin: 2px 0 8px;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+    .meta-row{
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+    }
+    .badge-mini{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:5px 9px;border-radius:999px;border:1px solid var(--chip-stroke);
+      background:var(--chip-bg);font-weight:800;font-size:.88rem;
+      line-height:1;
+    }
+    .mini-dot{ width:8px;height:8px;border-radius:999px; background:#94a3b8; }
+
+    /* „Verwechslungsgefahr“ in Kachel – dezenter Chip */
+    .confuse-chip{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 8px;border-radius:10px;
+      background: rgba(239,68,68,.09);
+      border: 1px dashed rgba(239,68,68,.35);
+      color:#b91c1c; font-weight:800; font-size:.82rem;
+    }
+    .confuse-chip::before{content:"⚠"; font-size:.9rem}
+
+    /* Bearbeiten-Button in Kachel (mobil sichtbar im Anpassen-Modus) */
+    .card-actions{
+      display:flex; gap:8px; justify-content:flex-end; margin-top:10px;
+    }
+    .card .btn-edit{
+      display:none; /* wird in anpassen--on auf block gesetzt */
+      padding:8px 12px; font-size:.9rem; border-radius:10px;
+      background:var(--blue); color:#fff; border:none; font-weight:800; cursor:pointer;
+    }
+
+    /* ---------------------------
+       PAGINATION
+       --------------------------- */
+    .pagination{
+      display:flex;align-items:center;justify-content:center;gap:12px;
+      margin: 16px 0 8px;
+    }
+    .pagination .btn[disabled]{opacity:.55; cursor:not-allowed}
+    .page-info{ font-weight:700 }
+
+    /* ---------------------------
+       MOBIL-ANPASSUNGEN
+       --------------------------- */
+    @media (max-width: 900px){
+      /* Desktopliste bleibt, aber wir lassen nur benötigte Spalten stehen */
+      .col-grp, .col-hint, .col-act{ display:none; }
+
+      /* Checkboxen standardmäßig unsichtbar, bis Anpassen aktiviert ist */
+      .col-check{ width: 40px; }
+      td.col-check input[type="checkbox"]{
+        visibility: hidden;  /* wird in .anpassen--on sichtbar */
+      }
+      /* Zeilen kompakter */
+      tbody td{ padding: 12px 10px; }
+      thead th{ padding: 14px 10px; }
+
+      /* Kategorie bündig – kleiner Badge direkt im DE-Feld */
+      .col-cat{ display: none; }
+      .de-with-chip{
+        display:flex; align-items:center; gap:8px;
+        flex-wrap:wrap;
+      }
+      .cat-badge{ padding:4px 8px; font-size:.88rem }
+
+      /* Kleinere Schrift, sodass mehr Zeilen auf den Screen passen */
+      tbody td, thead th{ font-size: 0.98rem }
+      .term-de, .term-en{ font-size: 1rem }
+
+      /* Kachel-Grid → 1 Spalte auf sehr kleinen Geräten */
+      .grid{ grid-template-columns: 1fr; }
+
+      /* Mobile FAB-Leiste (sichtbar nur mobil) */
+      .fab-row{
+        position: sticky;
+        bottom: 0;
+        z-index: 40;
+        display:flex;
+        justify-content:center;
+        padding: 10px;
+        background: rgba(255,255,255,.86);
+        border-top: 1px solid var(--stroke);
+        backdrop-filter: blur(8px);
+      }
+      .fab-row .fabs{ display:flex; gap:8px; width:100%; max-width:720px }
+      .fab{ flex:1; padding:12px; border:none; border-radius:12px; font-weight:800; cursor:pointer; color:#fff }
+      .fab.gray{ background:#6b7280 }
+      .fab.warn{ background:var(--bad) }
+      .fab.blue{ background:var(--blue) }
+
+      /* Im Listenmodus: Bearbeiten-Buttons & Checkboxen nur im Anpassen-Modus sichtbar */
+      .anpassen--on td.col-check input[type="checkbox"]{ visibility: visible; }
+      .anpassen--on .btn-edit{ display:inline-flex }
+    }
+
+    /* ---------------------------
+       DARK MODE (mit sanftem Fade)
+       --------------------------- */
+    .dark{
+      color: var(--ink-d);
+      background: radial-gradient(1200px 600px at 50% -100px, var(--bg-d), var(--bg2-d)) fixed;
+    }
+    .dark .title{ color:#93c5fd }
+    .dark .meta{ color: var(--ink-weak-d) }
+    .dark .toolbar select,
+    .dark .toolbar input[type="text"]{
+      background: var(--card-d); color: var(--ink-d);
+      border-color: var(--stroke-d);
+    }
+    .dark .btn.ghost,
+    .dark .btn.switch{
+      background: linear-gradient(135deg,#0f172a,#0b1323);
+      color: var(--ink-d);
+      border-color: var(--stroke-d);
+    }
+
+    .dark .table-wrap{ background: var(--card-d); border-color: var(--stroke-d) }
+    .dark thead th{ border-color: var(--stroke-d) }
+    .dark tbody td{ border-color: var(--stroke-d) }
+    .dark tbody tr:hover{ background: rgba(99,102,241,.08) }
+
+    .dark .cat-badge{
+      background: var(--chip-bg-d);
+      border-color: var(--chip-stroke-d);
+      color: var(--ink-d);
+    }
+    .dark .badge-mini{
+      background: var(--chip-bg-d);
+      border-color: var(--chip-stroke-d);
+      color: var(--ink-d);
+    }
+    .dark .flag{
+      background: rgba(239,68,68,.12);
+      border-color: rgba(239,68,68,.45);
+      color:#fecaca;
+    }
+    .dark .fab-row{
+      background: rgba(2,6,23,.8);
+      border-top-color: var(--stroke-d);
+    }
+
+    /* Sanfter Übergang aller Primärelemente im Themewechsel */
+    .dark, .dark .table-wrap, .dark .card, .dark .toolbar select,
+    .dark .toolbar input[type="text"], .dark .btn.ghost, .dark .btn.switch{
+      transition: background var(--fade), color var(--fade), border-color var(--fade), box-shadow var(--fade);
+    }
+
+    /* ---------------------------
+       HILFSKLASSEN
+       --------------------------- */
+    .hidden{ display:none !important }
+    .center{ text-align:center }
+    .nowrap{ white-space:nowrap }
+  </style>
 </head>
+  <!-- =========================
+  vokabeln.html — TEIL 2/4
+  Body + Strukturelle Elemente
+  ========================= -->
 <body>
-<div class="app">
-  <h1>📘 Vokabelübersicht</h1>
-  <div class="hr"></div>
-  <div class="toolbar">
-    <select id="filterCatDesk"></select>
-    <input id="searchDesk" type="text" placeholder="Suchen…">
-    <button id="resetDesk" class="btn">Reset</button>
-    <button id="addDesk" class="btn">➕ Neue</button>
-    <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-    <button id="syncDesk" class="btn">📤 Sync</button>
-    <button id="darkModeToggle" class="btn">🌙 Dark Mode</button>
-  </div>
-  <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:var(--blue)">📘 0 Vokabeln</div>
-  <div class="table-wrap">
-    <table id="tbl"><thead><tr>
-      <th>⟲</th><th data-sort="0">Englisch</th><th data-sort="1">Deutsch</th><th>Kategorie</th>
-      <th>Gruppe</th><th>Hinweis</th><th>Aktion</th>
-    </tr></thead><tbody></tbody></table>
-  </div>
-  <div id="pagination" style="text-align:center;margin:16px 0;"></div>
-  <div class="fab-row">
-    <div class="fabs">
-      <button class="fab gray" id="fabBack">Zurück</button>
-      <button class="fab blue" id="fabAdjust">Anpassen</button>
-      <button class="fab gray" id="fabSync">Sync</button>
+  <div class="app">
+
+    <!-- Titel & Headline -->
+    <div class="title">
+      <h1>📘 Vokabelübersicht</h1>
+      <div class="hr"></div>
+      <div class="meta" id="countDesk">–</div>
     </div>
-  </div>
-  <div class="footer" style="text-align:center;margin-top:20px">
-    <a href="index.html" style="font-weight:700">⬅️ Zurück zum Trainer</a>
-  </div>
-</div>
-  <!-- === Modal für Vokabeldetails === -->
-<div class="modal" id="modal">
-  <div class="panel">
-    <h3 id="modalTitle" style="margin-top:0">Vokabel bearbeiten</h3>
-    <div class="form-grid">
-      <label>Englisch<input id="mEn" type="text"></label>
-      <label>Deutsch<input id="mDe" type="text"></label>
-      <label>Kategorie
-        <select id="mCat"></select>
-      </label>
-      <div class="confuse-toggle">
-        <span>Verwechslungsgefahr</span>
-        <label class="switch">
-          <input type="checkbox" id="mConfuse">
-          <span class="slider"></span>
-        </label>
+
+    <!-- Toolbar mit Filter, Suche, Reset, Buttons -->
+    <div class="toolbar">
+      <select id="filterCatDesk" title="Kategorie filtern">
+        <option value="Alle">Alle (bunt gemischt)</option>
+      </select>
+      <input id="searchDesk" type="text" placeholder="Suchen…" />
+      <button id="resetDesk" class="btn ghost" title="Filter zurücksetzen">Reset</button>
+      <button id="addDesk" class="btn primary" title="Neue Vokabel hinzufügen">➕ Neue</button>
+      <button id="delDesk" class="btn warn" title="Markierte löschen">🗑️ Löschen</button>
+      <button id="syncDesk" class="btn" title="Mit GitHub synchronisieren">🔄 Sync</button>
+
+      <!-- Umschalter Listen/Kachelansicht -->
+      <div class="mode-toggle" id="modeSwitch">
+        <div class="seg active" data-mode="list">📋 Liste</div>
+        <div class="seg" data-mode="grid">🧩 Kacheln</div>
       </div>
-      <label>Gruppe / Variante<input id="mGroup" type="text"></label>
-      <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
-    </div>
-    <div class="modal-actions" style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
-      <button class="btn ghost" id="mCancel">Abbrechen</button>
-      <button class="btn primary" id="mSave">Speichern</button>
-    </div>
-  </div>
-</div>
 
+      <!-- Dark-Mode-Schalter -->
+      <button id="darkModeToggle" class="btn switch" title="Helles/Dunkles Design">🌙 Dark Mode</button>
+    </div>
+
+    <!-- =========================
+         TABELLENANSICHT (Desktop-Basis)
+         ========================= -->
+    <div class="table-wrap" id="listView">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th class="col-check">✓</th>
+            <th class="col-en">Englisch</th>
+            <th class="col-de">Deutsch</th>
+            <th class="col-cat">Kategorie</th>
+            <th class="col-grp">Gruppe</th>
+            <th class="col-hint">Hinweis</th>
+            <th class="col-act">Aktion</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Vokabelzeilen werden dynamisch gerendert -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="pagination">
+      <button class="btn" id="pgPrev" disabled>⬅️ Zurück</button>
+      <span class="page-info">–</span>
+      <button class="btn" id="pgNext">Weiter ➡️</button>
+    </div>
+
+    <!-- =========================
+         KACHELANSICHT (Grid)
+         ========================= -->
+    <div id="gridView" class="grid hidden">
+      <!-- Kacheln werden dynamisch erzeugt -->
+    </div>
+
+    <!-- =========================
+         MOBILE FAB-Leiste
+         ========================= -->
+    <div class="fab-row">
+      <div class="fabs">
+        <button class="fab gray" id="fabBack">Zurück</button>
+        <button class="fab blue" id="fabAdjust">Anpassen</button>
+        <button class="fab gray" id="fabSync">Sync</button>
+      </div>
+    </div>
+
+    <!-- =========================
+         MODAL-FENSTER (Bearbeiten / Neu)
+         ========================= -->
+    <div class="modal" id="modal" style="display:none;">
+      <div class="panel">
+        <h3 id="modalTitle" style="margin-top:0;">Vokabel bearbeiten</h3>
+        <div class="form-grid">
+
+          <label>Englisch
+            <input id="mEn" type="text" placeholder="z. B. hammer" />
+          </label>
+
+          <label>Deutsch
+            <input id="mDe" type="text" placeholder="z. B. Hammer" />
+          </label>
+
+          <label>Kategorie
+            <select id="mCat"></select>
+          </label>
+
+          <!-- Verwechslungsgefahr-Schalter -->
+          <div class="confuse-toggle">
+            <span>Verwechslungsgefahr</span>
+            <label class="switch">
+              <input type="checkbox" id="mConfuse" />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <label>Gruppe / Variante
+            <input id="mGroup" type="text" />
+          </label>
+
+          <label>Hinweis
+            <textarea id="mHint" rows="2"></textarea>
+          </label>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn ghost" id="mCancel">Abbrechen</button>
+          <button class="btn primary" id="mSave">Speichern</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /app -->
+<!-- =========================
+  vokabeln.html — TEIL 3/4
+  Script: Datenlogik + Rendering + Umschalter
+  ========================= -->
 <script>
-(function(){
+document.addEventListener("DOMContentLoaded", () => {
 
-/* ===== Konstanten & Hilfsfunktionen ===== */
-const CATEGORY_NAMES={
-  Gelb:"Grundwerkzeuge Metallverarbeitung",
-  Pink:"Werkzeugkasten Mechaniker",
-  Blau:"Blech- / Kunststoffarbeiten",
-  Gruen:"Drehen / Fräsen",
-  HellesPink:"Hydraulik / Pneumatik",
-  Orange:"Elektrotechnik",
-  Dunkelgruen:"Fluggerätemechanik allgemein"
-};
-const COLOR_MAP={Gelb:"#F4D03F",Pink:"#E91E63",Blau:"#1976D2",Gruen:"#1E8449",HellesPink:"#F54927",Orange:"#E67E22",Dunkelgruen:"#117A65"};
-const TEXT_ON={Gelb:"#000",Pink:"#fff",Blau:"#fff",Gruen:"#fff",HellesPink:"#fff",Orange:"#fff",Dunkelgruen:"#fff"};
+  /* ========= Elemente ========= */
+  const tblBody = document.querySelector("#tbl tbody");
+  const gridView = document.getElementById("gridView");
+  const listView = document.getElementById("listView");
+  const pagination = document.getElementById("pagination");
+  const pgPrev = document.getElementById("pgPrev");
+  const pgNext = document.getElementById("pgNext");
+  const pageInfo = pagination.querySelector(".page-info");
+  const modeSwitch = document.getElementById("modeSwitch");
+  const countDesk = document.getElementById("countDesk");
 
-const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
-const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+  const filterCatDesk = document.getElementById("filterCatDesk");
+  const searchDesk = document.getElementById("searchDesk");
+  const resetDesk = document.getElementById("resetDesk");
+  const addDesk = document.getElementById("addDesk");
+  const delDesk = document.getElementById("delDesk");
 
-let list=[], selectedIds=new Set(), adjustMode=false;
-let currentPage=1, PAGE_SIZE=15;
+  const fabBack = document.getElementById("fabBack");
+  const fabAdjust = document.getElementById("fabAdjust");
+  const fabSync = document.getElementById("fabSync");
 
-/* ===== DOM-Elemente ===== */
-const tblBody=$("#tbl tbody");
-const modal=$("#modal");
-const mEn=$("#mEn"), mDe=$("#mDe"), mCat=$("#mCat"), mConfuse=$("#mConfuse"), mGroup=$("#mGroup"), mHint=$("#mHint");
+  /* ========= Variablen ========= */
+  let data = [];
+  let filtered = [];
+  let currentPage = 1;
+  const perPage = 15;
+  let mode = "list"; // list | grid
+  let anpassen = false;
 
-/* ===== Dark-Mode Toggle ===== */
-const darkToggle=$("#darkModeToggle");
-if(localStorage.getItem("darkMode")==="1") document.body.classList.add("dark");
-darkToggle.onclick=()=>{
-  document.body.classList.toggle("dark");
-  const on=document.body.classList.contains("dark");
-  localStorage.setItem("darkMode",on?"1":"0");
-};
+  /* ========= Hilfsfunktionen ========= */
+  const el = (tag, cls, html) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html) e.innerHTML = html;
+    return e;
+  };
 
-/* ===== Kategorien füllen ===== */
-function fillCategorySelect(){
-  mCat.innerHTML="";
-  for(const [key,val] of Object.entries(CATEGORY_NAMES)){
-    const o=document.createElement("option");
-    o.value=key; o.textContent=val;
-    o.style.background=COLOR_MAP[key]; o.style.color=TEXT_ON[key];
-    mCat.appendChild(o);
+  const truncate = (s, n=60) => s.length>n ? s.slice(0,n)+"…" : s;
+
+  /* ========= Daten laden ========= */
+  async function loadData() {
+    try {
+      const res = await fetch("vokabeln.json");
+      data = await res.json();
+      filtered = data.slice();
+      renderCategories();
+      render();
+    } catch (e) {
+      console.error("Fehler beim Laden der Daten:", e);
+    }
   }
-}
 
-/* ===== Daten laden ===== */
-async function loadData(){
-  try{
-    const r=await fetch(RAW_URL,{cache:"no-store"});
-    list=await r.json();
-  }catch{
-    list=JSON.parse(localStorage.getItem("vokabeln")||"[]");
+  /* ========= Kategorien füllen ========= */
+  function renderCategories() {
+    const cats = Array.from(new Set(data.map(v=>v[2]).filter(Boolean))).sort();
+    filterCatDesk.innerHTML = `<option value="Alle">Alle (bunt gemischt)</option>
+      <option value="confuse">⚠️ Verwechslungsgefahr</option>` +
+      cats.map(c=>`<option value="${c}">${c}</option>`).join("");
   }
-  localStorage.setItem("vokabeln",JSON.stringify(list));
-  fillCategorySelect();
-  renderAll();
-}
 
-/* ===== Filter & Pagination ===== */
-function filtered(){
-  const cat=$("#filterCatDesk").value||"Alle";
-  const q=$("#searchDesk").value.trim().toLowerCase();
-  return list.filter(v=>{
-    const matchCat=cat==="Alle"||v[2]===cat||(cat==="confuse"&&v[6]);
-    const matchQ=!q||v[0].toLowerCase().includes(q)||v[1].toLowerCase().includes(q);
-    return matchCat&&matchQ;
-  });
-}
-function totalPages(){return Math.ceil(filtered().length/PAGE_SIZE)||1;}
-function pageSlice(){const data=filtered();const start=(currentPage-1)*PAGE_SIZE;return data.slice(start,start+PAGE_SIZE);}
-function changePage(d){currentPage+=d;if(currentPage<1)currentPage=1;if(currentPage>totalPages())currentPage=totalPages();renderAll();}
-function renderPagination(){
-  const pages=totalPages();
-  const container=$("#pagination");
-  if(pages<=1){container.innerHTML="";return;}
-  container.innerHTML=`
-    <button class="btn" ${currentPage===1?"disabled":""} id="pgPrev">⬅️ Zurück</button>
-    <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
-    <button class="btn" ${currentPage===pages?"disabled":""} id="pgNext">Weiter ➡️</button>
-  `;
-  $("#pgPrev")?.addEventListener("click",()=>changePage(-1));
-  $("#pgNext")?.addEventListener("click",()=>changePage(1));
-}
-/* ===== Tabellen-Rendering ===== */
-function renderList(){
-  const rows = pageSlice();
-  tblBody.innerHTML = rows.map(v=>{
-    const [en,de,cat,group,hint,created,confuse,id] = v;
-    const chip = `<span class="category-chip" style="background:${COLOR_MAP[cat]};color:${TEXT_ON[cat]}">${CATEGORY_NAMES[cat]}</span>`;
-    const checked = selectedIds.has(id) ? ' checked' : '';
-    const confuseIcon = confuse ? ' <span class="red-flag" title="Verwechslungsgefahr">🔴</span>' : '';
+  /* ========= Filter + Suche ========= */
+  function applyFilter() {
+    const cat = filterCatDesk.value;
+    const term = searchDesk.value.trim().toLowerCase();
 
-    return `
-      <tr data-id="${id}">
-        <td><input type="checkbox" data-id="${id}"${checked}></td>
-        <td data-view="${id}">${en}${confuseIcon}</td>
-        <td>${de}</td>
-        <td>${chip}</td>
-        <td>${group||""}</td>
-        <td>${hint||""}</td>
-        <td><button class="btn" data-edit="${id}">✏️ Bearbeiten</button></td>
-      </tr>`;
-  }).join("");
+    filtered = data.filter(v => {
+      const matchCat = cat === "Alle" ? true :
+                       cat === "confuse" ? !!v[6] :
+                       v[2] === cat;
+      const matchSearch = !term ||
+        v[0].toLowerCase().includes(term) ||
+        v[1].toLowerCase().includes(term);
+      return matchCat && matchSearch;
+    });
 
-  // Checkboxen reagieren nur im Anpassmodus
-  $$('input[type="checkbox"][data-id]').forEach(cb=>{
-    cb.onchange = ()=>{
-      const id = cb.dataset.id;
-      if(!adjustMode) return; // Sicherung
-      if(cb.checked) selectedIds.add(id); else selectedIds.delete(id);
-    };
-  });
-
-  // Editieren (Desktop)
-  $$('button[data-edit]').forEach(b=>{
-    b.onclick = ()=> openEdit(b.dataset.edit);
-  });
-
-  // Mobile: Klick auf Englisch öffnet Detailansicht
-  $$('td[data-view]').forEach(td=>{
-    td.onclick = ()=>{
-      openEdit(td.dataset.view);
-    };
-  });
-}
-
-/* ===== Modal-Steuerung ===== */
-function openEdit(id){
-  const v = list.find(x=>x[7]===id);
-  if(!v) return;
-  mEn.value = v[0]; mDe.value = v[1]; mCat.value=v[2];
-  mGroup.value=v[3]; mHint.value=v[4]; mConfuse.checked=!!v[6];
-  modal.style.display="flex";
-}
-function closeModal(){ modal.style.display="none"; }
-$("#mCancel").onclick=closeModal;
-$("#mSave").onclick=()=>{
-  const en=mEn.value.trim(), de=mDe.value.trim();
-  if(!en||!de){ alert("Bitte Englisch & Deutsch angeben."); return; }
-  const cat=mCat.value, group=mGroup.value.trim(), hint=mHint.value.trim(), confuse=mConfuse.checked?1:0;
-  const id = crypto.randomUUID();
-  list.push([en,de,cat,group,hint,new Date().toISOString(),confuse,id]);
-  localStorage.setItem("vokabeln",JSON.stringify(list));
-  closeModal(); renderAll();
-};
-modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
-
-/* ===== Anpassmodus-Toggle ===== */
-function toggleAdjust(on){
-  adjustMode = on;
-  document.body.classList.toggle("adjusting", on);
-  selectedIds.clear();
-  renderAll();
-
-  const bar = document.querySelector(".fabs");
-  if(on){
-    bar.innerHTML = `
-      <button class="fab gray" id="fabEnd">Beenden</button>
-      <button class="fab warn" id="fabDelete">Löschen</button>
-      <button class="fab blue" id="fabNew">Neu</button>`;
-    $("#fabEnd").onclick = ()=> toggleAdjust(false);
-    $("#fabDelete").onclick = ()=> deleteSelected();
-    $("#fabNew").onclick = ()=> openEdit(null);
-  }else{
-    bar.innerHTML = `
-      <button class="fab gray" id="fabBack">Zurück</button>
-      <button class="fab blue" id="fabAdjust">Anpassen</button>
-      <button class="fab gray" id="fabSync">Sync</button>`;
-    $("#fabBack").onclick = ()=> location.href="index.html";
-    $("#fabAdjust").onclick = ()=> toggleAdjust(true);
-    $("#fabSync").onclick = ()=> githubSync();
+    currentPage = 1;
+    render();
   }
-}
 
-/* ===== Löschen markierter Einträge ===== */
-function deleteSelected(){
-  if(!selectedIds.size){ alert("Keine Auswahl."); return; }
-  if(!confirm(`${selectedIds.size} Vokabel(n) löschen?`)) return;
-  list = list.filter(v=>!selectedIds.has(v[7]));
-  localStorage.setItem("vokabeln",JSON.stringify(list));
-  selectedIds.clear();
-  renderAll();
-}
-/* ===== Filter & Reset ===== */
-function fillFilterSelect(){
-  const sel = $("#filterCatDesk");
-  sel.innerHTML = `
-    <option value="Alle">Alle (bunt gemischt)</option>
-    ${Object.entries(CATEGORY_NAMES).map(([k,v]) =>
-      `<option value="${k}" style="background:${COLOR_MAP[k]};color:${TEXT_ON[k]}">${v}</option>`).join("")}
-    <option value="confuse" style="background:#ffe4e6;color:#b91c1c;">⚠️ Verwechslungsgefahr</option>
-  `;
-}
-function resetFilters(){
-  $("#filterCatDesk").value = "Alle";
-  $("#searchDesk").value = "";
-  currentPage = 1;
-  renderAll();
-}
-$("#resetDesk").onclick = resetFilters;
-["change","input"].forEach(evt=>{
-  $("#filterCatDesk").addEventListener(evt,()=>{currentPage=1;renderAll();});
-  $("#searchDesk").addEventListener(evt,()=>{currentPage=1;renderAll();});
+  /* ========= Reset-Button ========= */
+  resetDesk.addEventListener("click", () => {
+    filterCatDesk.value = "Alle";
+    searchDesk.value = "";
+    filtered = data.slice();
+    currentPage = 1;
+    render();
+  });
+
+  filterCatDesk.addEventListener("change", applyFilter);
+  searchDesk.addEventListener("input", applyFilter);
+
+  /* ========= Pagination ========= */
+  function totalPages() {
+    return Math.max(1, Math.ceil(filtered.length / perPage));
+  }
+
+  function renderPagination() {
+    const pages = totalPages();
+    pageInfo.textContent = `Seite ${currentPage} von ${pages}`;
+    pgPrev.disabled = currentPage <= 1;
+    pgNext.disabled = currentPage >= pages;
+  }
+
+  pgPrev.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      render();
+    }
+  });
+  pgNext.addEventListener("click", () => {
+    if (currentPage < totalPages()) {
+      currentPage++;
+      render();
+    }
+  });
+
+  /* ========= Rendering: Tabelle ========= */
+  function renderTable() {
+    tblBody.innerHTML = "";
+    const start = (currentPage - 1) * perPage;
+    const items = filtered.slice(start, start + perPage);
+
+    items.forEach((v, idx) => {
+      const [en, de, cat, group, hint, , confuse] = v;
+      const tr = el("tr");
+      if (anpassen) tr.classList.add("anpassen--on");
+
+      // Checkbox (nur im Anpassen-Modus)
+      const tdCheck = el("td","col-check");
+      const cb = el("input");
+      cb.type = "checkbox";
+      cb.checked = false;
+      tdCheck.appendChild(cb);
+
+      // Englisch mit Warnsymbol falls Verwechslungsgefahr
+      const tdEn = el("td","col-en");
+      tdEn.innerHTML = `<b>${en}</b>${confuse ? '<span class="flag"></span>' : ''}`;
+
+      // Deutsch + Kategorie-Badge bündig
+      const tdDe = el("td","col-de de-with-chip");
+      const catBadge = `<span class="cat-badge"><span class="cat-dot"></span>${cat||'–'}</span>`;
+      tdDe.innerHTML = `<b>${de}</b> ${catBadge}`;
+
+      // Kategorie separat (Desktop)
+      const tdCat = el("td","col-cat",cat||"–");
+      const tdGrp = el("td","col-grp",group||"–");
+      const tdHint = el("td","col-hint",truncate(hint||"–"));
+
+      // Aktionen (nur im Anpassen-Modus sichtbar)
+      const tdAct = el("td","col-act");
+      const rowBtns = el("div","btn-row");
+      const btnE = el("button","btn ghost","✏️ Bearbeiten");
+      btnE.classList.add("btn-edit");
+      btnE.addEventListener("click",()=>openModal(v,idx));
+      rowBtns.appendChild(btnE);
+      tdAct.appendChild(rowBtns);
+
+      tr.append(tdCheck, tdEn, tdDe, tdCat, tdGrp, tdHint, tdAct);
+      tblBody.appendChild(tr);
+    });
+  }
+
+  /* ========= Rendering: Kacheln ========= */
+  function renderGrid() {
+    gridView.innerHTML = "";
+    const start = (currentPage - 1) * perPage;
+    const items = filtered.slice(start, start + perPage);
+
+    items.forEach((v, idx) => {
+      const [en, de, cat, group, hint, , confuse] = v;
+      const card = el("div","card");
+
+      const head = el("div","card-head");
+      const title = el("div","term-en",en);
+      if (confuse) {
+        const warn = el("span","confuse-chip","Verwechslungsgefahr");
+        head.append(title, warn);
+      } else {
+        head.append(title);
+      }
+
+      const deTxt = el("div","term-de",de);
+      const meta = el("div","meta-row");
+      meta.innerHTML = `
+        <span class="badge-mini"><span class="mini-dot"></span>${cat || "–"}</span>
+      `;
+
+      const hintTxt = hint ? `<div style="font-size:.85rem;color:var(--muted);margin-top:4px">${truncate(hint,60)}</div>` : "";
+
+      const actions = el("div","card-actions");
+      const btnEdit = el("button","btn-edit","Bearbeiten");
+      btnEdit.addEventListener("click",()=>openModal(v,idx));
+      actions.appendChild(btnEdit);
+
+      card.append(head,deTxt,meta);
+      if(hintTxt) card.insertAdjacentHTML("beforeend",hintTxt);
+      card.append(actions);
+      gridView.appendChild(card);
+    });
+  }
+
+  /* ========= Gesamtrendering ========= */
+  function render() {
+    const total = filtered.length;
+    countDesk.textContent = `${total} Vokabel${total!==1?"n":""} gefunden`;
+    renderPagination();
+
+    if (mode === "list") {
+      listView.classList.remove("hidden");
+      gridView.classList.add("hidden");
+      renderTable();
+    } else {
+      gridView.classList.remove("hidden");
+      listView.classList.add("hidden");
+      renderGrid();
+    }
+  }
+
+  /* ========= Umschalter Liste/Kachel ========= */
+  modeSwitch.querySelectorAll(".seg").forEach(seg=>{
+    seg.addEventListener("click",()=>{
+      modeSwitch.querySelectorAll(".seg").forEach(s=>s.classList.remove("active"));
+      seg.classList.add("active");
+      mode = seg.dataset.mode;
+      render();
+    });
+  });
+
+  /* ========= Mobile FABs ========= */
+  fabBack.addEventListener("click",()=>history.back());
+  fabAdjust.addEventListener("click",()=>{
+    anpassen = !anpassen;
+    fabAdjust.textContent = anpassen ? "Fertig" : "Anpassen";
+    document.body.classList.toggle("anpassen--on",anpassen);
+    render();
+  });
+  fabSync.addEventListener("click",()=>alert("Sync-Funktion folgt"));
+
+  /* ========= Initialisieren ========= */
+  loadData();
+  /* ==============================
+     TEIL 4/4 – Modal & Dark Mode
+     ============================== */
+
+  /* ===== Modal ===== */
+  const modal = document.getElementById("modal");
+  const mEn = document.getElementById("mEn");
+  const mDe = document.getElementById("mDe");
+  const mCat = document.getElementById("mCat");
+  const mConfuse = document.getElementById("mConfuse");
+  const mGroup = document.getElementById("mGroup");
+  const mHint = document.getElementById("mHint");
+  const mCancel = document.getElementById("mCancel");
+  const mSave = document.getElementById("mSave");
+  const modalTitle = document.getElementById("modalTitle");
+
+  let editIndex = null;
+
+  /* ===== Modal füllen ===== */
+  function fillModalSelects() {
+    mCat.innerHTML = "";
+    const cats = Array.from(new Set(data.map(v=>v[2]).filter(Boolean))).sort();
+    cats.forEach(c=>{
+      const o = document.createElement("option");
+      o.value = c;
+      o.textContent = c;
+      mCat.appendChild(o);
+    });
+  }
+
+  function openModal(v, idx) {
+    editIndex = idx;
+    fillModalSelects();
+    modalTitle.textContent = "Vokabel bearbeiten";
+    [mEn.value, mDe.value, mCat.value, mGroup.value, mHint.value] = [v[0],v[1],v[2]||"",v[3]||"",v[4]||""];
+    mConfuse.checked = !!v[6];
+    modal.style.display = "block";
+  }
+
+  addDesk.addEventListener("click", ()=>{
+    editIndex = null;
+    fillModalSelects();
+    modalTitle.textContent = "Neue Vokabel";
+    mEn.value = "";
+    mDe.value = "";
+    mCat.value = "";
+    mGroup.value = "";
+    mHint.value = "";
+    mConfuse.checked = false;
+    modal.style.display = "block";
+  });
+
+  mCancel.addEventListener("click", ()=> modal.style.display="none");
+
+  /* ===== Speichern ===== */
+  mSave.addEventListener("click", ()=>{
+    const newItem = [
+      mEn.value.trim(),
+      mDe.value.trim(),
+      mCat.value,
+      mGroup.value,
+      mHint.value,
+      "",           // reserviert (z.B. timestamp)
+      mConfuse.checked
+    ];
+    if(!newItem[0] || !newItem[1]){
+      alert("Bitte Englisch und Deutsch ausfüllen!");
+      return;
+    }
+
+    if (editIndex != null && filtered[editIndex]) {
+      // Bearbeiten
+      const original = filtered[editIndex];
+      const indexInData = data.indexOf(original);
+      if (indexInData > -1) data[indexInData] = newItem;
+    } else {
+      // Neu hinzufügen
+      data.push(newItem);
+    }
+
+    saveLocal();
+    modal.style.display="none";
+    applyFilter();
+  });
+
+  /* ===== Löschen ===== */
+  delDesk.addEventListener("click", ()=>{
+    const checked = Array.from(tblBody.querySelectorAll("input[type=checkbox]:checked"));
+    if(!checked.length){alert("Keine Vokabeln markiert.");return;}
+    if(!confirm(`${checked.length} Vokabel(n) wirklich löschen?`)) return;
+    const names = checked.map(cb=>{
+      const en = cb.closest("tr").querySelector(".col-en").textContent.trim();
+      return en;
+    });
+    data = data.filter(v=>!names.includes(v[0]));
+    saveLocal();
+    applyFilter();
+  });
+
+  /* ===== Speicherung in localStorage ===== */
+  function saveLocal(){
+    localStorage.setItem("vokabelnData", JSON.stringify(data));
+  }
+  function loadLocal(){
+    const d = localStorage.getItem("vokabelnData");
+    if(d){
+      try{ data = JSON.parse(d); }
+      catch(e){ console.warn("LocalStorage konnte nicht gelesen werden"); }
+    }
+  }
+
+  /* ===== Dark Mode ===== */
+  const darkToggle = document.getElementById("darkModeToggle");
+  function setDarkMode(active){
+    document.body.classList.toggle("dark", active);
+    localStorage.setItem("darkMode", active ? "1":"0");
+    darkToggle.textContent = active ? "☀️ Light Mode" : "🌙 Dark Mode";
+  }
+  darkToggle.addEventListener("click", ()=>{
+    const newMode = !document.body.classList.contains("dark");
+    setDarkMode(newMode);
+  });
+
+  /* ===== Initial Load ===== */
+  loadLocal();
+  if(localStorage.getItem("darkMode")==="1") setDarkMode(true);
+
 });
-
-/* ===== Sync Stub (Platzhalter für später) ===== */
-async function githubSync(){
-  alert("Sync-Funktion ist derzeit deaktiviert (Placeholder).");
-}
-
-/* ===== Rendering-Helfer ===== */
-function updateCount(){
-  const data = filtered();
-  const txt = `📘 ${data.length} Vokabel${data.length!==1?"n":""} gefunden`;
-  $("#countDesk").textContent = txt;
-}
-function renderAll(){
-  renderList();
-  updateCount();
-  renderPagination();
-}
-
-/* ===== Initialisierung ===== */
-$("#addDesk").onclick = ()=> openEdit(null);
-$("#delDesk").onclick = deleteSelected;
-$("#syncDesk").onclick = githubSync;
-$("#fabAdjust").onclick = ()=> toggleAdjust(true);
-$("#fabBack").onclick = ()=> location.href="index.html";
-$("#fabSync").onclick = githubSync;
-
-/* ===== Start ===== */
-fillFilterSelect();
-loadData();
-
-})(); // Ende Hauptfunktion
 </script>
 </body>
 </html>
+
 
