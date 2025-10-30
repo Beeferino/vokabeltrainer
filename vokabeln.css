@@ -239,3 +239,39 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
 
 [data-theme="dark"] .mob-card[data-cat="Gelb"] .mob-en,
 [data-theme="dark"] .mob-card[data-cat="Gelb"] .mob-de { color:#fefefe; }
+/* =======================
+   LIGHTMODE LESBARKEIT
+   ======================= */
+
+/* Standardmäßig alle Kategorien mit weißem Text */
+[data-theme="light"] .mob-card .mob-card-top {
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+/* Ausnahme: Gelb bleibt mit schwarzem Text */
+[data-theme="light"] .mob-card[data-cat="Gelb"] .mob-card-top {
+  color: #111;
+  text-shadow: none;
+}
+
+/* Einzelne Farbanpassungen (kräftiger für hellen Hintergrund) */
+[data-theme="light"] .mob-card[data-cat="Blau"] .mob-card-top {
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+}
+[data-theme="light"] .mob-card[data-cat="Gruen"] .mob-card-top {
+  background: linear-gradient(90deg, #16a34a, #166534);
+}
+[data-theme="light"] .mob-card[data-cat="Pink"] .mob-card-top {
+  background: linear-gradient(90deg, #db2777, #be185d);
+}
+[data-theme="light"] .mob-card[data-cat="HellesPink"] .mob-card-top {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+[data-theme="light"] .mob-card[data-cat="Orange"] .mob-card-top {
+  background: linear-gradient(90deg, #f97316, #ea580c);
+}
+[data-theme="light"] .mob-card[data-cat="Dunkelgruen"] .mob-card-top {
+  background: linear-gradient(90deg, #15803d, #065f46);
+}
