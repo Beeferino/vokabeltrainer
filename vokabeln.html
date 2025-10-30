@@ -751,4 +751,164 @@ a:hover { text-decoration: underline; }
 </script>
 </div>
 </body>
+   <!-- =========================================================
+     TEIL 4 — OPTIONALER FEINSCHLIFF & KOMMENTARE
+     ========================================================= -->
+
+<style>
+/* =========================================================
+   DARKMODE – Toggle Animation (Feinschliff)
+   ========================================================= */
+body.dark .switch .slider { background:#334155; }
+body.dark .switch .knob { background:#e2e8f0; transform:translateX(24px); }
+
+/* kleine Transition für den Umschalter */
+.switch input:checked + .slider { background:#2563eb; }
+.switch input:checked + .slider + .knob { transform:translateX(24px); }
+
+.switch .slider, .switch .knob {
+  transition:background-color .25s ease, transform .25s ease;
+}
+
+/* =========================================================
+   Fade Animationen für Seitenwechsel
+   ========================================================= */
+.fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* =========================================================
+   RESPONSIVE OPTIMIERUNG
+   ========================================================= */
+@media (max-width: 600px) {
+  .toolbar select,
+  .toolbar input {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+  .btn.small {
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+  table thead th {
+    padding: 10px 8px;
+  }
+  tbody td {
+    padding: 10px 8px;
+  }
+  .card h3 {
+    font-size: 1.15rem;
+  }
+  .count-row .badge {
+    font-size: 0.95rem;
+  }
+}
+
+/* =========================================================
+   VISUELLE VERBESSERUNGEN FÜR DARK MODE (Feinschliff)
+   ========================================================= */
+body.dark table thead th {
+  background: rgba(148,163,184,.08);
+  border-bottom: 1px solid #334155;
+}
+body.dark tbody tr:hover {
+  background: rgba(148,163,184,.08);
+}
+body.dark .btn.primary {
+  background: linear-gradient(135deg,#3b82f6,#1d4ed8);
+}
+body.dark .btn.soft {
+  background: #1e293b;
+  border-color: #334155;
+  color: #f3f4f6;
+}
+body.dark .count-row .badge {
+  background: #1e293b;
+  color: #dbeafe;
+}
+body.dark .card {
+  background: #1e293b;
+  border-color: #334155;
+}
+body.dark .card .chip {
+  background: #334155;
+  color: #e0e7ff;
+}
+body.dark .hint {
+  color: #9ca3af;
+}
+body.dark .modal .panel {
+  background: #1e293b;
+  color: #f3f4f6;
+  border-color: #334155;
+}
+body.dark .modal input,
+body.dark .modal select,
+body.dark .modal textarea {
+  background: #0f172a;
+  color: #f1f5f9;
+  border-color: #334155;
+}
+body.dark .modal .btn.soft {
+  background: #334155;
+  border-color: #475569;
+}
+
+/* =========================================================
+   VISUELLE DETAILS – SYNC BUTTON BREITE & ZENTRIERUNG
+   ========================================================= */
+#btnSync {
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: .2px;
+  border-radius: 10px;
+}
+#btnSync:hover {
+  background: linear-gradient(135deg, #e0e7ff, #f1f5ff);
+  transform: translateY(-1px);
+}
+body.dark #btnSync:hover {
+  background: #334155;
+}
+
+/* =========================================================
+   FINALER FADE BEIM LADEN
+   ========================================================= */
+body {
+  opacity: 0;
+  animation: fadeInBody .4s ease forwards;
+}
+@keyframes fadeInBody {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* =========================================================
+   COPYRIGHT & META
+   ========================================================= */
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 32px;
+  opacity: 0.8;
+}
+body.dark .footer {
+  color: #9ca3af;
+}
+</style>
+
+<div class="footer">
+  © 2025 Beeferino – Vokabeltrainer • Alle Angaben ohne Gewähr.
+</div>
+<!-- =========================================================
+     Ende der Datei vokabeln.html (Stand: 30. Oktober 2025)
+     ========================================================= -->
+
 </html>
