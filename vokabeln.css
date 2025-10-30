@@ -352,19 +352,39 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
 [data-theme="dark"] .mob-add-btn { background: #2563eb; } /* Blau kräftiger */
 [data-theme="dark"] .mob-abc-btn { background: #f59e0b; } /* Orange heller */
 
-/* --- Kategorie Farbkontrast Elektronik verbessern --- */
+@media (max-width: 900px) {
+  #themeToggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(30, 41, 59, 0.8); /* dezenter Hintergrund */
+    color: #fff;
+    z-index: 500;
+    backdrop-filter: blur(6px);
+    box-shadow: none;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+}
+/* Elektronik (Orange) – bessere Lesbarkeit Light & Dark */
 .mob-card[data-cat="Orange"] .mob-card-top {
-  background: linear-gradient(90deg, #ff9f40, #fca34d);
-  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.2);
+  background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.25);
+}
+
+.mob-card[data-cat="Orange"] .mob-en,
+.mob-card[data-cat="Orange"] .mob-de {
+  color: #1e1e1e; /* dunkler Text für Kontrast */
+  text-shadow: none;
 }
 
 [data-theme="dark"] .mob-card[data-cat="Orange"] .mob-card-top {
-  background: linear-gradient(90deg, #ffb55e, #ff9f40);
+  background: linear-gradient(90deg, #fb923c, #f97316);
 }
 
-/* Lesbarkeit Text Elektronik */
-.mob-card[data-cat="Orange"] .mob-en,
-.mob-card[data-cat="Orange"] .mob-de {
-  color: #fff;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+[data-theme="dark"] .mob-card[data-cat="Orange"] .mob-en,
+[data-theme="dark"] .mob-card[data-cat="Orange"] .mob-de {
+  color: #fefefe; /* heller Text im dunklen Modus */
 }
