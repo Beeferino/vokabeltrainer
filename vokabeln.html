@@ -1,914 +1,756 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>📘 Vokabelübersicht – Beeferino</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<meta name="color-scheme" content="light dark">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📘 Vokabelübersicht</title>
 
 <style>
-/* =========================================================
-   VOKABELN – LAYOUT & THEME (verbessert, responsive)
-   ========================================================= */
 :root {
-  --bg: #f4f7ff;
-  --card: #ffffff;
-  --ink: #0f172a;
-  --muted: #6b7280;
-  --border: #dbe3ff;
-  --shade: 0 10px 28px rgba(15, 23, 42, .08);
   --blue: #2563eb;
-  --blue-2: #1d4ed8;
-  --green: #16a34a;
-  --red: #ef4444;
-  --amber: #f59e0b;
-
-  --chip-bg: #eef2ff;
-  --chip-ink: #1e3a8a;
-
-  --cat-Gelb: #F4D03F;
-  --cat-Pink: #E91E63;
-  --cat-Blau: #1976D2;
-  --cat-Gruen: #1E8449;
-  --cat-HellesPink: #F54927;
-  --cat-Orange: #E67E22;
-  --cat-Dunkelgruen: #117A65;
-
-  --fade-ms: 280ms;
+  --blue2: #1d4ed8;
+  --bg-light: #f8fafc;
+  --text-dark: #1e293b;
+  --muted: #9ca3af;
+  --ok: #22c55e;
+  --bad: #ef4444;
+  --shadow: rgba(0,0,0,0.05);
+  --card-bg: #ffffff;
+  --card-dark: #1e293b;
 }
 
-/* ==================== Dark Mode verbessert ==================== */
-body.dark {
-  --bg: #0d1424;
-  --card: #111827;
-  --ink: #f3f4f6;
-  --muted: #9aa4b2;
-  --border: #1e293b;
-  --shade: 0 10px 30px rgba(0, 0, 0, .45);
-  --chip-bg: #1e293b;
-  --chip-ink: #dbeafe;
-  background: radial-gradient(1200px 600px at 50% -100px, #0f172a 0%, #0a1120 60%), var(--bg);
-  color: var(--ink);
-}
-
-* {
-  box-sizing: border-box;
-}
-html, body {
+/* ===== Allgemeines Layout ===== */
+body {
   margin: 0;
-  font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  transition: background-color var(--fade-ms) ease, color var(--fade-ms) ease;
-  background: radial-gradient(1200px 600px at 50% -100px, #dbeafe 0%, transparent 60%), var(--bg);
+  font-family: "Inter", system-ui, sans-serif;
+  background: linear-gradient(145deg, #eef4ff, #dbeafe);
+  color: var(--text-dark);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* =========================================================
-   Hauptcontainer
-   ========================================================= */
-.app {
-  max-width: 1200px;
-  margin: 22px auto 40px;
-  padding: 10px 16px 40px;
+body.dark {
+  background: linear-gradient(145deg, #1e293b, #0f172a);
+  color: #f8fafc;
 }
 
-/* =========================================================
-   Header
-   ========================================================= */
-.h1 {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  justify-content: center;
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: rgba(255,255,255,0.9);
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+}
+
+body.dark .container {
+  background: rgba(15,23,42,0.7);
+}
+
+/* ===== Header ===== */
+h1 {
+  font-size: 2rem;
+  text-align: center;
   font-weight: 800;
-  font-size: clamp(1.6rem, 2.3vw, 2.4rem);
-  letter-spacing: .2px;
-}
-.h1 .icon {
-  font-size: 1.8em;
-}
-.subbar {
-  width: 220px;
-  height: 6px;
-  border-radius: 999px;
-  margin: 8px auto 12px;
-  background: linear-gradient(90deg, #60a5fa, #2563eb, #60a5fa);
-  opacity: .9;
+  margin-bottom: 4px;
+  color: var(--blue2);
 }
 
-/* =========================================================
-   Toolbar (inkl. schmalerer Sync-Button)
-   ========================================================= */
+body.dark h1 {
+  color: #93c5fd;
+}
+
+.header-line {
+  width: 160px;
+  height: 4px;
+  background: var(--blue);
+  margin: 8px auto 16px;
+  border-radius: 4px;
+}
+
+.subtitle {
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+body.dark .subtitle {
+  color: #cbd5e1;
+}
+
+/* ===== Toolbar ===== */
 .toolbar {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto auto;
-  gap: 10px;
-  align-items: center;
-  margin: 8px 0 14px;
-}
-@media (max-width: 900px) {
-  .toolbar {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-select, input[type="text"] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--card);
-  color: var(--ink);
-  transition: border-color .2s ease, background-color var(--fade-ms) ease, color var(--fade-ms) ease;
-}
-input[type="text"]::placeholder { color: var(--muted); }
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--ink);
-  padding: 10px 14px;
-  border-radius: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: var(--shade);
-  transition: transform .08s ease, background-color var(--fade-ms), color var(--fade-ms), border-color var(--fade-ms);
-  user-select: none;
-}
-.btn:active { transform: translateY(1px); }
-.btn.primary {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: #fff;
-  border-color: transparent;
-}
-.btn.warn {
-  background: linear-gradient(135deg, #f87171, #ef4444);
-  color: #fff;
-  border-color: transparent;
-}
-.btn.soft {
-  background: linear-gradient(135deg, #eef2ff, #f8faff);
-}
-body.dark .btn.soft {
-  background: #1e293b;
-  color: #f3f4f6;
-  border-color: #334155;
-}
-.btn.toggle-active { outline: 2px solid #60a5fa; }
-.btn.small { padding: 8px 12px; border-radius: 10px; font-weight: 700; }
-.btn.block { width: 100%; justify-content: center; }
-
-/* --- kleinerer Sync-Button --- */
-#btnSync {
-  max-width: 220px;
-  justify-self: end;
-}
-body.dark #btnSync {
-  background: #1e293b;
-  color: #e5e7eb;
-  border-color: #334155;
-}
-
-/* =========================================================
-   Zähler (zentriert)
-   ========================================================= */
-.count-row {
   display: flex;
-  align-items: center;
-  justify-content: center;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 10px;
-  margin: 8px 0 12px;
+  margin: 16px 0 22px;
 }
+
+.toolbar button,
+.toolbar select,
+.toolbar input {
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button.primary {
+  background: var(--blue);
+  color: #fff;
+}
+
+button.danger {
+  background: var(--bad);
+  color: #fff;
+}
+
+button.outline {
+  background: #fff;
+  color: var(--text-dark);
+  border: 1px solid #dbe3ff;
+}
+
+button.outline.active {
+  border-color: var(--blue);
+  background: rgba(37,99,235,0.1);
+  color: var(--blue2);
+}
+
+body.dark .toolbar button.outline {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e5e7eb;
+}
+
+input[type="text"] {
+  background: #fff;
+  border: 1px solid #dbe3ff;
+}
+
+body.dark input[type="text"] {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+/* ===== Tabelle (Desktop) ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+}
+
+th {
+  background: #f1f5ff;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+body.dark th {
+  background: #1e293b;
+  color: #f8fafc;
+}
+
+tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+body.dark tr:nth-child(even) {
+  background: rgba(255,255,255,0.03);
+}
+
+/* ===== Kategorie-Badges ===== */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  background: var(--chip-bg);
-  color: var(--chip-ink);
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-weight: 800;
-}
-
-/* =========================================================
-   Tabellen-Layout
-   ========================================================= */
-.table-wrap {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shade);
-  overflow: hidden;
-}
-table { width: 100%; border-collapse: collapse; }
-thead th {
-  text-align: left;
-  font-weight: 800;
-  padding: 14px 14px;
-  background: linear-gradient(180deg, rgba(99,102,241,.06), transparent 60%);
-  border-bottom: 1px solid var(--border);
-}
-tbody td {
-  padding: 16px 14px;
-  border-bottom: 1px solid var(--border);
-}
-tbody tr:hover { background: rgba(99,102,241,.05); }
-
-.cell-english a {
-  font-weight: 800;
-  color: #2563eb;
-  text-decoration: none;
-}
-.cell-english a:hover { text-decoration: underline; }
-
-.cat-badge {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  padding: 6px 10px;
+  font-weight: 700;
+  padding: 4px 10px;
   border-radius: 999px;
-  font-weight: 800;
-  font-size: .9rem;
-  background: var(--chip-bg);
-  color: var(--chip-ink);
-  border: 1px solid var(--border);
+  background: #e0f2fe;
+  color: var(--blue2);
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
 }
-body.dark .cat-badge {
-  background: #1e293b;
-  color: #dbeafe;
-  border-color: #334155;
-}
-.cat-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #94a3b8;
-}
-.dot-Gelb { background: var(--cat-Gelb) }
-.dot-Pink { background: var(--cat-Pink) }
-.dot-Blau { background: var(--cat-Blau) }
-.dot-Gruen { background: var(--cat-Gruen) }
-.dot-HellesPink { background: var(--cat-HellesPink) }
-.dot-Orange { background: var(--cat-Orange) }
-.dot-Dunkelgruen { background: var(--cat-Dunkelgruen) }
 
-.confuse-flag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: 10px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 800;
-  font-size: .78rem;
-  background: rgba(239,68,68,.10);
-  color: #ef4444;
-  border: 1px solid rgba(239,68,68,.25);
+.badge::before {
+  content: "●";
+  font-size: 0.8rem;
 }
-body.dark .confuse-flag {
-  background: rgba(239,68,68,.2);
-  border-color: rgba(239,68,68,.3);
-  color: #fca5a5;
+
+body.dark .badge {
+  background: rgba(255,255,255,0.1);
+  color: #93c5fd;
 }
-/* =========================================================
-   Karten-Grid (Desktop-Kachelansicht)
-   ========================================================= */
+
+/* ===== Kachel-Layout ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 Spalten Desktop */
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+  gap: 16px;
+  margin-top: 18px;
 }
-@media (max-width: 1100px) {
-  .grid { grid-template-columns: 1fr; }          /* 1 Spalte bei kleiner Breite */
-}
+
 .card {
-  background: var(--card);
-  border: 1px solid var(--border);
+  background: var(--card-bg);
   border-radius: 16px;
-  box-shadow: var(--shade);
   padding: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
   position: relative;
+  transition: transform .15s ease, box-shadow .2s ease;
 }
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+body.dark .card {
+  background: rgba(30,41,59,0.9);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
 .card h3 {
-  margin: 0 0 6px;
-  font-size: 1.25rem;
-  font-weight: 800;
-}
-.card .sub {
-  margin: 0 0 10px;
-  color: var(--muted);
-}
-.card .row {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-}
-.card .chip {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 10px; border-radius: 999px;
-  background: var(--chip-bg); color: var(--chip-ink);
-  border: 1px solid var(--border); font-weight: 800;
-}
-.card .hint { color: var(--muted); }
-
-/* „Bearbeiten“-Button rechts oben in der Karte */
-.card .edit {
-  position: absolute; top: 10px; right: 10px;
-  opacity: .9;
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-dark);
 }
 
-/* =========================================================
-   Pagination (zentriert, 15/Seite)
-   ========================================================= */
-.pagination {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin: 14px 0 6px;
-}
-.pagination .btn { min-width: 100px; }
-.page-info { font-weight: 800; color: var(--muted); }
-
-/* =========================================================
-   Bottom Action Bar (Mobil)
-   ========================================================= */
-.fab-row {
-  display: none; /* mobil-only; Desktop keine FAB-Leiste */
-}
-@media (max-width: 900px) {
-  .fab-row {
-    display: block;
-    position: sticky; bottom: 0; z-index: 5;
-    background: color-mix(in oklab, var(--card) 92%, transparent);
-    border-top: 1px solid var(--border);
-    padding: 10px;
-    backdrop-filter: blur(6px);
-  }
-  .fabs { display: flex; gap: 8px; }
-  .fab { flex: 1; }
+body.dark .card h3 {
+  color: #f8fafc;
 }
 
-/* =========================================================
-   Modal (Bearbeiten)
-   ========================================================= */
-.modal {
-  position: fixed; inset: 0;
-  display: none; align-items: center; justify-content: center;
-  background: rgba(2,6,23,.45);
-  z-index: 50;
+.card .de {
+  margin-top: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
 }
-.panel {
-  width: min(560px, 94vw);
-  background: var(--card); color: var(--ink);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: var(--shade);
-  padding: 16px;
-}
-.panel h3 { margin: 0 0 10px; }
-.form-grid { display: grid; gap: 10px; }
-.form-grid input, .form-grid select, .form-grid textarea {
-  width: 100%; padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: 12px; background: var(--card); color: var(--ink);
-}
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
 
-/* =========================================================
-   Kleinkram
-   ========================================================= */
-a { color: #2563eb; }
-a:hover { text-decoration: underline; }
+body.dark .card .de {
+  color: #cbd5e1;
+}
 
-/* Fader für Dark/Light Umschalter */
-.fade-x {
-  transition: background-color var(--fade-ms) ease, color var(--fade-ms) ease, border-color var(--fade-ms) ease;
+.edit-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e2e8f0;
+  border: none;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body.dark .edit-btn {
+  background: #334155;
+  color: #e5e7eb;
 }
 </style>
 </head>
 <body>
-<div class="app fade-x">
-
-  <!-- ===========================
-       HEADER
-       =========================== -->
-  <div class="h1">
-    <span class="icon">📘</span>
-    <span>Vokabelübersicht</span>
-  </div>
-  <div class="subbar"></div>
-
-  <!-- ===========================
-       ZÄHLER (zentriert)
-       =========================== -->
-  <div class="count-row">
-    <span class="badge" id="countBadge">📘 0 Vokabeln gefunden</span>
-  </div>
-
-  <!-- ===========================
-       TOOLBAR (Desktop)
-       =========================== -->
+<div class="container">
+  <h1>📘 Vokabelübersicht</h1>
+  <div class="header-line"></div>
+  <div class="subtitle" id="countInfo">–</div>
+  <!-- ===== Toolbar ===== -->
   <div class="toolbar">
-    <select id="filterCatDesk" class="fade-x">
+    <select id="filterCategory">
       <option value="Alle">Alle (bunt gemischt)</option>
-      <!-- Kategorien werden per JS ergänzt -->
+      <option value="confuse">⚠️ Verwechslungsgefahr</option>
     </select>
 
-    <input id="searchDesk" type="text" placeholder="Suchen…" class="fade-x">
+    <input type="text" id="searchInput" placeholder="Suchen …">
 
-    <button id="resetDesk" class="btn soft">Reset</button>
-
-    <button id="addDesk" class="btn primary">➕ Neue</button>
-
-    <button id="btnSync" class="btn soft small">🧾 Sync</button>
+    <button id="btnReset" class="outline">Reset</button>
+    <button id="btnNew" class="primary">+ Neue</button>
+    <button id="btnDelete" class="danger" style="display:none;">Löschen</button>
+    <button id="btnSync" class="outline" style="max-width:180px;">📄 Sync</button>
   </div>
 
-  <!-- Ansichtsschalter -->
-  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
-    <button id="btnList"   class="btn soft">📋 Liste</button>
-    <button id="btnCards"  class="btn soft toggle-active">🧩 Kacheln</button>
-    <button id="btnDark"   class="btn soft">🌙 Dark Mode</button>
+  <!-- ===== Ansichtsschalter ===== -->
+  <div class="toolbar">
+    <button id="btnList" class="outline active">📋 Liste</button>
+    <button id="btnCards" class="outline">🧩 Kacheln</button>
+    <button id="btnDark" class="outline">🌙 Dark Mode</button>
   </div>
 
-  <!-- ===========================
-       LISTEN-ANSICHT (TABLE) – Desktop
-       =========================== -->
-  <div id="listView" class="table-wrap" style="display:none;">
-    <table>
+  <!-- ===== Anzeige Statistik ===== -->
+  <div class="subtitle" style="margin-bottom:12px;">
+    <b id="vocabCount">–</b> Vokabeln gefunden
+  </div>
+
+  <!-- ===== Tabellen-Container (Listenansicht) ===== -->
+  <div id="tableContainer">
+    <table id="vocabTable">
       <thead>
         <tr>
+          <th><input type="checkbox" id="selectAll" disabled></th>
           <th>Englisch</th>
           <th>Deutsch</th>
           <th>Kategorie</th>
-          <th class="th-group">Gruppe</th>
-          <th class="th-hint">Hinweis</th>
           <th>Aktion</th>
         </tr>
       </thead>
-      <tbody id="tblBody">
-        <!-- Zeilen via JS -->
-      </tbody>
+      <tbody id="tableBody"></tbody>
     </table>
   </div>
 
-  <!-- Pagination (List) -->
-  <div id="pagination" class="pagination" style="display:none;">
-    <button id="pgPrev" class="btn soft small">⬅️ Zurück</button>
-    <span class="page-info" id="pgInfo">Seite 1 / 1</span>
-    <button id="pgNext" class="btn soft small">Weiter ➡️</button>
-  </div>
+  <!-- ===== Grid-Container (Kachelansicht) ===== -->
+  <div id="gridContainer" class="grid" style="display:none;"></div>
+</div>
 
-  <!-- ===========================
-       KACHEL-ANSICHT – Desktop
-       =========================== -->
-  <div id="cardView" class="grid">
-    <!-- Karten via JS -->
-  </div>
+<!-- ===== Modal für Bearbeiten/Anlegen ===== -->
+<div id="editModal"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);
+            align-items:center;justify-content:center;z-index:50;">
+  <div style="background:#fff;color:#111;border-radius:16px;
+              width:min(400px,90vw);padding:20px;
+              box-shadow:0 6px 30px rgba(0,0,0,0.25);">
+    <h2 id="modalTitle" style="margin-top:0;">Vokabel bearbeiten</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <label>Englisch <input type="text" id="editEN"></label>
+      <label>Deutsch <input type="text" id="editDE"></label>
+      <label>Kategorie <select id="editCat"></select></label>
+      <label class="toggle">
+        <span>⚠️ Verwechslungsgefahr</span>
+        <input type="checkbox" id="editConfuse">
+      </label>
+    </div>
 
-  <!-- ===========================
-       MOBILE-FAB (bleibt wie vorher)
-       =========================== -->
-  <div class="fab-row" id="fabRow">
-    <div class="fabs">
-      <button class="btn soft fab" id="fabBack">Zurück</button>
-      <button class="btn primary fab" id="fabAdjust">Anpassen</button>
-      <button class="btn soft fab" id="fabSync">Sync</button>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">
+      <button id="btnCancel" class="outline">Abbrechen</button>
+      <button id="btnSave" class="primary">Speichern</button>
     </div>
   </div>
+</div>
 
-  <!-- ===========================
-       MODAL – Bearbeiten
-       =========================== -->
-  <div class="modal" id="modal">
-    <div class="panel fade-x">
-      <h3 id="modalTitle">Vokabel</h3>
-      <div class="form-grid">
-        <label>Englisch
-          <input id="mEn" type="text">
-        </label>
-        <label>Deutsch
-          <input id="mDe" type="text">
-        </label>
-        <label>Kategorie
-          <select id="mCat"></select>
-        </label>
-        <div class="confuse-toggle" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border:1px solid var(--border);border-radius:12px;background:var(--chip-bg);color:var(--ink)">
-          <span style="font-weight:800;">Verwechslungsgefahr</span>
-          <!-- schöner Toggle -->
-          <label class="switch" style="position:relative;display:inline-block;width:52px;height:28px;">
-            <input type="checkbox" id="mConfuse" style="opacity:0;width:0;height:0;">
-            <span class="slider" style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#c7d2fe;border-radius:26px;transition:.25s;"></span>
-            <span class="knob" style="position:absolute;content:'';height:22px;width:22px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.25s;"></span>
-          </label>
-        </div>
-        <label>Gruppe / Variante
-          <input id="mGroup" type="text">
-        </label>
-        <label>Hinweis
-          <textarea id="mHint" rows="2"></textarea>
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button class="btn soft" id="mCancel">Abbrechen</button>
-        <button class="btn primary" id="mSave">Speichern</button>
-      </div>
-    </div>
-  </div>
-<!-- =========================================================
-     JAVASCRIPT
-     ========================================================= -->
 <script>
-(function(){
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-  const isMobile = () => matchMedia("(max-width:900px)").matches;
+(() => {
+'use strict';
 
-  /* =========================================================
-     VARIABLEN & KONSTANTEN
-     ========================================================= */
-  const CATEGORY_NAMES = {
-    Gelb:"Grundwerkzeuge Metallverarbeitung",
-    Pink:"Werkzeugkasten Mechaniker",
-    Blau:"Blech-/Kunststoffarbeiten",
-    Gruen:"Drehen/Fräsen",
-    HellesPink:"Hydraulik/Pneumatik",
-    Orange:"Elektrotechnik",
-    Dunkelgruen:"Fluggerätemechanik allgemein"
-  };
-  const COLOR_MAP = {
-    Gelb:"#F4D03F", Pink:"#E91E63", Blau:"#1976D2",
-    Gruen:"#1E8449", HellesPink:"#F54927",
-    Orange:"#E67E22", Dunkelgruen:"#117A65"
-  };
-  const RAW_URL="https://beeferino.github.io/vokabeltrainer/vokabeln.json";
+/* ==================== Setup & Variablen ==================== */
+const tableBody = document.getElementById('tableBody');
+const gridContainer = document.getElementById('gridContainer');
+const filterCategory = document.getElementById('filterCategory');
+const searchInput = document.getElementById('searchInput');
+const selectAll = document.getElementById('selectAll');
+const btnReset = document.getElementById('btnReset');
+const btnNew = document.getElementById('btnNew');
+const btnDelete = document.getElementById('btnDelete');
+const btnSync = document.getElementById('btnSync');
+const btnList = document.getElementById('btnList');
+const btnCards = document.getElementById('btnCards');
+const btnDark = document.getElementById('btnDark');
+const countInfo = document.getElementById('vocabCount');
 
-  let list = [];
-  let currentPage = 1;
-  const PAGE_SIZE = 15;
-  let adjustMode = false;
+/* ==================== Kategorien ==================== */
+const CATS = {
+  Gelb:{label:'Grundwerkzeuge Metallverarbeitung',color:'#F4D03F',text:'#000'},
+  Pink:{label:'Werkzeugkasten Mechaniker',color:'#E91E63',text:'#fff'},
+  Blau:{label:'Blech- / Kunststoffarbeiten',color:'#1976D2',text:'#fff'},
+  Gruen:{label:'Drehen / Fräsen',color:'#1E8449',text:'#fff'},
+  HellesPink:{label:'Hydraulik / Pneumatik',color:'#F54927',text:'#fff'},
+  Orange:{label:'Elektrotechnik',color:'#E67E22',text:'#fff'},
+  Dunkelgruen:{label:'Fluggerätemechanik allgemein',color:'#117A65',text:'#fff'}
+};
 
-  /* =========================================================
-     DATENLADEN
-     ========================================================= */
-  async function loadData(){
-    try {
-      const r = await fetch(RAW_URL,{cache:"no-store"});
-      list = await r.json();
-    } catch(e) {
-      console.warn("Laden aus LocalStorage",e);
-      list = JSON.parse(localStorage.getItem("vokabeln")||"[]");
-    }
-    renderAll();
-  }
+/* ==================== Beispieldaten (Demo) ==================== */
+let data = [
+  {en:'hammer',de:'Hammer',cat:'Gelb',confuse:false},
+  {en:'screwdriver',de:'Schraubendreher',cat:'Gelb',confuse:false},
+  {en:'pliers',de:'Zange',cat:'Gelb',confuse:true},
+  {en:'drill',de:'Bohrmaschine',cat:'Orange',confuse:false},
+  {en:'lathe',de:'Drehmaschine',cat:'Gruen',confuse:false},
+  {en:'sheet metal',de:'Blech',cat:'Blau',confuse:false},
+  {en:'valve',de:'Ventil',cat:'HellesPink',confuse:true},
+  {en:'assemble',de:'montieren',cat:'Pink',confuse:false},
+  {en:'inspect',de:'prüfen',cat:'Dunkelgruen',confuse:true}
+];
 
-  /* =========================================================
-     FILTERN & PAGINATION
-     ========================================================= */
-  function currentFilter(){
-    const cat = $("#filterCatDesk").value;
-    const q = $("#searchDesk").value.toLowerCase();
-    return {cat,q};
-  }
+/* ==================== Zustand ==================== */
+let viewMode = 'list';  // list | cards
+let darkMode = false;
+let editIndex = null;
+let editMode = false;  // „Anpassen“ aktiv ja/nein
+const perPage = 15;
+let currentPage = 1;
 
-  function filtered(){
-    const {cat,q}=currentFilter();
-    return list.filter(v=>{
-      const matchCat=cat==="Alle"||v[2]===cat||(cat==="confuse"&&v[6]==1);
-      const matchQ=!q||(v[0]&&v[0].toLowerCase().includes(q))||(v[1]&&v[1].toLowerCase().includes(q));
-      return matchCat&&matchQ;
-    });
-  }
+/* ==================== Dropdowns befüllen ==================== */
+function populateCategoryFilter(){
+  const keep = new Set(['Alle','confuse']);
+  [...filterCategory.options].forEach(o=>{if(!keep.has(o.value))o.remove();});
+  Object.keys(CATS).forEach(k=>{
+    const opt=document.createElement('option');
+    opt.value=k; opt.textContent=CATS[k].label;
+    opt.style.background=CATS[k].color;
+    opt.style.color=CATS[k].text;
+    filterCategory.appendChild(opt);
+  });
+}
 
-  function paginated(){
-    const data=filtered();
-    const start=(currentPage-1)*PAGE_SIZE;
-    return data.slice(start,start+PAGE_SIZE);
-  }
+function populateEditCategorySelect(){
+  const sel = document.getElementById('editCat');
+  sel.innerHTML = '';
+  Object.keys(CATS).forEach(k=>{
+    const opt=document.createElement('option');
+    opt.value=k;opt.textContent=CATS[k].label;
+    opt.style.background=CATS[k].color;
+    opt.style.color=CATS[k].text;
+    sel.appendChild(opt);
+  });
+}
 
-  function totalPages(){return Math.ceil(filtered().length/PAGE_SIZE)||1;}
+/* Hilfs-Badge für Kategorie */
+function categoryBadge(key){
+  const c=CATS[key] || {label:key,color:'#e5e7eb',text:'#111'};
+  const span=document.createElement('span');
+  span.className='badge';
+  span.textContent=c.label;
+  span.style.background=c.color;
+  span.style.color=c.text;
+  return span;
+}
 
-  function changePage(d){
-    const max=totalPages();
-    currentPage=Math.min(Math.max(currentPage+d,1),max);
-    renderAll();
-  }
+/* ⚠️ Icon für Verwechslungsgefahr */
+function confuseIcon(flag){
+  if(!flag)return '';
+  return '<span title="Verwechslungsgefahr">⚠️</span>';
+}
 
-  /* =========================================================
-     RENDERING – LIST
-     ========================================================= */
-  function renderList(){
-    const tbody=$("#tblBody");
-    const data=paginated();
-    tbody.innerHTML=data.map(v=>{
-      const danger=v[6]==1?`<span class="confuse-flag">⚠️</span>`:"";
-      const colorDot=`<span class="cat-badge"><span class="cat-dot dot-${v[2]}"></span>${v[2]}</span>`;
-      return `<tr>
-        <td class="cell-english">${v[0]} ${danger}</td>
-        <td>${v[1]}</td>
-        <td>${colorDot}</td>
-        <td>${v[3]||""}</td>
-        <td>${v[4]||""}</td>
-        <td><button class="btn small soft editRow" data-id="${v[7]}">✏️ Bearbeiten</button></td>
-      </tr>`;
-    }).join("");
+/* Filter & Suche anwenden */
+function getFilteredData(){
+  const catVal = filterCategory.value;
+  const isConf = catVal==='confuse';
+  const q = searchInput.value.trim().toLowerCase();
+  return data.filter(v=>{
+    const matchCat = isConf ? v.confuse : (catVal==='Alle' ? true : v.cat===catVal);
+    const matchQ = !q || v.en.toLowerCase().includes(q) || v.de.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+}
+/* ==================== Rendering ==================== */
 
-    $$("#pgPrev").forEach(b=>b.onclick=()=>changePage(-1));
-    $$("#pgNext").forEach(b=>b.onclick=()=>changePage(1));
-    $("#pgInfo").textContent=`Seite ${currentPage} / ${totalPages()}`;
-  }
+// Rendert die Tabellenansicht (Desktop-/Listenmodus)
+function renderTable(){
+  const filtered = getFilteredData();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * perPage;
+  const pageData = filtered.slice(start, start + perPage);
 
-  /* =========================================================
-     RENDERING – KACHELN
-     ========================================================= */
-  function renderCards(){
-    const grid=$("#cardView");
-    const data=paginated();
-    grid.innerHTML=data.map(v=>{
-      const danger=v[6]==1?`<span class="confuse-flag">⚠️</span>`:"";
-      const group=v[3]?`<div class="chip">Gruppe: ${v[3]}</div>`:"";
-      const hint=v[4]?`<div class="hint">${v[4]}</div>`:"";
-      return `<div class="card">
-        <h3>${v[0]} ${danger}</h3>
-        <div class="sub">${v[1]}</div>
-        <div class="row">
-          <div class="chip"><span class="cat-dot dot-${v[2]}"></span>${CATEGORY_NAMES[v[2]]}</div>
-        </div>
-        ${group}
-        ${hint}
-        <button class="btn soft small edit editCard" data-id="${v[7]}">Bearbeiten</button>
-      </div>`;
-    }).join("");
-  }
-
-  /* =========================================================
-     RENDER ALL
-     ========================================================= */
-  function renderAll(){
-    $("#countBadge").textContent=`📘 ${filtered().length} Vokabel${filtered().length!==1?"n":""} gefunden`;
-    if(viewMode==="list"){
-      $("#listView").style.display="block";
-      $("#pagination").style.display="flex";
-      $("#cardView").style.display="none";
-      renderList();
-    } else {
-      $("#listView").style.display="none";
-      $("#pagination").style.display="none";
-      $("#cardView").style.display="grid";
-      renderCards();
-    }
-  }
-
-  /* =========================================================
-     MODAL-FUNKTIONALITÄT
-     ========================================================= */
-  const modal=$("#modal");
-  const mEn=$("#mEn"),mDe=$("#mDe"),mCat=$("#mCat"),mGroup=$("#mGroup"),mHint=$("#mHint"),mConfuse=$("#mConfuse");
-  let editId=null;
-
-  $("#mCancel").onclick=()=>modal.style.display="none";
-  modal.addEventListener("click",e=>{if(e.target===modal)modal.style.display="none";});
-
-  $("#mSave").onclick=()=>{
-    const en=mEn.value.trim(),de=mDe.value.trim();
-    if(!en||!de){alert("Bitte Englisch & Deutsch ausfüllen.");return;}
-    const cat=mCat.value,grp=mGroup.value.trim(),hint=mHint.value.trim(),confuse=mConfuse.checked?1:0;
-    if(editId){
-      const idx=list.findIndex(x=>x[7]===editId);
-      if(idx>-1){list[idx][0]=en;list[idx][1]=de;list[idx][2]=cat;list[idx][3]=grp;list[idx][4]=hint;list[idx][6]=confuse;}
-    } else {
-      list.push([en,de,cat,grp,hint,new Date().toISOString(),confuse,crypto.randomUUID()]);
-    }
-    localStorage.setItem("vokabeln",JSON.stringify(list));
-    modal.style.display="none";
-    renderAll();
-  };
-
-  function openEdit(id){
-    const v=list.find(x=>x[7]===id);
-    if(!v)return;
-    editId=id;
-    mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mGroup.value=v[3]||"";mHint.value=v[4]||"";mConfuse.checked=v[6]==1;
-    modal.style.display="flex";
-  }
-
-  document.addEventListener("click",e=>{
-    if(e.target.classList.contains("editRow")||e.target.classList.contains("editCard")){
-      openEdit(e.target.dataset.id);
-    }
+  tableBody.innerHTML = '';
+  pageData.forEach((v,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input type="checkbox" data-idx="${i}"></td>
+      <td>${v.en} ${v.confuse?confuseIcon(true):''}</td>
+      <td>${v.de}</td>
+      <td>${categoryBadge(v.cat).outerHTML}</td>
+      <td><button class="btnEdit" data-edit="${i}">✏️ Bearbeiten</button></td>`;
+    tableBody.appendChild(tr);
   });
 
-  /* =========================================================
-     ANSICHTSSCHALTER & DARKMODE
-     ========================================================= */
-  let viewMode="card";
-  $("#btnList").onclick=()=>{viewMode="list";$("#btnList").classList.add("toggle-active");$("#btnCards").classList.remove("toggle-active");renderAll();};
-  $("#btnCards").onclick=()=>{viewMode="card";$("#btnCards").classList.add("toggle-active");$("#btnList").classList.remove("toggle-active");renderAll();};
+  // Klick-Events für Bearbeiten
+  document.querySelectorAll('.btnEdit').forEach(btn=>{
+    btn.onclick=()=>openEdit(start+Number(btn.dataset.edit));
+  });
 
-  const root=document.body;
-  $("#btnDark").onclick=()=>{
-    root.classList.toggle("dark");
-    $("#btnDark").innerHTML=root.classList.contains("dark")?"🌞 Light Mode":"🌙 Dark Mode";
-  };
+  countInfo.textContent = `${filtered.length}`;
+  renderPagination(totalPages);
+}
 
-  /* =========================================================
-     FILTER & RESET
-     ========================================================= */
-  $("#resetDesk").onclick=()=>{
-    $("#filterCatDesk").value="Alle";
-    $("#searchDesk").value="";
-    currentPage=1;
-    renderAll();
-  };
-  $("#filterCatDesk").onchange=()=>{currentPage=1;renderAll();};
-  $("#searchDesk").oninput=()=>{currentPage=1;renderAll();};
+// Rendert die Karten-/Kachelansicht (2-spaltig responsiv)
+function renderCards(){
+  const filtered = getFilteredData();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * perPage;
+  const pageData = filtered.slice(start, start + perPage);
 
-  $("#addDesk").onclick=()=>{
-    editId=null;
-    mEn.value=mDe.value=mGroup.value=mHint.value="";
-    mCat.value="Gelb";mConfuse.checked=false;
-    modal.style.display="flex";
-  };
+  gridContainer.innerHTML='';
+  pageData.forEach((v,i)=>{
+    const card=document.createElement('div');
+    card.className='card';
+    card.innerHTML=`
+      <div class="cardTitle">${v.en} ${v.confuse?confuseIcon(true):''}</div>
+      <div class="cardSub">DE: ${v.de}</div>
+      <div class="cardCat">${categoryBadge(v.cat).outerHTML}</div>
+      <div class="cardRow">
+        <button class="btnEdit" data-edit="${i}">Bearbeiten</button>
+      </div>`;
+    gridContainer.appendChild(card);
+  });
 
-  /* =========================================================
-     INIT-KATEGORIEN
-     ========================================================= */
-  function fillCategories(){
-    const sel=$("#filterCatDesk"),mSel=$("#mCat");
-    Object.keys(CATEGORY_NAMES).forEach(k=>{
-      const o=document.createElement("option");
-      o.value=k;o.textContent=CATEGORY_NAMES[k];
-      sel.appendChild(o.cloneNode(true));
-      mSel.appendChild(o);
-    });
-    const confuse=document.createElement("option");
-    confuse.value="confuse";
-    confuse.textContent="⚠️ Verwechslungsgefahr-Vokabeln";
-    sel.appendChild(confuse);
+  document.querySelectorAll('.btnEdit').forEach(btn=>{
+    btn.onclick=()=>openEdit(start+Number(btn.dataset.edit));
+  });
+
+  countInfo.textContent = `${filtered.length}`;
+  renderPagination(totalPages);
+}
+
+// Pagination-Buttons
+function renderPagination(totalPages){
+  const existing=document.getElementById('pagination');
+  if(existing)existing.remove();
+  const nav=document.createElement('div');
+  nav.id='pagination';
+  nav.style.textAlign='center';
+  nav.style.margin='16px 0';
+  nav.innerHTML=`
+    <button class="outline" id="btnPrev" ${currentPage===1?'disabled':''}>⬅️ Zurück</button>
+    <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${totalPages}</span>
+    <button class="outline" id="btnNext" ${currentPage===totalPages?'disabled':''}>Weiter ➡️</button>`;
+  (viewMode==='list'?tableBody.parentElement:gridContainer).after(nav);
+  document.getElementById('btnPrev').onclick=()=>{currentPage--;render();};
+  document.getElementById('btnNext').onclick=()=>{currentPage++;render();};
+}
+
+/* ==================== Modal-Funktionen ==================== */
+
+function openEdit(idx){
+  editIndex=idx;
+  const v=data[idx];
+  document.getElementById('modalTitle').textContent='Vokabel bearbeiten';
+  document.getElementById('editEN').value=v.en;
+  document.getElementById('editDE').value=v.de;
+  document.getElementById('editCat').value=v.cat;
+  document.getElementById('editConfuse').checked=!!v.confuse;
+  document.getElementById('editModal').style.display='flex';
+}
+
+function closeModal(){
+  document.getElementById('editModal').style.display='none';
+}
+
+// Speichern im Modal
+document.getElementById('btnSave').onclick=()=>{
+  const en=document.getElementById('editEN').value.trim();
+  const de=document.getElementById('editDE').value.trim();
+  const cat=document.getElementById('editCat').value;
+  const confuse=document.getElementById('editConfuse').checked;
+  if(!en||!de){alert('Bitte Englisch & Deutsch ausfüllen.');return;}
+  if(editIndex==null){data.push({en,de,cat,confuse});}
+  else{data[editIndex]={en,de,cat,confuse};}
+  closeModal();
+  render();
+};
+
+document.getElementById('btnCancel').onclick=closeModal;
+
+/* ==================== Ansicht-Umschaltung ==================== */
+
+function render(){
+  if(viewMode==='list'){
+    gridContainer.style.display='none';
+    document.getElementById('tableContainer').style.display='block';
+    renderTable();
+  }else{
+    gridContainer.style.display='grid';
+    document.getElementById('tableContainer').style.display='none';
+    renderCards();
   }
+}
 
-  fillCategories();
-  loadData();
-})();
+/* ==================== Event-Handling ==================== */
+
+// Filter / Suche
+filterCategory.onchange=()=>{currentPage=1;render();};
+searchInput.oninput=()=>{currentPage=1;render();};
+
+// Reset-Button
+btnReset.onclick=()=>{
+  filterCategory.value='Alle';
+  searchInput.value='';
+  currentPage=1;
+  render();
+};
+
+// Neue Vokabel
+btnNew.onclick=()=>{
+  editIndex=null;
+  document.getElementById('modalTitle').textContent='Neue Vokabel';
+  document.getElementById('editEN').value='';
+  document.getElementById('editDE').value='';
+  document.getElementById('editCat').value=Object.keys(CATS)[0];
+  document.getElementById('editConfuse').checked=false;
+  document.getElementById('editModal').style.display='flex';
+};
+
+// Löschen
+btnDelete.onclick=()=>{
+  const checked=[...document.querySelectorAll('#vocabTable tbody input[type=checkbox]:checked')];
+  if(!checked.length){alert('Keine Auswahl zum Löschen.');return;}
+  if(!confirm(`${checked.length} Vokabel(n) löschen?`))return;
+  const indexes=checked.map(x=>Number(x.dataset.idx));
+  data=data.filter((_,i)=>!indexes.includes(i));
+  render();
+};
+
+// Ansichtsschalter
+btnList.onclick=()=>{viewMode='list';btnList.classList.add('active');btnCards.classList.remove('active');render();};
+btnCards.onclick=()=>{viewMode='cards';btnCards.classList.add('active');btnList.classList.remove('active');render();};
+
+// Dark-Mode
+btnDark.onclick=()=>{
+  darkMode=!darkMode;
+  document.body.classList.toggle('dark',darkMode);
+};
+/* ==================== Initialisierung ==================== */
+populateCategoryFilter();
+populateEditCategorySelect();
+render();
+
+/* ==================== Dark Mode Styles ==================== */
+const style=document.createElement('style');
+style.textContent=`
+body.dark{
+  background:#0f172a;
+  color:#f9fafb;
+  transition:background .3s,color .3s;
+}
+body.dark input, body.dark select, body.dark button{
+  background:#1e293b;
+  color:#f9fafb;
+  border-color:#334155;
+}
+body.dark table{
+  background:#1e293b;
+  color:#f9fafb;
+}
+body.dark .badge{
+  border:1px solid rgba(255,255,255,0.1);
+}
+body.dark .card{
+  background:#1e293b;
+  color:#f9fafb;
+  border-color:#334155;
+}
+`;
+document.head.appendChild(style);
+
+/* ==================== Responsiveness ==================== */
+// Kachel-Layout 2-spaltig auf Desktop, 1-spaltig auf Handy
+const gridStyle=document.createElement('style');
+gridStyle.textContent=`
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:16px;
+}
+.card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:14px;
+  box-shadow:0 4px 10px rgba(0,0,0,.05);
+  transition:transform .2s,box-shadow .2s;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 6px 18px rgba(0,0,0,.1);
+}
+.cardTitle{
+  font-weight:700;
+  font-size:1.1rem;
+  margin-bottom:4px;
+}
+.cardSub{
+  color:#6b7280;
+  margin-bottom:8px;
+}
+.cardCat .badge{
+  font-size:.9rem;
+  padding:4px 10px;
+  border-radius:999px;
+  display:inline-block;
+}
+.cardRow{
+  text-align:right;
+}
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:999px;
+  font-weight:600;
+  font-size:.85rem;
+}
+.toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-weight:600;
+}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:10px;
+}
+.toolbar select,
+.toolbar input{
+  padding:8px 10px;
+  border:1px solid #cfd6e4;
+  border-radius:10px;
+}
+.toolbar button{
+  padding:8px 12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:600;
+}
+.toolbar button.primary{background:#2563eb;color:#fff;}
+.toolbar button.outline{background:#fff;border:1px solid #cfd6e4;color:#111;}
+.toolbar button.danger{background:#ef4444;color:#fff;}
+.toolbar button.active{background:#2563eb;color:#fff;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+th,td{
+  padding:10px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+}
+tr:hover td{
+  background:#f9fafb;
+}
+@media(max-width:700px){
+  table, thead, tbody, th, td, tr{
+    display:block;
+  }
+  th{display:none;}
+  td{
+    padding:8px;
+    border:none;
+    border-bottom:1px solid #e5e7eb;
+  }
+}
+`;
+document.head.appendChild(gridStyle);
+
+})(); // end IIFE
 </script>
-</div>
 </body>
-   <!-- =========================================================
-     TEIL 4 — OPTIONALER FEINSCHLIFF & KOMMENTARE
-     ========================================================= -->
-
-<style>
-/* =========================================================
-   DARKMODE – Toggle Animation (Feinschliff)
-   ========================================================= */
-body.dark .switch .slider { background:#334155; }
-body.dark .switch .knob { background:#e2e8f0; transform:translateX(24px); }
-
-/* kleine Transition für den Umschalter */
-.switch input:checked + .slider { background:#2563eb; }
-.switch input:checked + .slider + .knob { transform:translateX(24px); }
-
-.switch .slider, .switch .knob {
-  transition:background-color .25s ease, transform .25s ease;
-}
-
-/* =========================================================
-   Fade Animationen für Seitenwechsel
-   ========================================================= */
-.fade-enter {
-  opacity: 0;
-  transform: translateY(10px);
-}
-.fade-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-/* =========================================================
-   RESPONSIVE OPTIMIERUNG
-   ========================================================= */
-@media (max-width: 600px) {
-  .toolbar select,
-  .toolbar input {
-    font-size: 0.9rem;
-    padding: 8px 10px;
-  }
-  .btn.small {
-    font-size: 0.9rem;
-    padding: 8px 10px;
-  }
-  table thead th {
-    padding: 10px 8px;
-  }
-  tbody td {
-    padding: 10px 8px;
-  }
-  .card h3 {
-    font-size: 1.15rem;
-  }
-  .count-row .badge {
-    font-size: 0.95rem;
-  }
-}
-
-/* =========================================================
-   VISUELLE VERBESSERUNGEN FÜR DARK MODE (Feinschliff)
-   ========================================================= */
-body.dark table thead th {
-  background: rgba(148,163,184,.08);
-  border-bottom: 1px solid #334155;
-}
-body.dark tbody tr:hover {
-  background: rgba(148,163,184,.08);
-}
-body.dark .btn.primary {
-  background: linear-gradient(135deg,#3b82f6,#1d4ed8);
-}
-body.dark .btn.soft {
-  background: #1e293b;
-  border-color: #334155;
-  color: #f3f4f6;
-}
-body.dark .count-row .badge {
-  background: #1e293b;
-  color: #dbeafe;
-}
-body.dark .card {
-  background: #1e293b;
-  border-color: #334155;
-}
-body.dark .card .chip {
-  background: #334155;
-  color: #e0e7ff;
-}
-body.dark .hint {
-  color: #9ca3af;
-}
-body.dark .modal .panel {
-  background: #1e293b;
-  color: #f3f4f6;
-  border-color: #334155;
-}
-body.dark .modal input,
-body.dark .modal select,
-body.dark .modal textarea {
-  background: #0f172a;
-  color: #f1f5f9;
-  border-color: #334155;
-}
-body.dark .modal .btn.soft {
-  background: #334155;
-  border-color: #475569;
-}
-
-/* =========================================================
-   VISUELLE DETAILS – SYNC BUTTON BREITE & ZENTRIERUNG
-   ========================================================= */
-#btnSync {
-  text-align: center;
-  font-weight: 700;
-  letter-spacing: .2px;
-  border-radius: 10px;
-}
-#btnSync:hover {
-  background: linear-gradient(135deg, #e0e7ff, #f1f5ff);
-  transform: translateY(-1px);
-}
-body.dark #btnSync:hover {
-  background: #334155;
-}
-
-/* =========================================================
-   FINALER FADE BEIM LADEN
-   ========================================================= */
-body {
-  opacity: 0;
-  animation: fadeInBody .4s ease forwards;
-}
-@keyframes fadeInBody {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* =========================================================
-   COPYRIGHT & META
-   ========================================================= */
-.footer {
-  text-align: center;
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin-top: 32px;
-  opacity: 0.8;
-}
-body.dark .footer {
-  color: #9ca3af;
-}
-</style>
-
-<div class="footer">
-  © 2025 Beeferino – Vokabeltrainer • Alle Angaben ohne Gewähr.
-</div>
-<!-- =========================================================
-     Ende der Datei vokabeln.html (Stand: 30. Oktober 2025)
-     ========================================================= -->
-
 </html>
