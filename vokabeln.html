@@ -100,7 +100,66 @@ body.dark .card-sub{color:#cbd5e1;}
 body.dark .confuse-badge{
   background:rgba(239,68,68,0.15);color:#fca5a5;
 }
-
+ /* === Schöner Toggle-Schalter für "Verwechslungsgefahr" === */
+.confuse-toggle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 14px;
+  border:1px solid #cfd6e4;
+  border-radius:10px;
+  background:#f9fafb;
+  font-weight:600;
+  color:#111;
+  transition:background .3s,border-color .3s;
+}
+body.dark .confuse-toggle{
+  background:#1e293b;
+  border-color:#334155;
+  color:#e2e8f0;
+}
+.confuse-toggle .switch{
+  position:relative;
+  display:inline-block;
+  width:50px;
+  height:28px;
+}
+.confuse-toggle .switch input{
+  opacity:0;
+  width:0;
+  height:0;
+}
+.confuse-toggle .slider{
+  position:absolute;
+  cursor:pointer;
+  top:0; left:0; right:0; bottom:0;
+  background-color:#ccc;
+  transition:.3s;
+  border-radius:34px;
+}
+.confuse-toggle .slider:before{
+  position:absolute;
+  content:"";
+  height:22px; width:22px;
+  left:3px; bottom:3px;
+  background-color:white;
+  transition:.3s;
+  border-radius:50%;
+}
+.confuse-toggle input:checked + .slider{
+  background-color:#ef4444;
+  box-shadow:0 0 6px rgba(239,68,68,.4);
+}
+.confuse-toggle input:checked + .slider:before{
+  transform:translateX(22px);
+}
+body.dark .confuse-toggle .slider{
+  background-color:#475569;
+}
+body.dark .confuse-toggle input:checked + .slider{
+  background-color:#f87171;
+}
 /* FAB / Mobile-Leiste */
 .fab-row{display:none;position:sticky;bottom:0;background:rgba(255,255,255,.95);
   padding:10px;border-top:1px solid #e5ebf3;}
@@ -230,66 +289,7 @@ body.dark .dark-toggle{background:#1e293b;border-color:#334155;color:#e2e8f0;}
     </div>
   </div>
 </div>
-  /* === Schöner Toggle-Schalter für "Verwechslungsgefahr" === */
-.confuse-toggle{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:10px 14px;
-  border:1px solid #cfd6e4;
-  border-radius:10px;
-  background:#f9fafb;
-  font-weight:600;
-  color:#111;
-  transition:background .3s,border-color .3s;
-}
-body.dark .confuse-toggle{
-  background:#1e293b;
-  border-color:#334155;
-  color:#e2e8f0;
-}
-.confuse-toggle .switch{
-  position:relative;
-  display:inline-block;
-  width:50px;
-  height:28px;
-}
-.confuse-toggle .switch input{
-  opacity:0;
-  width:0;
-  height:0;
-}
-.confuse-toggle .slider{
-  position:absolute;
-  cursor:pointer;
-  top:0; left:0; right:0; bottom:0;
-  background-color:#ccc;
-  transition:.3s;
-  border-radius:34px;
-}
-.confuse-toggle .slider:before{
-  position:absolute;
-  content:"";
-  height:22px; width:22px;
-  left:3px; bottom:3px;
-  background-color:white;
-  transition:.3s;
-  border-radius:50%;
-}
-.confuse-toggle input:checked + .slider{
-  background-color:#ef4444;
-  box-shadow:0 0 6px rgba(239,68,68,.4);
-}
-.confuse-toggle input:checked + .slider:before{
-  transform:translateX(22px);
-}
-body.dark .confuse-toggle .slider{
-  background-color:#475569;
-}
-body.dark .confuse-toggle input:checked + .slider{
-  background-color:#f87171;
-}
+ 
 
 <script>
 (function(){
