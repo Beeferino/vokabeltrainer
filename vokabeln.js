@@ -70,12 +70,22 @@ window.addEventListener("DOMContentLoaded", () => {
     } catch {
       list = loadLocal();
     }
-    renderApp();
-    renderABCOverlay();
+    renderByViewport();
     initTheme();
   }
 
-  // Render main UI
+  function isMobile() {
+    return window.matchMedia("(max-width: 900px)").matches;
+  }
+
+  function renderByViewport() {
+    if (isMobile()) renderMobileView();
+    else renderApp();
+    // Desktop-only overlay button
+    if (!isMobile()) renderABCOverlayDesktop();
+  }
+
+  // Render main UI (Desktop)
   function renderApp() {
     app.innerHTML = `
       <div class="desktop-app">
@@ -127,8 +137,8 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function currentFilter() {
-    const cat = document.getElementById("filterCatDesk").value || "Alle";
-    const q = (document.getElementById("searchDesk").value || "")
+    const cat = document.getElementById("filterCatDesk")?.value || "Alle";
+    const q = (document.getElementById("searchDesk")?.value || "")
       .trim()
       .toLowerCase();
     return { cat, q };
@@ -191,37 +201,41 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function addDesktopListeners() {
-    // Farbanpassung für Toolbar-Select
-const fDesk = document.getElementById("filterCatDesk");
-if (fDesk) {
-  const updateFilterColor = () => {
-    const val = fDesk.value;
-    if (val && COLOR_MAP[val]) {
-      fDesk.style.background = COLOR_MAP[val];
-      fDesk.style.color = TEXT_ON[val];
-    } else {
-      fDesk.style.background = "";
-      fDesk.style.color = "";
+    // Filter-Select einfärben
+    const fDesk = document.getElementById("filterCatDesk");
+    if (fDesk) {
+      const updateFilterColor = () => {
+        const val = fDesk.value;
+        if (val && COLOR_MAP[val]) {
+          fDesk.style.background = COLOR_MAP[val];
+          fDesk.style.color = TEXT_ON[val];
+        } else {
+          fDesk.style.background = "";
+          fDesk.style.color = "";
+        }
+      };
+      fDesk.addEventListener("change", updateFilterColor);
+      updateFilterColor();
     }
-  };
-  fDesk.addEventListener("change", updateFilterColor);
-  updateFilterColor();
-}
-document.getElementById("filterCatDesk").onchange = () => { currentPage=1; renderTable(); };
+
+    document.getElementById("filterCatDesk").onchange = () => { currentPage=1; renderTable(); };
     document.getElementById("searchDesk").oninput = () => { currentPage=1; renderTable(); };
     document.getElementById("resetDesk").onclick = () => {
       document.getElementById("filterCatDesk").value = "Alle";
       document.getElementById("searchDesk").value = "";
       currentPage = 1; currentLetter = "Alle";
       renderTable();
+      const toggle = document.getElementById("abcToggle");
+      if (toggle) {
+        toggle.textContent = "A–Z";
+        toggle.title = "Alphabet-Filter öffnen";
+        toggle.style.background = "var(--blue)";
+      }
     };
     document.getElementById("addDesk").onclick = () => openEdit(null);
     document.getElementById("delDesk").onclick = () => bulkDelete();
     document.getElementById("syncDesk").onclick = githubSync;
-  document.getElementById("homeBtn").onclick = () => {
-  window.location.href = "index.html";
-};
-
+    document.getElementById("homeBtn").onclick = () => { window.location.href = "index.html"; };
   }
 
   function enableSorting() {
@@ -247,6 +261,7 @@ document.getElementById("filterCatDesk").onchange = () => { currentPage=1; rende
   const mCancel = document.getElementById("mCancel");
   const mSave = document.getElementById("mSave");
   const mDelete = document.getElementById("mDelete");
+  const mCreated = document.getElementById("mCreated");
 
   function fillModalCategories() {
     mCat.innerHTML = "";
@@ -256,49 +271,41 @@ document.getElementById("filterCatDesk").onchange = () => { currentPage=1; rende
       o.style.background = COLOR_MAP[k]; o.style.color = TEXT_ON[k];
       mCat.appendChild(o);
     });
-    // Nach dem Aufbau der Liste:
-if (mCat.value) {
-  mCat.style.background = COLOR_MAP[mCat.value];
-  mCat.style.color = TEXT_ON[mCat.value];
-}
-
-// Bei jeder Änderung sofort die Farbe aktualisieren:
-mCat.addEventListener("change", () => {
-  const sel = mCat.value;
-  mCat.style.background = COLOR_MAP[sel];
-  mCat.style.color = TEXT_ON[sel];
-});
-
+    // Select einfärben
+    if (mCat.value) {
+      mCat.style.background = COLOR_MAP[mCat.value];
+      mCat.style.color = TEXT_ON[mCat.value];
+    }
+    mCat.addEventListener("change", () => {
+      const sel = mCat.value;
+      mCat.style.background = COLOR_MAP[sel];
+      mCat.style.color = TEXT_ON[sel];
+    });
   }
 
   function openEdit(i) {
     fillModalCategories();
     editIndex = i;
     if (i === null || i === undefined) {
-  // Neu
-  mEn.value = "";
-  mDe.value = "";
-  mCat.value = "Gelb";
-  mHint.value = "";
-  mConfuse.checked = false;
-  document.getElementById("mCreated").value = new Date().toLocaleDateString();
-} else {
-  const v = list[i];
-  mEn.value = v[0];
-  mDe.value = v[1];
-  mCat.value = v[2];
-  mHint.value = v[4] || "";
-  mConfuse.checked = v[6] === 1;
-  document.getElementById("mCreated").value = new Date(v[5]).toLocaleDateString();
-}
-
+      // Neu
+      mEn.value = "";
+      mDe.value = "";
+      mCat.value = "Gelb";
+      mHint.value = "";
+      mConfuse.checked = false;
+      mCreated.value = new Date().toLocaleDateString();
+    } else {
+      const v = list[i];
+      mEn.value = v[0];
+      mDe.value = v[1];
+      mCat.value = v[2];
+      mHint.value = v[4] || "";
+      mConfuse.checked = v[6] === 1;
+      mCreated.value = new Date(v[5]).toLocaleDateString();
+    }
     // set color on select
     mCat.style.background = COLOR_MAP[mCat.value];
     mCat.style.color = TEXT_ON[mCat.value];
-    mCat.onchange = () => {
-      mCat.style.background = COLOR_MAP[mCat.value];
-      mCat.style.color = TEXT_ON[mCat.value];
-    };
     modal.style.display = "flex";
   }
 
@@ -312,17 +319,16 @@ mCat.addEventListener("change", () => {
     const hint = mHint.value.trim();
     const confuse = mConfuse.checked ? 1 : 0;
     if (!en || !de) { alert("Bitte Englisch & Deutsch ausfüllen."); return; }
-    const newEntry = [en, de, cat, "", hint, new Date().toISOString(), confuse, crypto.randomUUID()];
     if (editIndex !== null && editIndex !== undefined) {
       // keep original id/date
       const old = list[editIndex];
       list[editIndex] = [en, de, cat, "", hint, old[5], confuse, old[7]];
     } else {
-      list.push(newEntry);
+      list.push([en, de, cat, "", hint, new Date().toISOString(), confuse, crypto.randomUUID()]);
     }
     saveLocal(list);
     modal.style.display = "none";
-    renderTable();
+    renderByViewport();
   };
 
   mDelete.onclick = () => {
@@ -331,7 +337,7 @@ mCat.addEventListener("change", () => {
     list.splice(editIndex, 1);
     saveLocal(list);
     modal.style.display = "none";
-    renderTable();
+    renderByViewport();
   };
 
   function bulkDelete(){
@@ -343,8 +349,8 @@ mCat.addEventListener("change", () => {
     renderTable();
   }
 
-  // ===== A–Z Overlay (right)
-  function renderABCOverlay(){
+  // ===== A–Z Overlay (Desktop)
+  function renderABCOverlayDesktop(){
     const overlayHTML = `
       <button id="abcToggle" class="abc-toggle">A–Z</button>
       <div class="abc-overlay" id="abcOverlay">
@@ -364,57 +370,125 @@ mCat.addEventListener("change", () => {
     const close = document.getElementById("abcClose");
 
     btn.onclick = () => {
-  overlay.classList.add("show");
-  setTimeout(() => renderABCFilter(), 40);
-};
-
-// Schließen-Button
-close.onclick = () => overlay.classList.remove("show");
-
+      overlay.classList.add("show");
+      setTimeout(() => renderABCFilter(), 40);
+    };
+    close.onclick = () => overlay.classList.remove("show");
   }
 
   function renderABCFilter() {
-  const container = document.getElementById("abcFilter");
-  if (!container) return;
-  const letters = ["Alle", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
-  container.innerHTML = letters
-    .map(
-      (l) => `
-      <button class="abc-btn${l === currentLetter ? " active" : ""}" data-letter="${l}">
-        ${l}
-      </button>`
-    )
-    .join("");
+    const container = document.getElementById("abcFilter");
+    if (!container) return;
+    const letters = ["Alle", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+    container.innerHTML = letters
+      .map(
+        (l) => `
+        <button class="abc-btn${l === currentLetter ? " active" : ""}" data-letter="${l}">
+          ${l}
+        </button>`
+      )
+      .join("");
 
-  container.querySelectorAll(".abc-btn").forEach((btn) => {
-    btn.onclick = () => {
-      currentLetter = btn.dataset.letter;
-      currentPage = 1;
-      renderABCFilter();
-      renderTable();
+    container.querySelectorAll(".abc-btn").forEach((btn) => {
+      btn.onclick = () => {
+        currentLetter = btn.dataset.letter;
+        currentPage = 1;
+        renderABCFilter();
+        if (isMobile()) renderMobileList();
+        else renderTable();
 
-      // Overlay schließen
-      const overlay = document.getElementById("abcOverlay");
-      if (overlay) overlay.classList.remove("show");
+        // Overlay schließen
+        const overlay = document.getElementById("abcOverlay");
+        if (overlay) overlay.classList.remove("show");
 
-      // Buttontext aktualisieren
-      const toggle = document.getElementById("abcToggle");
-      if (toggle) {
-        if (currentLetter === "Alle") {
-          toggle.textContent = "A–Z";
-          toggle.title = "Alphabet-Filter öffnen";
-          toggle.style.background = "var(--blue)";
-        } else {
-          toggle.textContent = `${currentLetter}`;
-          toggle.title = `Gefiltert nach "${currentLetter}"`;
-          toggle.style.background = "#e67e22"; // orange als Warnfarbe
+        // Buttontext aktualisieren
+        const toggle = document.getElementById("abcToggle");
+        if (toggle) {
+          if (currentLetter === "Alle") {
+            toggle.textContent = "A–Z";
+            toggle.title = "Alphabet-Filter öffnen";
+            toggle.style.background = "var(--blue)";
+          } else {
+            toggle.textContent = `${currentLetter}`;
+            toggle.title = `Gefiltert nach "${currentLetter}"`;
+            toggle.style.background = "#e67e22";
+          }
         }
-      }
-    };
-  });
-}
+      };
+    });
+  }
 
-  
+  // ===== Mobile view
+  function renderMobileView() {
+    app.innerHTML = `
+      <div class="mobile-app">
+        <div class="mob-header">
+          <h2>Vokabeln</h2>
+          <div><button class="iconbtn" id="syncMob" title="Mit GitHub synchronisieren">🔄</button></div>
+        </div>
+        <div id="mobList" class="mob-list"></div>
+
+        <!-- Floating Add Button -->
+        <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
+
+        <!-- A–Z Floating Button -->
+        <button id="abcToggle" class="mob-abc-btn">A–Z</button>
+
+        <!-- Overlay (mobil) -->
+        <div class="abc-overlay" id="abcOverlay">
+          <div class="abc-panel">
+            <div class="abc-header">
+              <span class="abc-title">Wähle Buchstabe</span>
+              <button id="abcClose" class="abc-close">✕</button>
+            </div>
+            <div class="abc-list" id="abcFilter"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    renderMobileList();
+    document.getElementById("syncMob").onclick = githubSync;
+    document.getElementById("addMob").onclick = () => openEdit(null);
+    renderABCOverlayMobile();
+  }
+
+  function renderMobileList() {
+    const container = document.getElementById("mobList");
+    container.innerHTML = list
+      .filter(v => currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter))
+      .map(
+        (v, i) => `
+        <div class="mob-card" data-idx="${i}">
+          <div class="mob-card-top" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
+            ${CATEGORY_NAMES[v[2]]}
+          </div>
+          <div class="mob-card-content">
+            <div class="mob-en">${v[0]}${v[6]===1?` <span title="Verwechslungsgefahr">⚠️</span>`:""}</div>
+            <div class="mob-de">${v[1]}</div>
+          </div>
+        </div>`
+      )
+      .join("");
+
+    // Karte tippen = Bearbeiten
+    container.querySelectorAll(".mob-card").forEach((c) => {
+      c.onclick = () => openEdit(parseInt(c.dataset.idx, 10));
+    });
+  }
+
+  function renderABCOverlayMobile() {
+    const overlay = document.getElementById("abcOverlay");
+    const btn = document.getElementById("abcToggle");
+    const close = document.getElementById("abcClose");
+
+    btn.onclick = () => {
+      overlay.classList.add("show");
+      setTimeout(() => renderABCFilter(), 40);
+    };
+    close.onclick = () => overlay.classList.remove("show");
+  }
+
   // ===== GitHub Sync
   function getToken(){
     let t = localStorage.getItem("gh_token") || "";
@@ -461,84 +535,15 @@ close.onclick = () => overlay.classList.remove("show");
     const tbtn = document.getElementById("themeToggle");
     if(tbtn) tbtn.addEventListener("click", toggleTheme);
   }
-// Gerät erkennen: Desktop oder Mobile
-const isMobile = window.matchMedia("(max-width: 900px)").matches;
 
   // Start
-if (isMobile) {
-  renderMobileView();
-} else {
   loadData();
-}
 
-// === Mobile: Kartenliste statt Tabelle ======================================
-function renderMobileView() {
-  const app = document.getElementById("app");
-  app.innerHTML = `
-    <div class="mobile-app">
-      <div class="mob-header">
-        <h2>Vokabeln</h2>
-        <div><button class="iconbtn" id="syncMob" title="Mit GitHub synchronisieren">🔄</button></div>
-      </div>
-      <div id="mobList" class="mob-list"></div>
-
-      <!-- Floating Add Button -->
-      <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
-
-      <!-- A–Z Floating Button -->
-      <button id="abcToggle" class="mob-abc-btn">A–Z</button>
-
-      <!-- Overlay (gleiches ABC-Panel, nur mobil gerendert) -->
-      <div class="abc-overlay" id="abcOverlay">
-        <div class="abc-panel">
-          <div class="abc-header">
-            <span class="abc-title">Wähle Buchstabe</span>
-            <button id="abcClose" class="abc-close">✕</button>
-          </div>
-          <div class="abc-list" id="abcFilter"></div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  renderMobileList();
-  document.getElementById("syncMob").onclick = githubSync;
-  document.getElementById("addMob").onclick = () => openEdit(null);
-  renderABCOverlayMobile();
-}
-
-function renderMobileList() {
-  const container = document.getElementById("mobList");
-  container.innerHTML = list
-    .map(
-      (v, i) => `
-      <div class="mob-card" data-idx="${i}">
-        <div class="mob-card-top" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
-          ${CATEGORY_NAMES[v[2]]}
-        </div>
-        <div class="mob-card-content">
-          <div class="mob-en">${v[0]}</div>
-          <div class="mob-de">${v[1]}</div>
-          ${v[6] === 1 ? `<div class="mob-warning">⚠️ Verwechslungsgefahr</div>` : ""}
-        </div>
-      </div>`
-    )
-    .join("");
-
-  // Karte tippen = Bearbeiten
-  container.querySelectorAll(".mob-card").forEach((c) => {
-    c.onclick = () => openEdit(parseInt(c.dataset.idx, 10));
+  // Re-render on viewport change
+  window.addEventListener("resize", () => {
+    const wasMobile = document.querySelector(".mobile-app") !== null;
+    const nowMobile = isMobile();
+    if (nowMobile && !wasMobile) renderByViewport();
+    if (!nowMobile && wasMobile) renderByViewport();
   });
-}
-
-function renderABCOverlayMobile() {
-  const overlay = document.getElementById("abcOverlay");
-  const btn = document.getElementById("abcToggle");
-  const close = document.getElementById("abcClose");
-
-  btn.onclick = () => {
-    overlay.classList.add("show");
-    setTimeout(() => renderABCFilter(), 40); // nutzt deine bestehende renderABCFilter()
-  };
-  close.onclick = () => overlay.classList.remove("show");
-}
+});

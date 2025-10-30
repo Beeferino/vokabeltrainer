@@ -10,28 +10,39 @@
 <body>
   <div id="app"></div>
 
+  <!-- Modal: Add/Edit/Delete -->
   <div class="modal" id="modal" style="display:none;">
     <div class="panel">
       <h3 style="margin:0 0 10px 0;">Vokabel</h3>
       <div class="form-grid">
-        <label>Englisch<input id="mEn" type="text" /></label>
-        <label>Deutsch<input id="mDe" type="text" /></label>
-        <label>Kategorie<select id="mCat"></select></label>
+        <label>Englisch
+          <input id="mEn" type="text" />
+        </label>
+        <label>Deutsch
+          <input id="mDe" type="text" />
+        </label>
+        <label>Kategorie
+          <select id="mCat"></select>
+        </label>
+
         <div class="confuse-toggle">
           <span>Verwechslungsgefahr</span>
-          <label class="switch">
+          <label class="switch" title="Gefahr ein/aus">
             <input type="checkbox" id="mConfuse" />
             <span class="slider"></span>
           </label>
         </div>
-        <label>Hinweis<textarea id="mHint" rows="3"></textarea></label>
-        <label>Erstellt am
-  <input id="mCreated" type="text" readonly />
-</label>
 
+        <label>Hinweis
+          <textarea id="mHint" rows="3"></textarea>
+        </label>
+
+        <label>Erstellt am
+          <input id="mCreated" type="text" readonly />
+        </label>
       </div>
       <div class="modal-actions">
-        <button class="btn ghost" id="mDelete">Löschen</button>
+        <button class="btn ghost" id="mDelete" title="Diese Vokabel löschen">Löschen</button>
         <div style="flex:1"></div>
         <button class="btn ghost" id="mCancel">Abbrechen</button>
         <button class="btn primary" id="mSave">Speichern</button>
@@ -39,7 +50,9 @@
     </div>
   </div>
 
-  <button id="themeToggle" class="theme-toggle">🌙</button>
+  <!-- Floating Theme Toggle -->
+  <button id="themeToggle" class="theme-toggle" title="Design umschalten">🌙</button>
+
   <script src="vokabeln.js"></script>
 </body>
 </html>
