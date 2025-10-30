@@ -273,34 +273,7 @@ renderAll = function() {
 };
 
   
-  function renderDesktop(){
-    const data=paginatedData();
-    tbl.innerHTML=data.map(v=>{
-      const i=idxInList(v);
-      const danger=v[6]==1?'<span class="red-flag" title="Verwechslungsgefahr">🔴</span>':"";
-      return `<tr title="ID: ${v[7]}"><td><input type="checkbox" data-idx="${i}"></td><td>${v[0]} ${danger}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td><td style="display:none">${v[3]}</td><td style="display:none">${v[4]}</td><td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td></tr>`;
-    }).join("");
-    $$('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-  }
-
-  function renderMobile(){
-    const data=paginatedData();
-    mobList.innerHTML=data.map(v=>{
-      const i=idxInList(v),sel=selected.has(i)?" selected":"",red=v[6]==1?" red-card":"";
-      return `<div class="card${sel}${red}" data-idx="${i}"><div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div><div class="card-title">${v[0]}</div><div class="card-sub">DE: ${v[1]}</div><div class="card-row"><button class="mobEdit" data-edit="${i}">Bearbeiten</button></div></div>`;
-    }).join("");
-    $$('.mobEdit').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
-    $$('.card').forEach(c=>c.onclick=e=>{
-      if(!adjustMode||e.target.classList.contains('mobEdit'))return;
-      const i=+c.dataset.idx;
-      if(selected.has(i))selected.delete(i);else selected.add(i);
-      c.classList.toggle('selected');
-    });
-  }
-
-  function renderAll(){
-    renderDesktop();renderMobile();updateCount();renderPagination();
-  }
+  
 
   function openEdit(i=null){
     editIndex=i;
