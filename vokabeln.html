@@ -211,6 +211,68 @@ tr:hover{background:#f8fbff}
     else{$('#countDesk').textContent=txt;$('#countMob').textContent="";}
   }
 
+/* === Umschaltbare Ansicht: Liste <-> Kacheln === */
+let viewMode = localStorage.getItem("viewMode") || "list";
+const btnToggleView = document.createElement("button");
+btnToggleView.className = "btn";
+btnToggleView.id = "toggleView";
+btnToggleView.textContent = viewMode === "list" ? "🧱 Kachelansicht" : "🗒️ Listenansicht";
+document.querySelector(".toolbar").appendChild(btnToggleView);
+
+btnToggleView.onclick = () => {
+  viewMode = viewMode === "list" ? "cards" : "list";
+  localStorage.setItem("viewMode", viewMode);
+  btnToggleView.textContent = viewMode === "list" ? "🧱 Kachelansicht" : "🗒️ Listenansicht";
+  renderAll();
+};
+
+/* === Kachelcontainer === */
+const cardContainer = document.createElement("div");
+cardContainer.id = "cardContainer";
+cardContainer.style.display = "none";
+cardContainer.style.display = viewMode === "cards" ? "grid" : "none";
+cardContainer.style.gridTemplateColumns = "repeat(auto-fit, minmax(240px, 1fr))";
+cardContainer.style.gap = "12px";
+cardContainer.style.marginTop = "14px";
+document.querySelector(".app").insertBefore(cardContainer, document.querySelector(".footer"));
+
+/* === Rendering für Kachelansicht === */
+function renderCards() {
+  const data = paginatedData();
+  cardContainer.innerHTML = data.map(v => {
+    const danger = v[6] == 1 ? '⚠️' : '';
+    return `
+      <div class="card" style="border:1px solid #e5ebf3;border-radius:14px;padding:14px;background:#fff;box-shadow:0 4px 10px rgba(0,0,0,.05)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div class="card-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]};padding:4px 10px;border-radius:999px;font-weight:700;">
+            ${CATEGORY_NAMES[v[2]]}
+          </div>
+          ${danger ? `<span title="Verwechslungsgefahr" style="color:#ef4444;font-size:1.2rem;">${danger}</span>` : ""}
+        </div>
+        <div class="card-title" style="font-weight:800;font-size:1.05rem;margin-bottom:4px;">${v[0]}</div>
+        <div class="card-sub" style="color:#374151;margin-bottom:8px;">${v[1]}</div>
+        <div style="text-align:right;">
+          <button class="btn" data-edit="${idxInList(v)}">✏️ Bearbeiten</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+  $$('button[data-edit]').forEach(b => b.onclick = () => openEdit(+b.dataset.edit));
+}
+
+/* === renderAll erweitert === */
+const _renderAllOriginal = renderAll;
+renderAll = function() {
+  renderDesktop();
+  renderMobile();
+  updateCount();
+  renderPagination();
+  document.querySelector(".table-wrap").style.display = (viewMode === "list") ? "block" : "none";
+  cardContainer.style.display = (viewMode === "cards") ? "grid" : "none";
+  if (viewMode === "cards") renderCards();
+};
+
+  
   function renderDesktop(){
     const data=paginatedData();
     tbl.innerHTML=data.map(v=>{
