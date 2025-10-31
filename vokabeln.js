@@ -501,3 +501,27 @@ window.addEventListener("DOMContentLoaded", () => {
   // === Start ===
   loadData();
 });
+// Start
+window.addEventListener("DOMContentLoaded", () => {
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+  
+  if (isMobile) {
+    renderMobileView();
+    initTheme(); // Theme wird trotzdem initialisiert
+  } else {
+    loadData(); // Desktop-Version mit Tabelle
+  }
+
+  window.addEventListener("resize", () => {
+    const nowMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+    const wasMobile = document.body.classList.contains("mobile-mode");
+    
+    if (nowMobile && !wasMobile) {
+      document.body.classList.add("mobile-mode");
+      renderMobileView();
+    } else if (!nowMobile && wasMobile) {
+      document.body.classList.remove("mobile-mode");
+      loadData();
+    }
+  });
+});
