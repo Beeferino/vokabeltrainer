@@ -1,53 +1,60 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vokabelverwaltung</title>
+  <title>Vokabelübersicht | Beeferino</title>
   <link rel="stylesheet" href="vokabeln.css" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <meta name="description" content="Interaktiver Vokabeltrainer – verwalte, bearbeite und synchronisiere deine Lernvokabeln einfach online.">
+  <meta name="theme-color" content="#1e3a8a" />
+  <style>
+    /* Sicherstellen, dass App beim Laden sichtbar bleibt */
+    body, html { height: 100%; }
+    #app { min-height: 100vh; display: flex; flex-direction: column; }
+  </style>
 </head>
 <body>
-  <div id="app" class="app"></div>
 
-  <!-- Modal -->
-  <div id="modal" class="modal">
+  <!-- Haupt-App -->
+  <div id="app">
+    <noscript>Bitte aktiviere JavaScript, um den Vokabeltrainer zu nutzen.</noscript>
+  </div>
+
+  <!-- Modal für Bearbeiten / Erstellen -->
+  <div id="modal">
     <div class="modal-content">
-      <h2>Vokabel bearbeiten</h2>
-      <div class="form-group">
-        <label>Englisch</label>
-        <input type="text" id="mEn" />
-      </div>
-      <div class="form-group">
-        <label>Deutsch</label>
-        <input type="text" id="mDe" />
-      </div>
-      <div class="form-group">
-        <label>Kategorie</label>
-        <select id="mCat"></select>
-      </div>
-      <div class="form-group">
-        <label>Gruppe / Variante</label>
-        <input type="text" id="mVar" />
-      </div>
-      <div class="form-group">
-        <label>Hinweis</label>
-        <input type="text" id="mHint" />
-      </div>
-      <div class="form-group switch-row">
-        <label>Verwechslungsgefahr</label>
-        <label class="switch">
-          <input type="checkbox" id="mConfuse" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <div class="modal-actions">
+      <h2 id="mTitle">Vokabel bearbeiten</h2>
+
+      <label>Englisch</label>
+      <input id="mEn" type="text" placeholder="z. B. hammer" />
+
+      <label>Deutsch</label>
+      <input id="mDe" type="text" placeholder="z. B. Hammer" />
+
+      <label>Kategorie</label>
+      <select id="mCat"></select>
+
+      <label>Hinweis</label>
+      <textarea id="mHint" rows="2" placeholder="optional …"></textarea>
+
+      <label>
+        <input id="mConfuse" type="checkbox" />
+        ⚠️ Verwechslungsgefahr
+      </label>
+
+      <label>Erstellt am</label>
+      <input id="mCreated" type="text" disabled />
+
+      <div style="display:flex;justify-content:space-between;margin-top:1rem;">
         <button id="mCancel" class="btn">Abbrechen</button>
-        <button id="mDelete" class="btn warn">Löschen</button>
-        <button id="mSave" class="btn primary">Speichern</button>
+        <button id="mSave" class="btn">💾 Speichern</button>
+        <button id="mDelete" class="btn warn">🗑️ Löschen</button>
       </div>
     </div>
   </div>
 
+  <!-- JavaScript -->
   <script src="vokabeln.js"></script>
 </body>
 </html>
