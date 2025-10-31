@@ -1,10 +1,10 @@
 // ==============================
-// Beeferino – vokabeln.js (komplett final)
+// Beeferino – vokabeln.js (Full version)
 // ==============================
 window.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
 
-  // Kategorien
+  // === Kategorien ===
   const CATEGORY_NAMES = {
     Gelb: "Grundwerkzeuge Metallverarbeitung",
     Pink: "Werkzeugkasten Mechaniker",
@@ -33,22 +33,21 @@ window.addEventListener("DOMContentLoaded", () => {
     Dunkelgruen: "#fff",
   };
 
-  // GitHub
+  // === Datenquellen ===
   const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
   const GH_OWNER = "beeferino",
     GH_REPO = "vokabeltrainer",
     GH_PATH = "vokabeln.json";
 
-  // Zustände
+  // === State ===
   let list = [];
   let currentPage = 1;
   const PAGE_SIZE = 20;
   let sortState = { col: null, dir: 1 };
   let currentLetter = "Alle";
   let editIndex = null;
-  let desktopView = localStorage.getItem("desktop_view_mode") || "table";
 
-  // Helper
+  // === Helpers ===
   const normalize = (v) => [
     v[0] || "",
     v[1] || "",
@@ -71,17 +70,13 @@ window.addEventListener("DOMContentLoaded", () => {
     } catch {
       list = loadLocal();
     }
-    const isMobile = window.matchMedia("(max-width: 900px)").matches;
-    if (isMobile) renderMobileView();
-    else renderDesktopView();
+    renderApp();
     renderABCOverlay();
     initTheme();
   }
 
-  // ==============================
-  // DESKTOP
-  // ==============================
-  function renderDesktopView() {
+  // === DESKTOP Ansicht ===
+  function renderApp() {
     app.innerHTML = `
       <div class="desktop-app">
         <h1>📘 Vokabelübersicht</h1>
@@ -94,15 +89,26 @@ window.addEventListener("DOMContentLoaded", () => {
           <button id="addDesk" class="btn">➕ Neue</button>
           <button id="delDesk" class="btn warn">🗑️ Löschen</button>
           <button id="syncDesk" class="btn">📤 Sync</button>
-          <button id="viewToggle" class="btn ghost" title="Ansicht wechseln">🗂️ Ansicht</button>
         </div>
         <div id="countDesk" style="text-align:center;margin:8px 0;font-weight:600;color:#1e3a8a"></div>
-        <div class="table-wrap"></div>
+        <div class="table-wrap">
+          <table id="tbl">
+            <thead>
+              <tr>
+                <th class="select-col"></th>
+                <th class="sortable" data-sort="0">Englisch ⬍</th>
+                <th class="sortable" data-sort="1">Deutsch ⬍</th>
+                <th>Kategorie</th>
+                <th>Aktion</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
         <div id="pagination" style="text-align:center;margin:16px 0;"></div>
       </div>
     `;
 
-    // Filter befüllen
     const sel = document.getElementById("filterCatDesk");
     sel.innerHTML = '<option value="Alle">Alle (bunt gemischt)</option>';
     Object.keys(CATEGORY_NAMES).forEach((k) => {
@@ -141,121 +147,38 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ============= Tabelle & Kartenansicht =================
   function renderTable() {
     const data = filtered();
     const start = (currentPage - 1) * PAGE_SIZE;
     const pageData = data.slice(start, start + PAGE_SIZE);
 
-    if (desktopView === "cards") {
-      renderCardViewDesktop(pageData, data);
-      return;
-    }
+    const tbody = document.querySelector("#tbl tbody");
+    tbody.innerHTML = pageData
+      .map((v) => {
+        const idx = list.findIndex((x) => x[7] === v[7]);
+        return `<tr>
+          <td><input type="checkbox" class="rowcheck" data-idx="${idx}"></td>
+          <td>${v[0]}${v[6]===1?` <span title="Verwechslungsgefahr" style="color:#ef4444">⚠️</span>`:""}</td>
+          <td>${v[1]}</td>
+          <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+          <td><button class="btn" data-edit="${idx}">✏️ Bearbeiten</button></td>
+        </tr>`;
+      })
+      .join("");
 
-    const container = document.querySelector(".table-wrap");
-    container.innerHTML = `
-      <table id="tbl">
-        <thead>
-          <tr>
-            <th></th>
-            <th class="sortable" data-sort="0">Englisch ⬍</th>
-            <th class="sortable" data-sort="1">Deutsch ⬍</th>
-            <th>Kategorie</th>
-            <th>Hinweis</th>
-            <th>Aktion</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${pageData
-            .map((v) => {
-              const idx = list.findIndex((x) => x[7] === v[7]);
-              return `
-                <tr>
-                  <td><input type="checkbox" class="rowcheck" data-idx="${idx}"></td>
-                  <td>${v[0]} ${v[6] === 1 ? `<span title="Verwechslungsgefahr" style="color:#ef4444">⚠️</span>` : ""}</td>
-                  <td>${v[1]}</td>
-                  <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-                  <td>${v[4] || ""}</td>
-                  <td><button class="btn" data-edit="${idx}">✏️ Bearbeiten</button></td>
-                </tr>`;
-            })
-            .join("")}
-        </tbody>
-      </table>
-    `;
+    document.querySelectorAll('button[data-edit]').forEach((b)=> b.onclick=()=>openEdit(+b.dataset.edit));
 
-    document.querySelectorAll("button[data-edit]").forEach((b) => {
-      b.onclick = () => openEdit(+b.dataset.edit);
-    });
-
-    document.getElementById("countDesk").textContent = `📘 ${
-      data.length
-    } Vokabel${data.length !== 1 ? "n" : ""} gefunden`;
+    document.getElementById("countDesk").textContent = `📘 ${data.length} Vokabel${data.length !== 1 ? "n" : ""} gefunden`;
 
     const pages = Math.ceil(data.length / PAGE_SIZE) || 1;
     const pagination = document.getElementById("pagination");
     pagination.innerHTML = `
-      <button class="btn" ${currentPage === 1 ? "disabled" : ""} id="prevPage">⬅️ Zurück</button>
+      <button class="btn" ${currentPage===1?"disabled":""} id="prevPage">⬅️ Zurück</button>
       <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
-      <button class="btn" ${currentPage === pages ? "disabled" : ""} id="nextPage">Weiter ➡️</button>
+      <button class="btn" ${currentPage===pages?"disabled":""} id="nextPage">Weiter ➡️</button>
     `;
-    document.getElementById("prevPage").onclick = () => {
-      if (currentPage > 1) {
-        currentPage--;
-        renderTable();
-      }
-    };
-    document.getElementById("nextPage").onclick = () => {
-      if (currentPage < pages) {
-        currentPage++;
-        renderTable();
-      }
-    };
-  }
-
-  function renderCardViewDesktop(pageData, fullData) {
-    const wrap = document.querySelector(".table-wrap");
-    wrap.innerHTML = `
-      <div class="vocab-grid">
-        ${pageData
-          .map((v) => {
-            const idx = list.findIndex((x) => x[7] === v[7]);
-            return `
-              <div class="vocab-card">
-                <div class="vocab-top">
-                  <div>
-                    <div class="vocab-lang">${v[0]}</div>
-                    <div class="vocab-de">${v[1]}</div>
-                  </div>
-                  ${v[6] === 1 ? `<div class="confuse-badge" title="Verwechslungsgefahr">⚠️</div>` : ``}
-                </div>
-                <div>
-                  <div class="vocab-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
-                    ${CATEGORY_NAMES[v[2]]}
-                  </div>
-                  ${v[3] ? `<div class="vocab-group">🔹 ${v[3]}</div>` : ``}
-                  ${v[4] ? `<div class="vocab-hint">💡 ${v[4]}</div>` : ``}
-                </div>
-                <div class="vocab-footer">
-                  <button class="btn" data-edit="${idx}">✏️ Bearbeiten</button>
-                  <button class="btn warn" data-del="${idx}">🗑️ Löschen</button>
-                </div>
-              </div>`;
-          })
-          .join("")}
-      </div>
-    `;
-    wrap.querySelectorAll("button[data-edit]").forEach((b) => b.onclick = () => openEdit(+b.dataset.edit));
-    wrap.querySelectorAll("button[data-del]").forEach((b) => {
-      b.onclick = () => {
-        const i = +b.dataset.del;
-        if (confirm(`"${list[i][0]}" wirklich löschen?`)) {
-          list.splice(i, 1);
-          saveLocal(list);
-          renderTable();
-        }
-      };
-    });
+    document.getElementById("prevPage").onclick = () => { if (currentPage>1){ currentPage--; renderTable(); } };
+    document.getElementById("nextPage").onclick = () => { if (currentPage<pages){ currentPage++; renderTable(); } };
   }
 
   function addDesktopListeners() {
@@ -274,9 +197,8 @@ window.addEventListener("DOMContentLoaded", () => {
       fDesk.addEventListener("change", updateFilterColor);
       updateFilterColor();
     }
-
-    document.getElementById("filterCatDesk").onchange = () => { currentPage = 1; renderTable(); };
-    document.getElementById("searchDesk").oninput = () => { currentPage = 1; renderTable(); };
+    document.getElementById("filterCatDesk").onchange = () => { currentPage=1; renderTable(); };
+    document.getElementById("searchDesk").oninput = () => { currentPage=1; renderTable(); };
     document.getElementById("resetDesk").onclick = () => {
       document.getElementById("filterCatDesk").value = "Alle";
       document.getElementById("searchDesk").value = "";
@@ -287,19 +209,6 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("delDesk").onclick = () => bulkDelete();
     document.getElementById("syncDesk").onclick = githubSync;
     document.getElementById("homeBtn").onclick = () => window.location.href = "index.html";
-
-    // Umschalt-Button
-    const viewBtn = document.getElementById("viewToggle");
-    if (viewBtn) {
-      const setLabel = () => viewBtn.textContent = (desktopView === "table" ? "🗂️ Ansicht" : "📋 Tabelle");
-      setLabel();
-      viewBtn.onclick = () => {
-        desktopView = (desktopView === "table" ? "cards" : "table");
-        localStorage.setItem("desktop_view_mode", desktopView);
-        setLabel();
-        renderTable();
-      };
-    }
   }
 
   function enableSorting() {
@@ -315,14 +224,11 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ==============================
-  // Modal
-  // ==============================
+  // === Modal ===
   const modal = document.getElementById("modal");
   const mEn = document.getElementById("mEn");
   const mDe = document.getElementById("mDe");
   const mCat = document.getElementById("mCat");
-  const mVar = document.getElementById("mVar");
   const mHint = document.getElementById("mHint");
   const mConfuse = document.getElementById("mConfuse");
   const mCancel = document.getElementById("mCancel");
@@ -339,10 +245,6 @@ window.addEventListener("DOMContentLoaded", () => {
       o.style.color = TEXT_ON[k];
       mCat.appendChild(o);
     });
-    if (mCat.value) {
-      mCat.style.background = COLOR_MAP[mCat.value];
-      mCat.style.color = TEXT_ON[mCat.value];
-    }
     mCat.addEventListener("change", () => {
       const sel = mCat.value;
       mCat.style.background = COLOR_MAP[sel];
@@ -354,10 +256,20 @@ window.addEventListener("DOMContentLoaded", () => {
     fillModalCategories();
     editIndex = i;
     if (i === null || i === undefined) {
-      mEn.value = ""; mDe.value = ""; mCat.value = "Gelb"; mVar.value = ""; mHint.value = ""; mConfuse.checked = false;
+      mEn.value = "";
+      mDe.value = "";
+      mCat.value = "Gelb";
+      mHint.value = "";
+      mConfuse.checked = false;
+      document.getElementById("mCreated").value = new Date().toLocaleDateString();
     } else {
       const v = list[i];
-      mEn.value = v[0]; mDe.value = v[1]; mCat.value = v[2]; mVar.value = v[3]; mHint.value = v[4]; mConfuse.checked = v[6] === 1;
+      mEn.value = v[0];
+      mDe.value = v[1];
+      mCat.value = v[2];
+      mHint.value = v[4] || "";
+      mConfuse.checked = v[6] === 1;
+      document.getElementById("mCreated").value = new Date(v[5]).toLocaleDateString();
     }
     mCat.style.background = COLOR_MAP[mCat.value];
     mCat.style.color = TEXT_ON[mCat.value];
@@ -365,28 +277,29 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   mCancel.onclick = () => modal.style.display = "none";
-  modal.addEventListener("click", (e) => { if (e.target === modal) modal.style.display = "none"; });
+  modal.addEventListener("click",(e)=>{ if(e.target===modal) modal.style.display="none"; });
 
   mSave.onclick = () => {
     const en = mEn.value.trim();
     const de = mDe.value.trim();
     const cat = mCat.value;
     const hint = mHint.value.trim();
-    const variant = mVar.value.trim();
     const confuse = mConfuse.checked ? 1 : 0;
     if (!en || !de) { alert("Bitte Englisch & Deutsch ausfüllen."); return; }
-    const newEntry = [en, de, cat, variant, hint, new Date().toISOString(), confuse, crypto.randomUUID()];
+    const newEntry = [en, de, cat, "", hint, new Date().toISOString(), confuse, crypto.randomUUID()];
     if (editIndex !== null && editIndex !== undefined) {
       const old = list[editIndex];
-      list[editIndex] = [en, de, cat, variant, hint, old[5], confuse, old[7]];
-    } else list.push(newEntry);
+      list[editIndex] = [en, de, cat, "", hint, old[5], confuse, old[7]];
+    } else {
+      list.push(newEntry);
+    }
     saveLocal(list);
     modal.style.display = "none";
     renderTable();
   };
 
   mDelete.onclick = () => {
-    if (editIndex === null || editIndex === undefined) return alert("Nichts zum Löschen ausgewählt.");
+    if (editIndex === null || editIndex === undefined) { alert("Nichts zum Löschen ausgewählt."); return; }
     if (!confirm("Eintrag wirklich löschen?")) return;
     list.splice(editIndex, 1);
     saveLocal(list);
@@ -394,18 +307,108 @@ window.addEventListener("DOMContentLoaded", () => {
     renderTable();
   };
 
-  function bulkDelete() {
-    const checks = Array.from(document.querySelectorAll(".rowcheck:checked")).map(x => +x.dataset.idx);
-    if (!checks.length) return alert("Bitte Zeilen auswählen.");
-    if (!confirm(`${checks.length} Einträge löschen?`)) return;
-    list = list.filter((_, i) => !checks.includes(i));
+  function bulkDelete(){
+    const checks = Array.from(document.querySelectorAll(".rowcheck:checked")).map(x=>+x.dataset.idx);
+    if(!checks.length){ alert("Bitte Zeilen auswählen."); return; }
+    if(!confirm(`${checks.length} Einträge löschen?`)) return;
+    list = list.filter((_,i)=>!checks.includes(i));
     saveLocal(list);
     renderTable();
   }
 
-  // ==============================
-  // A–Z Overlay
-  // ==============================
+  // === Mobile Ansicht ===
+  function renderMobileView() {
+    app.innerHTML = `
+      <div class="mobile-app">
+        <div id="mobList" class="mob-list"></div>
+        <div class="l-menu">
+          <div class="l-row">
+            <button id="themeMob" class="l-btn theme" title="Dark/Light">🌗</button>
+            <button id="viewMob" class="l-btn view" title="Ansicht wechseln">🗂️</button>
+          </div>
+          <div class="l-row">
+            <button id="addMob" class="l-btn add" title="Neue Vokabel hinzufügen">➕</button>
+            <button id="abcToggle" class="l-btn abc">A–Z</button>
+          </div>
+        </div>
+        <div class="abc-overlay" id="abcOverlay">
+          <div class="abc-panel">
+            <div class="abc-header">
+              <span class="abc-title">Wähle Buchstabe</span>
+              <button id="abcClose" class="abc-close">✕</button>
+            </div>
+            <div class="abc-list" id="abcFilter"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    renderMobileList();
+    document.getElementById("themeMob").onclick = toggleTheme;
+    document.getElementById("addMob").onclick = () => openEdit(null);
+    renderABCOverlayMobile();
+    const btnView = document.getElementById("viewMob");
+    const currentMode = localStorage.getItem("mobile_view_mode") || "cards";
+    btnView.textContent = currentMode === "cards" ? "🗂️" : "📋";
+    btnView.onclick = () => {
+      const next = currentMode === "cards" ? "table" : "cards";
+      localStorage.setItem("mobile_view_mode", next);
+      renderMobileList();
+    };
+  }
+
+  function renderMobileList() {
+    const mode = localStorage.getItem("mobile_view_mode") || "cards";
+    const container = document.getElementById("mobList");
+    if (mode === "cards") {
+      container.innerHTML = list
+        .map(
+          (v, i) => `
+          <div class="mob-card" data-idx="${i}">
+            <div class="mob-card-top" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
+              ${CATEGORY_NAMES[v[2]]}
+            </div>
+            <div class="mob-card-content">
+              <div class="mob-en">${v[0]}</div>
+              <div class="mob-de">${v[1]}</div>
+              ${v[6]===1?`<div class="mob-warning">⚠️ Verwechslungsgefahr</div>`:""}
+            </div>
+          </div>`
+        )
+        .join("");
+      container.querySelectorAll(".mob-card").forEach((c) => {
+        c.onclick = () => openEdit(parseInt(c.dataset.idx, 10));
+      });
+    } else {
+      container.innerHTML = `
+        <table class="mob-table">
+          <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th></tr></thead>
+          <tbody>
+          ${list.map(
+            (v,i)=>`
+            <tr data-idx="${i}">
+              <td>${v[0]}</td><td>${v[1]}</td>
+              <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+            </tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+      container.querySelectorAll("tr[data-idx]").forEach((r)=>r.onclick=()=>openEdit(parseInt(r.dataset.idx,10)));
+    }
+  }
+
+  // === ABC Overlay Mobile ===
+  function renderABCOverlayMobile() {
+    const overlay = document.getElementById("abcOverlay");
+    const btn = document.getElementById("abcToggle");
+    const close = document.getElementById("abcClose");
+    btn.onclick = () => {
+      overlay.classList.add("show");
+      setTimeout(() => renderABCFilter(), 40);
+    };
+    close.onclick = () => overlay.classList.remove("show");
+  }
+
+  // === ABC Overlay Desktop ===
   function renderABCOverlay() {
     const overlayHTML = `
       <button id="abcToggle" class="abc-toggle">A–Z</button>
@@ -413,17 +416,18 @@ window.addEventListener("DOMContentLoaded", () => {
         <div class="abc-panel">
           <div class="abc-header">
             <span class="abc-title">Wähle Buchstabe</span>
-            <button id="abcClose" class="btn warn">✕</button>
+            <button id="abcClose" class="abc-close">✕</button>
           </div>
           <div class="abc-list" id="abcFilter"></div>
         </div>
       </div>`;
-    if (!document.getElementById("abcOverlay")) document.body.insertAdjacentHTML("beforeend", overlayHTML);
+    if(!document.getElementById("abcOverlay")){
+      document.body.insertAdjacentHTML("beforeend", overlayHTML);
+    }
     const btn = document.getElementById("abcToggle");
     const overlay = document.getElementById("abcOverlay");
     const close = document.getElementById("abcClose");
-
-    btn.onclick = () => { overlay.classList.add("show"); setTimeout(renderABCFilter, 40); };
+    btn.onclick = () => { overlay.classList.add("show"); setTimeout(() => renderABCFilter(), 40); };
     close.onclick = () => overlay.classList.remove("show");
   }
 
@@ -431,10 +435,10 @@ window.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("abcFilter");
     if (!container) return;
     const letters = ["Alle", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
-    container.innerHTML = letters
-      .map(l => `<button class="abc-btn${l === currentLetter ? " active" : ""}" data-letter="${l}">${l}</button>`)
-      .join("");
-    container.querySelectorAll(".abc-btn").forEach(btn => {
+    container.innerHTML = letters.map(
+      (l) => `<button class="abc-btn${l === currentLetter ? " active" : ""}" data-letter="${l}">${l}</button>`
+    ).join("");
+    container.querySelectorAll(".abc-btn").forEach((btn) => {
       btn.onclick = () => {
         currentLetter = btn.dataset.letter;
         currentPage = 1;
@@ -444,35 +448,25 @@ window.addEventListener("DOMContentLoaded", () => {
         if (overlay) overlay.classList.remove("show");
         const toggle = document.getElementById("abcToggle");
         if (toggle) {
-          if (currentLetter === "Alle") {
-            toggle.textContent = "A–Z";
-            toggle.style.background = "#2563eb";
-          } else {
-            toggle.textContent = currentLetter;
-            toggle.style.background = "#e67e22";
-          }
+          toggle.textContent = currentLetter === "Alle" ? "A–Z" : currentLetter;
+          toggle.style.background = currentLetter === "Alle" ? "var(--blue)" : "#e67e22";
         }
       };
     });
   }
 
-  // ==============================
-  // GitHub Sync
-  // ==============================
+  // === GitHub Sync ===
   function getToken() {
     let t = localStorage.getItem("gh_token") || "";
-    if (!t) {
-      t = prompt("GitHub Token (repo-Scope):", "");
-      if (t) {
-        localStorage.setItem("gh_token", t);
-        alert("Token gespeichert.");
-      }
+    if(!t){
+      t = prompt("GitHub Token (repo-Scope):","");
+      if(t){ localStorage.setItem("gh_token", t); alert("Token gespeichert."); }
     }
     return t;
   }
 
   async function githubSync() {
-    const token = getToken(); if (!token) return;
+    const token = getToken(); if(!token) return;
     try {
       const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
       const get = await fetch(api, { headers: { Authorization: `token ${token}` } });
@@ -480,99 +474,30 @@ window.addEventListener("DOMContentLoaded", () => {
       const content = btoa(unescape(encodeURIComponent(JSON.stringify(list, null, 2))));
       const res = await fetch(api, {
         method: "PUT",
-        headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+        headers: { Authorization: `token ${token}`, "Content-Type":"application/json" },
         body: JSON.stringify({ message: "Update via Vokabel-UI", content, sha })
       });
-      if (!res.ok) throw new Error(await res.text());
+      if(!res.ok) throw new Error(await res.text());
       alert("✅ Erfolgreich in Datenbank eingetragen.");
-    } catch (e) {
+    } catch(e) {
       alert("❌ Sync fehlgeschlagen.");
     }
   }
 
-  // ==============================
-  // Theme
-  // ==============================
-  function applyTheme(mode) {
+  // === Theme ===
+  function applyTheme(mode){
     document.documentElement.setAttribute("data-theme", mode);
     localStorage.setItem("theme", mode);
   }
-  function toggleTheme() {
+  function toggleTheme(){
     const current = localStorage.getItem("theme") || "light";
     applyTheme(current === "dark" ? "light" : "dark");
   }
-  function initTheme() {
+  function initTheme(){
     const saved = localStorage.getItem("theme") || "light";
     applyTheme(saved);
   }
 
-  // ==============================
-  // MOBILE
-  // ==============================
-  function renderMobileView() {
-  app.innerHTML = `
-    <div class="mobile-app">
-      <div id="mobList" class="mob-list"></div>
-
-      <!-- Floating Buttons -->
-      <button id="themeMob" class="mob-dark-btn" title="Dark/Light">🌗</button>
-      <button id="viewMob" class="mob-view-btn" title="Ansicht wechseln">🗂️</button>
-      <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
-      <button id="abcToggle" class="mob-abc-btn">A–Z</button>
-
-      <!-- Overlay -->
-      <div class="abc-overlay" id="abcOverlay">
-        <div class="abc-panel">
-          <div class="abc-header">
-            <span class="abc-title">Wähle Buchstabe</span>
-            <button id="abcClose" class="abc-close">✕</button>
-          </div>
-          <div class="abc-list" id="abcFilter"></div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  renderMobileList();
-  document.getElementById("themeMob").onclick = toggleTheme;
-  document.getElementById("addMob").onclick = () => openEdit(null);
-  renderABCOverlayMobile();
-
-  // Umschalten zwischen Kachel / Tabelle
-  const btnView = document.getElementById("viewMob");
-  btnView.onclick = () => {
-    const current = localStorage.getItem("mobile_view_mode") || "cards";
-    const next = current === "cards" ? "table" : "cards";
-    localStorage.setItem("mobile_view_mode", next);
-    renderMobileList();
-    btnView.textContent = next === "cards" ? "🗂️" : "📋";
-  };
-}
-
-
-  function renderMobileList() {
-    const container = document.getElementById("mobList");
-    container.innerHTML = list
-      .map((v, i) => `
-        <div class="mob-card" data-idx="${i}">
-          <div class="mob-card-top" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
-          <div class="mob-card-content">
-            <div class="mob-en">${v[0]}</div>
-            <div class="mob-de">${v[1]}</div>
-            ${v[6] === 1 ? `<div class="mob-warning">⚠️ Verwechslungsgefahr</div>` : ""}
-          </div>
-        </div>`)
-      .join("");
-    container.querySelectorAll(".mob-card").forEach(c => c.onclick = () => openEdit(parseInt(c.dataset.idx, 10)));
-  }
-
-  function renderABCOverlayMobile() {
-    const overlay = document.getElementById("abcOverlay");
-    const btn = document.getElementById("abcToggle");
-    const close = document.getElementById("abcClose");
-    btn.onclick = () => { overlay.classList.add("show"); setTimeout(renderABCFilter, 40); };
-    close.onclick = () => overlay.classList.remove("show");
-  }
-
+  // === Start ===
   loadData();
 });
