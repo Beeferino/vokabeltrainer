@@ -1,5 +1,5 @@
 // ==============================
-// Beeferino – vokabeln.js (Update Final)
+// Beeferino – vokabeln.js (Update Final v3)
 // ==============================
 window.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
@@ -39,6 +39,7 @@ window.addEventListener("DOMContentLoaded", () => {
   let sortState = { col: null, dir: 1 };
   let currentLetter = "Alle";
   let editIndex = null;
+  let onlyConfuse = false; // NEW: filter toggle
 
   const normalize = (v) => [
     v[0] || "", v[1] || "", v[2] || "Gelb", v[3] || "", v[4] || "",
@@ -71,6 +72,13 @@ window.addEventListener("DOMContentLoaded", () => {
           <button id="homeBtn" class="btn ghost" title="Zurück zum Trainer">🏠</button>
           <input id="searchDesk" placeholder="Suchen…" />
           <select id="filterCatDesk"></select>
+          <div class="toggle-wrap" title="Nur Verwechslungsgefahr anzeigen">
+            <span class="warn-icon">⚠️</span>
+            <label class="switch">
+              <input type="checkbox" id="filterConfuseDesk" />
+              <span class="slider"></span>
+            </label>
+          </div>
           <button id="resetDesk" class="btn">Reset</button>
           <button id="addDesk" class="btn">➕ Neue</button>
           <button id="delDesk" class="btn warn">🗑️ Löschen</button>
@@ -124,7 +132,8 @@ window.addEventListener("DOMContentLoaded", () => {
       const matchCat = cat === "Alle" || v[2] === cat;
       const matchQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
       const matchLetter = currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter);
-      return matchCat && matchQ && matchLetter;
+      const matchConfuse = !onlyConfuse || v[6] === 1;
+      return matchCat && matchQ && matchLetter && matchConfuse;
     });
   }
 
@@ -169,11 +178,15 @@ window.addEventListener("DOMContentLoaded", () => {
     fDesk.addEventListener("change", updateColor);
     updateColor();
 
+    document.getElementById("filterConfuseDesk").onchange = (e)=>{ onlyConfuse = e.target.checked; currentPage=1; renderTable(); };
+
     document.getElementById("filterCatDesk").onchange = () => { currentPage = 1; renderTable(); };
     document.getElementById("searchDesk").oninput = () => { currentPage = 1; renderTable(); };
     document.getElementById("resetDesk").onclick = () => {
       document.getElementById("filterCatDesk").value = "Alle";
       document.getElementById("searchDesk").value = "";
+      const cbox = document.getElementById("filterConfuseDesk");
+      if (cbox) cbox.checked = false; onlyConfuse = false;
       currentPage = 1; currentLetter = "Alle"; renderTable();
     };
     document.getElementById("addDesk").onclick = () => openEdit(null);
@@ -297,17 +310,31 @@ window.addEventListener("DOMContentLoaded", () => {
             <button id="mobAdd" class="lbtn" title="Neu">＋</button>
           </div>
         </div>
+        <div class="mob-filterbar">
+          <span class="warn-icon">⚠️</span>
+          <span class="label">Nur Verwechslungsgefahr</span>
+          <label class="switch">
+            <input type="checkbox" id="filterConfuseMob" />
+            <span class="slider"></span>
+          </label>
+        </div>
         <div id="mobList" class="mob-list"></div>
       </div>`;
     document.getElementById("mobHome").onclick=()=>{ location.href = "index.html"; };
     document.getElementById("mobTheme").onclick=toggleTheme;
     document.getElementById("mobAZ").onclick=()=>{ ensureABCOverlay(); document.getElementById("abcOverlay").classList.add("show"); renderABCFilter(); };
     document.getElementById("mobAdd").onclick=()=>openEdit(null);
+    const mobToggle = document.getElementById("filterConfuseMob");
+    mobToggle.onchange = (e)=>{ onlyConfuse = e.target.checked; renderMobileList(); };
     renderMobileList();
   }
 
   function renderMobileList(){
-    const data = list.filter(v=> currentLetter==="Alle" || v[0].toUpperCase().startsWith(currentLetter));
+    const data = list.filter(v=> {
+      const byLetter = currentLetter==="Alle" || v[0].toUpperCase().startsWith(currentLetter);
+      const byConfuse = !onlyConfuse || v[6]===1;
+      return byLetter && byConfuse;
+    });
     const c = document.getElementById("mobList"); if(!c) return;
     c.innerHTML = data.map(v=>{
       const idx = list.findIndex(x=>x[7]===v[7]);

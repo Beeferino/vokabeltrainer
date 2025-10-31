@@ -1,5 +1,5 @@
 /* ==============================
-   Beeferino – vokabeln.css (Update Final)
+   Beeferino – vokabeln.css (Update Final v3)
    ============================== */
 :root{
   --bg:#f7f7f7;--text:#222;--blue:#2563eb;--orange:#e67e22;
@@ -14,10 +14,13 @@ html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:
 h1{margin:8px 0 6px;color:var(--blue);font-weight:800}
 .hr{height:3px;background:var(--blue);border-radius:2px;margin:6px 0 14px}
 /* Toolbar */
-.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 16px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 16px}
 .btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer;transition:.2s}
 .btn:hover{background:var(--orange)}
-.btn.warn{background:#d9534f}.btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(0,0,0,.15)}
+.btn.warn{background:#d9534f}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid var(--muted);transition:.2s}
+[data-theme="dark"] .btn.ghost{border:1px solid #ffffff55}
+.btn.ghost:hover{background:rgba(255,255,255,.08)}
 input[type="text"],select{padding:6px 8px;border-radius:6px;border:1px solid #c9cdd4;background:var(--card-bg);color:var(--text)}
 .count-info{text-align:center;font-weight:700;color:var(--blue);margin:8px 0}
 /* Table */
@@ -35,11 +38,13 @@ tbody tr:hover{background:rgba(0,0,0,.06)}
 .modal-content input,.modal-content select,.modal-content textarea{width:100%;padding:8px;margin:4px 0 10px;border-radius:8px;border:1px solid #c9cdd4;background:var(--card-bg);color:var(--text)}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end}
 /* Modal row with toggle + date */
-.modal-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}
+.modal-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;flex-wrap:wrap}
 .toggle-wrap{display:flex;align-items:center;gap:8px}
 .warn-icon{color:#ef4444}
 .warn-label{font-weight:700}
-.created{width:160px;text-align:right;opacity:.7;font-size:.9rem;background:var(--card-bg)}
+.created-wrap{display:flex;align-items:center;gap:8px}
+.created-label{opacity:.8;font-size:.9rem}
+.created{width:160px;text-align:right;opacity:.8;font-size:.9rem;background:var(--card-bg)}
 /* iOS-like switch (no animation) */
 .switch{position:relative;display:inline-block;width:48px;height:26px}
 .switch input{opacity:0;width:0;height:0}
@@ -73,6 +78,9 @@ tbody tr:hover{background:rgba(0,0,0,.06)}
 .mob-en{font-weight:800;font-size:1.05rem}
 .mob-de{opacity:.9}
 .mob-warn{color:#ef4444}
+/* Mobile filter bar (confuse toggle) */
+.mob-filterbar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--card-bg);border-bottom:1px solid rgba(0,0,0,.08)}
+.mob-filterbar .label{font-weight:700}
 /* Responsive split */
 @media(min-width:901px){.mobile-app{display:none}}
 @media(max-width:900px){.desktop-app{display:none}}
