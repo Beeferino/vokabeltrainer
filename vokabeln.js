@@ -1,5 +1,5 @@
 // ==============================
-// Beeferino – vokabeln.js (Update Final v3)
+// Beeferino – vokabeln.js (Update Final v4)
 // ==============================
 window.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
@@ -39,7 +39,7 @@ window.addEventListener("DOMContentLoaded", () => {
   let sortState = { col: null, dir: 1 };
   let currentLetter = "Alle";
   let editIndex = null;
-  let onlyConfuse = false; // NEW: filter toggle
+  let onlyConfuse = false; // filter toggle
 
   const normalize = (v) => [
     v[0] || "", v[1] || "", v[2] || "Gelb", v[3] || "", v[4] || "",
@@ -82,7 +82,6 @@ window.addEventListener("DOMContentLoaded", () => {
           <button id="resetDesk" class="btn">Reset</button>
           <button id="addDesk" class="btn">➕ Neue</button>
           <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-          <button id="syncDesk" class="btn">📤 Sync</button>
         </div>
         <div id="countDesk" class="count-info"></div>
         <div class="table-wrap">
@@ -100,6 +99,9 @@ window.addEventListener("DOMContentLoaded", () => {
           </table>
         </div>
         <div id="pagination" class="pagination"></div>
+        <div class="bottom-actions">
+          <button id="syncDesk" class="btn">📤 Sync</button>
+        </div>
       </div>
     `;
 

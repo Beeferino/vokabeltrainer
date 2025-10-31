@@ -1,5 +1,5 @@
 /* ==============================
-   Beeferino – vokabeln.css (Update Final v3)
+   Beeferino – vokabeln.css (Update Final v4)
    ============================== */
 :root{
   --bg:#f7f7f7;--text:#222;--blue:#2563eb;--orange:#e67e22;
@@ -32,6 +32,7 @@ tbody tr:nth-child(even){background:rgba(0,0,0,.03)}
 tbody tr:hover{background:rgba(0,0,0,.06)}
 .category-chip{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.85rem;font-weight:700;white-space:nowrap}
 .pagination{text-align:center;margin:14px 0}
+.bottom-actions{display:flex;justify-content:flex-end;margin-top:8px}
 /* Modal */
 #modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:999}
 .modal-content{background:var(--card-bg);color:var(--text);border-radius:12px;padding:18px;width:92%;max-width:560px;box-shadow:0 8px 24px var(--shadow)}
