@@ -71,14 +71,15 @@ function renderDesktopView(){
       <h1>📘 Vokabelübersicht</h1>
       <div class="hr"></div>
       <div class="toolbar">
-        <button id="homeBtn" class="btn ghost" title="Zurück zum Trainer" onclick="location.href='index.html'">🏠</button>
-        <input id="searchDesk" placeholder="Suchen…" />
-        <select id="filterCatDesk"></select>
-        <button id="resetDesk" class="btn">Reset</button>
-        <button id="addDesk" class="btn">➕ Neue</button>
-        <button id="delDesk" class="btn warn">🗑️ Löschen</button>
-        <button id="syncDesk" class="btn">📤 Sync</button>
-      </div>
+  <button id="homeBtn" class="btn ghost" title="Zurück zum Trainer">🏠</button>
+  <input id="searchDesk" placeholder="Suchen…" />
+  <select id="filterCatDesk"></select>
+  <button id="resetDesk" class="btn">Reset</button>
+  <button id="addDesk" class="btn">➕ Neue</button>
+  <button id="delDesk" class="btn warn">🗑️ Löschen</button>
+  <button id="syncDesk" class="btn">📤 Sync</button>
+  <button id="themeToggle" class="btn ghost" title="Dark / Light umschalten">🌙</button>
+</div>
       <div id="countDesk" class="count-info"></div>
       <div class="table-wrap">
         <table id="tbl">
