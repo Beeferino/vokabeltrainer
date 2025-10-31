@@ -1,55 +1,40 @@
 <!DOCTYPE html>
-<html lang="de" data-theme="light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vokabelverwaltung</title>
-    <link rel="stylesheet" href="vokabeln.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  </head>
-  <body>
-    <div id="app" class="app"></div>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📘 Vokabelübersicht – Beeferino</title>
+<link rel="stylesheet" href="vokabeln.css">
+</head>
+<body>
+<div id="app"></div>
 
-    <!-- Modal -->
-    <div id="modal">
-      <div class="modal-content">
-        <h3>Vokabel bearbeiten / hinzufügen</h3>
-
-        <label for="mEn">Englisch</label>
-        <input type="text" id="mEn" placeholder="Englisches Wort" />
-
-        <label for="mDe">Deutsch</label>
-        <input type="text" id="mDe" placeholder="Deutsches Wort" />
-
-        <label for="mCat">Kategorie</label>
-        <select id="mCat"></select>
-
-        <label for="mHint">Hinweis</label>
-        <textarea id="mHint" rows="2" placeholder="optional"></textarea>
-
-        <div class="modal-row">
-          <div class="toggle-wrap">
-            <span class="warn-icon">⚠️</span>
-            <span class="warn-label">Verwechslungsgefahr</span>
-            <label class="switch">
-              <input type="checkbox" id="mConfuse" />
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="created-wrap">
-            <label for="mCreated" class="created-label">Erstelldatum</label>
-            <input type="text" id="mCreated" readonly class="created" />
-          </div>
-        </div>
-
-        <div class="modal-actions">
-          <button id="mCancel" class="btn ghost">Abbrechen</button>
-          <button id="mDelete" class="btn warn">Löschen</button>
-          <button id="mSave" class="btn">Speichern</button>
-        </div>
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="panel">
+    <h3 id="modalTitle">Vokabel bearbeiten</h3>
+    <div class="form-grid">
+      <label>Englisch<input id="mEn" type="text"></label>
+      <label>Deutsch<input id="mDe" type="text"></label>
+      <label>Kategorie<select id="mCat"></select></label>
+      <div class="confuse-toggle">
+        <span>Verwechslungsgefahr</span>
+        <label class="switch">
+          <input type="checkbox" id="mConfuse">
+          <span class="slider"></span>
+        </label>
       </div>
+      <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
+      <label>Erstelldatum<input id="mCreated" type="text" readonly></label>
     </div>
+    <div class="modal-actions">
+      <button class="btn ghost" id="mCancel">Abbrechen</button>
+      <button class="btn primary" id="mSave">Speichern</button>
+      <button class="btn warn" id="mDelete">Löschen</button>
+    </div>
+  </div>
+</div>
 
-    <script src="vokabeln.js"></script>
-  </body>
+<script src="vokabeln.js"></script>
+</body>
 </html>
