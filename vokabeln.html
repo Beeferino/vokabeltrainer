@@ -1,58 +1,58 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📘 Vokabelübersicht – Beeferino</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Beeferino Vokabelverwaltung – Desktop & Mobile" />
+  <title>Vokabeln</title>
   <link rel="stylesheet" href="vokabeln.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="app"></div>
+  <main id="app" class="app"></main>
 
-  <!-- Modal: Add/Edit/Delete -->
+  <!-- Bearbeiten / Neu Modal -->
   <div class="modal" id="modal" style="display:none;">
-    <div class="panel">
-      <div id="confuseBanner" class="confuse-banner" style="display:none;">⚠️ Verwechslungsgefahr aktiv</div>
-      <h3 style="margin:10px 0 12px 0;">Vokabel</h3>
-      <div class="form-grid">
-        <label>Englisch
-          <input id="mEn" type="text" />
-        </label>
-        <label>Deutsch
-          <input id="mDe" type="text" />
-        </label>
-        <label>Kategorie
-          <select id="mCat"></select>
-        </label>
-
-        <div class="confuse-toggle" title="Verwechslungsgefahr markieren">
-          <span>Verwechslungsgefahr</span>
-          <label class="switch">
-            <input type="checkbox" id="mConfuse" />
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <label>Hinweis
-          <textarea id="mHint" rows="3" spellcheck="false"></textarea>
-        </label>
-
-        <label>Erstellt am
-          <input id="mCreated" type="text" readonly />
+    <div class="modal-content">
+      <h2 style="margin-top:0;">Vokabel</h2>
+      <div class="form-group">
+        <label for="mEn">Englisch</label>
+        <input type="text" id="mEn" />
+      </div>
+      <div class="form-group">
+        <label for="mDe">Deutsch</label>
+        <input type="text" id="mDe" />
+      </div>
+      <div class="form-group">
+        <label for="mCat">Kategorie</label>
+        <select id="mCat"></select>
+      </div>
+      <div class="form-group">
+        <label for="mVar">Gruppe / Variante</label>
+        <input type="text" id="mVar" />
+      </div>
+      <div class="form-group">
+        <label for="mHint">Hinweis</label>
+        <input type="text" id="mHint" />
+      </div>
+      <div class="form-group switch-row">
+        <label>Verwechslungsgefahr</label>
+        <label class="switch">
+          <input type="checkbox" id="mConfuse" />
+          <span class="slider round"></span>
         </label>
       </div>
+      <div class="form-group">
+        <label>Erstellt</label>
+        <input type="text" id="mCreated" readonly style="opacity:.7;" />
+      </div>
       <div class="modal-actions">
-        <button class="btn ghost" id="mDelete" title="Diese Vokabel löschen">🗑️ Löschen</button>
-        <div style="flex:1"></div>
-        <button class="btn ghost" id="mCancel">Abbrechen</button>
+        <button class="btn" id="mCancel">Abbrechen</button>
+        <button class="btn warn" id="mDelete">Löschen</button>
         <button class="btn primary" id="mSave">Speichern</button>
       </div>
     </div>
   </div>
-
-  <!-- Desktop Theme Toggle (oben rechts) -->
-  <button id="themeToggle" class="theme-toggle" title="Design umschalten">🌙</button>
 
   <script src="vokabeln.js"></script>
 </body>
