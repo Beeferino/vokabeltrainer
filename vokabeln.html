@@ -1,57 +1,55 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📘 Vokabelübersicht – Beeferino</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="vokabeln.css" />
-</head>
-<body>
-  <div id="app" class="app"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vokabelverwaltung</title>
+    <link rel="stylesheet" href="vokabeln.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="app" class="app"></div>
 
-  <!-- Persistentes Modal (wird von JS befüllt) -->
-  <div class="modal" id="modal" style="display:none;">
-    <div class="panel">
-      <h3 id="modalTitle" style="margin-top:0">Vokabel</h3>
-      <div class="form-grid">
-        <label>Englisch<input id="mEn" type="text"></label>
-        <label>Deutsch<input id="mDe" type="text"></label>
+    <!-- Modal -->
+    <div id="modal">
+      <div class="modal-content">
+        <h3>Vokabel bearbeiten / hinzufügen</h3>
 
-        <label>Kategorie
-          <select id="mCat"></select>
-        </label>
+        <label for="mEn">Englisch</label>
+        <input type="text" id="mEn" placeholder="Englisches Wort" />
 
-        <div class="confuse-row">
-          <div class="confuse-left">
-            <span class="warn-icon" title="Verwechslungsgefahr">⚠️</span>
+        <label for="mDe">Deutsch</label>
+        <input type="text" id="mDe" placeholder="Deutsches Wort" />
+
+        <label for="mCat">Kategorie</label>
+        <select id="mCat"></select>
+
+        <label for="mHint">Hinweis</label>
+        <textarea id="mHint" rows="2" placeholder="optional"></textarea>
+
+        <div class="modal-row">
+          <div class="toggle-wrap">
+            <span class="warn-icon">⚠️</span>
             <span class="warn-label">Verwechslungsgefahr</span>
+            <label class="switch">
+              <input type="checkbox" id="mConfuse" />
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch">
-            <input type="checkbox" id="mConfuse">
-            <span class="slider"></span>
-          </label>
+          <div class="created-wrap">
+            <label for="mCreated" class="created-label">Erstelldatum</label>
+            <input type="text" id="mCreated" readonly class="created" />
+          </div>
         </div>
 
-        <label>Hinweis<textarea id="mHint" rows="2"></textarea></label>
-
-        <div class="created-row">
-          <label for="mCreated" class="created-label">Erstelldatum</label>
-          <input id="mCreated" type="text" readonly class="created-input">
+        <div class="modal-actions">
+          <button id="mCancel" class="btn ghost">Abbrechen</button>
+          <button id="mDelete" class="btn warn">Löschen</button>
+          <button id="mSave" class="btn">Speichern</button>
         </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn ghost" id="mCancel">Abbrechen</button>
-        <button class="btn warn" id="mDelete">Löschen</button>
-        <button class="btn primary" id="mSave">Speichern</button>
       </div>
     </div>
-  </div>
 
-  <!-- Toast Container (für Benachrichtigungen) -->
-  <div id="toastStack" class="toast-stack" aria-live="polite" aria-atomic="true"></div>
-
-  <script src="vokabeln.js"></script>
-</body>
+    <script src="vokabeln.js"></script>
+  </body>
 </html>

@@ -1,34 +1,8 @@
 // ==============================
-// Beeferino – vokabeln.js (Update Final v8: v4 + Toasts)
+// Beeferino – vokabeln.js (Update Final v4)
 // ==============================
 window.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
-
-  // Toasts
-  function toast(message, type = "success") {
-    const stack = document.getElementById("toastStack") || (() => {
-      const s = document.createElement("div");
-      s.id = "toastStack"; s.className = "toast-stack";
-      document.body.appendChild(s); return s;
-    })();
-    const t = document.createElement("div");
-    t.className = "toast " + (type === "error" ? "error" : "success");
-    const icon = document.createElement("div");
-    icon.className = "icon";
-    icon.textContent = type === "error" ? "⚠️" : "✅";
-    const msg = document.createElement("div");
-    msg.className = "msg";
-    msg.textContent = message;
-    t.appendChild(icon); t.appendChild(msg);
-    stack.appendChild(t);
-    // animate in
-    requestAnimationFrame(() => t.classList.add("show"));
-    // auto remove
-    setTimeout(() => {
-      t.classList.remove("show");
-      setTimeout(() => t.remove(), 200);
-    }, 2600);
-  }
 
   // Kategorien + Farben
   const CATEGORY_NAMES = {
@@ -126,7 +100,7 @@ window.addEventListener("DOMContentLoaded", () => {
         </div>
         <div id="pagination" class="pagination"></div>
         <div class="bottom-actions">
-          <button id="syncDesk" class="btn" title="Mit GitHub synchronisieren">🔄 Sync</button>
+          <button id="syncDesk" class="btn">📤 Sync</button>
         </div>
       </div>
     `;
@@ -216,7 +190,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const cbox = document.getElementById("filterConfuseDesk");
       if (cbox) cbox.checked = false; onlyConfuse = false;
       currentPage = 1; currentLetter = "Alle"; renderTable();
-      toast("Filter zurückgesetzt");
     };
     document.getElementById("addDesk").onclick = () => openEdit(null);
     document.getElementById("delDesk").onclick = () => bulkDelete();
@@ -268,31 +241,26 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     setCatSelectColors(); mCat.onchange=setCatSelectColors; modal.style.display="flex";
   }
-  mCancel.onclick = ()=> { modal.style.display="none"; toast("Abgebrochen","error"); };
+  mCancel.onclick = ()=> modal.style.display="none";
   modal.addEventListener("click",(e)=>{ if(e.target===modal) modal.style.display="none"; });
-
   mSave.onclick = ()=>{
     const en=mEn.value.trim(), de=mDe.value.trim(), cat=mCat.value, hint=mHint.value.trim(), confuse=mConfuse.checked?1:0;
-    if(!en||!de){ toast("Bitte Englisch & Deutsch ausfüllen.", "error"); return; }
+    if(!en||!de){ alert("Bitte Englisch & Deutsch ausfüllen."); return; }
     if(editIndex==null){ list.push([en,de,cat,"",hint,new Date().toISOString(),confuse,crypto.randomUUID()]); }
     else{ const old=list[editIndex]; list[editIndex]=[en,de,cat,old[3]||"",hint,old[5],confuse,old[7]]; }
     saveLocal(list); modal.style.display="none"; if(window.innerWidth<768) renderMobileList(); else renderTable();
-    toast("Vokabel gespeichert");
   };
-
   mDelete.onclick = ()=>{
-    if(editIndex==null){ toast("Nichts zum Löschen ausgewählt.","error"); return; }
+    if(editIndex==null){ alert("Nichts zum Löschen ausgewählt."); return; }
     if(!confirm("Eintrag wirklich löschen?")) return;
     list.splice(editIndex,1); saveLocal(list); modal.style.display="none"; if(window.innerWidth<768) renderMobileList(); else renderTable();
-    toast("Eintrag gelöscht");
   };
 
   function bulkDelete(){
     const ids = Array.from(document.querySelectorAll(".rowcheck:checked")).map(x=>+x.dataset.idx);
-    if(!ids.length){ toast("Bitte Zeilen auswählen.","error"); return; }
+    if(!ids.length){ alert("Bitte Zeilen auswählen."); return; }
     if(!confirm(`${ids.length} Einträge löschen?`)) return;
     list = list.filter((_,i)=>!ids.includes(i)); saveLocal(list); renderTable();
-    toast(`${ids.length} Einträge gelöscht`);
   }
 
   // ===== A–Z =====
@@ -315,7 +283,6 @@ window.addEventListener("DOMContentLoaded", () => {
         currentLetter=btn.dataset.letter; currentPage=1;
         if(window.innerWidth<768) renderMobileList(); else renderTable();
         document.getElementById("abcOverlay").classList.remove("show");
-        toast(currentLetter==="Alle"?"Alphabetfilter aus":"Gefiltert: "+currentLetter);
       };
     });
   }
@@ -388,10 +355,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // ===== GitHub Sync =====
   function getToken(){
     let t = localStorage.getItem("gh_token") || "";
-    if(!t){
-      t=prompt("GitHub Token (repo-Scope):","");
-      if(t){ localStorage.setItem("gh_token", t); toast("GitHub Token gespeichert"); }
-    }
+    if(!t){ t=prompt("GitHub Token (repo-Scope):",""); if(t){ localStorage.setItem("gh_token", t); alert("Token gespeichert."); } }
     return t;
   }
   async function githubSync(){
@@ -403,11 +367,8 @@ window.addEventListener("DOMContentLoaded", () => {
       const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
       const res=await fetch(api,{method:"PUT",headers:{Authorization:`token ${token}`,"Content-Type":"application/json"},body:JSON.stringify({message:"Update via Vokabel-UI",content,sha})});
       if(!res.ok) throw new Error(await res.text());
-      toast("Erfolgreich mit GitHub synchronisiert!");
-    }catch(e){
-      console.error(e);
-      toast("Sync fehlgeschlagen.", "error");
-    }
+      alert("✅ Erfolgreich in Datenbank eingetragen.");
+    }catch(e){ alert("❌ Sync fehlgeschlagen."); }
   }
 
   // ===== Theme =====
