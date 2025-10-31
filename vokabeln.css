@@ -392,3 +392,29 @@ input:checked + .slider:before {
 .vocab-hint { margin-top:6px; font-style:italic; opacity:.85; }
 .confuse-badge { color:#ef4444; font-weight:800; }
 .vocab-footer { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+
+/* ==============================
+   Floating Buttons (Mobile unten rechts)
+   ============================== */
+.mob-dark-btn,
+.mob-view-btn,
+.mob-add-btn,
+.mob-abc-btn {
+  position: fixed;
+  right: 20px;
+  border: none;
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  z-index: 45;
+}
+
+.mob-dark-btn { bottom: 212px; background: #1e3a8a; }
+.mob-view-btn { bottom: 148px; background: #10b981; } /* Grün: Ansicht */
+.mob-add-btn  { bottom: 84px;  background: #22c55e; } /* Hellgrün: Neue */
+.mob-abc-btn  { bottom: 20px;  background: #2563eb; } /* Blau: A-Z */
+
