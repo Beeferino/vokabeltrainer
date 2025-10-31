@@ -1,13 +1,24 @@
 // ==============================
 // Beeferino – vokabeln.js (final)
 // ==============================
-window.addEventListener('DOMContentLoaded', async () => {
+window.addEventListener("DOMContentLoaded", async () => {
   await loadData();
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
-  if (isMobile) { document.body.classList.add('mobile-mode'); renderMobileView(); }
-  else { renderDesktopView(); }
+
+  const isMobile =
+    /Mobi|Android/i.test(navigator.userAgent) ||
+    window.matchMedia("(max-width: 900px)").matches;
+
+  if (isMobile) {
+    document.body.classList.add("mobile-mode");
+    renderMobileView();
+  } else {
+    document.body.classList.remove("mobile-mode");
+    renderDesktopView();
+  }
+
   initTheme();
 });
+
 
 // Data & constants
 const RAW_URL = 'https://beeferino.github.io/vokabeltrainer/vokabeln.json';
