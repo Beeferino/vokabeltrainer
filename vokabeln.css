@@ -1,195 +1,99 @@
-<!DOCTYPE html>
-<html lang="de" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Interaktiver Vokabeltrainer – mobile & desktop Ansicht" />
-  <title>Vokabeln</title>
+/* ==============================
+   Beeferino – vokabeln.css
+   ============================== */
+:root {
+  --bg: #f5f7fb;
+  --text: #0f172a;
+  --card: #ffffff;
+  --muted: #64748b;
+  --blue: #2563eb;
+  --warn: #ef4444;
+  --ok: #16a34a;
+}
 
-  <!-- Icons & Favicon -->
-  <link rel="icon" href="https://beeferino.github.io/assets/icon.png" type="image/png" />
+[data-theme="dark"] {
+  --bg: #0b1220;
+  --text: #e2e8f0;
+  --card: #0f1a2f;
+  --muted: #a3b2c5;
+  --blue: #3b82f6;
+  --warn: #f87171;
+  --ok: #22c55e;
+}
 
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="vokabeln.css" />
+/* Base */
+html,body{margin:0;padding:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text)}
+.app{padding:16px}
 
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+/* Headings */
+h1{margin:8px 0 6px;font-weight:800;color:var(--blue)}
+.hr{height:3px;background:var(--blue);border-radius:2px;margin:6px 0 14px}
 
-  <!-- Hauptcontainer -->
-  <main id="app" class="app-container">
-    <!-- Wird dynamisch durch JS gefüllt -->
-  </main>
+/* Buttons & Inputs */
+.btn{border:none;border-radius:10px;padding:8px 12px;font-weight:700;background:var(--blue);color:#fff;cursor:pointer}
+.btn.warn{background:var(--warn)} .btn.primary{background:var(--blue)}
+.btn.ghost{background:transparent;border:1px solid var(--blue);color:var(--blue)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{border:1px solid #cbd5e1;border-radius:10px;padding:8px;background:var(--card);color:var(--text)}
 
-  <!-- ==============================
-       MODAL (Bearbeiten / Neu)
-       ============================== -->
-  <div id="modalOverlay" class="modal-overlay" style="display:none;">
-    <div class="modal">
-      <h3 id="modalTitle">Vokabel bearbeiten</h3>
-      <label>Englisch:</label>
-      <input id="editEng" type="text" placeholder="Englisches Wort" />
-      <label>Deutsch:</label>
-      <input id="editDeu" type="text" placeholder="Deutsche Übersetzung" />
-      <label>Kategorie:</label>
-      <select id="editCat"></select>
-      <label>Anmerkung:</label>
-      <textarea id="editNote" placeholder="Optional"></textarea>
-      <div class="modal-buttons">
-        <button id="saveBtn" class="btn">💾 Speichern</button>
-        <button id="cancelBtn" class="btn warn">✖ Abbrechen</button>
-      </div>
-    </div>
-  </div>
+/* Toolbar */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.count-info{text-align:center;font-weight:700;color:var(--blue);margin:8px 0}
 
-  <!-- ==============================
-       SCRIPTS
-       ============================== -->
-  <script>
-    // Theme initialisieren & umschalten
-    function initTheme() {
-      const theme = localStorage.getItem("theme") || "light";
-      document.documentElement.setAttribute("data-theme", theme);
-    }
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.getAttribute("data-theme");
-      const next = current === "dark" ? "light" : "dark";
-      html.setAttribute("data-theme", next);
-      localStorage.setItem("theme", next);
-    }
-  </script>
+/* Table */
+.table-wrap{background:var(--card);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #e5e7eb}
+[data-theme="dark"] th, [data-theme="dark"] td{border-color:#1f2a44}
+th{background:#1e3a8a;color:#fff;text-align:left}
+tr:hover{background:rgba(37,99,235,.06)}
 
-  <script src="vokabeln.js"></script>
+/* Category chip */
+.category-chip{display:inline-block;padding:4px 8px;border-radius:10px;font-weight:700}
 
-  <!-- ==============================
-       MODAL-LOGIK (Bearbeiten / Neu)
-       ============================== -->
-  <script>
-    const modal = document.getElementById("modalOverlay");
-    const editEng = document.getElementById("editEng");
-    const editDeu = document.getElementById("editDeu");
-    const editCat = document.getElementById("editCat");
-    const editNote = document.getElementById("editNote");
-    const modalTitle = document.getElementById("modalTitle");
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal-content{background:var(--card);color:var(--text);padding:18px;border-radius:14px;width:92%;max-width:520px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.form-group{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
 
-    const CATEGORY_NAMES = {
-      Gelb: "Grundwerkzeuge Metallverarbeitung",
-      Pink: "Werkzeugkasten Mechaniker",
-      Blau: "Blech- / Kunststoffarbeiten",
-      Gruen: "Drehen / Fräsen",
-      HellesPink: "Hydraulik / Pneumatik",
-      Orange: "Elektrotechnik",
-      Dunkelgruen: "Fluggerätemechanik allgemein",
-    };
+/* Switch (Verwechslungsgefahr) */
+.switch{position:relative;display:inline-block;width:46px;height:26px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#a3a3a3;transition:.25s;border-radius:26px}
+.slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;transition:.25s;border-radius:999px}
+.switch input:checked + .slider{background:var(--ok)}
+.switch input:checked + .slider:before{transform:translateX(20px)}
 
-    // Kategorien füllen
-    Object.entries(CATEGORY_NAMES).forEach(([key, label]) => {
-      const opt = document.createElement("option");
-      opt.value = key;
-      opt.textContent = label;
-      editCat.appendChild(opt);
-    });
+/* Mobile cards */
+.mobile-app{padding:12px 12px 280px}
+.mob-list{display:flex;flex-direction:column;gap:12px}
+.mob-card{background:var(--card);border:1px solid rgba(2,8,23,.08);border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.08);padding:12px}
+.mob-cat{display:inline-block;font-weight:800;padding:4px 8px;border-radius:8px;margin-bottom:6px}
+.mob-en{font-weight:800;font-size:1.05rem}
+.mob-de{color:var(--muted)}
 
-    let editIndex = null;
+/* Mobile table */
+.mob-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden}
+.mob-table th,.mob-table td{padding:10px;border-bottom:1px solid #e5e7eb}
 
-    function openEdit(index) {
-      modal.style.display = "flex";
-      if (index === null) {
-        modalTitle.textContent = "Neue Vokabel";
-        editIndex = null;
-        editEng.value = "";
-        editDeu.value = "";
-        editNote.value = "";
-        editCat.value = "Gelb";
-      } else {
-        modalTitle.textContent = "Vokabel bearbeiten";
-        const item = list[index];
-        editIndex = index;
-        editEng.value = item[0];
-        editDeu.value = item[1];
-        editNote.value = item[3];
-        editCat.value = item[2];
-      }
-    }
+/* Floating L buttons */
+.mob-btn{position:fixed;right:18px;width:56px;height:56px;border:none;border-radius:50%;color:#fff;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px rgba(0,0,0,.25);z-index:100}
+#themeMob{bottom:232px;background:#1e3a8a}
+#viewMob{bottom:164px;background:#10b981}
+#addMob{bottom:96px;background:#22c55e}
+#abcToggle{bottom:28px;background:#2563eb}
+.mob-btn:active{transform:scale(.94)}
 
-    function closeModal() {
-      modal.style.display = "none";
-    }
+/* Desktop container */
+@media(min-width:901px){.desktop-app{max-width:1100px;margin:20px auto}}
+@media(max-width:900px){.desktop-app{display:none}}
 
-    document.getElementById("cancelBtn").onclick = closeModal;
-
-    document.getElementById("saveBtn").onclick = () => {
-      const eng = editEng.value.trim();
-      const deu = editDeu.value.trim();
-      const cat = editCat.value;
-      const note = editNote.value.trim();
-
-      if (!eng || !deu) {
-        alert("Bitte Englisch und Deutsch ausfüllen!");
-        return;
-      }
-
-      const newItem = [eng, deu, cat, note, "", new Date().toISOString(), 0, crypto.randomUUID()];
-      if (editIndex === null) {
-        list.push(newItem);
-      } else {
-        list[editIndex] = newItem;
-      }
-
-      localStorage.setItem("vokabeln", JSON.stringify(list));
-      closeModal();
-      // Neu rendern je nach View
-      if (document.body.classList.contains("mobile-mode")) {
-        renderMobileList();
-      } else {
-        renderTable();
-      }
-    };
-  </script>
-
-  <!-- ==============================
-       STYLES für Modal
-       ============================== -->
-  <style>
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-    }
-    .modal {
-      background: var(--bg-light);
-      color: var(--text-light);
-      border-radius: 10px;
-      padding: 20px;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    }
-    [data-theme="dark"] .modal {
-      background: #1e293b;
-      color: var(--text-dark);
-    }
-    .modal input, .modal textarea, .modal select {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1em;
-    }
-    .modal-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 10px;
-    }
-  </style>
-
-</body>
-</html>
+/* A–Z Overlay */
+.abc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:120}
+.abc-overlay.show{display:flex}
+.abc-panel{background:var(--card);color:var(--text);padding:16px;border-radius:12px;width:92%;max-width:420px;box-shadow:0 10px 26px rgba(0,0,0,.35)}
+.abc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.abc-list{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.abc-btn{padding:8px;border:1px solid #cbd5e1;border-radius:8px;background:var(--card);color:var(--text);font-weight:700;cursor:pointer}
+.abc-btn.active{background:var(--blue);color:#fff}

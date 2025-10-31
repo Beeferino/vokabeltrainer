@@ -1,105 +1,66 @@
 // ==============================
-// Beeferino – vokabeln.js (2025 Edition)
+// Beeferino – vokabeln.js (final)
 // ==============================
-window.addEventListener("DOMContentLoaded", async () => {
-  // ---- Erkennung Mobil/Desktop ----
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
-
-  // ---- Daten laden ----
+window.addEventListener('DOMContentLoaded', async () => {
   await loadData();
-
-  // ---- Ansicht wählen ----
-  if (isMobile) {
-    document.body.classList.add("mobile-mode");
-    renderMobileView();
-  } else {
-    renderApp();
-  }
-
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
+  if (isMobile) { document.body.classList.add('mobile-mode'); renderMobileView(); }
+  else { renderDesktopView(); }
   initTheme();
 });
 
-// ==============================
-// Globale Variablen & Konstanten
-// ==============================
-const app = document.getElementById("app");
-let list = [];
-let currentPage = 1;
-let currentLetter = "Alle";
-const PAGE_SIZE = 20;
-const RAW_URL = "https://beeferino.github.io/vokabeltrainer/vokabeln.json";
-
+// Data & constants
+const RAW_URL = 'https://beeferino.github.io/vokabeltrainer/vokabeln.json';
 const CATEGORY_NAMES = {
-  Gelb: "Grundwerkzeuge Metallverarbeitung",
-  Pink: "Werkzeugkasten Mechaniker",
-  Blau: "Blech- / Kunststoffarbeiten",
-  Gruen: "Drehen / Fräsen",
-  HellesPink: "Hydraulik / Pneumatik",
-  Orange: "Elektrotechnik",
-  Dunkelgruen: "Fluggerätemechanik allgemein",
+  Gelb: 'Grundwerkzeuge Metallverarbeitung',
+  Pink: 'Werkzeugkasten Mechaniker',
+  Blau: 'Blech- / Kunststoffarbeiten',
+  Gruen: 'Drehen / Fräsen',
+  HellesPink: 'Hydraulik / Pneumatik',
+  Orange: 'Elektrotechnik',
+  Dunkelgruen: 'Fluggerätemechanik allgemein',
 };
 const COLOR_MAP = {
-  Gelb: "#f4d03f",
-  Pink: "#e91e63",
-  Blau: "#1976d2",
-  Gruen: "#1e8449",
-  HellesPink: "#f54927",
-  Orange: "#e67e22",
-  Dunkelgruen: "#117a65",
+  Gelb: '#F4D03F',
+  Pink: '#E91E63',
+  Blau: '#1976D2',
+  Gruen: '#1E8449',
+  HellesPink: '#F54927',
+  Orange: '#E67E22',
+  Dunkelgruen: '#117A65',
 };
-const TEXT_ON = {
-  Gelb: "#000",
-  Pink: "#fff",
-  Blau: "#fff",
-  Gruen: "#fff",
-  HellesPink: "#fff",
-  Orange: "#fff",
-  Dunkelgruen: "#fff",
-};
+const TEXT_ON = { Gelb:'#000', Pink:'#fff', Blau:'#fff', Gruen:'#fff', HellesPink:'#fff', Orange:'#fff', Dunkelgruen:'#fff' };
 
-// ==============================
-// Hilfsfunktionen
-// ==============================
-const normalize = (v) => [
-  v[0] || "",
-  v[1] || "",
-  v[2] || "Gelb",
-  v[3] || "",
-  v[4] || "",
-  v[5] || new Date().toISOString(),
-  typeof v[6] === "number" ? v[6] : 0,
-  v[7] || crypto.randomUUID(),
-];
+let list = [];
+let currentPage = 1;
+const PAGE_SIZE = 20;
+let currentLetter = 'Alle';
+let editIndex = null;
 
-const loadLocal = () =>
-  JSON.parse(localStorage.getItem("vokabeln") || "[]").map(normalize);
+const app = document.getElementById('app');
 
-const saveLocal = (d) =>
-  localStorage.setItem("vokabeln", JSON.stringify(d));
+const normalize = (v)=>[v[0]||'',v[1]||'',v[2]||'Gelb',v[3]||'',v[4]||'',v[5]||new Date().toISOString(),typeof v[6]==='number'?v[6]:0,v[7]||crypto.randomUUID()];
+const loadLocal = ()=> JSON.parse(localStorage.getItem('vokabeln')||'[]').map(normalize);
+const saveLocal = d => localStorage.setItem('vokabeln', JSON.stringify(d));
 
-// ==============================
-// Daten laden
-// ==============================
-async function loadData() {
-  try {
-    const res = await fetch(RAW_URL, { cache: "no-store" });
-    list = (await res.json()).map(normalize);
+async function loadData(){
+  try{
+    const r = await fetch(RAW_URL,{cache:'no-store'});
+    list = (await r.json()).map(normalize);
     saveLocal(list);
-  } catch {
+  }catch{
     list = loadLocal();
   }
 }
 
-// ==============================
-// DESKTOP-ANSICHT
-// ==============================
-function renderApp() {
+// ===== Desktop =====
+function renderDesktopView(){
   app.innerHTML = `
     <div class="desktop-app">
       <h1>📘 Vokabelübersicht</h1>
       <div class="hr"></div>
       <div class="toolbar">
-        <button id="homeBtn" class="btn ghost" title="Zurück zum Trainer">🏠</button>
+        <button id="homeBtn" class="btn ghost" title="Zurück zum Trainer" onclick="location.href='index.html'">🏠</button>
         <input id="searchDesk" placeholder="Suchen…" />
         <select id="filterCatDesk"></select>
         <button id="resetDesk" class="btn">Reset</button>
@@ -112,7 +73,7 @@ function renderApp() {
         <table id="tbl">
           <thead>
             <tr>
-              <th class="select-col"></th>
+              <th></th>
               <th class="sortable" data-sort="0">Englisch ⬍</th>
               <th class="sortable" data-sort="1">Deutsch ⬍</th>
               <th>Kategorie</th>
@@ -125,386 +86,268 @@ function renderApp() {
       <div id="pagination" class="pagination"></div>
     </div>
   `;
-
-  // Filter-Kategorien befüllen
-  const sel = document.getElementById("filterCatDesk");
+  // fill filter
+  const sel = document.getElementById('filterCatDesk');
   sel.innerHTML = '<option value="Alle">Alle (bunt gemischt)</option>';
-  Object.keys(CATEGORY_NAMES).forEach((k) => {
-    const o = document.createElement("option");
-    o.value = k;
-    o.textContent = CATEGORY_NAMES[k];
-    o.style.background = COLOR_MAP[k];
-    o.style.color = TEXT_ON[k];
+  Object.keys(CATEGORY_NAMES).forEach(k=>{
+    const o=document.createElement('option');
+    o.value=k;o.textContent=CATEGORY_NAMES[k];
+    o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
     sel.appendChild(o);
   });
-
-  addDesktopListeners();
+  // listeners
+  document.getElementById('filterCatDesk').onchange=()=>{currentPage=1;renderTable();updateFilterColor();};
+  document.getElementById('searchDesk').oninput=()=>{currentPage=1;renderTable();};
+  document.getElementById('resetDesk').onclick=()=>{
+    document.getElementById('filterCatDesk').value='Alle';
+    document.getElementById('searchDesk').value='';
+    currentPage=1;currentLetter='Alle';renderTable();updateFilterColor();
+  };
+  document.getElementById('addDesk').onclick=()=>openEdit(null);
+  document.getElementById('delDesk').onclick=bulkDelete;
+  document.getElementById('syncDesk').onclick=githubSync;
+  updateFilterColor();
   enableSorting();
+  renderTable();
+  renderABCOverlay(); // Desktop A–Z
+}
+
+function updateFilterColor(){
+  const s=document.getElementById('filterCatDesk');
+  const val=s.value;
+  if(val && COLOR_MAP[val]){ s.style.background=COLOR_MAP[val]; s.style.color=TEXT_ON[val]; }
+  else { s.style.background=''; s.style.color=''; }
+}
+
+function filtered(){
+  const cat = document.getElementById('filterCatDesk').value || 'Alle';
+  const q = (document.getElementById('searchDesk').value||'').trim().toLowerCase();
+  return list.filter(v=>{
+    const matchCat = cat==='Alle'||v[2]===cat;
+    const matchQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
+    const matchLetter = currentLetter==='Alle' || v[0].toUpperCase().startsWith(currentLetter);
+    return matchCat && matchQ && matchLetter;
+  });
+}
+
+function renderTable(){
+  const data=filtered();
+  const start=(currentPage-1)*PAGE_SIZE;
+  const pageData=data.slice(start,start+PAGE_SIZE);
+  const tbody=document.querySelector('#tbl tbody');
+  tbody.innerHTML = pageData.map(v=>{
+    const idx=list.findIndex(x=>x[7]===v[7]);
+    return `<tr>
+      <td><input type="checkbox" class="rowcheck" data-idx="${idx}"></td>
+      <td>${v[0]}${v[6]===1?` <span title="Verwechslungsgefahr" style="color:#ef4444">⚠️</span>`:''}</td>
+      <td>${v[1]}</td>
+      <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
+      <td><button class="btn" data-edit="${idx}">✏️ Bearbeiten</button></td>
+    </tr>`;
+  }).join('');
+  document.querySelectorAll('button[data-edit]').forEach(b=>b.onclick=()=>openEdit(+b.dataset.edit));
+  document.getElementById('countDesk').textContent=`📘 ${data.length} Vokabel${data.length!==1?'n':''} gefunden`;
+  const pages=Math.ceil(data.length/PAGE_SIZE)||1;
+  const pag=document.getElementById('pagination');
+  pag.innerHTML=`
+    <button class="btn" ${currentPage===1?'disabled':''} id="prevPage">⬅️ Zurück</button>
+    <span style="margin:0 10px;font-weight:600;">Seite ${currentPage} / ${pages}</span>
+    <button class="btn" ${currentPage===pages?'disabled':''} id="nextPage">Weiter ➡️</button>`;
+  document.getElementById('prevPage').onclick=()=>{if(currentPage>1){currentPage--;renderTable();}};
+  document.getElementById('nextPage').onclick=()=>{if(currentPage<pages){currentPage++;renderTable();}};
+}
+
+function enableSorting(){
+  document.querySelectorAll('th.sortable').forEach(th=>{
+    th.style.cursor='pointer';
+    th.onclick=()=>{
+      const col=parseInt(th.dataset.sort);
+      const data=filtered().slice().sort((a,b)=>(a[col]||'').localeCompare(b[col]||''));
+      // overwrite list order based on sorted data (keeping other items at end)
+      const ids=data.map(v=>v[7]);
+      list.sort((a,b)=>ids.indexOf(a[7])-ids.indexOf(b[7]));
+      saveLocal(list);
+      renderTable();
+    };
+  });
+}
+
+function bulkDelete(){
+  const ids=Array.from(document.querySelectorAll('.rowcheck:checked')).map(x=>+x.dataset.idx);
+  if(!ids.length){alert('Bitte Zeilen auswählen.');return;}
+  if(!confirm(`${ids.length} Einträge löschen?`))return;
+  list = list.filter((_,i)=>!ids.includes(i));
+  saveLocal(list);
   renderTable();
 }
 
-// ==============================
-// Tabellenanzeige Desktop
-// ==============================
-function renderTable() {
-  const { cat, q } = currentFilter();
-  const data = list.filter((v) => {
-    const matchCat = cat === "Alle" || v[2] === cat;
-    const matchQ = !q || v[0].toLowerCase().includes(q) || v[1].toLowerCase().includes(q);
-    const matchLetter = currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter);
-    return matchCat && matchQ && matchLetter;
+// ===== Modal =====
+const modal=document.getElementById('modal');
+const mEn=document.getElementById('mEn');
+const mDe=document.getElementById('mDe');
+const mCat=document.getElementById('mCat');
+const mVar=document.getElementById('mVar');
+const mHint=document.getElementById('mHint');
+const mConfuse=document.getElementById('mConfuse');
+const mCreated=document.getElementById('mCreated');
+const mCancel=document.getElementById('mCancel');
+const mSave=document.getElementById('mSave');
+const mDelete=document.getElementById('mDelete');
+
+function fillModalCategories(){
+  mCat.innerHTML='';
+  Object.keys(CATEGORY_NAMES).forEach(k=>{
+    const o=document.createElement('option');
+    o.value=k;o.textContent=CATEGORY_NAMES[k];
+    o.style.background=COLOR_MAP[k];o.style.color=TEXT_ON[k];
+    mCat.appendChild(o);
   });
-
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const pageData = data.slice(start, start + PAGE_SIZE);
-  const tbody = document.querySelector("#tbl tbody");
-
-  tbody.innerHTML = pageData.map((v, i) => `
-    <tr>
-      <td><input type="checkbox" class="rowcheck" data-idx="${i}"></td>
-      <td>${v[0]}${v[6] === 1 ? ` <span title="Verwechslungsgefahr" style="color:#ef4444">⚠️</span>` : ""}</td>
-      <td>${v[1]}</td>
-      <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-      <td><button class="btn" data-edit="${i}">✏️ Bearbeiten</button></td>
-    </tr>
-  `).join("");
-
-  document.querySelectorAll("button[data-edit]").forEach((b) => {
-    b.onclick = () => openEdit(+b.dataset.edit);
-  });
-
-  document.getElementById("countDesk").textContent = `📘 ${data.length} Vokabel${data.length !== 1 ? "n" : ""} gefunden`;
-
-  const pages = Math.ceil(data.length / PAGE_SIZE) || 1;
-  document.getElementById("pagination").innerHTML = `
-    <button class="btn" ${currentPage === 1 ? "disabled" : ""} id="prevPage">⬅️ Zurück</button>
-    <span class="page-info">Seite ${currentPage} / ${pages}</span>
-    <button class="btn" ${currentPage === pages ? "disabled" : ""} id="nextPage">Weiter ➡️</button>
-  `;
-  document.getElementById("prevPage").onclick = () => { if (currentPage > 1) { currentPage--; renderTable(); } };
-  document.getElementById("nextPage").onclick = () => { if (currentPage < pages) { currentPage++; renderTable(); } };
+  // colorize
+  const setCol=()=>{mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];};
+  mCat.onchange=setCol; setCol();
 }
 
-function currentFilter() {
-  const cat = document.getElementById("filterCatDesk").value || "Alle";
-  const q = (document.getElementById("searchDesk").value || "").trim().toLowerCase();
-  return { cat, q };
+function openEdit(i){
+  fillModalCategories();
+  editIndex=i;
+  if(i==null){
+    mEn.value='';mDe.value='';mCat.value='Gelb';mVar.value='';mHint.value='';mConfuse.checked=false;mCreated.value=new Date().toLocaleDateString();
+  }else{
+    const v=list[i];
+    mEn.value=v[0];mDe.value=v[1];mCat.value=v[2];mVar.value=v[3];mHint.value=v[4];mConfuse.checked=v[6]===1;mCreated.value=new Date(v[5]).toLocaleDateString();
+  }
+  mCat.style.background=COLOR_MAP[mCat.value];mCat.style.color=TEXT_ON[mCat.value];
+  modal.style.display='flex';
+}
+mCancel.onclick=()=>modal.style.display='none';
+modal.addEventListener('click',e=>{if(e.target===modal)modal.style.display='none';});
+mSave.onclick=()=>{
+  const en=mEn.value.trim(), de=mDe.value.trim(), cat=mCat.value, hint=mHint.value.trim(), variant=mVar.value.trim(), confuse=mConfuse.checked?1:0;
+  if(!en||!de){alert('Bitte Englisch & Deutsch ausfüllen.');return;}
+  if(editIndex==null){ list.push([en,de,cat,variant,hint,new Date().toISOString(),confuse,crypto.randomUUID()]); }
+  else{ const old=list[editIndex]; list[editIndex]=[en,de,cat,variant,hint,old[5],confuse,old[7]]; }
+  saveLocal(list); modal.style.display='none';
+  if(document.body.classList.contains('mobile-mode')) renderMobileList(); else renderTable();
+};
+mDelete.onclick=()=>{
+  if(editIndex==null){alert('Nichts zum Löschen.');return;}
+  if(!confirm('Eintrag wirklich löschen?'))return;
+  list.splice(editIndex,1); saveLocal(list); modal.style.display='none';
+  if(document.body.classList.contains('mobile-mode')) renderMobileList(); else renderTable();
+};
+
+// ===== A–Z =====
+function renderABCOverlay(){
+  if(document.getElementById('abcOverlay')) return;
+  const html = `
+    <div class="abc-overlay" id="abcOverlay">
+      <div class="abc-panel">
+        <div class="abc-header">
+          <strong class="abc-title">Wähle Buchstabe</strong>
+          <button id="abcClose" class="btn warn">✕</button>
+        </div>
+        <div class="abc-list" id="abcFilter"></div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.getElementById('abcClose').onclick=()=>document.getElementById('abcOverlay').classList.remove('show');
+  renderABCFilter();
+}
+function renderABCFilter(){
+  const cont=document.getElementById('abcFilter'); if(!cont) return;
+  const letters=['Alle',...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
+  cont.innerHTML = letters.map(l=>`<button class="abc-btn ${l===currentLetter?'active':''}" data-letter="${l}">${l}</button>`).join('');
+  cont.querySelectorAll('.abc-btn').forEach(b=>b.onclick=()=>{
+    currentLetter=b.dataset.letter; currentPage=1;
+    document.getElementById('abcOverlay').classList.remove('show');
+    if(document.body.classList.contains('mobile-mode')) renderMobileList(); else renderTable();
+  });
 }
 
-// ==============================
-// Mobile Ansicht
-// ==============================
-function renderMobileView() {
+// ===== Mobile =====
+function renderMobileView(){
   app.innerHTML = `
     <div class="mobile-app">
-      <h2>Vokabeln</h2>
       <div id="mobList" class="mob-list"></div>
-      <button id="themeMob" class="mob-btn" title="Dark / Light">🌗</button>
-      <button id="viewMob"  class="mob-btn" title="Ansicht wechseln">🗂️</button>
-      <button id="addMob"   class="mob-btn" title="Neue Vokabel">➕</button>
-      <button id="abcToggle"class="mob-btn" title="A–Z">A–Z</button>
-    </div>
-  `;
-
-  renderMobileList();
-  renderABCOverlayMobile();
-
-  document.getElementById("themeMob").onclick = toggleTheme;
-  document.getElementById("addMob").onclick = () => openEdit(null);
-
-  const btnView = document.getElementById("viewMob");
-  btnView.onclick = () => {
-    const current = localStorage.getItem("mobile_view_mode") || "cards";
-    const next = current === "cards" ? "table" : "cards";
-    localStorage.setItem("mobile_view_mode", next);
+      <button id="themeMob" class="mob-btn" title="Dark/Light">🌗</button>
+      <button id="viewMob" class="mob-btn" title="Ansicht wechseln">🗂️</button>
+      <button id="addMob" class="mob-btn" title="Neue Vokabel">➕</button>
+      <button id="abcToggle" class="mob-btn" title="A–Z">A–Z</button>
+      <div class="abc-overlay" id="abcOverlay">
+        <div class="abc-panel">
+          <div class="abc-header">
+            <strong class="abc-title">Wähle Buchstabe</strong>
+            <button id="abcClose" class="btn warn">✕</button>
+          </div>
+          <div class="abc-list" id="abcFilter"></div>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('themeMob').onclick=toggleTheme;
+  document.getElementById('addMob').onclick=()=>openEdit(null);
+  document.getElementById('viewMob').onclick=()=>{
+    const cur=localStorage.getItem('mobile_view_mode')||'cards';
+    const next=cur==='cards'?'table':'cards';
+    localStorage.setItem('mobile_view_mode',next);
     renderMobileList();
-    btnView.textContent = next === "cards" ? "🗂️" : "📋";
+    document.getElementById('viewMob').textContent = next==='cards'?'🗂️':'📋';
   };
+  document.getElementById('abcToggle').onclick=()=>{ renderABCFilter(); document.getElementById('abcOverlay').classList.add('show'); };
+  document.getElementById('abcClose').onclick=()=>document.getElementById('abcOverlay').classList.remove('show');
+  renderMobileList();
 }
 
-function renderMobileList() {
-  const mode = localStorage.getItem("mobile_view_mode") || "cards";
-  const container = document.getElementById("mobList");
-  if (!container) return;
-
-  if (mode === "cards") {
-    container.innerHTML = list.map((v, i) => `
-      <div class="mob-card" data-idx="${i}">
-        <div class="mob-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">
-          ${CATEGORY_NAMES[v[2]]}
-        </div>
-        <div class="mob-en">${v[0]}</div>
-        <div class="mob-de">${v[1]}</div>
-      </div>`).join("");
-
-    container.querySelectorAll(".mob-card").forEach((c) => {
-      c.onclick = () => openEdit(parseInt(c.dataset.idx, 10));
-    });
-  } else {
-    container.innerHTML = `
+function renderMobileList(){
+  const mode=localStorage.getItem('mobile_view_mode')||'cards';
+  const cont=document.getElementById('mobList'); if(!cont) return;
+  const data = list.filter(v=> currentLetter==='Alle' || v[0].toUpperCase().startsWith(currentLetter));
+  if(mode==='table'){
+    cont.innerHTML = `
       <table class="mob-table">
         <thead><tr><th>Englisch</th><th>Deutsch</th><th>Kategorie</th></tr></thead>
         <tbody>
-          ${list.map((v, i) => `
-            <tr data-idx="${i}">
-              <td>${v[0]}</td>
-              <td>${v[1]}</td>
-              <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td>
-            </tr>`).join("")}
+          ${data.map((v,i)=>`<tr data-idx="${i}"><td>${v[0]}${v[6]===1?' ⚠️':''}</td><td>${v[1]}</td><td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</span></td></tr>`).join('')}
         </tbody>
       </table>`;
-    container.querySelectorAll("tr[data-idx]").forEach((r) => {
-      r.onclick = () => openEdit(parseInt(r.dataset.idx, 10));
-    });
+    cont.querySelectorAll('tr[data-idx]').forEach(r=>r.onclick=()=>openEdit(+r.dataset.idx));
+  }else{
+    cont.innerHTML = data.map((v,i)=>`
+      <div class="mob-card" data-idx="${i}">
+        <div class="mob-cat" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${CATEGORY_NAMES[v[2]]}</div>
+        <div class="mob-en">${v[0]}${v[6]===1?' <span style="color:#ef4444">⚠️</span>':''}</div>
+        <div class="mob-de">${v[1]}</div>
+      </div>`).join('');
+    cont.querySelectorAll('.mob-card').forEach(c=>c.onclick=()=>openEdit(+c.dataset.idx));
   }
 }
-/* ==============================
-   Beeferino – vokabeln.css
-   ============================== */
 
-/* ----- Basislayout ----- */
-:root {
-  --bg-light: #f5f6f8;
-  --bg-dark: #0e1420;
-  --text-light: #111;
-  --text-dark: #e2e8f0;
-  --accent: #2563eb;
+// ===== GitHub Sync =====
+function getToken(){
+  let t=localStorage.getItem('gh_token')||'';
+  if(!t){ t=prompt('GitHub Token (repo-Scope):',''); if(t){localStorage.setItem('gh_token',t); alert('Token gespeichert.');} }
+  return t;
 }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', Arial, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-light);
-  min-height: 100vh;
-  overflow-x: hidden;
+async function githubSync(){
+  const token=getToken(); if(!token)return;
+  try{
+    const api='https://api.github.com/repos/beeferino/vokabeltrainer/contents/vokabeln.json';
+    const get=await fetch(api,{headers:{Authorization:`token ${token}`}});
+    const meta=await get.json(); const sha=meta.sha;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(list,null,2))));
+    const res=await fetch(api,{method:'PUT',headers:{Authorization:`token ${token}`,'Content-Type':'application/json'},body:JSON.stringify({message:'Update via Vokabel-UI',content,sha})});
+    if(!res.ok) throw new Error(await res.text());
+    alert('✅ Erfolgreich in Datenbank eingetragen.');
+  }catch(e){ alert('❌ Sync fehlgeschlagen.'); }
 }
 
-[data-theme="dark"] body {
-  background: var(--bg-dark);
-  color: var(--text-dark);
+// ===== Theme =====
+function initTheme(){
+  const saved=localStorage.getItem('theme')||'light';
+  document.documentElement.setAttribute('data-theme', saved);
 }
-
-/* ==============================
-   DESKTOP
-   ============================== */
-
-.desktop-app {
-  max-width: 1100px;
-  margin: 20px auto;
-  background: rgba(255,255,255,0.02);
-  padding: 10px 20px;
-}
-
-h1, h2 {
-  margin: 0 0 10px 0;
-  font-size: 1.8em;
-  color: var(--accent);
-}
-
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.toolbar input, .toolbar select {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.btn {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-.btn:hover { opacity: 0.9; }
-.btn.warn { background: #e74c3c; }
-.btn.ghost { background: transparent; color: var(--text-dark); }
-
-.table-wrap {
-  overflow-x: auto;
-  border-radius: 8px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-radius: 8px;
-}
-
-th, td {
-  padding: 10px;
-  border-bottom: 1px solid #1f2937;
-  text-align: left;
-}
-
-th {
-  background: #1e3a8a;
-  color: #fff;
-}
-
-tbody tr:hover {
-  background: rgba(37,99,235,0.1);
-}
-
-.category-chip {
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 0.85em;
-}
-
-.pagination {
-  text-align: center;
-  margin: 20px 0;
-}
-
-.count-info {
-  text-align: center;
-  color: #2563eb;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-/* ==============================
-   MOBILE VIEW
-   ============================== */
-.mobile-app {
-  position: relative;
-  padding: 10px;
-}
-
-.mob-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 100px;
-}
-
-/* Kartenansicht */
-.mob-card {
-  background: var(--bg-light);
-  color: var(--text-light);
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  padding: 12px;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-[data-theme="dark"] .mob-card {
-  background: #182030;
-  color: var(--text-dark);
-}
-.mob-card:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-
-.mob-cat {
-  font-weight: 700;
-  padding: 5px 10px;
-  border-radius: 8px;
-  margin-bottom: 6px;
-  display: inline-block;
-}
-
-.mob-en {
-  font-size: 1.2em;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.mob-de {
-  font-size: 1em;
-  opacity: 0.75;
-}
-
-/* Tabellenansicht mobil */
-.mob-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-.mob-table th, .mob-table td {
-  border-bottom: 1px solid #ccc;
-  padding: 8px;
-  font-size: 0.95em;
-}
-[data-theme="dark"] .mob-table th,
-[data-theme="dark"] .mob-table td {
-  border-color: #2b3344;
-}
-
-/* ==============================
-   FLOATING BUTTONS (Mobile)
-   ============================== */
-.mob-btn {
-  position: fixed;
-  right: 18px;
-  border: none;
-  border-radius: 50%;
-  width: 52px;
-  height: 52px;
-  font-size: 1.2em;
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  color: #fff;
-  background: #2563eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.2s ease, background 0.2s ease;
-  z-index: 1000;
-}
-.mob-btn:hover { transform: scale(1.1); }
-
-/* Reihenfolge L-förmig */
-#themeMob { bottom: 210px; right: 24px; background: #374151; }
-#viewMob  { bottom: 150px; right: 24px; background: #059669; }
-#addMob   { bottom: 90px;  right: 24px; background: #10b981; }
-#abcToggle{ bottom: 30px;  right: 24px; background: #2563eb; }
-
-/* ==============================
-   DARK MODE
-   ============================== */
-[data-theme="dark"] {
-  background: var(--bg-dark);
-  color: var(--text-dark);
-}
-
-[data-theme="dark"] .desktop-app {
-  background: #0f172a;
-}
-
-[data-theme="dark"] table th {
-  background: #1e293b;
-}
-
-[data-theme="dark"] .mob-card {
-  background: #1f2937;
-  color: #e2e8f0;
-}
-
-/* Kontrastfix für Kategorien bei dunklem Modus */
-[data-theme="dark"] .mob-cat {
-  color: #fff !important;
-  mix-blend-mode: normal;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
-}
-
-/* ==============================
-   RESPONSIVE BRIDGES
-   ============================== */
-@media (min-width: 769px) {
-  .mobile-app, .mob-btn { display: none !important; }
-}
-@media (max-width: 768px) {
-  .desktop-app { display: none !important; }
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme')||'light';
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
 }
