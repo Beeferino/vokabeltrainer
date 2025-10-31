@@ -27,12 +27,16 @@
         <label for="mHint">Hinweis</label>
         <textarea id="mHint" rows="2" placeholder="optional"></textarea>
 
-        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
-          <label for="mConfuse" style="flex:1;display:flex;align-items:center;gap:6px;">
-            <input type="checkbox" id="mConfuse" />
-            <span>⚠️ Verwechslungsgefahr</span>
-          </label>
-          <input type="text" id="mCreated" readonly style="width:140px;text-align:right;opacity:0.6;font-size:0.85rem;" />
+        <div class="modal-row">
+          <div class="toggle-wrap">
+            <span class="warn-icon">⚠️</span>
+            <span class="warn-label">Verwechslungsgefahr</span>
+            <label class="switch">
+              <input type="checkbox" id="mConfuse" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <input type="text" id="mCreated" readonly class="created" />
         </div>
 
         <div class="modal-actions">

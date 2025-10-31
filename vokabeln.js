@@ -1,5 +1,5 @@
 // ==============================
-// Beeferino – vokabeln.js (Final)
+// Beeferino – vokabeln.js (Update Final)
 // ==============================
 window.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
@@ -291,6 +291,7 @@ window.addEventListener("DOMContentLoaded", () => {
         <div class="mobile-header">
           <h2>Vokabeln</h2>
           <div class="mob-actions">
+            <button id="mobHome" class="lbtn" title="Trainer">🏠</button>
             <button id="mobTheme" class="lbtn" title="Dark / Light">🌙</button>
             <button id="mobAZ" class="lbtn" title="A–Z">A–Z</button>
             <button id="mobAdd" class="lbtn" title="Neu">＋</button>
@@ -298,6 +299,7 @@ window.addEventListener("DOMContentLoaded", () => {
         </div>
         <div id="mobList" class="mob-list"></div>
       </div>`;
+    document.getElementById("mobHome").onclick=()=>{ location.href = "index.html"; };
     document.getElementById("mobTheme").onclick=toggleTheme;
     document.getElementById("mobAZ").onclick=()=>{ ensureABCOverlay(); document.getElementById("abcOverlay").classList.add("show"); renderABCFilter(); };
     document.getElementById("mobAdd").onclick=()=>openEdit(null);
