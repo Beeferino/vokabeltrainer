@@ -1,59 +1,59 @@
 <!DOCTYPE html>
 <html lang="de" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Beeferino Vokabelverwaltung – Desktop & Mobile" />
-  <title>Vokabeln</title>
-  <link rel="stylesheet" href="vokabeln.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
-  <main id="app" class="app"></main>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vokabelverwaltung</title>
 
-  <!-- Bearbeiten / Neu Modal -->
-  <div class="modal" id="modal" style="display:none;">
-    <div class="modal-content">
-      <h2 style="margin-top:0;">Vokabel</h2>
-      <div class="form-group">
+    <!-- Styles -->
+    <link rel="stylesheet" href="vokabeln.css" />
+
+    <style>
+      /* Fallback Schrift */
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Haupt-App -->
+    <div id="app" class="app"></div>
+
+    <!-- Modal -->
+    <div id="modal">
+      <div class="modal-content">
+        <h3>Vokabel bearbeiten / hinzufügen</h3>
+
         <label for="mEn">Englisch</label>
-        <input type="text" id="mEn" />
-      </div>
-      <div class="form-group">
+        <input type="text" id="mEn" placeholder="Englisches Wort" />
+
         <label for="mDe">Deutsch</label>
-        <input type="text" id="mDe" />
-      </div>
-      <div class="form-group">
+        <input type="text" id="mDe" placeholder="Deutsches Wort" />
+
         <label for="mCat">Kategorie</label>
         <select id="mCat"></select>
-      </div>
-      <div class="form-group">
-        <label for="mVar">Gruppe / Variante</label>
-        <input type="text" id="mVar" />
-      </div>
-      <div class="form-group">
+
         <label for="mHint">Hinweis</label>
-        <input type="text" id="mHint" />
-      </div>
-      <div class="form-group switch-row">
-        <label>Verwechslungsgefahr</label>
-        <label class="switch">
-          <input type="checkbox" id="mConfuse" />
-          <span class="slider round"></span>
-        </label>
-      </div>
-      <div class="form-group">
-        <label>Erstellt</label>
-        <input type="text" id="mCreated" readonly style="opacity:.7;" />
-      </div>
-      <div class="modal-actions">
-        <button class="btn" id="mCancel">Abbrechen</button>
-        <button class="btn warn" id="mDelete">Löschen</button>
-        <button class="btn primary" id="mSave">Speichern</button>
+        <textarea id="mHint" rows="2" placeholder="optional"></textarea>
+
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+          <label for="mConfuse" style="flex:1;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="mConfuse" />
+            <span>⚠️ Verwechslungsgefahr</span>
+          </label>
+          <input type="text" id="mCreated" readonly style="width:120px;text-align:right;opacity:0.6;font-size:0.85rem;" />
+        </div>
+
+        <div class="modal-actions">
+          <button id="mCancel" class="btn ghost">Abbrechen</button>
+          <button id="mDelete" class="btn warn">Löschen</button>
+          <button id="mSave" class="btn">Speichern</button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <script src="vokabeln.js"></script>
-</body>
+    <!-- Skript -->
+    <script src="vokabeln.js"></script>
+  </body>
 </html>
