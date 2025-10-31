@@ -137,7 +137,7 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding-bottom: 130px; /* Platz für FABs */
+    padding-bottom: 140px; /* Platz für FABs */
   }
 
   /* 🎨 Modernisierte Karte */
@@ -163,7 +163,7 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
     color: var(--bad); background: rgba(239,68,68,0.1); padding: 4px 8px; border-radius: 6px;
   }
 
-  /* Floating Buttons – Corner L */
+  /* Floating Buttons – Corner L (inkl. View Toggle) */
   .mob-fab-corner { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; align-items: flex-end; gap: 14px; z-index: 400; }
   .mob-fab-row { display: flex; gap: 14px; }
   .mob-fab {
@@ -174,12 +174,20 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
   .mob-fab:hover { transform: scale(1.08); box-shadow: 0 6px 12px rgba(0,0,0,0.35); }
   .mob-fab.blue { background: #2563eb; }     /* Add */
   .mob-fab.orange { background: #ea580c; }   /* A–Z */
+  .mob-fab.teal { background: #0ea5a4; }     /* View toggle */
   .mob-fab.theme { background: #334155; }    /* Theme */
   /* Iconwechsel automatisch */
   [data-theme="dark"]  .mob-fab.theme::after { content: "☀️"; }
   [data-theme="light"] .mob-fab.theme::after { content: "🌙"; }
   /* altes Theme-Button-Styling neutralisieren */
   #themeToggle{ all: unset; }
+
+  /* Mobile table */
+  .mob-table-wrap{ background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:var(--shadow); overflow:hidden; margin:12px; }
+  table.mob{ width:100%; border-collapse:collapse; }
+  table.mob th, table.mob td{ padding:10px; border-bottom:1px solid var(--border); text-align:left; }
+  table.mob tr:hover{ background:#f8fbff; }
+  .mob-pagination{ display:flex; justify-content:center; align-items:center; gap:10px; padding:12px; }
 }
 
 /* ========== Light/Dark Lesbarkeit für Kategorie-Streifen (mobile) ========= */
@@ -204,11 +212,3 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
 [data-theme="dark"] .mob-card[data-cat="HellesPink"] .mob-card-top{ background: linear-gradient(90deg, #b91c1c, #ef4444); }
 [data-theme="dark"] .mob-card[data-cat="Orange"] .mob-card-top{ background: linear-gradient(90deg, #d97706, #f59e0b); }
 [data-theme="dark"] .mob-card[data-cat="Dunkelgruen"] .mob-card-top{ background: linear-gradient(90deg, #064e3b, #117a65); }
-
-/* 🧹 Entfernt altes Theme-Icon unten links im Mobile View */
-@media (max-width: 900px) {
-  button.theme-toggle {
-    display: none !important;
-  }
-}
-

@@ -391,7 +391,7 @@ window.addEventListener("DOMContentLoaded", () => {
         currentLetter = btn.dataset.letter;
         currentPage = 1;
         renderABCFilter();
-        if (isMobile()) renderMobileList();
+        if (isMobile()) renderMobileContent();
         else renderTable();
 
         // Overlay schließen
@@ -415,7 +415,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ===== Mobile view
+  // ===== Mobile view (with view toggle)
   function renderMobileView() {
     app.innerHTML = `
       <div class="mobile-app">
@@ -423,7 +423,7 @@ window.addEventListener("DOMContentLoaded", () => {
           <h2>Vokabeln</h2>
           <div><button class="iconbtn" id="syncMob" title="Mit GitHub synchronisieren">🔄</button></div>
         </div>
-        <div id="mobList" class="mob-list"></div>
+        <div id="mobContent" class="mob-list"></div>
 
         <!-- Floating Buttons in umgedrehter L-Form -->
         <div class="mob-fab-corner">
@@ -431,6 +431,7 @@ window.addEventListener("DOMContentLoaded", () => {
           <div class="mob-fab-row">
             <button id="abcToggle" class="mob-fab orange" title="Nach Buchstabe filtern">A–Z</button>
             <button id="addMob" class="mob-fab blue" title="Neue Vokabel hinzufügen">➕</button>
+            <button id="viewToggle" class="mob-fab teal" title="Kachel/Tabelle umschalten"></button>
           </div>
         </div>
 
@@ -447,21 +448,52 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
-    renderMobileList();
     document.getElementById("syncMob").onclick = githubSync;
     document.getElementById("addMob").onclick = () => openEdit(null);
     renderABCOverlayMobile();
-    // Theme button works here too
+
     const tbtn = document.getElementById("themeToggle");
     if (tbtn) tbtn.addEventListener("click", toggleTheme);
+
+    const vbtn = document.getElementById("viewToggle");
+    vbtn.addEventListener("click", toggleViewMode);
+
+    renderMobileContent();
   }
 
-  function renderMobileList() {
-    const container = document.getElementById("mobList");
+  function getViewMode(){
+    return localStorage.getItem("mobile_view_mode") || "cards"; // "cards" | "table"
+  }
+  function setViewMode(mode){
+    localStorage.setItem("mobile_view_mode", mode);
+  }
+
+  function setViewToggleIcon(){
+    const mode = getViewMode();
+    const btn = document.getElementById("viewToggle");
+    if(!btn) return;
+    // 📋 = wechsle zu Tabelle; 🧩 = wechsle zu Kacheln
+    btn.textContent = mode === "cards" ? "📋" : "🧩";
+  }
+
+  function renderMobileContent(){
+    const mode = getViewMode();
+    setViewToggleIcon();
+    if(mode === "cards") renderMobileCards(); else renderMobileTable();
+  }
+
+  function toggleViewMode(){
+    const mode = getViewMode();
+    setViewMode(mode === "cards" ? "table" : "cards");
+    renderMobileContent();
+  }
+
+  function renderMobileCards() {
+    const container = document.getElementById("mobContent");
+    container.className = "mob-list"; // ensure proper padding
     container.innerHTML = list
       .filter(v => currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter))
-      .map(
-        (v, i) => `
+      .map((v, i) => `
         <div class="mob-card" data-idx="${i}" data-cat="${v[2]}">
           <div class="mob-card-top"></div>
           <div class="mob-card-content">
@@ -469,13 +501,54 @@ window.addEventListener("DOMContentLoaded", () => {
             <div class="mob-de">${v[1]}</div>
           </div>
         </div>`
-      )
-      .join("");
+      ).join("");
 
-    // Karte tippen = Bearbeiten
     container.querySelectorAll(".mob-card").forEach((c) => {
       c.onclick = () => openEdit(parseInt(c.dataset.idx, 10));
     });
+  }
+
+  function renderMobileTable(){
+    const container = document.getElementById("mobContent");
+    container.className = ""; // remove mob-list padding so wrap owns it
+    const data = list.filter(v => currentLetter === "Alle" || v[0].toUpperCase().startsWith(currentLetter));
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageData = data.slice(start, start + PAGE_SIZE);
+
+    container.innerHTML = `
+      <div class="mob-table-wrap">
+        <table class="mob">
+          <thead>
+            <tr><th>Englisch</th><th>Deutsch</th><th>Kat.</th><th>Aktion</th></tr>
+          </thead>
+          <tbody>
+            ${pageData.map((v)=>{
+              const idx = list.findIndex(x=>x[7]===v[7]);
+              return `<tr>
+                <td>${v[0]}${v[6]===1?` <span title="Verwechslungsgefahr" style="color:#ef4444">⚠️</span>`:""}</td>
+                <td>${v[1]}</td>
+                <td><span class="category-chip" style="background:${COLOR_MAP[v[2]]};color:${TEXT_ON[v[2]]}">${v[2]}</span></td>
+                <td><button class="btn" data-edit="${idx}">✏️</button></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>
+        <div class="mob-pagination">
+          <button class="btn" id="mprev" ${currentPage===1?"disabled":""}>⬅️</button>
+          <span style="font-weight:600;">Seite ${Math.max(1, Math.ceil(((currentPage-1)*PAGE_SIZE+1)/PAGE_SIZE))} / ${Math.max(1, Math.ceil(data.length/PAGE_SIZE))}</span>
+          <button class="btn" id="mnext" ${(start+PAGE_SIZE)>=data.length?"disabled":""}>➡️</button>
+        </div>
+      </div>
+    `;
+
+    container.querySelectorAll('button[data-edit]').forEach((b)=>{
+      b.onclick=()=>openEdit(+b.dataset.edit);
+    });
+
+    const mprev = document.getElementById("mprev");
+    const mnext = document.getElementById("mnext");
+    mprev.onclick = () => { if(currentPage>1){ currentPage--; renderMobileTable(); }};
+    mnext.onclick = () => { if((start+PAGE_SIZE)<data.length){ currentPage++; renderMobileTable(); }};
   }
 
   function renderABCOverlayMobile() {
