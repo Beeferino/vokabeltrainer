@@ -1,340 +1,195 @@
-/* ==============================
-   Vokabelübersicht – Stylesheet
-   ============================== */
+<!DOCTYPE html>
+<html lang="de" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Interaktiver Vokabeltrainer – mobile & desktop Ansicht" />
+  <title>Vokabeln</title>
 
-/* === Grundlayout === */
-:root {
-  --bg-light: #f4f4f7;
-  --bg-dark: #0f172a;
-  --text-light: #1e293b;
-  --text-dark: #f1f5f9;
-  --blue: #2563eb;
-  --shadow: rgba(0,0,0,0.15);
-  --card-radius: 14px;
-}
+  <!-- Icons & Favicon -->
+  <link rel="icon" href="https://beeferino.github.io/assets/icon.png" type="image/png" />
 
-[data-theme="light"] {
-  --bg: var(--bg-light);
-  --text: var(--text-light);
-}
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="vokabeln.css" />
 
-[data-theme="dark"] {
-  --bg: var(--bg-dark);
-  --text: var(--text-dark);
-}
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  margin: 0;
-  padding: 0;
-  transition: background 0.3s, color 0.3s;
-}
+  <!-- Hauptcontainer -->
+  <main id="app" class="app-container">
+    <!-- Wird dynamisch durch JS gefüllt -->
+  </main>
 
-/* === Desktop App Container === */
-.desktop-app {
-  padding: 1rem 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
+  <!-- ==============================
+       MODAL (Bearbeiten / Neu)
+       ============================== -->
+  <div id="modalOverlay" class="modal-overlay" style="display:none;">
+    <div class="modal">
+      <h3 id="modalTitle">Vokabel bearbeiten</h3>
+      <label>Englisch:</label>
+      <input id="editEng" type="text" placeholder="Englisches Wort" />
+      <label>Deutsch:</label>
+      <input id="editDeu" type="text" placeholder="Deutsche Übersetzung" />
+      <label>Kategorie:</label>
+      <select id="editCat"></select>
+      <label>Anmerkung:</label>
+      <textarea id="editNote" placeholder="Optional"></textarea>
+      <div class="modal-buttons">
+        <button id="saveBtn" class="btn">💾 Speichern</button>
+        <button id="cancelBtn" class="btn warn">✖ Abbrechen</button>
+      </div>
+    </div>
+  </div>
 
-h1 {
-  margin: 0;
-  font-size: 1.8rem;
-  color: var(--text);
-}
+  <!-- ==============================
+       SCRIPTS
+       ============================== -->
+  <script>
+    // Theme initialisieren & umschalten
+    function initTheme() {
+      const theme = localStorage.getItem("theme") || "light";
+      document.documentElement.setAttribute("data-theme", theme);
+    }
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    }
+  </script>
 
-.hr {
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  margin: 0.5rem 0 1rem;
-}
+  <script src="vokabeln.js"></script>
 
-/* === Toolbar === */
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-  margin-bottom: 1rem;
-}
+  <!-- ==============================
+       MODAL-LOGIK (Bearbeiten / Neu)
+       ============================== -->
+  <script>
+    const modal = document.getElementById("modalOverlay");
+    const editEng = document.getElementById("editEng");
+    const editDeu = document.getElementById("editDeu");
+    const editCat = document.getElementById("editCat");
+    const editNote = document.getElementById("editNote");
+    const modalTitle = document.getElementById("modalTitle");
 
-.toolbar input, .toolbar select {
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.05);
-  color: var(--text);
-  min-width: 150px;
-}
+    const CATEGORY_NAMES = {
+      Gelb: "Grundwerkzeuge Metallverarbeitung",
+      Pink: "Werkzeugkasten Mechaniker",
+      Blau: "Blech- / Kunststoffarbeiten",
+      Gruen: "Drehen / Fräsen",
+      HellesPink: "Hydraulik / Pneumatik",
+      Orange: "Elektrotechnik",
+      Dunkelgruen: "Fluggerätemechanik allgemein",
+    };
 
-.toolbar input::placeholder {
-  color: rgba(255,255,255,0.5);
-}
+    // Kategorien füllen
+    Object.entries(CATEGORY_NAMES).forEach(([key, label]) => {
+      const opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = label;
+      editCat.appendChild(opt);
+    });
 
-.btn {
-  border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-weight: 500;
-  color: #fff;
-  background: var(--blue);
-  transition: 0.2s;
-}
+    let editIndex = null;
 
-.btn:hover { opacity: 0.85; }
-.btn.warn { background: #e11d48; }
-.btn.ghost {
-  background: transparent;
-  color: var(--text);
-  font-size: 1.3rem;
-}
+    function openEdit(index) {
+      modal.style.display = "flex";
+      if (index === null) {
+        modalTitle.textContent = "Neue Vokabel";
+        editIndex = null;
+        editEng.value = "";
+        editDeu.value = "";
+        editNote.value = "";
+        editCat.value = "Gelb";
+      } else {
+        modalTitle.textContent = "Vokabel bearbeiten";
+        const item = list[index];
+        editIndex = index;
+        editEng.value = item[0];
+        editDeu.value = item[1];
+        editNote.value = item[3];
+        editCat.value = item[2];
+      }
+    }
 
-/* === Tabelle (Desktop) === */
-.table-wrap {
-  overflow-x: auto;
-}
+    function closeModal() {
+      modal.style.display = "none";
+    }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: rgba(255,255,255,0.03);
-}
+    document.getElementById("cancelBtn").onclick = closeModal;
 
-th, td {
-  padding: 10px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
+    document.getElementById("saveBtn").onclick = () => {
+      const eng = editEng.value.trim();
+      const deu = editDeu.value.trim();
+      const cat = editCat.value;
+      const note = editNote.value.trim();
 
-th {
-  text-align: left;
-  font-weight: 600;
-  color: var(--text);
-  cursor: pointer;
-}
+      if (!eng || !deu) {
+        alert("Bitte Englisch und Deutsch ausfüllen!");
+        return;
+      }
 
-tr:hover td {
-  background: rgba(255,255,255,0.05);
-}
+      const newItem = [eng, deu, cat, note, "", new Date().toISOString(), 0, crypto.randomUUID()];
+      if (editIndex === null) {
+        list.push(newItem);
+      } else {
+        list[editIndex] = newItem;
+      }
 
-/* === Kategorie-Chip === */
-.category-chip {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
+      localStorage.setItem("vokabeln", JSON.stringify(list));
+      closeModal();
+      // Neu rendern je nach View
+      if (document.body.classList.contains("mobile-mode")) {
+        renderMobileList();
+      } else {
+        renderTable();
+      }
+    };
+  </script>
 
-/* === ABC Overlay (Desktop + Mobile) === */
-.abc-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  border: none;
-  border-radius: 50%;
-  width: 54px;
-  height: 54px;
-  background: var(--blue);
-  color: #fff;
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 20;
-  box-shadow: 0 4px 10px var(--shadow);
-}
+  <!-- ==============================
+       STYLES für Modal
+       ============================== -->
+  <style>
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+    .modal {
+      background: var(--bg-light);
+      color: var(--text-light);
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+    [data-theme="dark"] .modal {
+      background: #1e293b;
+      color: var(--text-dark);
+    }
+    .modal input, .modal textarea, .modal select {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    .modal-buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+  </style>
 
-.abc-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
-
-.abc-overlay.show { display: flex; }
-
-.abc-panel {
-  background: var(--bg);
-  color: var(--text);
-  border-radius: 16px;
-  padding: 20px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-.abc-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.abc-title {
-  font-weight: 700;
-  font-size: 1.2rem;
-}
-
-.abc-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
-  gap: 5px;
-}
-
-.abc-btn {
-  padding: 8px;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  background: rgba(255,255,255,0.1);
-  color: var(--text);
-  font-weight: 600;
-}
-
-.abc-btn.active {
-  background: #e67e22;
-  color: #fff;
-}
-
-/* === Modal === */
-#modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.modal-content {
-  background: var(--bg);
-  color: var(--text);
-  padding: 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-
-.modal-content input,
-.modal-content select,
-.modal-content textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(255,255,255,0.05);
-  color: var(--text);
-}
-
-/* === Mobile Ansicht (Karten) === */
-.mob-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 16px;
-}
-
-.mob-card {
-  background: var(--bg);
-  border-radius: var(--card-radius);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.mob-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
-
-.mob-card-top {
-  border-top-left-radius: var(--card-radius);
-  border-top-right-radius: var(--card-radius);
-  font-weight: 700;
-  padding: 6px 12px;
-  font-size: 0.9rem;
-}
-
-.mob-card-content {
-  padding: 10px 14px 14px;
-}
-
-.mob-en {
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 4px;
-}
-
-.mob-de {
-  color: rgba(255,255,255,0.7);
-  font-size: 1rem;
-}
-
-.mob-warning {
-  color: #ef4444;
-  margin-top: 4px;
-  font-weight: 600;
-}
-
-/* === Mobile Tabellenansicht === */
-.mob-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 1rem;
-}
-
-.mob-table th,
-.mob-table td {
-  padding: 10px 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.mob-table tr:hover {
-  background: rgba(255,255,255,0.05);
-}
-
-/* === Floating L-Menu unten rechts (nur Mobile) === */
-.l-menu {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  z-index: 999;
-}
-
-.l-row {
-  display: flex;
-  gap: 10px;
-}
-
-.l-btn {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: none;
-  color: #fff;
-  font-size: 1.3rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  cursor: pointer;
-}
-
-.l-btn.theme { background: #1e3a8a; }
-.l-btn.view  { background: #10b981; }
-.l-btn.add   { background: #22c55e; }
-.l-btn.abc   { background: #2563eb; }
-
-@media (min-width: 768px) {
-  .l-menu { display: none; }
-}
+</body>
+</html>
