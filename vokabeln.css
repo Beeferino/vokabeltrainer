@@ -97,3 +97,14 @@ tr:hover{background:rgba(37,99,235,.06)}
 .abc-list{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
 .abc-btn{padding:8px;border:1px solid #cbd5e1;border-radius:8px;background:var(--card);color:var(--text);font-weight:700;cursor:pointer}
 .abc-btn.active{background:var(--blue);color:#fff}
+
+/* Dark/Light-Mode Toggle für Desktop */
+#themeToggle {
+  border-radius: 50%;
+  font-size: 1.3rem;
+  padding: 6px 8px;
+  transition: transform 0.2s ease;
+}
+#themeToggle:hover {
+  transform: scale(1.1);
+}
