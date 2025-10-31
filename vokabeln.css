@@ -204,3 +204,11 @@ th.sortable:hover{color:var(--blue);text-decoration:underline}
 [data-theme="dark"] .mob-card[data-cat="HellesPink"] .mob-card-top{ background: linear-gradient(90deg, #b91c1c, #ef4444); }
 [data-theme="dark"] .mob-card[data-cat="Orange"] .mob-card-top{ background: linear-gradient(90deg, #d97706, #f59e0b); }
 [data-theme="dark"] .mob-card[data-cat="Dunkelgruen"] .mob-card-top{ background: linear-gradient(90deg, #064e3b, #117a65); }
+
+/* 🧹 Entfernt altes Theme-Icon unten links im Mobile View */
+@media (max-width: 900px) {
+  button.theme-toggle {
+    display: none !important;
+  }
+}
+
