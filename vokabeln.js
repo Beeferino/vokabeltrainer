@@ -510,31 +510,45 @@ window.addEventListener("DOMContentLoaded", () => {
   // MOBILE
   // ==============================
   function renderMobileView() {
-    app.innerHTML = `
-      <div class="mobile-app">
-        <div class="mob-header">
-          <h2>Vokabeln</h2>
-        </div>
-        <div id="mobList" class="mob-list"></div>
-        <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
-        <button id="abcToggle" class="mob-abc-btn">A–Z</button>
-        <button id="themeMob" class="mob-dark-btn" title="Dark/Light Modus">🌗</button>
-        <div class="abc-overlay" id="abcOverlay">
-          <div class="abc-panel">
-            <div class="abc-header">
-              <span class="abc-title">Wähle Buchstabe</span>
-              <button id="abcClose" class="abc-close">✕</button>
-            </div>
-            <div class="abc-list" id="abcFilter"></div>
+  app.innerHTML = `
+    <div class="mobile-app">
+      <div id="mobList" class="mob-list"></div>
+
+      <!-- Floating Buttons -->
+      <button id="themeMob" class="mob-dark-btn" title="Dark/Light">🌗</button>
+      <button id="viewMob" class="mob-view-btn" title="Ansicht wechseln">🗂️</button>
+      <button id="addMob" class="mob-add-btn" title="Neue Vokabel hinzufügen">➕</button>
+      <button id="abcToggle" class="mob-abc-btn">A–Z</button>
+
+      <!-- Overlay -->
+      <div class="abc-overlay" id="abcOverlay">
+        <div class="abc-panel">
+          <div class="abc-header">
+            <span class="abc-title">Wähle Buchstabe</span>
+            <button id="abcClose" class="abc-close">✕</button>
           </div>
+          <div class="abc-list" id="abcFilter"></div>
         </div>
       </div>
-    `;
+    </div>
+  `;
+
+  renderMobileList();
+  document.getElementById("themeMob").onclick = toggleTheme;
+  document.getElementById("addMob").onclick = () => openEdit(null);
+  renderABCOverlayMobile();
+
+  // Umschalten zwischen Kachel / Tabelle
+  const btnView = document.getElementById("viewMob");
+  btnView.onclick = () => {
+    const current = localStorage.getItem("mobile_view_mode") || "cards";
+    const next = current === "cards" ? "table" : "cards";
+    localStorage.setItem("mobile_view_mode", next);
     renderMobileList();
-    document.getElementById("addMob").onclick = () => openEdit(null);
-    document.getElementById("themeMob").onclick = toggleTheme;
-    renderABCOverlayMobile();
-  }
+    btnView.textContent = next === "cards" ? "🗂️" : "📋";
+  };
+}
+
 
   function renderMobileList() {
     const container = document.getElementById("mobList");
